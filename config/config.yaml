@@ -1,0 +1,38 @@
+run4counts_run2Assignment:
+  bc_length: 15
+  umi_length: 16
+  data_folder: resources/run4counts/data
+  experiment_file: resources/run4counts/experiment_run4.csv
+  demultiplex: False
+  assignments:
+    run2_incl_other: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/assignment_run2/assignment_barcodes_incl_other.sorted.tsv.gz
+  design_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/reference.fa
+  label_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/labels_run2assignment_merged.tsv
+  demultiplex: False
+  configs:
+    noZeros:
+      bc_threshhold: 10
+      minDNACounts: 1
+      minRNACounts: 1
+  variants:
+    map: "resources/MPRAML/variants/oligomap.tsv.gz"
+    min_barcodes: [1,10]
+run1-3counts_run2Assignment:
+  bc_length: 15
+  umi_length: 16
+  data_folder: resources/run1-3counts/data
+  experiment_file: resources/run1-3counts/experiment_run1-3.csv
+  demultiplex: False
+  assignments:
+    run2_incl_other: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/assignment_run2/assignment_barcodes_incl_other.sorted.tsv.gz
+  design_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/reference.fa
+  label_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/labels_run2assignment_merged.tsv
+  demultiplex: False
+  configs:
+    noZeros:
+      bc_threshhold: 10
+      minDNACounts: 1
+      minRNACounts: 1
+  variants:
+    map: "resources/MPRAML/variants/oligomap.tsv.gz"
+    min_barcodes: [1,10]

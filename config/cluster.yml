@@ -1,0 +1,73 @@
+__default__:
+  time: '01:00'
+  threads: 1
+  mem: 2000
+  queue: 'debug'
+  error: '/fast/users/schubacm_c/scratch/logs/%x_%j_%N.err'
+  output: '/fast/users/schubacm_c/scratch/logs/%x_%j_%N.log'
+  
+create_demultiplexed_BAM_umi:
+  time: '72:00'
+  mem: 22000
+  queue: 'medium'
+  
+mergeTrimReads_demultiplexed_BAM_umi:
+  time: '72:00'
+  mem: 12000
+  queue: 'medium'
+
+create_BAM:
+  time: '72:00'
+  mem: 12000
+  queue: 'medium'
+
+create_BAM_umi:
+  time: '72:00'
+  mem: 12000
+  queue: 'medium'
+
+raw_counts:
+  time: '22:00'
+  mem: 6000
+  queue: 'medium'
+
+raw_counts_umi:
+  time: '22:00'
+  mem: 6000
+  queue: 'medium'
+
+correlate_BC_counts:
+  time: '22:00'
+  mem: 80000
+  queue: 'medium'
+
+frequent_umis:
+  time: '04:00'
+  queue: 'medium'
+
+dna_rna_merge:
+  time: '72:00'
+  mem: 20000
+  queue: 'medium'
+
+dna_rna_merge_counts:
+  time: '10:00'
+  queue: 'medium'
+
+createAssignmentPickleFile:
+  mem: 10000
+
+calc_correlations:
+  time: '48:00'
+  mem: 120000
+  queue: 'medium'
+  
+overlapBCs:
+  time: '5:00'
+  mem: 10000
+  queue: 'medium'
+
+assignBarcodes:
+  time: '72:00'
+  queue: 'medium'
+  mem: 10000 
