@@ -290,7 +290,6 @@ rule combine_overlapBCs_stats_assigned:
             category="{project}",
             subcategory="Barcodes",
         ),
-        
     shell:
         """
         set +o pipefail;
@@ -311,7 +310,8 @@ def getMergedCounts(wc):
     replicates = []
     for index, row in exp.iterrows():
         files += expand(
-            "results/{project}/counts/merged/{mergeType}/{condition}_{replicate}_merged_counts.tsv.gz",
+            "results/{project}/{raw_or_assigned}/merged/{mergeType}/{condition}_{replicate}_merged_counts.tsv.gz",
+            raw_or_assigned=wc.raw_or_assigned,
             project=wc.project,
             condition=wc.condition,
             replicate=row["Replicate"],
@@ -327,16 +327,16 @@ rule correlate_BC_counts:
     input:
         lambda wc: getMergedCounts(wc)[0],
     output:
-        "results/{project}/stats/barcode/{mergeType}/{condition}_barcode_DNA_pairwise.png",
-        "results/{project}/stats/barcode/{mergeType}/{condition}_barcode_RNA_pairwise.png",
-        "results/{project}/stats/barcode/{mergeType}/{condition}_barcode_Ratio_pairwise.png",
-        "results/{project}/stats/barcode/{mergeType}/{condition}_barcode_correlation.tsv",
-        "results/{project}/stats/barcode/{mergeType}/{condition}_DNA_perBarcode.png",
-        "results/{project}/stats/barcode/{mergeType}/{condition}_RNA_perBarcode.png",
+        "results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}/{condition}_barcode_DNA_pairwise.png",
+        "results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}/{condition}_barcode_RNA_pairwise.png",
+        "results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}/{condition}_barcode_Ratio_pairwise.png",
+        "results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}/{condition}_barcode_correlation.tsv",
+        "results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}/{condition}_DNA_perBarcode.png",
+        "results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}/{condition}_RNA_perBarcode.png",
     params:
         replicates=lambda wc: ",".join(getMergedCounts(wc)[1]),
         cond="{condition}",
-        outdir="results/{project}/stats/barcode/{mergeType}",
+        outdir="results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}",
         input=lambda wc: ",".join(getMergedCounts(wc)[0]),
     shell:
         """
@@ -347,18 +347,44 @@ rule correlate_BC_counts:
         """
 
 
-rule combine_bc_correlation:
+rule combine_bc_correlation_raw:
     conda:
         "../envs/mpraflow_py36.yaml"
     input:
         lambda wc: expand(
-            "results/{{project}}/stats/barcode/{{mergeType}}/{condition}_barcode_correlation.tsv",
+            "results/{{project}}/stats/barcode/counts/{{mergeType}}/{condition}_barcode_correlation.tsv",
             condition=getConditions(wc.project),
         ),
     output:
         report(
             "results/{project}/stats/statistic_bc_correlation_merged_{mergeType}.tsv",
             caption="../report/bc_correlation.rst",
+            category="{project}",
+            subcategory="Barcodes",
+        ),
+    shell:
+        """
+        (
+        cat {input[0]} | head -n 1;
+        for i in {input}; do
+            cat $i | tail -n +2;
+        done;
+        ) > {output}
+        """
+
+
+rule combine_bc_correlation_assigned:
+    conda:
+        "../envs/mpraflow_py36.yaml"
+    input:
+        lambda wc: expand(
+            "results/{{project}}/stats/barcode/assigned_counts/{{assignment}}/{{mergeType}}/{condition}_barcode_correlation.tsv",
+            condition=getConditions(wc.project),
+        ),
+    output:
+        report(
+            "results/{project}/stats/statistic_bc_correlation_merged_{assignment}_{mergeType}.tsv",
+            caption="../report/bc_correlation_assigned.rst",
             category="{project}",
             subcategory="Barcodes",
         ),

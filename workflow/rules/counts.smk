@@ -222,10 +222,10 @@ rule dna_rna_merge_counts:
     conda:
         "../envs/mpraflow_py36.yaml"
     input:
-        dna="results/{project}/counts/{condition}_{replicate}_DNA_final_counts.tsv.gz",
-        rna="results/{project}/counts/{condition}_{replicate}_RNA_final_counts.tsv.gz",
+        dna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_DNA_final_counts.tsv.gz",
+        rna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_RNA_final_counts.tsv.gz",
     output:
-        "results/{project}/counts/merged/{mergeType}/{condition}_{replicate}_merged_counts.tsv.gz",
+        "results/{project}/{raw_or_assigned}/merged/{mergeType}/{condition}_{replicate}_merged_counts.tsv.gz",
     params:
         zero=lambda wc: "false" if wc.mergeType == "withoutZeros" else "true",
     shell:

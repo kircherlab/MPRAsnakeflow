@@ -1,6 +1,8 @@
 import pandas as pd
 
+
 report: "report/workflow.rst"
+
 
 localrules:
     all,
@@ -171,7 +173,10 @@ def getOutputProjectConditionType_helper(file):
         conditions = getConditions(project)
         for condition in conditions:
             output += expand(
-                file, project=project, condition=condition, type=["DNA", "RNA"],
+                file,
+                project=project,
+                condition=condition,
+                type=["DNA", "RNA"],
             )
     return output
 
@@ -222,6 +227,22 @@ def getOutputProjectAssignment_helper(file):
     return output
 
 
+def getOutputProjectMergeTypeAssignment_helper(file):
+    output = []
+    projects = list(config.keys())
+    for project in projects:
+        try:
+            output += expand(
+                file,
+                project=project,
+                assignment=getAssignments(project),
+                mergeType=["withZeros", "withoutZeros"],
+            )
+        except MissingAssignmentInConfigException:
+            continue
+    return output
+
+
 def getOutputVariants_helper(file):
     output = []
     projects = list(config.keys())
@@ -257,6 +278,9 @@ rule all:
             "results/{project}/stats/statistic_bc_correlation_merged_{mergeType}.tsv",
             project=list(config.keys()),
             mergeType=["withZeros", "withoutZeros"],
+        ),
+        getOutputProjectMergeTypeAssignment_helper(
+            "results/{project}/stats/statistic_bc_correlation_merged_{assignment}_{mergeType}.tsv"
         ),
         expand(
             "results/{project}/stats/statistic_overlapBCs_counts.tsv",
