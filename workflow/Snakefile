@@ -280,7 +280,7 @@ rule all:
             mergeType=["withZeros", "withoutZeros"],
         ),
         getOutputProjectMergeTypeAssignment_helper(
-            "results/{project}/stats/statistic_bc_correlation_merged_{assignment}_{mergeType}.tsv"
+            "results/{project}/stats/statistic_bc_correlation_merged_{mergeType}_{assignment}.tsv"
         ),
         expand(
             "results/{project}/stats/statistic_overlapBCs_counts.tsv",

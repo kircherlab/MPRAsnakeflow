@@ -383,7 +383,7 @@ rule combine_bc_correlation_assigned:
         ),
     output:
         report(
-            "results/{project}/stats/statistic_bc_correlation_merged_{assignment}_{mergeType}.tsv",
+            "results/{project}/stats/statistic_bc_correlation_merged_{mergeType}_{assignment}.tsv",
             caption="../report/bc_correlation_assigned.rst",
             category="{project}",
             subcategory="Barcodes",
