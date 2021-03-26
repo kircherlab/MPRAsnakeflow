@@ -140,6 +140,7 @@ def getIndexWithIndex(project):
 wildcard_constraints:
     project="[^/]+",
     condition="[^/]+",
+    mergeType="(withZeros)|(withoutZeros)",
 
 
 def getOutputProjectConditionReplicateType_helper(file, skip={}):
