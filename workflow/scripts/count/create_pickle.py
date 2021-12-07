@@ -1,4 +1,5 @@
 ###
+# Author: Max Schubach, 2021
 # python create_pickle.py /fast/groups/ag_kircher/MPRA/MPRA_ML_Experiments/assignment/assignment_barcodes_incl_other.sorted.tsv.gz assignment_barcodes_incl_other.sorted.pickle
 ###
 
