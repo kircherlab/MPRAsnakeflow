@@ -8,7 +8,6 @@ run4counts_run2Assignment:
     run2_incl_other: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/assignment_run2/assignment_barcodes_incl_other.sorted.tsv.gz
   design_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/reference.fa
   label_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/labels_run2assignment_merged.tsv
-  demultiplex: False
   configs:
     noZeros:
       bc_threshhold: 10
@@ -27,7 +26,6 @@ run1-3counts_run2Assignment:
     run2_incl_other: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/assignment_run2/assignment_barcodes_incl_other.sorted.tsv.gz
   design_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/reference.fa
   label_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/labels_run2assignment_merged.tsv
-  demultiplex: False
   configs:
     noZeros:
       bc_threshhold: 10
@@ -36,3 +34,36 @@ run1-3counts_run2Assignment:
   variants:
     map: "resources/MPRAML/variants/oligomap.tsv.gz"
     min_barcodes: [1,10]
+run5_K562counts_run2Assignment:
+  bc_length: 15
+  umi_length: 16
+  data_folder: resources/run5_K562counts/data
+  experiment_file: resources/run5_K562counts/experiment_run5.csv
+  demultiplex: False
+  assignments:
+    run2_incl_other: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/assignment_run2/assignment_barcodes_incl_other.sorted.tsv.gz
+  design_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/reference.fa
+  label_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/labels_run2assignment_merged.tsv
+  configs:
+    noZeros:
+      bc_threshhold: 10
+      minDNACounts: 1
+      minRNACounts: 1
+  variants:
+    map: "resources/MPRAML/variants/oligomap.tsv.gz"
+    min_barcodes: [1,10]
+nullomers:
+  bc_length: 15
+  umi_length: 16
+  data_folder: resources/Nullomers/data
+  experiment_file: resources/Nullomers/experiment.csv
+  demultiplex: False
+  assignments:
+    october_nullomer2bc: resources/Nullomers/october_nullomer2bc.tsv.gz
+  design_file: resources/Nullomers/design_file.fa
+  #label_file: resources/Nullomers/october_nullomer2bc.tsv.gz
+  configs:
+    noZeros:
+      bc_threshhold: 10
+      minDNACounts: 1
+      minRNACounts: 1
