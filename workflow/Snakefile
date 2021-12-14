@@ -271,6 +271,12 @@ rule all:
         getOutputProjectConditionReplicateType_helper(
             "results/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz"
         ),
+        # barcode stats
+        expand(
+            "results/{project}/stats/statistic_count_{countType}.tsv",
+            project=list(config.keys()),
+            countType=['raw','filtered'],
+        ),
         # counts stats
         getOutputProjectConditionReplicateType_helper(
             "results/{project}/stats/counts/freqUMIs_{condition}_{replicate}_{type}.txt"

@@ -35,7 +35,7 @@ stats_shared <- read_delim(opt$shared, "\t", escape_double = FALSE, col_names = 
 
 umiLength=16
 
-colnames(stats) <- c("Condition","Replicate", "Type", "Reads","Barcodes x UMI", "Barcodes", "Unique UMIs")
+colnames(stats) <- c("Condition","Replicate", "Type", "Avg reads per UMI x BC","Reads","Barcodes x UMI", "Barcodes", "Unique UMIs")
 colnames(stats_shared) <- c("Condition","Replicate", "Barcodes shared RNA&DNA")
 
 
