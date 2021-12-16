@@ -72,3 +72,8 @@ assignBarcodes:
   time: "4-00:00"
   queue: "medium"
   mem: 10000
+
+barcode_base_composition:
+  time: "1-00:00"
+  queue: "medium"
+  mem: 15000
