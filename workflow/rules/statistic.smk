@@ -155,7 +155,7 @@ rule frequent_umis:
 
 rule barcode_base_composition:
     conda:
-        "../envs/mpraflow_py36.yaml"
+        "../envs/mpraflow_pandas.yaml"
     input:
         counts="results/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
     output:
@@ -170,6 +170,7 @@ rule barcode_base_composition:
         zcat {input.counts} | awk '{{print $2}}' | gzip -c > {output.bc};
         python workflow/scripts/count/nucleotideCountPerPosition.py \
         --column 1 \
+        --chunksize 100000 \
         --input {output.bc} \
         --output {output.stats}
         """
