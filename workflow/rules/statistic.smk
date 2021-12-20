@@ -18,9 +18,23 @@ rule statistic_counts:
     shell:
         """
         paste <( echo "{params.cond}") <( echo "{params.rep}") <( echo "{params.type}") \
-        <( zcat {input} | \
-        awk -v OFS='\\t' 'BEGIN{{pbar="NA"}}{{ count += $NF; lines+=1; if (pbar != $1) {{ barcodes+=1 }}; pbar=$1 }}END{{ print count,lines,barcodes }}' ) \
-        <( zcat {input} | cut -f 2 | sort -u | wc -l ) | \
+        <( 
+            zcat {input} | \
+            awk -v OFS='\\t' 'BEGIN{{
+                pbar="NA"
+            }}{{ 
+                count += $NF; umi_sum+=$3; if (pbar != $1) {{ barcodes+=1 }}; pbar=$1 
+            }}END{{ 
+                if (NR > 0) {{
+                    print umi_sum/NR,count,NR,barcodes
+                }} else {{
+                    print 0,0,0,0
+                }}
+            }}' 
+        ) \
+        <( 
+            zcat {input} | cut -f 2 | sort -u | wc -l 
+        ) | \
         gzip -c > {output}
         """
 
@@ -131,6 +145,34 @@ rule frequent_umis:
         """
         set +o pipefail;
         zcat {input} | cut -f 2 | sort | uniq -c | sort -nr | head > {output.freqUMIs}
+        """
+
+
+##############################
+## Barcode base composition ##
+##############################
+
+
+rule barcode_base_composition:
+    conda:
+        "../envs/mpraflow_pandas.yaml"
+    input:
+        counts="results/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
+    output:
+        bc=temp(
+            "results/{project}/counts/{condition}_{replicate}_{type}_final.BC.tsv.gz"
+        ),
+        stats="results/{project}/stats/counts/BCNucleotideComposition/{condition}_{replicate}_{type}.tsv.gz",
+    params:
+        name="{condition}_{replicate}_{type}",
+    shell:
+        """
+        zcat {input.counts} | awk '{{print $2}}' | gzip -c > {output.bc};
+        python workflow/scripts/count/nucleotideCountPerPosition.py \
+        --column 1 \
+        --chunksize 100000 \
+        --input {output.bc} \
+        --output {output.stats}
         """
 
 

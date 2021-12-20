@@ -263,6 +263,10 @@ def getOutputVariants_helper(file):
 
 rule all:
     input:
+        # stats BC nucleotide composition
+        getOutputProjectConditionReplicateType_helper(
+            "results/{project}/stats/counts/BCNucleotideComposition/{condition}_{replicate}_{type}.tsv.gz"
+        ),
         # counts
         getOutputProjectConditionReplicateType_helper(
             "results/{project}/counts/{condition}_{replicate}_{type}.bam",
@@ -275,7 +279,7 @@ rule all:
         expand(
             "results/{project}/stats/statistic_count_{countType}.tsv",
             project=list(config.keys()),
-            countType=['raw','filtered'],
+            countType=["raw", "filtered"],
         ),
         # counts stats
         getOutputProjectConditionReplicateType_helper(
@@ -339,6 +343,13 @@ rule all_counts_stats:
         ),
 
 
+rule all_stats_BCNucleotideComposition:
+    input:
+        getOutputProjectConditionReplicateType_helper(
+            "results/{project}/stats/counts/BCNucleotideComposition/{condition}_{replicate}_{type}.tsv.gz"
+        ),
+
+
 include: "rules/counts.smk"
 
 
@@ -361,7 +372,7 @@ rule dna_rna_merge:
     input:
         counts=lambda wc: expand(
             "results/{{project}}/counts/merged/{mergeType}/{{condition}}_{{replicate}}_merged_counts.tsv.gz",
-            mergeType="withoutZeros"
+        mergeType="withoutZeros"
             if config[wc.project]["configs"][wc.config]["minRNACounts"] > 0
             and config[wc.project]["configs"][wc.config]["minDNACounts"] > 0
             else "withZeros",
@@ -371,12 +382,8 @@ rule dna_rna_merge:
         counts="results/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
         stats="results/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.statistic.tsv.gz",
     params:
-        minRNACounts=lambda wc: config[wc.project]["configs"][wc.config][
-            "minRNACounts"
-        ],
-        minDNACounts=lambda wc: config[wc.project]["configs"][wc.config][
-            "minDNACounts"
-        ],
+        minRNACounts=lambda wc: config[wc.project]["configs"][wc.config]["minRNACounts"],
+        minDNACounts=lambda wc: config[wc.project]["configs"][wc.config]["minDNACounts"],
     shell:
         """
         python workflow/scripts/count/merge_label.py --counts {input.counts} \
