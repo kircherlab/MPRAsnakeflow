@@ -10,7 +10,7 @@ run4counts_run2Assignment:
   label_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/labels_run2assignment_merged.tsv
   configs:
     noZeros:
-      bc_threshhold: 10
+      bc_threshold: 10
       minDNACounts: 1
       minRNACounts: 1
   variants:
@@ -28,7 +28,7 @@ run1-3counts_run2Assignment:
   label_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/labels_run2assignment_merged.tsv
   configs:
     noZeros:
-      bc_threshhold: 10
+      bc_threshold: 10
       minDNACounts: 1
       minRNACounts: 1
   variants:
@@ -46,7 +46,7 @@ run5_K562counts_run2Assignment:
   label_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/labels_run2assignment_merged.tsv
   configs:
     noZeros:
-      bc_threshhold: 10
+      bc_threshold: 10
       minDNACounts: 1
       minRNACounts: 1
   variants:
@@ -64,6 +64,6 @@ nullomers:
   #label_file: resources/Nullomers/october_nullomer2bc.tsv.gz
   configs:
     noZeros:
-      bc_threshhold: 10
+      bc_threshold: 10
       minDNACounts: 1
       minRNACounts: 1

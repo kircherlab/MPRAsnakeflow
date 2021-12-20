@@ -421,7 +421,7 @@ rule make_master_tables:
         replicates=lambda wc: ",".join(
             getReplicatesOfCondition(wc.project, wc.condition)
         ),
-        thresh=lambda wc: config[wc.project]["configs"][wc.config]["bc_threshhold"],
+        thresh=lambda wc: config[wc.project]["configs"][wc.config]["bc_threshold"],
     shell:
         """
         Rscript workflow/scripts/count/make_master_tables.R \

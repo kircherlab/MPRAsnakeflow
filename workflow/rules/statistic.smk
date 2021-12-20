@@ -556,7 +556,7 @@ rule calc_correlations:
         replicates=lambda wc: ",".join(
             getReplicatesOfCondition(wc.project, wc.condition)
         ),
-        thresh=lambda wc: config[wc.project]["configs"][wc.config]["bc_threshhold"],
+        thresh=lambda wc: config[wc.project]["configs"][wc.config]["bc_threshold"],
         outdir="results/{project}/stats/assigned_counts/{assignment}/{config}",
         label=(
             lambda wc: "--label %s" % config[wc.project]["label_file"]
@@ -595,7 +595,7 @@ rule combine_oligo_correlation:
             subcategory="Oligos",
         ),
     params:
-        thresh=lambda wc: config[wc.project]["configs"][wc.config]["bc_threshhold"],
+        thresh=lambda wc: config[wc.project]["configs"][wc.config]["bc_threshold"],
     shell:
         """
         set +o pipefail;
