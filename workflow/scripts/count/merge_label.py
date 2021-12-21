@@ -6,8 +6,9 @@ import numpy as np
 
 import click
 
-
 # options
+
+
 @click.command()
 @click.option('--counts',
               'counts_file',
@@ -59,7 +60,7 @@ def cli(counts_file, assignment_file, minRNACounts, minDNACounts, output_file, s
     click.echo("Read assignment file...")
     assoc = pd.read_csv(assignment_file, header=None, usecols=[0, 1], sep="\t", names=['Barcode', 'Oligo'])
     # drop duplicated barcodes!!!
-    assoc.drop_duplicates('Barcode',keep=False,inplace=True)
+    assoc.drop_duplicates('Barcode', keep=False, inplace=True)
     assoc.set_index('Barcode', inplace=True)
 
     statistic['oligos design'] = assoc.Oligo.nunique()
@@ -71,19 +72,15 @@ def cli(counts_file, assignment_file, minRNACounts, minDNACounts, output_file, s
     statistic['barcodes dna/rna'] = counts.shape[0]
 
     # fill in labels from dictionary
-    label = []
-    for i, row in counts.iterrows():
-        if row.Barcode in assoc.index:
-            label.append(assoc.loc[row.Barcode].Oligo)
-        else:
-            statistic[['unknown barcodes dna/rna']] += 1
-            label.append('no_BC')
+    click.echo("Combine assignment with count file...")
+    counts = pd.merge(assoc, counts, how='right', on="Barcode")
+    counts.Oligo.fillna("no_BC", inplace=True)
+    counts.rename(columns={"Oligo": "name"}, inplace=True)
+    #counts = counts[['name', 'Barcode', 'dna_count', 'rna_count']]
+    statistic[['unknown barcodes dna/rna']] = counts[counts.name == 'no_BC'].shape[0]
 
     statistic['matched barcodes'] = statistic['barcodes dna/rna'] - statistic['unknown barcodes dna/rna']
     statistic['% matched barcodes'] = (statistic['matched barcodes']/statistic['barcodes dna/rna'])*100.0
-
-    # Insert the label of oligo
-    counts.insert(0, 'name', label)
 
     # remove Barcorde. Not needed anymore
     counts.drop(['Barcode'], axis=1, inplace=True)
