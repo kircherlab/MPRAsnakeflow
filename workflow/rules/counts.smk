@@ -2,6 +2,7 @@
 ### Everything before assigning BC ###
 ######################################
 
+### Create_BAM_umi with demultiplexing ###
 
 rule create_demultiplexed_index:
     output:
@@ -112,6 +113,7 @@ rule mergeTrimReads_demultiplexed_BAM_umi:
         > {output}
         """
 
+### Create_BAM_umi without demultiplexing ###
 
 rule create_BAM_umi:
     input:
@@ -150,7 +152,12 @@ rule create_BAM_umi:
         """
 
 
+### START COUNTING ####
+
 def getBam(project, condition, replicate, type):
+    """
+    gelper to get the correct BAM file (demultiplexed or not)
+    """
     if config[project]["demultiplex"]:
         return "results/%s/counts/merged_demultiplex_%s_%s_%s.bam" % (
             project,
@@ -163,6 +170,9 @@ def getBam(project, condition, replicate, type):
 
 
 rule raw_counts_umi:
+    """
+    Counting BCsxUMIs from the BAM files.
+    """
     conda:
         "../envs/mpraflow_py36.yaml"
     input:
@@ -185,6 +195,9 @@ rule raw_counts_umi:
 
 
 rule filter_counts:
+    """
+    Filter the counts to BCs only of the correct length (defined in the config file)
+    """
     conda:
         "../envs/mpraflow_py27.yaml"
     input:
@@ -206,6 +219,9 @@ rule filter_counts:
 
 
 rule final_counts_umi:
+    """
+    Discarding PCR duplicates (taking BCxUMI only one time)
+    """
     input:
         "results/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
     output:
@@ -219,6 +235,11 @@ rule final_counts_umi:
 
 
 rule dna_rna_merge_counts:
+    """
+    Merge DNA and RNA counts together.
+    Is done in two ways. First no not allow zeros in DNA or RNA BCs (withoutZeros).
+    Second with zeros, so a BC can be defined only in the DNA or RNA (withZeros)
+    """
     conda:
         "../envs/mpraflow_py36.yaml"
     input:

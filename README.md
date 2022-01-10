@@ -12,7 +12,7 @@ Insert your code into the respective folders, i.e. `scripts`, `rules`, and `envs
 
 ## Authors
 
-* Max Schubach (@visze), Berlin Institute of Health (BIH), [JRG Computational Genome Biology](https://kircherlab.bihealth.org)
+* Max Schubach (@visze), Berlin Institute of Health at Charité -- Universitätsklinikum Berlin, [Computational Genome Biology Group](https://kircherlab.bihealth.org)
 
 ## Usage
 
@@ -25,7 +25,7 @@ If you use this workflow in a paper, don't forget to give credits to the authors
 
 ### Step 2: Configure workflow
 
-Configure the workflow according to your needs via editing the files in the `config/` folder. Adjust `config.yaml` to configure the workflow execution, and `samples.tsv` to specify your sample setup.
+Configure the workflow according to your needs via editing the files in the `config/` folder. Adjust `config.yaml` to configure the workflow execution.
 
 ### Step 3: Install Snakemake
 
