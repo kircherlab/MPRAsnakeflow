@@ -60,6 +60,7 @@ nullomers:
   demultiplex: False
   assignments:
     october_nullomer2bc: resources/Nullomers/october_nullomer2bc.tsv.gz
+    october_nullomer2bc_fixed: resources/Nullomers/october_nullomer2bc_correctLength_removedMultiAssignments.tsv.gz
   design_file: resources/Nullomers/design_file.fa
   #label_file: resources/Nullomers/october_nullomer2bc.tsv.gz
   configs:
