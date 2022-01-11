@@ -36,10 +36,10 @@ rule correlate_BC_counts:
         "results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}/{condition}_DNA_perBarcode.png",
         "results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}/{condition}_RNA_perBarcode.png",
     params:
-        replicates=lambda wc: ",".join(getMergedCounts(wc)[1]),
+        replicates=lambda wc: ",".join(getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.mergeType)[1]),
         cond="{condition}",
         outdir="results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}",
-        input=lambda wc: ",".join(getMergedCounts(wc)[0]),
+        input=lambda wc: ",".join(getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.mergeType)[0]),
     shell:
         """
         Rscript workflow/scripts/count/plot_perBCCounts_correlation.R \
