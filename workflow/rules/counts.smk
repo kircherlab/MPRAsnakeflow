@@ -233,6 +233,19 @@ rule final_counts_umi:
         gzip -c > {output.counts}
         """
 
+rule final_counts_umi_full_sort:
+    """
+    TODO
+    """
+    input:
+        "results/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
+    output:
+        "results/{project}/counts/{condition}_{replicate}_{type}_final_counts_full.tsv.gz",
+    shell:
+        """
+        zcat  {input} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | sort | \
+        gzip -c > {output}
+        """
 
 rule dna_rna_merge_counts:
     """
@@ -243,10 +256,10 @@ rule dna_rna_merge_counts:
     conda:
         "../envs/mpraflow_py36.yaml"
     input:
-        dna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_DNA_final_counts.tsv.gz",
-        rna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_RNA_final_counts.tsv.gz",
+        dna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_DNA_final_counts_full.tsv.gz",
+        rna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_RNA_final_counts_full.tsv.gz",
     output:
-        "results/{project}/{raw_or_assigned}/merged/{mergeType}/{condition}_{replicate}_merged_counts.tsv.gz",
+        "results/{project}/{raw_or_assigned}/merged/{mergeType}/{condition}_{replicate}_merged_counts_full.tsv.gz",
     params:
         zero=lambda wc: "false" if wc.mergeType == "withoutZeros" else "true",
     shell:
@@ -255,13 +268,13 @@ rule dna_rna_merge_counts:
         if [[ $zero=false ]]
         then
             join -1 1 -2 1 -t"$(echo -e '\\t')" \
-            <( zcat  {input.dna} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | sort ) \
-            <( zcat {input.rna} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | sort) | \
+            <( zcat  {input.dna} ) \
+            <( zcat {input.rna}  ) | \
             gzip -c > {output}
         else
             join -e 0 -a1 -a2 -t"$(echo -e '\\t')" -o 0 1.2 2.2 \
-            <( zcat  {input.dna} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | sort ) \
-            <( zcat {input.rna} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | sort) | \
+            <( zcat  {input.dna} ) \
+            <( zcat {input.rna}  ) | \
             gzip -c > {output}
         fi
         """
