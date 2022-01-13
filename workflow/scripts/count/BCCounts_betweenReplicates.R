@@ -90,7 +90,7 @@ getOverlapStats <- function(data1,data2,condition,r1,r2){
 
 readData <- function(file) {
   data <- read.table(file,as.is=T,header=F,stringsAsFactors = F)
-  colnames(data) <- c("Counts", "Barcode")
+  colnames(data) <- c("Barcode","Counts")
   return(data)
 }
 

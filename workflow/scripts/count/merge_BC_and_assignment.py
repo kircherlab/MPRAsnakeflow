@@ -53,7 +53,7 @@ def cli(counts_file, assignment_file, output_file, statistic_file, name):
 
     #get count df
     click.echo("Read count file...")
-    counts=pd.read_csv(counts_file, header=None, sep="\s+", names=['Counts','Barcode'])
+    counts=pd.read_csv(counts_file, header=None, sep="\t", names=['Barcode','Counts'])
 
     statistic['Barcodes'] = counts.shape[0]
     statistic['Counts'] = sum(counts.Counts)

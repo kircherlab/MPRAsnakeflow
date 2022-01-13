@@ -9,16 +9,16 @@ rule assignBarcodes:
     conda:
         "../envs/mpraflow_py36.yaml"
     input:
-        counts="results/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
+        counts="results/{project}/counts/{condition}_{replicate}_{type}_final_counts_full.tsv.gz",
         association=lambda wc: config[wc.project]["assignments"][wc.assignment],
     output:
-        counts="results/{project}/assigned_counts/{assignment}/{condition}_{replicate}_{type}_final_counts.tsv.gz",
+        counts="results/{project}/assigned_counts/{assignment}/{condition}_{replicate}_{type}_final_counts_full.tsv.gz",
         stats="results/{project}/stats/assigned_counts/{assignment}/{condition}_{replicate}_{type}.statistic.tsv.gz",
     params:
         name="{condition}_{replicate}_{type}",
     shell:
         """
-        python workflow/scripts/count/merge_BC_and_assignment.py --counts {input.counts} \
+        python {SCRIPTS_DIR}/count/merge_BC_and_assignment.py --counts {input.counts} \
         --assignment {input.association} \
         --output {output.counts} \
         --statistic {output.stats} \
@@ -35,7 +35,7 @@ rule createAssignmentPickleFile:
         "results/{project}/assigned_counts/{assignment}/assignment.pickle",
     shell:
         """
-        python workflow/scripts/count/create_pickle.py -i {input} -o {output}
+        python {SCRIPTS_DIR}/count/create_pickle.py -i {input} -o {output}
         """
 
 
@@ -44,7 +44,7 @@ rule dna_rna_merge:
         "../envs/mpraflow_py36.yaml"
     input:
         counts=lambda wc: expand(
-            "results/{{project}}/counts/merged/{mergeType}/{{condition}}_{{replicate}}_merged_counts.tsv.gz",
+            "results/{{project}}/counts/merged/{mergeType}/{{condition}}_{{replicate}}_merged_counts_full.tsv.gz",
         mergeType="withoutZeros"
             if config[wc.project]["configs"][wc.config]["minRNACounts"] > 0
             and config[wc.project]["configs"][wc.config]["minDNACounts"] > 0
@@ -59,7 +59,7 @@ rule dna_rna_merge:
         minDNACounts=lambda wc: config[wc.project]["configs"][wc.config]["minDNACounts"],
     shell:
         """
-        python workflow/scripts/count/merge_label.py --counts {input.counts} \
+        python {SCRIPTS_DIR}/count/merge_label.py --counts {input.counts} \
         --minRNACounts {params.minRNACounts} --minDNACounts {params.minDNACounts} \
         --assignment {input.association} \
         --output {output.counts} \
@@ -97,7 +97,7 @@ rule make_master_tables:
         thresh=lambda wc: config[wc.project]["configs"][wc.config]["bc_threshold"],
     shell:
         """
-        Rscript workflow/scripts/count/make_master_tables.R \
+        Rscript {SCRIPTS_DIR}/count/make_master_tables.R \
         --condition {params.cond} \
         --threshold {params.thresh} \
         --files {params.files} \

@@ -21,6 +21,8 @@ configfile: "config/config.yaml"
 
 validate(config, schema="schemas/config.schema.yaml")
 
+from snakemake.workflow import srcdir
+SCRIPTS_DIR=srcdir("scripts")
 
 ##### report workflow #####
 report: "report/workflow.rst"

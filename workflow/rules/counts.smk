@@ -63,7 +63,7 @@ checkpoint create_demultiplexed_BAM_umi:
             echo $idx_length
             echo $umi_length
 
-            python workflow/scripts/count/SplitFastQdoubleIndexBAM.py -s $rev_start -l $idx_length -m $umi_length -i {input.index_list} --outdir {params.outdir} --remove --summary --separate_files \
+            python {SCRIPTS_DIR}/count/SplitFastQdoubleIndexBAM.py -s $rev_start -l $idx_length -m $umi_length -i {input.index_list} --outdir {params.outdir} --remove --summary --separate_files \
             <(\
         paste <( zcat {input.fw_fastq} ) <( zcat {input.index_fastq} ) <( zcat {input.rev_fastq} ) <( zcat {input.umi_fastq} ) | \
             awk '{{ count+=1; if ((count == 1) || (count == 3)) {{ print $1 }} else {{ print $1$2$3$4 }}; if (count == 4) {{ count=0 }} }}'\
@@ -109,7 +109,7 @@ rule mergeTrimReads_demultiplexed_BAM_umi:
     shell:
         """
         samtools view -h {params.bam} | \
-        python workflow/scripts/count/MergeTrimReadsBAM.py -p --mergeoverlap -f ACCGGTCGCCACCATGGTGAGCAAGGGCGAGGA -s CTTAGCTTTCGCTTAGCGATGTGTTCACTTTGC \
+        python {SCRIPTS_DIR}/count/MergeTrimReadsBAM.py -p --mergeoverlap -f ACCGGTCGCCACCATGGTGAGCAAGGGCGAGGA -s CTTAGCTTTCGCTTAGCGATGTGTTCACTTTGC \
         > {output}
         """
 
@@ -147,8 +147,8 @@ rule create_BAM_umi:
 
         paste <( zcat {input.fw_fastq} ) <( zcat {input.rev_fastq}  ) <( zcat {input.umi_fastq} ) | \
         awk '{{if (NR % 4 == 2 || NR % 4 == 0) {{print $1$2$3}} else {{print $1}}}}' | \
-        python workflow/scripts/count/FastQ2doubleIndexBAM.py -p -s $rev_start -l 0 -m $umi_length --RG {params.datasetID} | \
-        python workflow/scripts/count/MergeTrimReadsBAM.py --FirstReadChimeraFilter '' --adapterFirstRead '' --adapterSecondRead '' -p --mergeoverlap --minoverlap $minoverlap > {output}
+        python {SCRIPTS_DIR}/count/FastQ2doubleIndexBAM.py -p -s $rev_start -l 0 -m $umi_length --RG {params.datasetID} | \
+        python {SCRIPTS_DIR}/count/MergeTrimReadsBAM.py --FirstReadChimeraFilter '' --adapterFirstRead '' --adapterSecondRead '' -p --mergeoverlap --minoverlap $minoverlap > {output}
         """
 
 

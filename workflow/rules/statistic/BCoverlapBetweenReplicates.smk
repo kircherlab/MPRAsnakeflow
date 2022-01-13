@@ -8,7 +8,7 @@ rule overlapBCs:
         "../../envs/mpraflow_r.yaml"
     input:
         lambda wc: expand(
-            "results/{{project}}/{{raw_or_assigned}}/{{condition}}_{replicate}_{{type}}_final_counts.tsv.gz",
+            "results/{{project}}/{{raw_or_assigned}}/{{condition}}_{replicate}_{{type}}_final_counts_full.tsv.gz",
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
     output:
@@ -16,7 +16,7 @@ rule overlapBCs:
     params:
         input=lambda wc: ",".join(
             expand(
-                "results/{project}/{raw_or_assigned}/{condition}_{replicate}_{type}_final_counts.tsv.gz",
+                "results/{project}/{raw_or_assigned}/{condition}_{replicate}_{type}_final_counts_full.tsv.gz",
                 project=wc.project,
                 condition=wc.condition,
                 raw_or_assigned=wc.raw_or_assigned,
@@ -30,7 +30,7 @@ rule overlapBCs:
         ),
     shell:
         """
-        Rscript workflow/scripts/count/BCCounts_betweenReplicates.R \
+        Rscript {SCRIPTS_DIR}/count/BCCounts_betweenReplicates.R \
         --outfile {output} \
         --condition {params.cond} \
         --files {params.input} --replicates {params.replicates}

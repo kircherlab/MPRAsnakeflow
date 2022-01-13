@@ -96,7 +96,7 @@ rule combine_stats_dna_rna_merge:
         ),
     shell:
         """
-        python workflow/scripts/count/merge_statistic_tables.py \
+        python {SCRIPTS_DIR}/count/merge_statistic_tables.py \
         --condition {params.cond} \
         {params.statistic} \
         --output {output}

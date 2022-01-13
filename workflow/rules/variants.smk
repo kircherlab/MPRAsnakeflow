@@ -10,7 +10,7 @@ rule generateVariantTable:
         "results/{project}/variants/{assignment}/{config}/{condition}_{replicate}_variantTable.tsv.gz",
     shell:
         """
-        python workflow/scripts/variants/generateVariantTable.py \
+        python {SCRIPTS_DIR}/variants/generateVariantTable.py \
         --counts {input.counts} \
         --declaration {input.variant_definition} \
         --output {output}
@@ -42,7 +42,7 @@ rule correlate_variants:
         ),
     shell:
         """
-        python workflow/scripts/variants/correlateVariantTables.py \
+        python {SCRIPTS_DIR}/variants/correlateVariantTables.py \
         --condition {params.cond} \
         {params.tables} \
         --bc-threshold {params.threshold} \

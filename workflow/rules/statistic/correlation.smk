@@ -10,7 +10,7 @@ def getMergedCounts(project, raw_or_assigned, condition, mergeType):
     replicates = []
     for index, row in exp.iterrows():
         files += expand(
-            "results/{project}/{raw_or_assigned}/merged/{mergeType}/{condition}_{replicate}_merged_counts.tsv.gz",
+            "results/{project}/{raw_or_assigned}/merged/{mergeType}/{condition}_{replicate}_merged_counts_full.tsv.gz",
             raw_or_assigned=raw_or_assigned,
             project=project,
             condition=condition,
@@ -42,7 +42,7 @@ rule correlate_BC_counts:
         input=lambda wc: ",".join(getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.mergeType)[0]),
     shell:
         """
-        Rscript workflow/scripts/count/plot_perBCCounts_correlation.R \
+        Rscript {SCRIPTS_DIR}/count/plot_perBCCounts_correlation.R \
         --outdir {params.outdir} \
         --condition {params.cond} \
         --files {params.input} --replicates {params.replicates}
@@ -156,7 +156,7 @@ rule calc_correlations:
         ),
     shell:
         """
-        Rscript workflow/scripts/count/plot_perInsertCounts_correlation.R \
+        Rscript {SCRIPTS_DIR}/count/plot_perInsertCounts_correlation.R \
         --condition {params.cond} \
         {params.label} \
         --files {params.files} \

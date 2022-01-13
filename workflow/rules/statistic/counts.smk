@@ -38,7 +38,7 @@ rule barcode_base_composition:
     shell:
         """
         zcat {input.counts} | awk '{{print $2}}' | gzip -c > {output.bc};
-        python workflow/scripts/count/nucleotideCountPerPosition.py \
+        python {SCRIPTS_DIR}/count/nucleotideCountPerPosition.py \
         --column 1 \
         --chunksize 100000 \
         --input {output.bc} \
@@ -170,5 +170,5 @@ rule stats_final:
         "results/{project}/stats/statistic_count_{countType}.tsv",
     shell:
         """
-        Rscript workflow/scripts/count/combine_count_stats.R --count {input.counts} --shared {input.shared} --output {output}
+        Rscript {SCRIPTS_DIR}/count/combine_count_stats.R --count {input.counts} --shared {input.shared} --output {output}
         """
