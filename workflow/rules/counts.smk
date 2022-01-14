@@ -273,13 +273,13 @@ rule dna_rna_merge_counts:
         if [[ $zero=false ]]
         then
             join -1 1 -2 1 -t"$(echo -e '\\t')" \
-            <( zcat  {input.dna} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | sort ) \
-            <( zcat {input.rna} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | sort) | \
+            <( zcat  {input.dna} | sort ) \
+            <( zcat {input.rna} | sort) | \
             gzip -c > {output}
         else
             join -e 0 -a1 -a2 -t"$(echo -e '\\t')" -o 0 1.2 2.2 \
-            <( zcat  {input.dna} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | sort ) \
-            <( zcat {input.rna} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | sort) | \
+            <( zcat  {input.dna} | sort ) \
+            <( zcat {input.rna}  | sort) | \
             gzip -c > {output}
         fi
         """

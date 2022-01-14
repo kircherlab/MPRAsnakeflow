@@ -187,7 +187,7 @@ def hasReplicates(project, condition=None):
 
 
 ##### Helper to create output files #####
-def getOutputProject_helper(project, betweenReplicates=False):
+def getOutputProject_helper(file, betweenReplicates=False):
     """
     Inserts {project} from config into given file.
     When betweenReplicates is True skips projects without replicates in one condition.
@@ -405,7 +405,8 @@ rule all:
             True,
         ),
         getOutputProjectMergeTypeAssignment_helper(
-            "results/{project}/stats/statistic_assigned_bc_correlation_merged_{mergeType}_{assignment}.tsv"
+            "results/{project}/stats/statistic_assigned_bc_correlation_merged_{mergeType}_{assignment}.tsv",
+            True
         ),
         getOutputProject_helper(
             "results/{project}/stats/statistic_overlapBCs_counts.tsv", True
@@ -424,6 +425,7 @@ rule all:
         ),
         getOutputProjectAssignment_helper(
             "results/{project}/stats/statistic_assigned_counts_single_{assignment}.tsv",
+            True
         ),
         getOutputProjectAssignment_helper(
             "results/{project}/stats/statistic_overlapBCs_assigned_counts_{assignment}.tsv",
