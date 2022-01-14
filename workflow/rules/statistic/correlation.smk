@@ -21,7 +21,7 @@ def getMergedCounts(project, raw_or_assigned, condition, mergeType):
     return [files, replicates]
 
 
-rule correlate_BC_counts:
+rule statistic_correlate_BC_counts:
     conda:
         "../../envs/mpraflow_r.yaml"
     input:
@@ -49,7 +49,7 @@ rule correlate_BC_counts:
         """
 
 
-rule combine_bc_correlation_raw:
+rule statistic_combine_bc_correlation_raw:
     conda:
         "../../envs/mpraflow_py36.yaml"
     input:
@@ -75,7 +75,7 @@ rule combine_bc_correlation_raw:
         """
 
 
-rule combine_bc_correlation_assigned:
+rule statistic_combine_bc_correlation_assigned:
     conda:
         "../../envs/mpraflow_py36.yaml"
     input:
@@ -106,7 +106,7 @@ rule combine_bc_correlation_assigned:
 #############################
 
 
-rule calc_correlations:
+rule statistic_calc_correlations:
     conda:
         "../../envs/mpraflow_r.yaml"
     input:
@@ -166,7 +166,7 @@ rule calc_correlations:
         """
 
 
-rule combine_oligo_correlation:
+rule statistic_combine_oligo_correlation:
     conda:
         "../../envs/mpraflow_py36.yaml"
     input:

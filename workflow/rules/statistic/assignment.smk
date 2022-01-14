@@ -4,7 +4,7 @@
 ####################################################
 
 
-rule combine_BC_assignment_stats_helper:
+rule statistic_combine_BC_assignment_stats_helper:
     input:
         stats=lambda wc: expand(
             "results/{{project}}/stats/assigned_counts/{{assignment}}/{{condition}}_{replicate}_{type}.statistic.tsv.gz",
@@ -27,7 +27,7 @@ rule combine_BC_assignment_stats_helper:
         """
 
 
-rule combine_BC_assignment_stats:
+rule statistic_combine_BC_assignment_stats:
     input:
         stats=lambda wc: expand(
             "results/{{project}}/stats/assigned_counts/{{assignment}}/helper.{condition}.statistic.tsv.gz",
@@ -77,7 +77,7 @@ def getAssignedCountsStatistic(project, assignment, config, condition):
     return output
 
 
-rule combine_stats_dna_rna_merge:
+rule statistic_combine_stats_dna_rna_merge:
     conda:
         "../../envs/mpraflow_py36.yaml"
     input:
@@ -103,7 +103,7 @@ rule combine_stats_dna_rna_merge:
         """
 
 
-rule combine_stats_dna_rna_merge_all:
+rule statistic_combine_stats_dna_rna_merge_all:
     conda:
         "../../envs/mpraflow_py36.yaml"
     input:

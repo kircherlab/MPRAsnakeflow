@@ -37,12 +37,12 @@ raw_counts_umi:
   mem: 6000
   queue: "medium"
 
-correlate_BC_counts:
+statistic_correlate_BC_counts:
   time: "22:00"
   mem: 80000
   queue: "medium"
 
-frequent_umis:
+statistic_frequent_umis:
   time: "04:00"
   queue: "medium"
 
@@ -58,7 +58,7 @@ dna_rna_merge_counts:
 createAssignmentPickleFile:
   mem: 10000
 
-calc_correlations:
+statistic_calc_correlations:
   time: "48:00"
   mem: 120000
   queue: "medium"
@@ -72,3 +72,8 @@ assignBarcodes:
   time: "72:00"
   queue: "medium"
   mem: 10000
+
+statistic_barcode_base_composition:
+  time: "24:00"
+  queue: "medium"
+  mem: 15000

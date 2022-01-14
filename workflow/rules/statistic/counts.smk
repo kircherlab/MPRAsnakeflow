@@ -4,7 +4,7 @@
 
 
 # count frequent UMIs per condition, replicate and DNA/RNA
-rule frequent_umis:
+rule statistic_frequent_umis:
     input:
         "results/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
     output:
@@ -23,7 +23,7 @@ rule frequent_umis:
 ##############################
 
 
-rule barcode_base_composition:
+rule statistic_barcode_base_composition:
     conda:
         "../../envs/mpraflow_pandas.yaml"
     input:
@@ -102,7 +102,7 @@ def getCountStats(wc):
 
 
 # concat DNA, RNA-counts (rule statistic_counts) for all experiments, and replicates
-rule count_stats_merge:
+rule statistic_count_stats_merge:
     input:
         getCountStats,
     output:
@@ -148,7 +148,7 @@ def getBCinRNADNAStats(wc):
 
 
 # concat shared barcodes (rule statistic_BC_in_RNA_DNA) for all experiments, and replicates
-rule stats_BC_in_RNA_DNA_merge:
+rule statistic_BC_in_RNA_DNA_merge:
     input:
         getBCinRNADNAStats,
     output:
@@ -160,7 +160,7 @@ rule stats_BC_in_RNA_DNA_merge:
 
 
 # making final count statistics
-rule stats_final:
+rule statistic_counts_final:
     conda:
         "../../envs/mpraflow_r.yaml"
     input:
