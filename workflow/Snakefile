@@ -16,7 +16,7 @@ min_version("6.12.3")
 from snakemake.utils import validate
 
 
-configfile: "config/config.yaml"
+#configfile: "config/config.yaml"
 
 
 validate(config, schema="schemas/config.schema.yaml")

@@ -4,6 +4,7 @@
 
 ### Create_BAM_umi with demultiplexing ###
 
+
 rule create_demultiplexed_index:
     output:
         "results/{project}/counts/demultiplex_index.tsv",
@@ -113,7 +114,9 @@ rule mergeTrimReads_demultiplexed_BAM_umi:
         > {output}
         """
 
+
 ### Create_BAM_umi without demultiplexing ###
+
 
 rule create_BAM_umi:
     input:
@@ -153,6 +156,7 @@ rule create_BAM_umi:
 
 
 ### START COUNTING ####
+
 
 def getBam(project, condition, replicate, type):
     """
@@ -233,7 +237,8 @@ rule final_counts_umi:
         gzip -c > {output.counts}
         """
 
-rule final_counts_umi_full_sort:
+
+rule final_counts_umi_full:
     """
     TODO
     """
@@ -243,9 +248,9 @@ rule final_counts_umi_full_sort:
         "results/{project}/counts/{condition}_{replicate}_{type}_final_counts_full.tsv.gz",
     shell:
         """
-        zcat  {input} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | sort | \
-        gzip -c > {output}
+        zcat  {input} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | gzip -c > {output}
         """
+
 
 rule dna_rna_merge_counts:
     """
@@ -268,13 +273,13 @@ rule dna_rna_merge_counts:
         if [[ $zero=false ]]
         then
             join -1 1 -2 1 -t"$(echo -e '\\t')" \
-            <( zcat  {input.dna} ) \
-            <( zcat {input.rna}  ) | \
+            <( zcat  {input.dna} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | sort ) \
+            <( zcat {input.rna} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | sort) | \
             gzip -c > {output}
         else
             join -e 0 -a1 -a2 -t"$(echo -e '\\t')" -o 0 1.2 2.2 \
-            <( zcat  {input.dna} ) \
-            <( zcat {input.rna}  ) | \
+            <( zcat  {input.dna} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | sort ) \
+            <( zcat {input.rna} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | sort) | \
             gzip -c > {output}
         fi
         """
