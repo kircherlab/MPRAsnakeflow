@@ -3,7 +3,7 @@
 ###################################
 
 
-rule overlapBCs:
+rule statistic_overlapBCs:
     conda:
         "../../envs/mpraflow_r.yaml"
     input:
@@ -37,7 +37,7 @@ rule overlapBCs:
         """
 
 
-rule combine_overlapBCs_stats_raw:
+rule statistic_combine_overlapBCs_stats_raw:
     input:
         stats=lambda wc: expand(
             "results/{{project}}/stats/counts/overlapBCandCounts_{condition}_{type}.tsv",
@@ -63,7 +63,7 @@ rule combine_overlapBCs_stats_raw:
         """
 
 
-rule combine_overlapBCs_stats_assigned:
+rule statistic_combine_overlapBCs_stats_assigned:
     input:
         stats=lambda wc: expand(
             "results/{{project}}/stats/assigned_counts/{{assignment}}/overlapBCandCounts_{condition}_{type}.tsv",

@@ -63,7 +63,7 @@ calc_correlations:
   mem: 120000
   queue: "medium"
 
-overlapBCs:
+statistic_overlapBCs:
   time: "5:00"
   mem: 10000
   queue: "medium"
