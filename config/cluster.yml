@@ -76,4 +76,4 @@ assignBarcodes:
 statistic_barcode_base_composition:
   time: "1-00:00"
   queue: "medium"
-  mem: 15000
+  mem: 20000
