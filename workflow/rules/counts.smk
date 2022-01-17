@@ -2,6 +2,8 @@
 ### Everything before assigning BC ###
 ######################################
 
+### Create_BAM_umi with demultiplexing ###
+
 
 rule create_demultiplexed_index:
     output:
@@ -62,7 +64,7 @@ checkpoint create_demultiplexed_BAM_umi:
             echo $idx_length
             echo $umi_length
 
-            python workflow/scripts/count/SplitFastQdoubleIndexBAM.py -s $rev_start -l $idx_length -m $umi_length -i {input.index_list} --outdir {params.outdir} --remove --summary --separate_files \
+            python {SCRIPTS_DIR}/count/SplitFastQdoubleIndexBAM.py -s $rev_start -l $idx_length -m $umi_length -i {input.index_list} --outdir {params.outdir} --remove --summary --separate_files \
             <(\
         paste <( zcat {input.fw_fastq} ) <( zcat {input.index_fastq} ) <( zcat {input.rev_fastq} ) <( zcat {input.umi_fastq} ) | \
             awk '{{ count+=1; if ((count == 1) || (count == 3)) {{ print $1 }} else {{ print $1$2$3$4 }}; if (count == 4) {{ count=0 }} }}'\
@@ -108,9 +110,12 @@ rule mergeTrimReads_demultiplexed_BAM_umi:
     shell:
         """
         samtools view -h {params.bam} | \
-        python workflow/scripts/count/MergeTrimReadsBAM.py -p --mergeoverlap -f ACCGGTCGCCACCATGGTGAGCAAGGGCGAGGA -s CTTAGCTTTCGCTTAGCGATGTGTTCACTTTGC \
+        python {SCRIPTS_DIR}/count/MergeTrimReadsBAM.py -p --mergeoverlap -f ACCGGTCGCCACCATGGTGAGCAAGGGCGAGGA -s CTTAGCTTTCGCTTAGCGATGTGTTCACTTTGC \
         > {output}
         """
+
+
+### Create_BAM_umi without demultiplexing ###
 
 
 rule create_BAM_umi:
@@ -145,12 +150,18 @@ rule create_BAM_umi:
 
         paste <( zcat {input.fw_fastq} ) <( zcat {input.rev_fastq}  ) <( zcat {input.umi_fastq} ) | \
         awk '{{if (NR % 4 == 2 || NR % 4 == 0) {{print $1$2$3}} else {{print $1}}}}' | \
-        python workflow/scripts/count/FastQ2doubleIndexBAM.py -p -s $rev_start -l 0 -m $umi_length --RG {params.datasetID} | \
-        python workflow/scripts/count/MergeTrimReadsBAM.py --FirstReadChimeraFilter '' --adapterFirstRead '' --adapterSecondRead '' -p --mergeoverlap --minoverlap $minoverlap > {output}
+        python {SCRIPTS_DIR}/count/FastQ2doubleIndexBAM.py -p -s $rev_start -l 0 -m $umi_length --RG {params.datasetID} | \
+        python {SCRIPTS_DIR}/count/MergeTrimReadsBAM.py --FirstReadChimeraFilter '' --adapterFirstRead '' --adapterSecondRead '' -p --mergeoverlap --minoverlap $minoverlap > {output}
         """
 
 
+### START COUNTING ####
+
+
 def getBam(project, condition, replicate, type):
+    """
+    gelper to get the correct BAM file (demultiplexed or not)
+    """
     if config[project]["demultiplex"]:
         return "results/%s/counts/merged_demultiplex_%s_%s_%s.bam" % (
             project,
@@ -163,6 +174,9 @@ def getBam(project, condition, replicate, type):
 
 
 rule raw_counts_umi:
+    """
+    Counting BCsxUMIs from the BAM files.
+    """
     conda:
         "../envs/mpraflow_py36.yaml"
     input:
@@ -185,6 +199,9 @@ rule raw_counts_umi:
 
 
 rule filter_counts:
+    """
+    Filter the counts to BCs only of the correct length (defined in the config file)
+    """
     conda:
         "../envs/mpraflow_py27.yaml"
     input:
@@ -206,6 +223,9 @@ rule filter_counts:
 
 
 rule final_counts_umi:
+    """
+    Discarding PCR duplicates (taking BCxUMI only one time)
+    """
     input:
         "results/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
     output:
@@ -218,14 +238,33 @@ rule final_counts_umi:
         """
 
 
+rule final_counts_umi_full:
+    """
+    TODO
+    """
+    input:
+        "results/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
+    output:
+        "results/{project}/counts/{condition}_{replicate}_{type}_final_counts_full.tsv.gz",
+    shell:
+        """
+        zcat  {input} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | gzip -c > {output}
+        """
+
+
 rule dna_rna_merge_counts:
+    """
+    Merge DNA and RNA counts together.
+    Is done in two ways. First no not allow zeros in DNA or RNA BCs (withoutZeros).
+    Second with zeros, so a BC can be defined only in the DNA or RNA (withZeros)
+    """
     conda:
         "../envs/mpraflow_py36.yaml"
     input:
-        dna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_DNA_final_counts.tsv.gz",
-        rna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_RNA_final_counts.tsv.gz",
+        dna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_DNA_final_counts_full.tsv.gz",
+        rna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_RNA_final_counts_full.tsv.gz",
     output:
-        "results/{project}/{raw_or_assigned}/merged/{mergeType}/{condition}_{replicate}_merged_counts.tsv.gz",
+        "results/{project}/{raw_or_assigned}/merged/{mergeType}/{condition}_{replicate}_merged_counts_full.tsv.gz",
     params:
         zero=lambda wc: "false" if wc.mergeType == "withoutZeros" else "true",
     shell:
@@ -234,13 +273,13 @@ rule dna_rna_merge_counts:
         if [[ $zero=false ]]
         then
             join -1 1 -2 1 -t"$(echo -e '\\t')" \
-            <( zcat  {input.dna} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | sort ) \
-            <( zcat {input.rna} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | sort) | \
+            <( zcat  {input.dna} | sort ) \
+            <( zcat {input.rna} | sort) | \
             gzip -c > {output}
         else
             join -e 0 -a1 -a2 -t"$(echo -e '\\t')" -o 0 1.2 2.2 \
-            <( zcat  {input.dna} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | sort ) \
-            <( zcat {input.rna} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | sort) | \
+            <( zcat  {input.dna} | sort ) \
+            <( zcat {input.rna}  | sort) | \
             gzip -c > {output}
         fi
         """

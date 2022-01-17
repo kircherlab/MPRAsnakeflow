@@ -1,17 +1,54 @@
+#################
+#### imports ####
+#################
 import pandas as pd
 
+##################
+#### SETTINGS ####
+##################
 
+##### check snakemake min version #####
+from snakemake.utils import min_version
+
+min_version("6.12.3")
+
+##### load config and sample sheets #####
+from snakemake.utils import validate
+
+
+# configfile: "config/config.yaml"
+
+
+validate(config, schema="schemas/config.schema.yaml")
+
+from snakemake.workflow import srcdir
+
+SCRIPTS_DIR = srcdir("scripts")
+
+
+##### report workflow #####
 report: "report/workflow.rst"
 
 
+##### General wirldcard constrains #####
+wildcard_constraints:
+    project="[^/]+",
+    condition="[^/]+",
+    mergeType="(withZeros)|(withoutZeros)",
+
+
+##### localrules #####
 localrules:
     all,
     aggregate_demultiplex,
 
 
-configfile: "config/config.yaml"
+################################
+#### HELPERS AND EXCEPTIONS ####
+################################
 
 
+##### Exceptions #####
 class MissingAssignmentInConfigException(Exception):
     """
     Exception raised for if no assignment file is set in the config.
@@ -48,6 +85,7 @@ class MissingVariantInConfigException(Exception):
         return "Config %s has no variants defined!" % (self.config_name)
 
 
+##### get helpers for different things (like Conditions etc) #####
 def getExperiments(project):
     experiments = pd.read_csv(config[project]["experiment_file"])
     return experiments
@@ -137,22 +175,48 @@ def getIndexWithIndex(project):
     ]
 
 
-wildcard_constraints:
-    project="[^/]+",
-    condition="[^/]+",
-    mergeType="(withZeros)|(withoutZeros)",
+def hasReplicates(project, condition=None):
+    if condition == None:
+        conditions = getConditions(project)
+        for condition in conditions:
+            if len(getReplicatesOfCondition(project, condition)) <= 1:
+                return False
+    else:
+        return len(getReplicatesOfCondition(project, condition)) > 1
+    return True
+
+
+##### Helper to create output files #####
+def getOutputProject_helper(file, betweenReplicates=False):
+    """
+    Inserts {project} from config into given file.
+    When betweenReplicates is True skips projects without replicates in one condition.
+    """
+    output = []
+    projects = list(config.keys())
+    for project in projects:
+        if not betweenReplicates or hasReplicates(project):
+            output += expand(
+                file,
+                project=project,
+            )
+    return output
 
 
 def getOutputProjectConditionReplicateType_helper(file, skip={}):
+    """
+    Inserts {project}, {condition}, {replicate} and {type} from config into given file.
+    Can skip projects with the given config set by skip.
+    """
     output = []
     projects = list(config.keys())
     for project in projects:
         # skip projects with the following config
-        don_not_use = False
+        do_not_use = False
         for key, value in skip.items():
             if config[project][key] == value:
-                don_not_use = True
-        if don_not_use:
+                do_not_use = True
+        if do_not_use:
             continue
         conditions = getConditions(project)
         for condition in conditions:
@@ -168,6 +232,9 @@ def getOutputProjectConditionReplicateType_helper(file, skip={}):
 
 
 def getOutputProjectConditionType_helper(file):
+    """
+    Inserts {project}, {condition} and {type} from config into given file.
+    """
     output = []
     projects = list(config.keys())
     for project in projects:
@@ -183,6 +250,9 @@ def getOutputProjectConditionType_helper(file):
 
 
 def getOutputProjectConditionAssignmentConfig_helper(file):
+    """
+    Inserts {project}, {condition}, {assignment} and {config} (from configs of project) from config into given file.
+    """
     output = []
     projects = list(config.keys())
     for project in projects:
@@ -201,64 +271,109 @@ def getOutputProjectConditionAssignmentConfig_helper(file):
     return output
 
 
-def getOutputProjectAssignmentConfig_helper(file):
+def getOutputProjectAssignmentConfig_helper(file, betweenReplicates=False):
+    """
+    Inserts {project}, {assignment} and {config} (from configs of project) from config into given file.
+    When betweenReplicates is True skips projects without replicates in one condition.
+    """
     output = []
     projects = list(config.keys())
     for project in projects:
-        try:
-            output += expand(
-                file,
-                project=project,
-                assignment=getAssignments(project),
-                config=list(config[project]["configs"].keys()),
-            )
-        except MissingAssignmentInConfigException:
-            continue
+        if not betweenReplicates or hasReplicates(project):
+            try:
+                output += expand(
+                    file,
+                    project=project,
+                    assignment=getAssignments(project),
+                    config=list(config[project]["configs"].keys()),
+                )
+            except MissingAssignmentInConfigException:
+                continue
     return output
 
 
-def getOutputProjectAssignment_helper(file):
+def getOutputProjectAssignment_helper(file, betweenReplicates=False):
+    """
+    Inserts {project} and {assignment} from config into given file.
+    When betweenReplicates is True skips projects without replicates in one condition.
+    """
     output = []
     projects = list(config.keys())
     for project in projects:
-        try:
-            output += expand(file, project=project, assignment=getAssignments(project))
-        except MissingAssignmentInConfigException:
-            continue
+        if not betweenReplicates or hasReplicates(project):
+            try:
+                output += expand(
+                    file, project=project, assignment=getAssignments(project)
+                )
+            except MissingAssignmentInConfigException:
+                continue
     return output
 
 
-def getOutputProjectMergeTypeAssignment_helper(file):
+def getOutputProjectMergeType_helper(file, betweenReplicates=False):
+    """
+    Inserts {project}, {mergeType} (withZeros, withoutZeros) from config into given file.
+    When betweenReplicates is True skips projects without replicates in one condition.
+    """
     output = []
     projects = list(config.keys())
     for project in projects:
-        try:
+        if not betweenReplicates or hasReplicates(project):
             output += expand(
                 file,
                 project=project,
-                assignment=getAssignments(project),
                 mergeType=["withZeros", "withoutZeros"],
             )
-        except MissingAssignmentInConfigException:
-            continue
     return output
 
 
-def getOutputVariants_helper(file):
+def getOutputProjectMergeTypeAssignment_helper(file, betweenReplicates=False):
+    """
+    Inserts {project}, {mergeType} (withZeros, withoutZeros) and {assignment} from config into given file.
+    When betweenReplicates is True skips projects without replicates in one condition.
+    """
+    output = []
+    projects = list(config.keys())
+    for project in projects:
+        if not betweenReplicates or hasReplicates(project):
+            try:
+                output += expand(
+                    file,
+                    project=project,
+                    assignment=getAssignments(project),
+                    mergeType=["withZeros", "withoutZeros"],
+                )
+            except MissingAssignmentInConfigException:
+                continue
+    return output
+
+
+def getOutputVariants_helper(file, betweenReplicates=False):
+    """
+    Only when variants are set in config file
+    Inserts {project}, {condition}, {assignment} and {config} (from configs of project) from config into given file.
+    When betweenReplicates is True skips project/condition without replicates in a condition.
+    """
     output = []
     projects = list(config.keys())
     for project in projects:
         conditions = getConditions(project)
         for condition in conditions:
             if "variants" in config[project]:
-                output += expand(
-                    file,
-                    project=project,
-                    condition=condition,
-                    assignment=getAssignments(project),
-                    config=list(config[project]["configs"].keys()),
-                )
+                if hasReplicates(project, condition):
+                    output += expand(
+                        file,
+                        project=project,
+                        condition=condition,
+                        assignment=getAssignments(project),
+                        config=list(config[project]["configs"].keys()),
+                    )
     return output
+
+
+###################
+#### ALL RULES ####
+###################
 
 
 rule all:
@@ -285,17 +400,16 @@ rule all:
         getOutputProjectConditionReplicateType_helper(
             "results/{project}/stats/counts/freqUMIs_{condition}_{replicate}_{type}.txt"
         ),
-        expand(
+        getOutputProjectMergeType_helper(
             "results/{project}/stats/statistic_bc_correlation_merged_{mergeType}.tsv",
-            project=list(config.keys()),
-            mergeType=["withZeros", "withoutZeros"],
+            True,
         ),
         getOutputProjectMergeTypeAssignment_helper(
-            "results/{project}/stats/statistic_assigned_bc_correlation_merged_{mergeType}_{assignment}.tsv"
+            "results/{project}/stats/statistic_assigned_bc_correlation_merged_{mergeType}_{assignment}.tsv",
+            True
         ),
-        expand(
-            "results/{project}/stats/statistic_overlapBCs_counts.tsv",
-            project=list(config.keys()),
+        getOutputProject_helper(
+            "results/{project}/stats/statistic_overlapBCs_counts.tsv", True
         ),
         # assignment
         getOutputProjectConditionAssignmentConfig_helper(
@@ -306,17 +420,21 @@ rule all:
             "results/{project}/stats/statistic_assigned_counts_merged_{assignment}_{config}.tsv"
         ),
         getOutputProjectAssignmentConfig_helper(
-            "results/{project}/stats/statistic_oligo_correlation_merged_{assignment}_{config}.tsv"
+            "results/{project}/stats/statistic_oligo_correlation_merged_{assignment}_{config}.tsv",
+            True,
         ),
         getOutputProjectAssignment_helper(
             "results/{project}/stats/statistic_assigned_counts_single_{assignment}.tsv",
+            True
         ),
         getOutputProjectAssignment_helper(
             "results/{project}/stats/statistic_overlapBCs_assigned_counts_{assignment}.tsv",
+            True,
         ),
         # variants
         getOutputVariants_helper(
-            "results/{project}/stats/variants/{assignment}/{config}/correlation_variantTable.tsv"
+            "results/{project}/stats/variants/{assignment}/{config}/correlation_variantTable.tsv",
+            True,
         ),
 
 
@@ -332,14 +450,12 @@ rule all_counts_stats:
         getOutputProjectConditionReplicateType_helper(
             "results/{project}/stats/counts/freqUMIs_{condition}_{replicate}_{type}.txt"
         ),
-        expand(
+        getOutputProjectMergeType_helper(
             "results/{project}/stats/statistic_bc_correlation_merged_{mergeType}.tsv",
-            project=list(config.keys()),
-            mergeType=["withZeros", "withoutZeros"],
+            True,
         ),
-        expand(
-            "results/{project}/stats/statistic_overlapBCs_counts.tsv",
-            project=list(config.keys()),
+        getOutputProject_helper(
+            "results/{project}/stats/statistic_overlapBCs_counts.tsv", True
         ),
 
 
@@ -350,102 +466,16 @@ rule all_stats_BCNucleotideComposition:
         ),
 
 
+###################
+## SUB-WORKFLOWS ##
+###################
+
+
+# count workflow
 include: "rules/counts.smk"
-
-
-rule createAssignmentPickleFile:
-    conda:
-        "envs/mpraflow_py36.yaml"
-    input:
-        lambda wc: config[wc.project]["assignments"][wc.assignment],
-    output:
-        "results/{project}/assigned_counts/{assignment}/assignment.pickle",
-    shell:
-        """
-        python workflow/scripts/count/create_pickle.py -i {input} -o {output}
-        """
-
-
-rule dna_rna_merge:
-    conda:
-        "envs/mpraflow_py36.yaml"
-    input:
-        counts=lambda wc: expand(
-            "results/{{project}}/counts/merged/{mergeType}/{{condition}}_{{replicate}}_merged_counts.tsv.gz",
-        mergeType="withoutZeros"
-            if config[wc.project]["configs"][wc.config]["minRNACounts"] > 0
-            and config[wc.project]["configs"][wc.config]["minDNACounts"] > 0
-            else "withZeros",
-        ),
-        association=lambda wc: config[wc.project]["assignments"][wc.assignment],
-    output:
-        counts="results/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
-        stats="results/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.statistic.tsv.gz",
-    params:
-        minRNACounts=lambda wc: config[wc.project]["configs"][wc.config]["minRNACounts"],
-        minDNACounts=lambda wc: config[wc.project]["configs"][wc.config]["minDNACounts"],
-    shell:
-        """
-        python workflow/scripts/count/merge_label.py --counts {input.counts} \
-        --minRNACounts {params.minRNACounts} --minDNACounts {params.minDNACounts} \
-        --assignment {input.association} \
-        --output {output.counts} \
-        --statistic {output.stats}
-        """
-
-
-rule make_master_tables:
-    conda:
-        "envs/mpraflow_r.yaml"
-    input:
-        counts=lambda wc: expand(
-            "results/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts.tsv.gz",
-            replicate=getReplicatesOfCondition(wc.project, wc.condition),
-        ),
-    output:
-        statistic="results/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_average_allreps_merged.tsv.gz",
-        all="results/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.tsv.gz",
-        thresh="results/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged.tsv.gz",
-    params:
-        cond="{condition}",
-        files=lambda wc: ",".join(
-            expand(
-                "results/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
-                replicate=getReplicatesOfCondition(wc.project, wc.condition),
-                project=wc.project,
-                condition=wc.condition,
-                assignment=wc.assignment,
-                config=wc.config,
-            )
-        ),
-        replicates=lambda wc: ",".join(
-            getReplicatesOfCondition(wc.project, wc.condition)
-        ),
-        thresh=lambda wc: config[wc.project]["configs"][wc.config]["bc_threshold"],
-    shell:
-        """
-        Rscript workflow/scripts/count/make_master_tables.R \
-        --condition {params.cond} \
-        --threshold {params.thresh} \
-        --files {params.files} \
-        --replicates {params.replicates} \
-        --output {output.all} \
-        --output-all {output.thresh} \
-        --statistic {output.statistic}
-        """
-
-
-################
-## Statistics ##
-################
-
-
+# assignimg BCs to oligos
+include: "rules/assigned_counts.smk"
+# all statistics
 include: "rules/statistic.smk"
-
-
-##############
-## variants ##
-##############
-
-
+# variant subworkflow (creating variant effects)
 include: "rules/variants.smk"

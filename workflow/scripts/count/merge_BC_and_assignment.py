@@ -53,7 +53,7 @@ def cli(counts_file, assignment_file, output_file, statistic_file, name):
 
     #get count df
     click.echo("Read count file...")
-    counts=pd.read_csv(counts_file, header=None, sep="\s+", names=['Counts','Barcode'])
+    counts=pd.read_csv(counts_file, header=None, sep="\t", names=['Barcode','Counts'])
 
     statistic['Barcodes'] = counts.shape[0]
     statistic['Counts'] = sum(counts.Counts)
@@ -77,7 +77,7 @@ def cli(counts_file, assignment_file, output_file, statistic_file, name):
     statistic['Fraction assigned counts'] = statistic['Assigned counts']/statistic['Counts']
 
     click.echo("Write files...")
-    counts.to_csv(output_file, index=False, sep=' ', header=False, compression='gzip')
+    counts.to_csv(output_file, index=False, sep='\t', header=False, compression='gzip')
 
     statistic.to_csv(statistic_file, index=False,sep='\t', compression='gzip')
 
