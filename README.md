@@ -8,7 +8,7 @@
 This pipeline processes sequencing data from Massively Parallel Reporter Assays (MPRA) to create count tables for candidate sequences tested in the experiment.
 
 This is the template for a new Snakemake workflow. Replace this text with a comprehensive description covering the purpose and domain.
-Insert your code into the respective folders, i.e. `scripts`, `rules`, and `envs`. Define the entry point of the workflow in the `Snakefile` and the main configuration in the `config.yaml` file.
+Insert your code into the respective folders, i.e. `scripts`, `rules`, and `envs`. Define the entry point of the workflow in the `Snakefile` and the main configuration in a `config.yaml` file.
 
 ## Authors
 
@@ -25,7 +25,7 @@ If you use this workflow in a paper, don't forget to give credits to the authors
 
 ### Step 2: Configure workflow
 
-Configure the workflow according to your needs via editing the files in the `config/` folder. Adjust `config.yaml` to configure the workflow execution.
+Configure the workflow according to your needs via editing the files in the `config/` folder. Create or adjust the `config.yaml` to configure the workflow execution. When running on a cluster environment there are `drmaa.yaml` for drmaa runs or `cluster.yaml` for SLURM environment which contain the resources required for each job.
 
 ### Step 3: Install Snakemake
 
@@ -43,25 +43,34 @@ Activate the conda environment:
 
 Test your configuration by performing a dry-run via
 
-    snakemake --use-conda -n
+    snakemake --use-conda --configfile conf/config.yaml -n
 
 Execute the workflow locally via
 
-    snakemake --use-conda --cores $N
+    snakemake --use-conda --cores $N --configfile conf/config.yaml
 
 using `$N` cores or run it in a cluster environment via
 
-    snakemake --use-conda --cluster qsub --jobs 100
+    snakemake --use-conda --configfile conf/config.yaml --cluster "sbatch --nodes=1 --ntasks={cluster.threads} --mem={cluster.mem} -t {cluster.time} -p {cluster.queue} -o {cluster.output}" --jobs 100 --cluster-config config/cluster.yaml
 
 or
 
-    snakemake --use-conda --drmaa --jobs 100
+    snakemake --use-conda --configfile conf/config.yaml --drmaa "-n {cluster.threads} --mem={cluster.mem} -t {cluster.time} -p {cluster.queue} -o {cluster.output}" --jobs 100
+    
+Please not ethat the log folder of the cluster environment has to be generated first, e.g:
+
+    mkdir -p logs
 
 If you not only want to fix the software stack but also the underlying OS, use
 
-    snakemake --use-conda --use-singularity
+    snakemake --use-conda --use-singularity --configfile conf/config.yaml
 
 in combination with any of the modes above.
+
+It is also possible to run the workflow in a different folder so that the results get stored not in the MPRAsnakeflow folder. Here you have to specify the snakefile path, like
+
+    snakemake --use-conda --configfile yourConfigFile.yaml --snakefile <path/to/MPRAsnakeflow>/MPRAsnakeflow/workflow/Snakefile --cores $N
+
 See the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/executable.html) for further details.
 
 ### Step 5: Investigate results
