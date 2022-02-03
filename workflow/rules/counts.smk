@@ -240,15 +240,20 @@ rule final_counts_umi:
 
 rule final_counts_umi_full:
     """
-    TODO
+    Creates full + downsampler files
     """
     input:
         "results/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
     output:
         "results/{project}/counts/{condition}_{replicate}_{type}_final_counts_full.tsv.gz",
+    params:
+        downsampling=lambda wc: config[wc.project]["downsampling"],
     shell:
         """
         zcat  {input} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | gzip -c > {output}
+        python {SCRIPTS_DIR}/count/downsampler.py --input {output} \
+        --threshold {params.downsampling} \
+        --output {output}
         """
 
 

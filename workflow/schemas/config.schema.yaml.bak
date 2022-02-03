@@ -25,8 +25,6 @@ additionalProperties:
       type: string
     label_file:
       type: string
-    downsampling:
-      type: integer  
     assignments:
       type: object
       additionalProperties:
@@ -69,4 +67,3 @@ additionalProperties:
     - demultiplex
     - design_file
     - assignments
-
