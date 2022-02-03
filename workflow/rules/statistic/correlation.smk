@@ -158,7 +158,7 @@ rule statistic_calc_correlations:
             getReplicatesOfCondition(wc.project, wc.condition)
         ),
         thresh=lambda wc: config[wc.project]["configs"][wc.config]["bc_threshold"],
-        outdir="results/{project}/stats/assigned_counts/{assignment}/{config}",
+        outdir="results/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_{sampling}",
         label=(
             lambda wc: "--label %s" % config[wc.project]["label_file"]
             if "label_file" in config[wc.project]
