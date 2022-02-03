@@ -20,14 +20,14 @@ sys.path.insert(0, os.path.abspath('.'))
 
 # -- Project information -----------------------------------------------------
 
-project = u'MPRAflow'
-copyright = u'2019, Max Schubach, Gracie Gordon'
-author = u'Max Schubach, Gracie Gordon'
+project = u'MPRAsnakeflow'
+copyright = u'2022, Max Schubach'
+author = u'Max Schubach'
 
 # The short X.Y version
-version = u'2.1'
+version = u'1.0'
 # The full version, including alpha/beta/rc tags
-release = u'2.1'
+release = u'1.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -109,7 +109,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'MPRAflowdoc'
+htmlhelp_basename = 'MPRAsnakeflowdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -136,8 +136,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'MPRAflow.tex', u'MPRAflow Documentation',
-     u'Max Schubach, Gracie Gordon', 'manual'),
+    (master_doc, 'MPRAsnakeflow.tex', u'MPRAsnakeflow Documentation',
+     u'Max Schubach', 'manual'),
 ]
 
 
@@ -146,7 +146,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'mpraflow', u'MPRAflow Documentation',
+    (master_doc, 'mprasnakeflow', u'MPRAsnakeflow Documentation',
      [author], 1)
 ]
 
@@ -157,9 +157,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'MPRAflow', u'MPRAflow Documentation',
-     author, 'MPRAflow', 'One line description of project.',
-     'Miscellaneous'),
+    (master_doc, 'MPRAsnakeflow', u'MPRAsnakeflow Documentation',
+     author, 'MPRAsnakeflow', 'One line description of project.',
+     'miscellaneous'),
 ]
 
 

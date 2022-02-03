@@ -1,5 +1,5 @@
 ===============================
-Running MPRAflow on HPC Cluster
+Running MPRAsnakeflow on HPC Cluster
 ===============================
 
 Nextflow gives us the opportunity to run MPRAflow in a cluster environment. Right now we split up processes into two main groups: `longtime` and `shorttime`. We can define different job setting for both groups. As you can imagine from the names `longtime` defines processes that takes a while when running. Sometimes several days. `shortime` defines processes that are quicker and are usually done in several minutes.
