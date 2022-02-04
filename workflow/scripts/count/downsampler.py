@@ -36,8 +36,8 @@ def cli(input_file, threshold_val, output_file):
     click.echo("Reading count file...")
     df_ = pd.read_csv(input_file, header=None, sep='\t')
     
-    click.echo("Removing barcodes with counts > threshold...")
-    df_ = df_[~(df_.iloc[:,1].astype(int) > threshold_val)] 
+    click.echo("Adjusting barcodes with counts > threshold...")
+    df_.iloc[:,1] = df_.iloc[:,1].astype(int).apply(lambda x: threshold_val if x > threshold_val else x)
     
     click.echo("Writing count file...")
     df_.to_csv(output_file, sep="\t", index=False, header=None, compression='gzip')
