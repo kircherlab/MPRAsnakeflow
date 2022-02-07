@@ -261,6 +261,8 @@ rule final_counts_umi_sample:
         "results/{project}/counts/{condition}_{replicate}_{type}_final_counts_{sampling}.tsv.gz",
     params:
         downsampling=lambda wc: config[wc.project]["sampling"][wc.sampling],
+    wildcard_constraints:
+        downsampling = '^full'
     shell:
         """
         python {SCRIPTS_DIR}/count/downsampler.py --input {input} \
