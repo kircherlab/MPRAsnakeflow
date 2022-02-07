@@ -187,11 +187,14 @@ def hasReplicates(project, condition=None):
 
 
 def getSamplings(project):
-    return ["full", "sampling"]
+    output = ["full"]
+    if "sampling" in config[project]:
+        output += list(config[project]["sampling"].keys())
+    return output
 
 
 ##### Helper to create output files #####
-def getOutputProject_helper(file, betweenReplicates=False):
+def getOutputProjectSampling_helper(file, betweenReplicates=False):
     """
     Inserts {project} from config into given file.
     When betweenReplicates is True skips projects without replicates in one condition.
@@ -203,6 +206,7 @@ def getOutputProject_helper(file, betweenReplicates=False):
             output += expand(
                 file,
                 project=project,
+                sampling=getSamplings(project),
             )
     return output
 
@@ -336,7 +340,7 @@ def getOutputProjectAssignmentConfigSampling_helper(file, betweenReplicates=Fals
                     project=project,
                     assignment=getAssignments(project),
                     config=list(config[project]["configs"].keys()),
-                    sampling=getSamplings(project)
+                    sampling=getSamplings(project),
                 )
             except MissingAssignmentInConfigException:
                 continue
@@ -365,7 +369,7 @@ def getOutputProjectAssignmentSampling_helper(file, betweenReplicates=False):
     return output
 
 
-def getOutputProjectMergeType_helper(file, betweenReplicates=False):
+def getOutputProjectMergeTypeSampling_helper(file, betweenReplicates=False):
     """
     Inserts {project}, {mergeType} (withZeros, withoutZeros) from config into given file.
     When betweenReplicates is True skips projects without replicates in one condition.
@@ -378,11 +382,12 @@ def getOutputProjectMergeType_helper(file, betweenReplicates=False):
                 file,
                 project=project,
                 mergeType=["withZeros", "withoutZeros"],
+                sampling=getSamplings(project),
             )
     return output
 
 
-def getOutputProjectMergeTypeAssignment_helper(file, betweenReplicates=False):
+def getOutputProjectMergeTypeAssignmentSampling_helper(file, betweenReplicates=False):
     """
     Inserts {project}, {mergeType} (withZeros, withoutZeros) and {assignment} from config into given file.
     When betweenReplicates is True skips projects without replicates in one condition.
@@ -397,6 +402,7 @@ def getOutputProjectMergeTypeAssignment_helper(file, betweenReplicates=False):
                     project=project,
                     assignment=getAssignments(project),
                     mergeType=["withZeros", "withoutZeros"],
+                    sampling=getSamplings(project),
                 )
             except MissingAssignmentInConfigException:
                 continue
@@ -455,16 +461,16 @@ rule all:
         getOutputProjectConditionReplicateType_helper(
             "results/{project}/stats/counts/freqUMIs_{condition}_{replicate}_{type}.txt"
         ),
-        getOutputProjectMergeType_helper(
-            "results/{project}/stats/statistic_bc_correlation_merged_{mergeType}.tsv",
+        getOutputProjectMergeTypeSampling_helper(
+            "results/{project}/stats/statistic_bc_correlation_merged_{mergeType}_{sampling}.tsv",
             True,
         ),
-        getOutputProjectMergeTypeAssignment_helper(
-            "results/{project}/stats/statistic_assigned_bc_correlation_merged_{mergeType}_{assignment}.tsv",
+        getOutputProjectMergeTypeAssignmentSamling_helper(
+            "results/{project}/stats/statistic_assigned_bc_correlation_merged_{mergeType}_{assignment}_{sampling}.tsv",
             True,
         ),
-        getOutputProject_helper(
-            "results/{project}/stats/statistic_overlapBCs_counts.tsv", True
+        getOutputProjectSampling_helper(
+            "results/{project}/stats/statistic_overlapBCs_counts_{sampling}.tsv", True
         ),
         # assignment
         getOutputProjectConditionAssignmentConfigSampling_helper(
@@ -472,10 +478,10 @@ rule all:
         ),
         # assignment stats
         getOutputProjectAssignmentConfigSampling_helper(
-            "results/{project}/stats/statistic_assigned_counts_merged_{assignment}_{config}.tsv"
+            "results/{project}/stats/statistic_assigned_counts_merged_{assignment}_{config}_{sampling}.tsv"
         ),
         getOutputProjectAssignmentConfigSampling_helper(
-            "results/{project}/stats/statistic_oligo_correlation_merged_{assignment}_{config}.tsv",
+            "results/{project}/stats/statistic_oligo_correlation_merged_{assignment}_{config}_{sampling}.tsv",
             True,
         ),
         getOutputProjectAssignmentSampling_helper(
@@ -505,12 +511,12 @@ rule all_counts_stats:
         getOutputProjectConditionReplicateType_helper(
             "results/{project}/stats/counts/freqUMIs_{condition}_{replicate}_{type}.txt"
         ),
-        getOutputProjectMergeType_helper(
-            "results/{project}/stats/statistic_bc_correlation_merged_{mergeType}.tsv",
+        getOutputProjectMergeTypeSampling_helper(
+            "results/{project}/stats/statistic_bc_correlation_merged_{mergeType}_{sampling}.tsv",
             True,
         ),
-        getOutputProject_helper(
-            "results/{project}/stats/statistic_overlapBCs_counts.tsv", True
+        getOutputProjectSampling_helper(
+            "results/{project}/stats/statistic_overlapBCs_counts_{sampling}.tsv", True
         ),
 
 
