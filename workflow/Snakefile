@@ -465,7 +465,7 @@ rule all:
             "results/{project}/stats/statistic_bc_correlation_merged_{mergeType}_{sampling}.tsv",
             True,
         ),
-        getOutputProjectMergeTypeAssignmentSamling_helper(
+        getOutputProjectMergeTypeAssignmentSampling_helper(
             "results/{project}/stats/statistic_assigned_bc_correlation_merged_{mergeType}_{assignment}_{sampling}.tsv",
             True,
         ),

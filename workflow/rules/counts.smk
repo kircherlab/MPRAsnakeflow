@@ -260,7 +260,7 @@ rule final_counts_umi_sample:
     output:
         "results/{project}/counts/{condition}_{replicate}_{type}_final_counts_{sampling}.tsv.gz",
     params:
-        downsampling=lambda wc: config[wc.project]["sampling"][wc.sampling],
+        downsampling=lambda wc: config[wc.project]["sampling"][wc.sampling]["downsampling"],
     wildcard_constraints:
         downsampling = '^full'
     shell:

@@ -44,6 +44,7 @@ rule statistic_combine_overlapBCs_stats_raw:
             "results/{{project}}/stats/counts/overlapBCandCounts_{condition}_{type}_{sampling}.tsv",
             type=["DNA", "RNA"],
             condition=getConditions(wc.project),
+            sampling=wc.sampling,
         ),
     output:
         report(

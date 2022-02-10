@@ -43,10 +43,10 @@ rule statistic_correlate_BC_counts:
             )[1]
         ),
         cond="{condition}",
-        outdir="results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}",
+        outdir="results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}/{condition}_{sampling}",
         input=lambda wc: ",".join(
             getMergedCounts(
-                wc.project, wc.raw_or_assigned, wc.condition, wc.mergeType
+                wc.project, wc.raw_or_assigned, wc.condition, wc.mergeType, wc.sampling
             )[0]
         ),
     shell:
