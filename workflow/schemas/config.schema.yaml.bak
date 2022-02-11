@@ -29,19 +29,14 @@ additionalProperties:
       type: object
       additionalProperties:
         type: string
-    sampling:
-      type: object
-      additionalProperties:
-        type: object
-        properties:
-          downsampling:
-            type: integer
     configs:
       type: object
       additionalProperties:
         type: object
         properties:
           bc_threshold:
+            type: integer
+          downsampling:
             type: integer
           minDNACounts:
             type: integer
@@ -72,4 +67,3 @@ additionalProperties:
     - demultiplex
     - design_file
     - assignments
-

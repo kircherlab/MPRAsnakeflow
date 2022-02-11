@@ -16,7 +16,7 @@ option_list <- list(
     make_option(c("-r", "--replicates"), type="character",
         help="Comma separated name of the replicates (same order than files)"),
     make_option(c("-o", "--outdir"), type="character",
-        help="Outdir of the plots and table.")
+        help="Outdir of the plots and table.")       
 )
 
 parser <- OptionParser(option_list=option_list)
@@ -33,7 +33,7 @@ if (!"replicates" %in% names(opt)) {
   stop("--replicates parameter must be provided. See script usage (--help)")
 }
 if (!"outdir" %in% names(opt)) {
-  outdir="."
+  outdir="./unknown"
 } else {
   outdir=opt$outdir
 }
@@ -183,11 +183,11 @@ if(data %>% nrow >1){
 
   }
 
-  writeCorrelationPlots(plots_correlations_dna, sprintf("%s/%s_barcode_DNA_pairwise.png",outdir,cond))
-  writeCorrelationPlots(plots_correlations_rna, sprintf("%s/%s_barcode_RNA_pairwise.png",outdir,cond))
-  writeCorrelationPlots(plots_correlations_ratio, sprintf("%s/%s_barcode_Ratio_pairwise.png",outdir,cond))
+  writeCorrelationPlots(plots_correlations_dna, sprintf("%s_barcode_DNA_pairwise.png",outdir))
+  writeCorrelationPlots(plots_correlations_rna, sprintf("%s_barcode_RNA_pairwise.png",outdir))
+  writeCorrelationPlots(plots_correlations_ratio, sprintf("%s_barcode_Ratio_pairwise.png",outdir))
 
-  writeCorrelation(stats_correlations, sprintf("%s/%s_barcode_correlation.tsv",outdir,cond))
+  writeCorrelation(stats_correlations, sprintf("%s_barcode_correlation.tsv",outdir))
 }
 
 
@@ -213,5 +213,5 @@ for(n in 1:(data%>%nrow)){
 
 hist_plot_rna <- do.call("plot_grid", c(plots_rna))
 hist_plot_dna <- do.call("plot_grid", c(plots_dna))
-ggsave(sprintf("%s/%s_RNA_perBarcode.png",outdir,cond),hist_plot_rna)
-ggsave(sprintf("%s/%s_DNA_perBarcode.png",outdir,cond),hist_plot_dna)
+ggsave(sprintf("%s_RNA_perBarcode.png",outdir),hist_plot_rna)
+ggsave(sprintf("%s_DNA_perBarcode.png",outdir),hist_plot_dna)

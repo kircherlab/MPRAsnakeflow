@@ -251,6 +251,25 @@ rule final_counts_umi_full:
         zcat  {input} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | gzip -c > {output}
         """
 
+rule final_counts_umi_sample:
+    """
+    Creates full + downsampler files
+    """
+    input:
+        "results/{project}/counts/{condition}_{replicate}_{type}_final_counts_full.tsv.gz",
+    output:
+        "results/{project}/counts/{condition}_{replicate}_{type}_final_counts_{sampling}.tsv.gz",
+    params:
+        downsampling=lambda wc: config[wc.project]["sampling"][wc.sampling]["downsampling"],
+    wildcard_constraints:
+        downsampling = '^full'
+    shell:
+        """
+        python {SCRIPTS_DIR}/count/downsampler.py --input {input} \
+        --threshold {params.downsampling} \
+        --output {output}
+        """
+
 
 rule dna_rna_merge_counts:
     """
@@ -261,10 +280,10 @@ rule dna_rna_merge_counts:
     conda:
         "../envs/mpraflow_py36.yaml"
     input:
-        dna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_DNA_final_counts_full.tsv.gz",
-        rna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_RNA_final_counts_full.tsv.gz",
+        dna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
+        rna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
     output:
-        "results/{project}/{raw_or_assigned}/merged/{mergeType}/{condition}_{replicate}_merged_counts_full.tsv.gz",
+        "results/{project}/{raw_or_assigned}/merged/{mergeType}/{condition}_{replicate}_merged_counts_{sampling}.tsv.gz",
     params:
         zero=lambda wc: "false" if wc.mergeType == "withoutZeros" else "true",
     shell:

@@ -40,7 +40,7 @@ if (!"replicates" %in% names(opt)) {
   stop("--replicates parameter must be provided. See script usage (--help)")
 }
 if (!"outdir" %in% names(opt)) {
-  outdir="."
+  outdir="./unknown"
 } else {
   outdir=opt$outdir
 }
@@ -215,15 +215,15 @@ if(data %>% nrow >1){
     stats_correlations_minThreshold <- stats_correlations_minThreshold %>% bind_rows(getCorrelationStats(res,n_oligos_r1_thres,n_oligos_r2_thres,cond,r1,r2,"correlation_minThreshold"))
   }
 
-  writeCorrelationPlots(plots_correlations_dna, sprintf("%s/%s_DNA_pairwise.png",outdir,cond))
-  writeCorrelationPlots(plots_correlations_rna, sprintf("%s/%s_RNA_pairwise.png",outdir,cond))
-  writeCorrelationPlots(plots_correlations_ratio, sprintf("%s/%s_Ratio_pairwise.png",outdir,cond))
-  writeCorrelationPlots(plots_correlations_minThreshold_dna, sprintf("%s/%s_DNA_pairwise_minThreshold.png",outdir,cond))
-  writeCorrelationPlots(plots_correlations_minThreshold_rna, sprintf("%s/%s_RNA_pairwise_minThreshold.png",outdir,cond))
-  writeCorrelationPlots(plots_correlations_minThreshold_ratio, sprintf("%s/%s_Ratio_pairwise_minThreshold.png",outdir,cond))
+  writeCorrelationPlots(plots_correlations_dna, sprintf("%s_DNA_pairwise.png",outdir))
+  writeCorrelationPlots(plots_correlations_rna, sprintf("%s_RNA_pairwise.png",outdir))
+  writeCorrelationPlots(plots_correlations_ratio, sprintf("%s_Ratio_pairwise.png",outdir))
+  writeCorrelationPlots(plots_correlations_minThreshold_dna, sprintf("%s_DNA_pairwise_minThreshold.png",outdir))
+  writeCorrelationPlots(plots_correlations_minThreshold_rna, sprintf("%s_RNA_pairwise_minThreshold.png",outdir))
+  writeCorrelationPlots(plots_correlations_minThreshold_ratio, sprintf("%s_Ratio_pairwise_minThreshold.png",outdir))
 
-  writeCorrelation(stats_correlations, sprintf("%s/%s_correlation.tsv",outdir,cond))
-  writeCorrelation(stats_correlations_minThreshold, sprintf("%s/%s_correlation_minThreshold.tsv",outdir,cond))
+  writeCorrelation(stats_correlations, sprintf("%s_correlation.tsv",outdir))
+  writeCorrelation(stats_correlations_minThreshold, sprintf("%s_correlation_minThreshold.tsv",outdir))
 }
 
 
@@ -245,7 +245,7 @@ for(n in 1:(data%>%nrow)){
 
 hist_plot <- do.call("plot_grid", c(plots))
 
-ggsave(sprintf("%s/%s_barcodesPerInsert.png",outdir,cond),hist_plot)
+ggsave(sprintf("%s_barcodesPerInsert.png",outdir),hist_plot)
 
 #
 print('boxplot')
@@ -292,11 +292,11 @@ plotGroupbarcodesPerInsert <- function(data){
 all_subsample <- all %>% sample_n(min(10000,all%>%nrow))
 
 bp <- plotAllBarcodesPerInsert(all_subsample)
-ggsave(sprintf("%s/%s_all_barcodesPerInsert_box.png",outdir,cond),bp)
+ggsave(sprintf("%s_all_barcodesPerInsert_box.png",outdir),bp)
 bp <- plotAllBarcodesPerInsert(all_subsample %>% filter(n_obs_bc >= thresh))
-ggsave(sprintf("%s/%s_all_barcodesPerInsert_box_minThreshold.png",outdir,cond),bp)
+ggsave(sprintf("%s_all_barcodesPerInsert_box_minThreshold.png",outdir),bp)
 
 bp <- plotGroupbarcodesPerInsert(all)
-ggsave(sprintf("%s/%s_group_barcodesPerInsert_box.png",outdir,cond),bp)
+ggsave(sprintf("%s_group_barcodesPerInsert_box.png",outdir),bp)
 bp <- plotGroupbarcodesPerInsert(all %>% filter(n_obs_bc >= thresh))
-ggsave(sprintf("%s/%s_group_barcodesPerInsert_box_minThreshold.png",outdir,cond),bp)
+ggsave(sprintf("%s_group_barcodesPerInsert_box_minThreshold.png",outdir),bp)
