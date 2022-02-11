@@ -34,8 +34,10 @@ additionalProperties:
       additionalProperties:
         type: object
         properties:
-          downsampling:
+          DNAdownsampling:
             type: integer
+          RNAdownsampling:
+            type: integer  
     configs:
       type: object
       additionalProperties:
