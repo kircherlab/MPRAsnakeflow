@@ -251,16 +251,16 @@ rule final_counts_umi_full:
         zcat  {input} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | gzip -c > {output}
         """
 
-rule final_counts_umi_sample:
+rule final_counts_umi_sampleDNA:
     """
-    Creates full + downsampler files
+    Creates full + downsampler DNA files
     """
     input:
-        "results/{project}/counts/{condition}_{replicate}_{type}_final_counts_full.tsv.gz",
+        "results/{project}/counts/{condition}_{replicate}_DNA_final_counts_full.tsv.gz",
     output:
-        "results/{project}/counts/{condition}_{replicate}_{type}_final_counts_{sampling}.tsv.gz",
+        "results/{project}/counts/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
     params:
-        downsampling=lambda wc: config[wc.project]["sampling"][wc.sampling]["downsampling"],
+        downsampling=lambda wc: config[wc.project]["sampling"][wc.sampling]["DNAdownsampling"],
     wildcard_constraints:
         downsampling = '^full'
     shell:
@@ -270,6 +270,24 @@ rule final_counts_umi_sample:
         --output {output}
         """
 
+rule final_counts_umi_sampleRNA:
+    """
+    Creates full + downsampler RNA files
+    """
+    input:
+        "results/{project}/counts/{condition}_{replicate}_RNA_final_counts_full.tsv.gz",
+    output:
+        "results/{project}/counts/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
+    params:
+        downsampling=lambda wc: config[wc.project]["sampling"][wc.sampling]["RNAdownsampling"],
+    wildcard_constraints:
+        downsampling = '^full'
+    shell:
+        """
+        python {SCRIPTS_DIR}/count/downsampler.py --input {input} \
+        --threshold {params.downsampling} \
+        --output {output}
+        """
 
 rule dna_rna_merge_counts:
     """
