@@ -7,71 +7,138 @@ type: object
 
 # possible entries of the config file
 
-additionalProperties:
-  description: name of the project
-  type: object
-  properties:
-    bc_length:
-      type: integer
-    umi_length:
-      type: integer
-    data_folder:
-      type: string
-    experiment_file:
-      type: string
-    demultiplex:
-      type: boolean
-    design_file:
-      type: string
-    label_file:
-      type: string
-    assignments:
-      type: object
-      additionalProperties:
-        type: string
-    sampling:
-      type: object
-      additionalProperties:
+properties:
+  global:
+    type: object
+    properties:
+      assignments:
         type: object
         properties:
-          DNAdownsampling:
+          split_number:
             type: integer
-          RNAdownsampling:
-            type: integer  
-    configs:
-      type: object
-      additionalProperties:
-        type: object
-        properties:
-          bc_threshold:
-            type: integer
-          minDNACounts:
-            type: integer
-          minRNACounts:
-            type: integer
-        required:
-          - bc_threshold
-          - minDNACounts
-          - minRNACounts
-    variants:
+        additionalProperties: False
+    additionalProperties: False
+  assignments:
+    description: Assignments to run with configurations
+    type: object
+    additionalProperties:
+      description: name of the assignment
       type: object
       properties:
-        map:
-          type: string
-        min_barcodes:
+        R1:
           type: array
-          items: 
-            type: integer
+          items:
+            type: string
+          minItems: 1
+          uniqueItems: true
+        R2:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          uniqueItems: true
+        R3:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          uniqueItems: true
+        reference:
+          type: string
+        configs:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              min_support:
+                type: integer
+              fraction:
+                type: number
+                minimum: 0
+                maximum: 1
+              unknown_other:
+                type: boolean
+            required:
+              - min_support
+              - fraction
+            additionalProperties: False
+          minProperties: 1
       required:
-        - map
-        - min_barcodes
-  # entries that have to be in the config file for successful validation
-  required:
-    - bc_length
-    - umi_length
-    - data_folder
-    - experiment_file
-    - demultiplex
-    - design_file
-    - assignments
-
+        - R1
+        - R2
+        - R3
+        - reference
+        - configs
+      additionalProperties: False
+  experiments:
+    description: MPRA experiments to run with configurations
+    type: object
+    additionalProperties:
+      description: name of the experiment
+      type: object
+      properties:
+        bc_length:
+          type: integer
+        umi_length:
+          type: integer
+        data_folder:
+          type: string
+        experiment_file:
+          type: string
+        demultiplex:
+          type: boolean
+        design_file:
+          type: string
+        label_file:
+          type: string
+        assignments:
+          type: object
+          additionalProperties:
+            type: string
+        sampling:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              DNAdownsampling:
+                type: integer
+              RNAdownsampling:
+                type: integer
+        configs:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              bc_threshold:
+                type: integer
+              minDNACounts:
+                type: integer
+              minRNACounts:
+                type: integer
+            required:
+              - bc_threshold
+              - minDNACounts
+              - minRNACounts
+        variants:
+          type: object
+          properties:
+            map:
+              type: string
+            min_barcodes:
+              type: array
+              items:
+                type: integer
+          required:
+            - map
+            - min_barcodes
+      # entries that have to be in the config file for successful validation
+      required:
+        - bc_length
+        - umi_length
+        - data_folder
+        - experiment_file
+        - demultiplex
+        - design_file
+        - assignments
+additionalProperties: False
+minProperties: 1

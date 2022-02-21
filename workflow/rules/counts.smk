@@ -7,7 +7,7 @@
 
 rule create_demultiplexed_index:
     output:
-        "results/{project}/counts/demultiplex_index.tsv",
+        "results/experiments/{project}/counts/demultiplex_index.tsv",
     run:
         import csv
 
@@ -38,11 +38,11 @@ checkpoint create_demultiplexed_BAM_umi:
         rev_fastq=lambda wc: getRevWithIndex(wc.project),
         umi_fastq=lambda wc: getUMIWithIndex(wc.project),
         index_fastq=lambda wc: getIndexWithIndex(wc.project),
-        index_list="results/{project}/counts/demultiplex_index.tsv",
+        index_list="results/experiments/{project}/counts/demultiplex_index.tsv",
     output:
-        "results/{project}/counts/demultiplex_{name}.bam",
+        "results/experiments/{project}/counts/demultiplex_{name}.bam",
     params:
-        outdir="results/{project}/counts/",
+        outdir="results/experiments/{project}/counts/",
     conda:
         "../envs/mpraflow_py27.yaml"
     shell:
@@ -95,18 +95,18 @@ rule aggregate_demultiplex:
     input:
         lambda wc: aggregate_input(wc.project),
     output:
-        touch("results/{project}/counts/demultiplex.done"),
+        touch("results/experiments/{project}/counts/demultiplex.done"),
 
 
 rule mergeTrimReads_demultiplexed_BAM_umi:
     input:
-        demultiplex="results/{project}/counts/demultiplex.done",
+        demultiplex="results/experiments/{project}/counts/demultiplex.done",
     output:
-        "results/{project}/counts/merged_demultiplex_{condition}_{replicate}_{type}.bam",
+        "results/experiments/{project}/counts/merged_demultiplex_{condition}_{replicate}_{type}.bam",
     conda:
         "../envs/mpraflow_py27.yaml"
     params:
-        bam="results/{project}/counts/demultiplex_{condition}_{replicate}_{type}.bam",
+        bam="results/experiments/{project}/counts/demultiplex_{condition}_{replicate}_{type}.bam",
     shell:
         """
         samtools view -h {params.bam} | \
@@ -124,7 +124,7 @@ rule create_BAM_umi:
         rev_fastq=lambda wc: getRev(wc.project, wc.condition, wc.replicate, wc.type),
         umi_fastq=lambda wc: getUMI(wc.project, wc.condition, wc.replicate, wc.type),
     output:
-        "results/{project}/counts/{condition}_{replicate}_{type}.bam",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}.bam",
     params:
         bc_length=lambda wc: config[wc.project]["bc_length"],
         datasetID="{condition}_{replicate}_{type}",
@@ -182,7 +182,7 @@ rule raw_counts_umi:
     input:
         lambda wc: getBam(wc.project, wc.condition, wc.replicate, wc.type),
     output:
-        "results/{project}/counts/{condition}_{replicate}_{type}_raw_counts.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_raw_counts.tsv.gz",
     params:
         umi_length=lambda wc: config[wc.project]["umi_length"],
         datasetID="{condition}_{replicate}_{type}",
@@ -205,9 +205,9 @@ rule filter_counts:
     conda:
         "../envs/mpraflow_py27.yaml"
     input:
-        "results/{project}/counts/{condition}_{replicate}_{type}_raw_counts.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_raw_counts.tsv.gz",
     output:
-        "results/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
     params:
         bc_length=lambda wc: config[wc.project]["bc_length"],
         datasetID="{condition}_{replicate}_{type}",
@@ -227,9 +227,9 @@ rule final_counts_umi:
     Discarding PCR duplicates (taking BCxUMI only one time)
     """
     input:
-        "results/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
     output:
-        counts="results/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
+        counts="results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
     shell:
         """
         zcat {input} | awk '{{print $1}}' | \
@@ -243,9 +243,9 @@ rule final_counts_umi_full:
     TODO
     """
     input:
-        "results/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
     output:
-        "results/{project}/counts/{condition}_{replicate}_{type}_final_counts_full.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts_full.tsv.gz",
     shell:
         """
         zcat  {input} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | gzip -c > {output}
@@ -256,9 +256,9 @@ rule final_counts_umi_sampleDNA:
     Creates full + downsampler DNA files
     """
     input:
-        "results/{project}/counts/{condition}_{replicate}_DNA_final_counts_full.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_DNA_final_counts_full.tsv.gz",
     output:
-        "results/{project}/counts/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
     params:
         downsampling=lambda wc: config[wc.project]["sampling"][wc.sampling]["DNAdownsampling"],
     wildcard_constraints:
@@ -275,9 +275,9 @@ rule final_counts_umi_sampleRNA:
     Creates full + downsampler RNA files
     """
     input:
-        "results/{project}/counts/{condition}_{replicate}_RNA_final_counts_full.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_RNA_final_counts_full.tsv.gz",
     output:
-        "results/{project}/counts/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
     params:
         downsampling=lambda wc: config[wc.project]["sampling"][wc.sampling]["RNAdownsampling"],
     wildcard_constraints:
@@ -298,10 +298,10 @@ rule dna_rna_merge_counts:
     conda:
         "../envs/mpraflow_py36.yaml"
     input:
-        dna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
-        rna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
+        dna="results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
+        rna="results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
     output:
-        "results/{project}/{raw_or_assigned}/merged/{mergeType}/{condition}_{replicate}_merged_counts_{sampling}.tsv.gz",
+        "results/experiments/{project}/{raw_or_assigned}/merged/{mergeType}/{condition}_{replicate}_merged_counts_{sampling}.tsv.gz",
     params:
         zero=lambda wc: "false" if wc.mergeType == "withoutZeros" else "true",
     shell:

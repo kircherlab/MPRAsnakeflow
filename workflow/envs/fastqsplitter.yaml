@@ -1,0 +1,8 @@
+---
+name: fastqsplitter
+channels:
+  - bioconda
+  - defaults
+  - conda-forge
+dependencies:
+  - fastqsplitter
