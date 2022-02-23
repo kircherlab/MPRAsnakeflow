@@ -253,39 +253,43 @@ rule final_counts_umi_full:
 
 rule final_counts_umi_sampleDNA:
     """
-    Creates full + downsampler DNA files
+    Creates full + new distribution DNA files
     """
     input:
         "results/{project}/counts/{condition}_{replicate}_DNA_final_counts_full.tsv.gz",
     output:
         "results/{project}/counts/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
     params:
-        downsampling=lambda wc: config[wc.project]["sampling"][wc.sampling]["DNAdownsampling"],
+        samplingMean=lambda wc: config[wc.project]["sampling"][wc.sampling]["DNAmean"],
+        samplingStd=lambda wc: config[wc.project]["sampling"][wc.sampling]["DNAstd"],
     wildcard_constraints:
         downsampling = '^full'
     shell:
         """
-        python {SCRIPTS_DIR}/count/downsampler.py --input {input} \
-        --threshold {params.downsampling} \
+        python {SCRIPTS_DIR}/count/samplerer.py --input {input} \
+        --mean {params.samplingMean} \
+        --std {params.samplingStd} \
         --output {output}
         """
 
 rule final_counts_umi_sampleRNA:
     """
-    Creates full + downsampler RNA files
+    Creates full + new distribution RNA files
     """
     input:
         "results/{project}/counts/{condition}_{replicate}_RNA_final_counts_full.tsv.gz",
     output:
         "results/{project}/counts/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
     params:
-        downsampling=lambda wc: config[wc.project]["sampling"][wc.sampling]["RNAdownsampling"],
+        samplingMean=lambda wc: config[wc.project]["sampling"][wc.sampling]["RNAmean"],
+        samplingStd=lambda wc: config[wc.project]["sampling"][wc.sampling]["RNAstd"],
     wildcard_constraints:
         downsampling = '^full'
     shell:
         """
-        python {SCRIPTS_DIR}/count/downsampler.py --input {input} \
-        --threshold {params.downsampling} \
+        python {SCRIPTS_DIR}/count/samplerer.py --input {input} \
+        --mean {params.samplingMean} \
+        --std {params.samplingStd} \
         --output {output}
         """
 
