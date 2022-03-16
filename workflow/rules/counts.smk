@@ -170,7 +170,7 @@ def getBam(project, condition, replicate, type):
             type,
         )
     else:
-        return "results/%s/counts/%s_%s_%s.bam" % (project, condition, replicate, type)
+        return "results/experiments/%s/counts/%s_%s_%s.bam" % (project, condition, replicate, type)
 
 
 rule raw_counts_umi:
