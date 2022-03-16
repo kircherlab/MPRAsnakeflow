@@ -38,6 +38,13 @@ additionalProperties:
             type: integer
           RNAdownsampling:
             type: integer  
+          DNAprop:
+            type: number
+          seed:
+            type: integer  
+          RNAprop:
+            type: number             
+
     configs:
       type: object
       additionalProperties:

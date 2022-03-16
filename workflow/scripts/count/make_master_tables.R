@@ -1,7 +1,5 @@
 #Adapted from Vikram Agarwal by Gracie Gordon
 
-cpath <- grep('conda', .libPaths(), value=TRUE, ignore.case=TRUE)
-.libPaths(cpath)
 
 library(dplyr)
 library(optparse)

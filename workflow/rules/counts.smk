@@ -251,41 +251,51 @@ rule final_counts_umi_full:
         zcat  {input} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | gzip -c > {output}
         """
 
-rule final_counts_umi_sampleDNA:
+def counts_getSamplingConfig(project, sampling, prop, command):
+    if prop in config[project]["sampling"][sampling]:
+        return "--%s %f" % (command, config[project]["sampling"][sampling][prop])
+    else:
+        return ""
+
+rule final_counts_umi_shiftDNA:
     """
-    Creates full + downsampler DNA files
+    Creates full + new distribution DNA files
     """
     input:
         "results/{project}/counts/{condition}_{replicate}_DNA_final_counts_full.tsv.gz",
     output:
         "results/{project}/counts/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
     params:
-        downsampling=lambda wc: config[wc.project]["sampling"][wc.sampling]["DNAdownsampling"],
+        samplingprop=lambda wc: counts_getSamplingConfig(wc.project, wc.sampling, "DNAprop", "prop"),
+        downsampling=lambda wc: counts_getSamplingConfig(wc.project, wc.sampling, "DNAdownsampling", "threshold"),
     wildcard_constraints:
         downsampling = '^full'
     shell:
         """
-        python {SCRIPTS_DIR}/count/downsampler.py --input {input} \
-        --threshold {params.downsampling} \
+        python {SCRIPTS_DIR}/count/samplerer.py --input {input} \
+        {params.samplingprop} \
+        {params.downsampling} \
         --output {output}
         """
 
-rule final_counts_umi_sampleRNA:
+rule final_counts_umi_shiftRNA:
     """
-    Creates full + downsampler RNA files
+    Creates full + new distribution RNA files
     """
     input:
         "results/{project}/counts/{condition}_{replicate}_RNA_final_counts_full.tsv.gz",
     output:
         "results/{project}/counts/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
     params:
-        downsampling=lambda wc: config[wc.project]["sampling"][wc.sampling]["RNAdownsampling"],
+        samplingprop=lambda wc: counts_getSamplingConfig(wc.project, wc.sampling, "RNAprop", "prop"),
+        downsampling=lambda wc: counts_getSamplingConfig(wc.project, wc.sampling, "RNAdownsampling", "threshold"),
     wildcard_constraints:
         downsampling = '^full'
     shell:
         """
-        python {SCRIPTS_DIR}/count/downsampler.py --input {input} \
-        --threshold {params.downsampling} \
+        python {SCRIPTS_DIR}/count/samplerer.py --input {input} \
+        {params.samplingprop} \
+        {params.downsampling} \
         --output {output}
         """
 
