@@ -10,7 +10,9 @@ experiments:
     experiment_file: resources/experiment.csv
     demultiplex: False
     assignments:
-      standard: resources/SRR10800986_filtered_coords_to_barcodes.tsv.gz
+      standard:
+        type: file
+        value: resources/SRR10800986_filtered_coords_to_barcodes.tsv.gz
     design_file: reseources/design.fa
     sampling:
       samplingDist3:
