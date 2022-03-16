@@ -1,0 +1,23 @@
+global:
+  assignments:
+    split_number: 300
+experiments:
+  test_basic_countSAMPLINGdist3:
+    bc_length: 15
+    umi_length: 10
+    data_folder: resources/Count_Basic/data
+    experiment_file: resources/experiment.csv
+    demultiplex: False
+    assignments:
+      standard: resources/SRR10800986_filtered_coords_to_barcodes.tsv.gz
+    design_file: reseources/design.fa
+    sampling:
+      samplingDist3:
+        DNAprop: 30000000
+        RNAprop: 50000000
+    configs:
+      threshold1:
+        bc_threshold: 1
+        minDNACounts: 1
+        minRNACounts: 1
+

@@ -23,6 +23,7 @@ properties:
     type: object
     additionalProperties:
       description: name of the assignment
+    configs:
       type: object
       properties:
         R1:
@@ -118,6 +119,13 @@ properties:
                 type: integer
               RNAdownsampling:
                 type: integer
+              DNAprop:
+                type: number
+              seed:
+                type: integer
+              RNAprop:
+                type: number
+            additionalProperties: False
         configs:
           type: object
           additionalProperties:

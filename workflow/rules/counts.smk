@@ -126,7 +126,7 @@ rule create_BAM_umi:
     output:
         "results/experiments/{project}/counts/{condition}_{replicate}_{type}.bam",
     params:
-        bc_length=lambda wc: config[wc.project]["bc_length"],
+        bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
         datasetID="{condition}_{replicate}_{type}",
     conda:
         "../envs/mpraflow_py27.yaml"
@@ -162,7 +162,7 @@ def getBam(project, condition, replicate, type):
     """
     gelper to get the correct BAM file (demultiplexed or not)
     """
-    if config[project]["demultiplex"]:
+    if config["experiments"][project]["demultiplex"]:
         return "results/%s/counts/merged_demultiplex_%s_%s_%s.bam" % (
             project,
             condition,
@@ -184,7 +184,7 @@ rule raw_counts_umi:
     output:
         "results/experiments/{project}/counts/{condition}_{replicate}_{type}_raw_counts.tsv.gz",
     params:
-        umi_length=lambda wc: config[wc.project]["umi_length"],
+        umi_length=lambda wc: config["experiments"][wc.project]["umi_length"],
         datasetID="{condition}_{replicate}_{type}",
     shell:
         """
@@ -209,7 +209,7 @@ rule filter_counts:
     output:
         "results/experiments/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
     params:
-        bc_length=lambda wc: config[wc.project]["bc_length"],
+        bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
         datasetID="{condition}_{replicate}_{type}",
     shell:
         """
@@ -251,41 +251,52 @@ rule final_counts_umi_full:
         zcat  {input} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | gzip -c > {output}
         """
 
-rule final_counts_umi_sampleDNA:
+def counts_getSamplingConfig(project, sampling, prop, command):
+    if "sampling" in config['experiments'][project]:
+        if prop in config['experiments'][project]["sampling"][sampling]:
+            return "--%s %f" % (command, config['experiments'][project]["sampling"][sampling][prop])
+    
+    return ""
+
+rule final_counts_umi_shiftDNA:
     """
-    Creates full + downsampler DNA files
+    Creates full + new distribution DNA files
     """
     input:
         "results/experiments/{project}/counts/{condition}_{replicate}_DNA_final_counts_full.tsv.gz",
     output:
         "results/experiments/{project}/counts/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
     params:
-        downsampling=lambda wc: config[wc.project]["sampling"][wc.sampling]["DNAdownsampling"],
+        samplingprop=lambda wc: counts_getSamplingConfig(wc.project, wc.sampling, "DNAprop", "prop"),
+        downsampling=lambda wc: counts_getSamplingConfig(wc.project, wc.sampling, "DNAdownsampling", "threshold"),
     wildcard_constraints:
         downsampling = '^full'
     shell:
         """
-        python {SCRIPTS_DIR}/count/downsampler.py --input {input} \
-        --threshold {params.downsampling} \
+        python {SCRIPTS_DIR}/count/samplerer.py --input {input} \
+        {params.samplingprop} \
+        {params.downsampling} \
         --output {output}
         """
 
-rule final_counts_umi_sampleRNA:
+rule final_counts_umi_shiftRNA:
     """
-    Creates full + downsampler RNA files
+    Creates full + new distribution RNA files
     """
     input:
         "results/experiments/{project}/counts/{condition}_{replicate}_RNA_final_counts_full.tsv.gz",
     output:
         "results/experiments/{project}/counts/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
     params:
-        downsampling=lambda wc: config[wc.project]["sampling"][wc.sampling]["RNAdownsampling"],
+        samplingprop=lambda wc: counts_getSamplingConfig(wc.project, wc.sampling, "RNAprop", "prop"),
+        downsampling=lambda wc: counts_getSamplingConfig(wc.project, wc.sampling, "RNAdownsampling", "threshold"),
     wildcard_constraints:
         downsampling = '^full'
     shell:
         """
-        python {SCRIPTS_DIR}/count/downsampler.py --input {input} \
-        --threshold {params.downsampling} \
+        python {SCRIPTS_DIR}/count/samplerer.py --input {input} \
+        {params.samplingprop} \
+        {params.downsampling} \
         --output {output}
         """
 

@@ -124,8 +124,8 @@ rule statistic_calc_correlations:
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
         label=(
-            lambda wc: config[wc.project]["label_file"]
-            if "label_file" in config[wc.project]
+            lambda wc: config["experiments"][wc.project]["label_file"]
+            if "label_file" in config["experiments"][wc.project]
             else []
         ),
     output:
@@ -157,11 +157,11 @@ rule statistic_calc_correlations:
         replicates=lambda wc: ",".join(
             getReplicatesOfCondition(wc.project, wc.condition)
         ),
-        thresh=lambda wc: config[wc.project]["configs"][wc.config]["bc_threshold"],
+        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["bc_threshold"],
         outdir="results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_{sampling}",
         label=(
-            lambda wc: "--label %s" % config[wc.project]["label_file"]
-            if "label_file" in config[wc.project]
+            lambda wc: "--label %s" % config["experiments"][wc.project]["label_file"]
+            if "label_file" in config["experiments"][wc.project]
             else ""
         ),
     shell:
@@ -196,7 +196,7 @@ rule statistic_combine_oligo_correlation:
             subcategory="Oligos",
         ),
     params:
-        thresh=lambda wc: config[wc.project]["configs"][wc.config]["bc_threshold"],
+        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["bc_threshold"],
     shell:
         """
         set +o pipefail;
