@@ -171,12 +171,13 @@ rule assignment_getBCs:
         """
         samtools view -F 1792 {input} | \
         awk -v "OFS=\t" '{{
-            split($(NF-1),a,":");
-            if (a[3] !~ /N/) {{
+            split($(NF),a,":");
+            split(a[3],a,",");
+            if (a[1] !~ /N/) {{
                 if (($5 > 0) && ($4 >= 15) && ($4 <= 17) && (length($10) >= 195) && (length($10) <= 205)) {{
-                    print a[3],$3,$4";"$6";"$12";"$13";"$5 
+                    print a[1],$3,$4";"$6";"$12";"$13";"$5 
                 }} else {{
-                    print a[3],"other","NA" 
+                    print a[1],"other","NA" 
                 }}
             }}
         }}' | sort -k1,1 -k2,2 -k3,3 | gzip -c > {output}
@@ -201,9 +202,13 @@ rule assignment_filter:
         if "unknown_other"
         in config["assignments"][wc.assignment]["configs"][wc.assignment_config]
         else "",
+        ambiguous=lambda wc: "-a"
+        if "ambiguous"
+        in config["assignments"][wc.assignment]["configs"][wc.assignment_config]
+        else "",
     shell:
         """
         zcat  {input} | \
-        python {SCRIPTS_DIR}/assignment/filterAssignmentTsv.py -m {params.min_support} -f {params.fraction} {params.unknown_other} | \
+        python {SCRIPTS_DIR}/assignment/filterAssignmentTsv.py -m {params.min_support} -f {params.fraction} {params.unknown_other} {params.ambiguous}| \
         gzip -c > {output}
         """

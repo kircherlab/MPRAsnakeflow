@@ -576,6 +576,13 @@ rule all_stats_BCNucleotideComposition:
         ),
 
 
+def getAssignment_helper(file):
+    return expand(
+        file,
+        assignment=getAssignments(),
+    )
+
+
 def getAssignmentConfig_helper(file):
     output = []
     for assignment in getAssignments():
@@ -591,6 +598,9 @@ rule all_assignment:
     input:
         getAssignmentConfig_helper(
             "results/assignment/{assignment}/assignment_barcodes_incl_other.{config}.sorted.tsv.gz",
+        ),
+        getAssignment_helper(
+            "results/assignment/{assignment}/stats/assignment/bam_stats.txt",
         ),
 
 

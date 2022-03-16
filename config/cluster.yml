@@ -15,18 +15,18 @@ assignment_getInputs:
   time: "0-10:00"
   queue: medium
 assignment_merge:
-  time: "0-04:00"
-  queue: short
+  time: "0-08:00"
+  queue: medium
 assignment_fastq_split:
   time: "0-01:00"
   threads: 10
   mem: 10G
   queue: debug
 assignment_mapping:
-  time: "0-04:00"
+  time: "0-08:00"
   threads: 30
   mem: 20G
-  queue: short
+  queue: medium
 assignment_getBCs:
   time: "0-04:00"
   threads: 1

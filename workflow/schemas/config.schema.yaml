@@ -58,6 +58,8 @@ properties:
                 maximum: 1
               unknown_other:
                 type: boolean
+              ambiguous:
+                type: boolean
             required:
               - min_support
               - fraction
@@ -94,7 +96,19 @@ properties:
         assignments:
           type: object
           additionalProperties:
-            type: string
+            type: object
+            properties:
+              type:
+                type: string
+                enum:
+                  - file
+                  - config
+              value:
+                type: string
+            required:
+              - type
+              - value
+            additionalProperties: False
         sampling:
           type: object
           additionalProperties:
