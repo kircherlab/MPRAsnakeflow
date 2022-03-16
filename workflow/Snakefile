@@ -10,7 +10,7 @@ import pandas as pd
 ##### check snakemake min version #####
 from snakemake.utils import min_version
 
-min_version("6.12.3")
+min_version("7.2.1")
 
 ##### load config and sample sheets #####
 from snakemake.utils import validate
