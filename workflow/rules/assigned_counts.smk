@@ -11,7 +11,7 @@ rule assignBarcodes:
         "../envs/mpraflow_py36.yaml"
     input:
         counts="results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts_{sampling}.tsv.gz",
-        association=lambda wc: config["experiments"][wc.project]["assignments"][wc.assignment],
+        association=lambda wc: getAssignmentFile(wc.project, wc.assignment),
     output:
         counts="results/experiments/{project}/assigned_counts/{assignment}/{condition}_{replicate}_{type}_final_counts_{sampling}.tsv.gz",
         stats="results/experiments/{project}/stats/assigned_counts/{assignment}/{condition}_{replicate}_{type}_{sampling}.statistic.tsv.gz",
@@ -31,7 +31,7 @@ rule createAssignmentPickleFile:
     conda:
         "envs/mpraflow_py36.yaml"
     input:
-        lambda wc: config["experiments"][wc.project]["assignments"][wc.assignment],
+        lambda wc: getAssignmentFile(wc.project, wc.assignment),
     output:
         "results/experiments/{project}/assigned_counts/{assignment}/assignment.pickle",
     shell:
@@ -47,17 +47,23 @@ rule dna_rna_merge:
         counts=lambda wc: expand(
             "results/experiments/{{project}}/counts/merged/{mergeType}/{{condition}}_{{replicate}}_merged_counts_{{sampling}}.tsv.gz",
         mergeType="withoutZeros"
-            if config["experiments"][wc.project]["configs"][wc.config]["minRNACounts"] > 0
-            and config["experiments"][wc.project]["configs"][wc.config]["minDNACounts"] > 0
+            if config["experiments"][wc.project]["configs"][wc.config]["minRNACounts"]
+            > 0
+            and config["experiments"][wc.project]["configs"][wc.config]["minDNACounts"]
+            > 0
             else "withZeros",
         ),
-        association=lambda wc: config["experiments"][wc.project]["assignments"][wc.assignment],
+        association=lambda wc: getAssignmentFile(wc.project, wc.assignment),
     output:
         counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts_{sampling}.tsv.gz",
         stats="results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts_{sampling}.statistic.tsv.gz",
     params:
-        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["minRNACounts"],
-        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["minDNACounts"],
+        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
+            wc.config
+        ]["minRNACounts"],
+        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
+            wc.config
+        ]["minDNACounts"],
     shell:
         """
         python {SCRIPTS_DIR}/count/merge_label.py --counts {input.counts} \
@@ -96,7 +102,9 @@ rule make_master_tables:
         replicates=lambda wc: ",".join(
             getReplicatesOfCondition(wc.project, wc.condition)
         ),
-        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["bc_threshold"],
+        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
+            "bc_threshold"
+        ],
     shell:
         """
         Rscript {SCRIPTS_DIR}/count/make_master_tables.R \
