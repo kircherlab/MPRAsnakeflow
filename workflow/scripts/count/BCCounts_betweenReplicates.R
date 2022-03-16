@@ -1,6 +1,4 @@
 
-# cpath <- grep('conda', .libPaths(), value=TRUE, ignore.case=TRUE)
-# .libPaths(cpath)
 
 library(optparse)
 library(tidyverse)
