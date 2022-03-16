@@ -70,7 +70,7 @@ rule dna_rna_merge:
 
 rule make_master_tables:
     conda:
-        "../envs/mpraflow_r.yaml"
+        "../envs/r.yaml"
     input:
         counts=lambda wc: expand(
             "results/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts_{{sampling}}.tsv.gz",

@@ -1,0 +1,12 @@
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - r-base
+  - r-cowplot
+  - r-dplyr
+  - r-ggplot2
+  - r-optparse
+  - r-readr
+  - r-tidyverse

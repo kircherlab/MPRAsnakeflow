@@ -162,7 +162,7 @@ rule statistic_BC_in_RNA_DNA_merge:
 # making final count statistics
 rule statistic_counts_final:
     conda:
-        "../../envs/mpraflow_r.yaml"
+        "../../envs/r.yaml"
     input:
         counts="results/{project}/stats/counts/count_{countType}.tsv",
         shared="results/{project}/stats/counts/BC_in_RNA_DNA_{countType}.tsv",

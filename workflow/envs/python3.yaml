@@ -1,0 +1,16 @@
+---
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - click
+  - dask
+  - matplotlib
+  - numpy
+  - pandas
+  - pysam
+  - python
+  - scikit-learn
+  - scipy
+  - seaborn
