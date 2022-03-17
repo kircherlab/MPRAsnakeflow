@@ -5,9 +5,7 @@
 
 import pickle
 import click
-import numpy
 import pandas
-import sys
 
 from Bio import SeqIO
 

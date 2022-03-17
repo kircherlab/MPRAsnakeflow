@@ -1,13 +1,7 @@
 #Author: Gracie Gordon 2019
 #merge tables
 
-import sys
 import pandas as pd
-import numpy as np
-
-import math
-import pickle
-
 import click
 
 

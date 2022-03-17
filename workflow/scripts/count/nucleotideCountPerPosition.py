@@ -2,8 +2,6 @@
 # Nucleotides count per position
 
 import pandas as pd
-import numpy as np
-
 import click
 
 

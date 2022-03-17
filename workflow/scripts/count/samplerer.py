@@ -12,8 +12,6 @@ usecase: samplerer.py --input <count_file> --prop <proportion to achieve> --outp
 
 import pandas as pd
 import click
-import statistics as stat
-import numpy as np
 import math
 import random
 

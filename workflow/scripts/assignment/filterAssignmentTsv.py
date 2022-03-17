@@ -8,10 +8,9 @@
 :Date: *17.09.2013
 """
 
-import sys, os
+import sys
 from optparse import OptionParser
 from collections import defaultdict
-import gzip
 
 ## Assumes a barcode sorted file with three columns
 ## 1: barcode 

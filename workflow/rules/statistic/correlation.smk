@@ -59,8 +59,6 @@ rule statistic_correlate_BC_counts:
 
 
 rule statistic_combine_bc_correlation_raw:
-    conda:
-        "../../envs/mpraflow_py36.yaml"
     input:
         lambda wc: expand(
             "results/experiments/{{project}}/stats/barcode/counts/{{mergeType}}/{condition}_{{sampling}}_barcode_correlation.tsv",
@@ -85,8 +83,6 @@ rule statistic_combine_bc_correlation_raw:
 
 
 rule statistic_combine_bc_correlation_assigned:
-    conda:
-        "../../envs/mpraflow_py36.yaml"
     input:
         lambda wc: expand(
             "results/experiments/{{project}}/stats/barcode/assigned_counts/{{assignment}}/{{mergeType}}/{condition}_{{sampling}}_barcode_correlation.tsv",
@@ -177,8 +173,6 @@ rule statistic_calc_correlations:
 
 
 rule statistic_combine_oligo_correlation:
-    conda:
-        "../../envs/mpraflow_py36.yaml"
     input:
         correlation=lambda wc: expand(
             "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/{condition}_{{sampling}}_correlation.tsv",

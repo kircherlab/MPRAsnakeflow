@@ -8,10 +8,9 @@
 rule create_demultiplexed_index:
     output:
         "results/experiments/{project}/counts/demultiplex_index.tsv",
-    conda:
-        "../envs/mpraflow_pandas.yaml"
     run:
         import csv
+        import pandas as pd
 
         exp = getExperiments(wildcards.project).astype(str)
 
@@ -46,7 +45,7 @@ checkpoint create_demultiplexed_BAM_umi:
     params:
         outdir="results/experiments/{project}/counts/",
     conda:
-        "../envs/mpraflow_py27.yaml"
+        "../envs/python27.yaml"
     shell:
         """
             set +o pipefail;
@@ -106,7 +105,7 @@ rule mergeTrimReads_demultiplexed_BAM_umi:
     output:
         "results/experiments/{project}/counts/merged_demultiplex_{condition}_{replicate}_{type}.bam",
     conda:
-        "../envs/mpraflow_py27.yaml"
+        "../envs/python27.yaml"
     params:
         bam="results/experiments/{project}/counts/demultiplex_{condition}_{replicate}_{type}.bam",
     shell:
@@ -131,7 +130,7 @@ rule create_BAM_umi:
         bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
         datasetID="{condition}_{replicate}_{type}",
     conda:
-        "../envs/mpraflow_py27.yaml"
+        "../envs/python27.yaml"
     shell:
         """
         set +o pipefail;
@@ -209,8 +208,6 @@ rule filter_counts:
     """
     Filter the counts to BCs only of the correct length (defined in the config file)
     """
-    conda:
-        "../envs/mpraflow_py27.yaml"
     input:
         "results/experiments/{project}/counts/{condition}_{replicate}_{type}_raw_counts.tsv.gz",
     output:
@@ -279,7 +276,7 @@ rule final_counts_umi_shiftDNA:
     output:
         "results/experiments/{project}/counts/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
     conda:
-        "../envs/mpraflow_py36.yaml"
+        "../envs/python3.yaml"
     params:
         samplingprop=lambda wc: counts_getSamplingConfig(
             wc.project, wc.sampling, "DNAprop", "prop"
@@ -307,7 +304,7 @@ rule final_counts_umi_shiftRNA:
     output:
         "results/experiments/{project}/counts/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
     conda:
-        "../envs/mpraflow_py36.yaml"
+        "../envs/python3.yaml"
     params:
         samplingprop=lambda wc: counts_getSamplingConfig(
             wc.project, wc.sampling, "RNAprop", "prop"
@@ -332,8 +329,6 @@ rule dna_rna_merge_counts:
     Is done in two ways. First no not allow zeros in DNA or RNA BCs (withoutZeros).
     Second with zeros, so a BC can be defined only in the DNA or RNA (withZeros)
     """
-    conda:
-        "../envs/mpraflow_py36.yaml"
     input:
         dna="results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
         rna="results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",

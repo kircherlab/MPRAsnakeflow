@@ -1,13 +1,9 @@
 #contributed by Tal Ashuach, Max Schubach
 
-import os
 import re
-import sys
-import gzip
 import pandas as pd
 import numpy as np
 import click
-from collections import defaultdict
 
 # options
 @click.command()

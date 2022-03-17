@@ -25,7 +25,7 @@ rule statistic_frequent_umis:
 
 rule statistic_barcode_base_composition:
     conda:
-        "../../envs/mpraflow_pandas.yaml"
+        "../../envs/python3.yaml"
     input:
         counts="results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
     output:

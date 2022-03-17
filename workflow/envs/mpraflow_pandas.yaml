@@ -1,9 +1,0 @@
----
-channels:
-  - conda-forge
-  - bioconda
-  - defaults
-dependencies:
-  - python
-  - pandas
-  - click

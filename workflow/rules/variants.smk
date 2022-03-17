@@ -2,7 +2,7 @@
 
 rule generateVariantTable:
     conda:
-        "../envs/mpraflow_py36.yaml"
+        "../envs/python3.yaml"
     input:
         variant_definition=lambda wc: getVariants(wc.project)["map"],
         counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
@@ -19,7 +19,7 @@ rule generateVariantTable:
 
 rule correlate_variants:
     conda:
-        "../envs/mpraflow_py36.yaml"
+        "../envs/python3.yaml"
     input:
         counts=lambda wc: expand(
             "results/experiments/{{project}}/variants/{{assignment}}/{{config}}/{{condition}}_{replicate}_variantTable.tsv.gz",
