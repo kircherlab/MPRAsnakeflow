@@ -95,7 +95,7 @@ rule assignment_bwa_ref:
         ),
         d="results/assignment/{assignment}/reference/reference.fa.dict",
     conda:
-        "../envs/bwa.yaml"
+        "../envs/bwa_samtools_picard_htslib.yaml"
     shell:
         """
         cp {input} {output.ref};
@@ -119,7 +119,7 @@ rule assignment_mapping:
     output:
         "results/assignment/{assignment}/aligned_merged_reads.bam",
     conda:
-        "../envs/bwa.yaml"
+        "../envs/bwa_samtools_picard_htslib.yaml"
     shell:
         """
         bwa mem -t 30 -L 80 -M -C {input.reference} <(

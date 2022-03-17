@@ -8,6 +8,8 @@
 rule create_demultiplexed_index:
     output:
         "results/experiments/{project}/counts/demultiplex_index.tsv",
+    conda:
+        "../envs/mpraflow_pandas.yaml"
     run:
         import csv
 
@@ -178,7 +180,7 @@ rule raw_counts_umi:
     Counting BCsxUMIs from the BAM files.
     """
     conda:
-        "../envs/mpraflow_py36.yaml"
+        "../envs/bwa_samtools_picard_htslib.yaml"
     input:
         lambda wc: getBam(wc.project, wc.condition, wc.replicate, wc.type),
     output:
@@ -266,6 +268,8 @@ rule final_counts_umi_shiftDNA:
         "results/experiments/{project}/counts/{condition}_{replicate}_DNA_final_counts_full.tsv.gz",
     output:
         "results/experiments/{project}/counts/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
+    conda:
+        "../envs/mpraflow_py36.yaml"
     params:
         samplingprop=lambda wc: counts_getSamplingConfig(wc.project, wc.sampling, "DNAprop", "prop"),
         downsampling=lambda wc: counts_getSamplingConfig(wc.project, wc.sampling, "DNAdownsampling", "threshold"),
