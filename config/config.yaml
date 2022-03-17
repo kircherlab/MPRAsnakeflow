@@ -5,7 +5,9 @@ run4counts_run2Assignment:
   experiment_file: resources/run4counts/experiment_run4.csv
   demultiplex: False
   assignments:
-    run2_incl_other: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/assignment_run2/assignment_barcodes_incl_other.sorted.tsv.gz
+    run2_incl_other:
+      type: file
+      value: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/assignment_run2/assignment_barcodes_incl_other.sorted.tsv.gz
   design_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/reference.fa
   label_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/labels_run2assignment_merged.tsv
   configs:
@@ -23,7 +25,9 @@ run1-3counts_run2Assignment:
   experiment_file: resources/run1-3counts/experiment_run1-3.csv
   demultiplex: False
   assignments:
-    run2_incl_other: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/assignment_run2/assignment_barcodes_incl_other.sorted.tsv.gz
+    run2_incl_other: 
+      type: file
+      value: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/assignment_run2/assignment_barcodes_incl_other.sorted.tsv.gz
   design_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/reference.fa
   label_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/labels_run2assignment_merged.tsv
   configs:
@@ -41,7 +45,9 @@ run5_K562counts_run2Assignment:
   experiment_file: resources/run5_K562counts/experiment_run5.csv
   demultiplex: False
   assignments:
-    run2_incl_other: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/assignment_run2/assignment_barcodes_incl_other.sorted.tsv.gz
+    run2_incl_other: 
+      type: file
+      value: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/assignment_run2/assignment_barcodes_incl_other.sorted.tsv.gz
   design_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/reference.fa
   label_file: /fast/work/groups/ag_kircher/MPRA/MPRA_ML_Experiments/MPRAflow/data/labels_run2assignment_merged.tsv
   configs:
