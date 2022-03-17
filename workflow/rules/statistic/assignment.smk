@@ -7,13 +7,13 @@
 rule statistic_combine_BC_assignment_stats_helper:
     input:
         stats=lambda wc: expand(
-            "results/{{project}}/stats/assigned_counts/{{assignment}}/{{condition}}_{replicate}_{type}_{{sampling}}.statistic.tsv.gz",
+            "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/{{condition}}_{replicate}_{type}_{{sampling}}.statistic.tsv.gz",
             type=["DNA", "RNA"],
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
     output:
         temp(
-            "results/{project}/stats/assigned_counts/{assignment}/helper.{condition}.{sampling}.statistic.tsv.gz"
+            "results/experiments/{project}/stats/assigned_counts/{assignment}/helper.{condition}.{sampling}.statistic.tsv.gz"
         ),
     shell:
         """
@@ -30,12 +30,12 @@ rule statistic_combine_BC_assignment_stats_helper:
 rule statistic_combine_BC_assignment_stats:
     input:
         stats=lambda wc: expand(
-            "results/{{project}}/stats/assigned_counts/{{assignment}}/helper.{condition}.{{sampling}}.statistic.tsv.gz",
+            "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/helper.{condition}.{{sampling}}.statistic.tsv.gz",
             condition=getConditions(wc.project),
         ),
     output:
         report(
-            "results/{project}/stats/statistic_assigned_counts_single_{assignment}_{sampling}.tsv",
+            "results/experiments/{project}/stats/statistic_assigned_counts_single_{assignment}_{sampling}.tsv",
             caption="../../report/assigned_counts_beforeMerge.rst",
             category="{project}",
             subcategory="Assignment",
@@ -64,7 +64,7 @@ def getAssignedCountsStatistic(project, assignment, config, condition, sampling)
     output = []
     for index, row in exp.iterrows():
         output += [
-            "--statistic %s results/%s/stats/assigned_counts/%s/%s/%s_%s_merged_assigned_counts_%s.statistic.tsv.gz"
+            "--statistic %s results/experiments/%s/stats/assigned_counts/%s/%s/%s_%s_merged_assigned_counts_%s.statistic.tsv.gz"
             % (
                 str(row["Replicate"]),
                 project,
@@ -83,11 +83,11 @@ rule statistic_combine_stats_dna_rna_merge:
         "../../envs/mpraflow_py36.yaml"
     input:
         lambda wc: expand(
-            "results/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts_{{sampling}}.statistic.tsv.gz",
+            "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts_{{sampling}}.statistic.tsv.gz",
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
     output:
-        "results/{project}/stats/assigned_counts/{assignment}/{config}/combined/{condition}_merged_assigned_counts_{sampling}.statistic.tsv.gz",
+        "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/combined/{condition}_merged_assigned_counts_{sampling}.statistic.tsv.gz",
     params:
         cond="{condition}",
         statistic=lambda wc: " ".join(
@@ -109,12 +109,12 @@ rule statistic_combine_stats_dna_rna_merge_all:
         "../../envs/mpraflow_py36.yaml"
     input:
         lambda wc: expand(
-            "results/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/combined/{condition}_merged_assigned_counts_{{sampling}}.statistic.tsv.gz",
+            "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/combined/{condition}_merged_assigned_counts_{{sampling}}.statistic.tsv.gz",
             condition=getConditions(wc.project),
         ),
     output:
         report(
-            "results/{project}/stats/statistic_assigned_counts_merged_{assignment}_{config}_{sampling}.tsv",
+            "results/experiments/{project}/stats/statistic_assigned_counts_merged_{assignment}_{config}_{sampling}.tsv",
             caption="../../report/assigned_counts_afterMerge.rst",
             category="{project}",
             subcategory="Assignment",

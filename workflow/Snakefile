@@ -10,7 +10,7 @@ import pandas as pd
 ##### check snakemake min version #####
 from snakemake.utils import min_version
 
-min_version("6.12.3")
+min_version("7.2.1")
 
 ##### load config and sample sheets #####
 from snakemake.utils import validate
@@ -33,6 +33,7 @@ report: "report/workflow.rst"
 ##### General wirldcard constrains #####
 wildcard_constraints:
     project="[^/]+",
+    assignment="[^/]+",
     condition="[^/]+",
     mergeType="(withZeros)|(withoutZeros)",
 
@@ -86,8 +87,34 @@ class MissingVariantInConfigException(Exception):
 
 
 ##### get helpers for different things (like Conditions etc) #####
+def getAssignments():
+    if "assignments" in config:
+        return list(config["assignments"].keys())
+    else:
+        return []
+
+
+def getAssignmentFile(project, assignment):
+    if config["experiments"][project]["assignments"][assignment]["type"] == "file":
+        return config["experiments"][project]["assignments"][assignment]["value"]
+    if config["experiments"][project]["assignments"][assignment]["type"] == "config":
+        conf = config["experiments"][project]["assignments"][assignment]["value"]
+        return expand(
+            "results/assignment/{assignment}/assignment_barcodes_incl_other.{config}.sorted.tsv.gz",
+            assignment=assignment,
+            config=conf,
+        )
+
+
+def getProjects():
+    if "experiments" in config:
+        return list(config["experiments"].keys())
+    else:
+        return []
+
+
 def getExperiments(project):
-    experiments = pd.read_csv(config[project]["experiment_file"])
+    experiments = pd.read_csv(config["experiments"][project]["experiment_file"])
     return experiments
 
 
@@ -96,16 +123,19 @@ def getConditions(project):
     return list(exp.Condition.unique())
 
 
-def getAssignments(project):
-    if "assignments" in config[project] and len(config[project]["assignments"]) > 0:
-        return list(config[project]["assignments"].keys())
+def getProjectAssignments(project):
+    if (
+        "assignments" in config["experiments"][project]
+        and len(config["experiments"][project]["assignments"]) > 0
+    ):
+        return list(config["experiments"][project]["assignments"].keys())
     else:
         raise MissingAssignmentInConfigException(project)
 
 
 def getVariants(project):
-    if "variants" in config[project]:
-        return config[project]["variants"]
+    if "variants" in config["experiments"][project]:
+        return config["experiments"][project]["variants"]
     else:
         raise MissingVariantInConfigException(project)
 
@@ -125,14 +155,14 @@ def getFW(project, condition, replicate, rnaDna_type):
     exp = exp[exp.Condition == condition]
     exp = exp[exp.Replicate.astype(str) == replicate]
     return "%s/%s" % (
-        config[project]["data_folder"],
+        config["experiments"][project]["data_folder"],
         exp[rnaDna_type + "_BC_F"].iloc[0],
     )
 
 
 def getFWWithIndex(project):
     return [
-        config[project]["data_folder"] + f
+        config["experiments"][project]["data_folder"] + f
         for f in getExperiments(project).BC_F.iloc[0].split(";")
     ]
 
@@ -142,14 +172,14 @@ def getRev(project, condition, replicate, rnaDna_type):
     exp = exp[exp.Condition == condition]
     exp = exp[exp.Replicate.astype(str) == replicate]
     return "%s/%s" % (
-        config[project]["data_folder"],
+        config["experiments"][project]["data_folder"],
         exp[rnaDna_type + "_BC_R"].iloc[0],
     )
 
 
 def getRevWithIndex(project):
     return [
-        config[project]["data_folder"] + f
+        config["experiments"][project]["data_folder"] + f
         for f in getExperiments(project).BC_R.iloc[0].split(";")
     ]
 
@@ -158,19 +188,22 @@ def getUMI(project, condition, replicate, rnaDna_type):
     exp = getExperiments(project)
     exp = exp[exp.Condition == condition]
     exp = exp[exp.Replicate.astype(str) == replicate]
-    return "%s/%s" % (config[project]["data_folder"], exp[rnaDna_type + "_UMI"].iloc[0])
+    return "%s/%s" % (
+        config["experiments"][project]["data_folder"],
+        exp[rnaDna_type + "_UMI"].iloc[0],
+    )
 
 
 def getUMIWithIndex(project):
     return [
-        config[project]["data_folder"] + f
+        config["experiments"][project]["data_folder"] + f
         for f in getExperiments(project).UMI.iloc[0].split(";")
     ]
 
 
 def getIndexWithIndex(project):
     return [
-        config[project]["data_folder"] + f
+        config["experiments"][project]["data_folder"] + f
         for f in getExperiments(project).INDEX.iloc[0].split(";")
     ]
 
@@ -188,8 +221,8 @@ def hasReplicates(project, condition=None):
 
 def getSamplings(project):
     output = ["full"]
-    if "sampling" in config[project]:
-        output += list(config[project]["sampling"].keys())
+    if "sampling" in config["experiments"][project]:
+        output += list(config["experiments"][project]["sampling"].keys())
     return output
 
 
@@ -200,7 +233,7 @@ def getOutputProjectSampling_helper(file, betweenReplicates=False):
     When betweenReplicates is True skips projects without replicates in one condition.
     """
     output = []
-    projects = list(config.keys())
+    projects = getProjects()
     for project in projects:
         if not betweenReplicates or hasReplicates(project):
             output += expand(
@@ -219,7 +252,7 @@ def getOutputConditionReplicateType_helper(file, project, skip={}):
     output = []
 
     for key, value in skip.items():
-        if config[project][key] == value:
+        if config["experiments"][project][key] == value:
             return []
     conditions = getConditions(project)
     for condition in conditions:
@@ -240,7 +273,7 @@ def getOutputProjectConditionReplicateType_helper(file, skip={}):
     Can skip projects with the given config set by skip.
     """
     output = []
-    projects = list(config.keys())
+    projects = getProjects()
     for project in projects:
         # skip projects with the following config
         output += getOutputConditionReplicateType_helper(
@@ -263,10 +296,10 @@ def getOutputProjectConditionReplicateTypeSampling_helper(file, skip={}):
     Can skip projects with the given config set by skip.
     """
 
-    "results/{project}/counts/{condition}_{replicate}_{type}_final_counts_{sampling}.tsv.gz"
+    "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts_{sampling}.tsv.gz"
 
     output = []
-    projects = list(config.keys())
+    projects = getProjects()
     for project in projects:
         for sampling in getSamplings(project):
             output += getOutputConditionReplicateType_helper(
@@ -289,7 +322,7 @@ def getOutputProjectConditionType_helper(file):
     Inserts {project}, {condition} and {type} from config into given file.
     """
     output = []
-    projects = list(config.keys())
+    projects = getProjects()
     for project in projects:
         conditions = getConditions(project)
         for condition in conditions:
@@ -307,7 +340,7 @@ def getOutputProjectConditionAssignmentConfigSampling_helper(file):
     Inserts {project}, {condition}, {assignment} and {config} (from configs of project) from config into given file.
     """
     output = []
-    projects = list(config.keys())
+    projects = getProjects()
     for project in projects:
         try:
             conditions = getConditions(project)
@@ -316,8 +349,8 @@ def getOutputProjectConditionAssignmentConfigSampling_helper(file):
                     file,
                     project=project,
                     condition=condition,
-                    assignment=getAssignments(project),
-                    config=list(config[project]["configs"].keys()),
+                    assignment=getProjectAssignments(project),
+                    config=list(config["experiments"][project]["configs"].keys()),
                     sampling=getSamplings(project),
                 )
         except MissingAssignmentInConfigException:
@@ -331,15 +364,15 @@ def getOutputProjectAssignmentConfigSampling_helper(file, betweenReplicates=Fals
     When betweenReplicates is True skips projects without replicates in one condition.
     """
     output = []
-    projects = list(config.keys())
+    projects = getProjects()
     for project in projects:
         if not betweenReplicates or hasReplicates(project):
             try:
                 output += expand(
                     file,
                     project=project,
-                    assignment=getAssignments(project),
-                    config=list(config[project]["configs"].keys()),
+                    assignment=getProjectAssignments(project),
+                    config=list(config["experiments"][project]["configs"].keys()),
                     sampling=getSamplings(project),
                 )
             except MissingAssignmentInConfigException:
@@ -353,7 +386,7 @@ def getOutputProjectAssignmentSampling_helper(file, betweenReplicates=False):
     When betweenReplicates is True skips projects without replicates in one condition.
     """
     output = []
-    projects = list(config.keys())
+    projects = getProjects()
     for project in projects:
         if not betweenReplicates or hasReplicates(project):
             for sampling in getSamplings(project):
@@ -361,7 +394,7 @@ def getOutputProjectAssignmentSampling_helper(file, betweenReplicates=False):
                     output += expand(
                         file,
                         project=project,
-                        assignment=getAssignments(project),
+                        assignment=getProjectAssignments(project),
                         sampling=sampling,
                     )
                 except MissingAssignmentInConfigException:
@@ -375,7 +408,7 @@ def getOutputProjectMergeTypeSampling_helper(file, betweenReplicates=False):
     When betweenReplicates is True skips projects without replicates in one condition.
     """
     output = []
-    projects = list(config.keys())
+    projects = getProjects()
     for project in projects:
         if not betweenReplicates or hasReplicates(project):
             output += expand(
@@ -393,14 +426,14 @@ def getOutputProjectMergeTypeAssignmentSampling_helper(file, betweenReplicates=F
     When betweenReplicates is True skips projects without replicates in one condition.
     """
     output = []
-    projects = list(config.keys())
+    projects = getProjects()
     for project in projects:
         if not betweenReplicates or hasReplicates(project):
             try:
                 output += expand(
                     file,
                     project=project,
-                    assignment=getAssignments(project),
+                    assignment=getProjectAssignments(project),
                     mergeType=["withZeros", "withoutZeros"],
                     sampling=getSamplings(project),
                 )
@@ -416,18 +449,18 @@ def getOutputVariants_helper(file, betweenReplicates=False):
     When betweenReplicates is True skips project/condition without replicates in a condition.
     """
     output = []
-    projects = list(config.keys())
+    projects = getProjects()
     for project in projects:
         conditions = getConditions(project)
         for condition in conditions:
-            if "variants" in config[project]:
+            if "variants" in config["experiments"][project]:
                 if hasReplicates(project, condition):
                     output += expand(
                         file,
                         project=project,
                         condition=condition,
-                        assignment=getAssignments(project),
-                        config=list(config[project]["configs"].keys()),
+                        assignment=getProjectAssignments(project),
+                        config=list(config["experiments"][project]["configs"].keys()),
                     )
     return output
 
@@ -441,60 +474,61 @@ rule all:
     input:
         # stats BC nucleotide composition
         getOutputProjectConditionReplicateType_helper(
-            "results/{project}/stats/counts/BCNucleotideComposition/{condition}_{replicate}_{type}.tsv.gz"
+            "results/experiments/{project}/stats/counts/BCNucleotideComposition/{condition}_{replicate}_{type}.tsv.gz"
         ),
         # counts
         getOutputProjectConditionReplicateType_helper(
-            "results/{project}/counts/{condition}_{replicate}_{type}.bam",
+            "results/experiments/{project}/counts/{condition}_{replicate}_{type}.bam",
             skip={"demultiplex": True},
         ),
         getOutputProjectConditionReplicateType_helper(
-            "results/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz"
+            "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz"
         ),
         # barcode stats
         expand(
-            "results/{project}/stats/statistic_count_{countType}.tsv",
-            project=list(config.keys()),
+            "results/experiments/{project}/stats/statistic_count_{countType}.tsv",
+            project=getProjects(),
             countType=["raw", "filtered"],
         ),
         # counts stats
         getOutputProjectConditionReplicateType_helper(
-            "results/{project}/stats/counts/freqUMIs_{condition}_{replicate}_{type}.txt"
+            "results/experiments/{project}/stats/counts/freqUMIs_{condition}_{replicate}_{type}.txt"
         ),
         getOutputProjectMergeTypeSampling_helper(
-            "results/{project}/stats/statistic_bc_correlation_merged_{mergeType}_{sampling}.tsv",
+            "results/experiments/{project}/stats/statistic_bc_correlation_merged_{mergeType}_{sampling}.tsv",
             True,
         ),
         getOutputProjectMergeTypeAssignmentSampling_helper(
-            "results/{project}/stats/statistic_assigned_bc_correlation_merged_{mergeType}_{assignment}_{sampling}.tsv",
+            "results/experiments/{project}/stats/statistic_assigned_bc_correlation_merged_{mergeType}_{assignment}_{sampling}.tsv",
             True,
         ),
         getOutputProjectSampling_helper(
-            "results/{project}/stats/statistic_overlapBCs_counts_{sampling}.tsv", True
+            "results/experiments/{project}/stats/statistic_overlapBCs_counts_{sampling}.tsv",
+            True,
         ),
         # assignment
         getOutputProjectConditionAssignmentConfigSampling_helper(
-            "results/{project}/assigned_counts/{assignment}/{config}/{condition}_{sampling}_allreps_merged.tsv.gz"
+            "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{sampling}_allreps_merged.tsv.gz"
         ),
         # assignment stats
         getOutputProjectAssignmentConfigSampling_helper(
-            "results/{project}/stats/statistic_assigned_counts_merged_{assignment}_{config}_{sampling}.tsv"
+            "results/experiments/{project}/stats/statistic_assigned_counts_merged_{assignment}_{config}_{sampling}.tsv"
         ),
         getOutputProjectAssignmentConfigSampling_helper(
-            "results/{project}/stats/statistic_oligo_correlation_merged_{assignment}_{config}_{sampling}.tsv",
+            "results/experiments/{project}/stats/statistic_oligo_correlation_merged_{assignment}_{config}_{sampling}.tsv",
             True,
         ),
         getOutputProjectAssignmentSampling_helper(
-            "results/{project}/stats/statistic_assigned_counts_single_{assignment}_{sampling}.tsv",
+            "results/experiments/{project}/stats/statistic_assigned_counts_single_{assignment}_{sampling}.tsv",
             True,
         ),
         getOutputProjectAssignmentSampling_helper(
-            "results/{project}/stats/statistic_overlapBCs_assigned_counts_{assignment}_{sampling}.tsv",
+            "results/experiments/{project}/stats/statistic_overlapBCs_assigned_counts_{assignment}_{sampling}.tsv",
             True,
         ),
         # variants
         getOutputVariants_helper(
-            "results/{project}/stats/variants/{assignment}/{config}/correlation_variantTable.tsv",
+            "results/experiments/{project}/stats/variants/{assignment}/{config}/correlation_variantTable.tsv",
             True,
         ),
 
@@ -502,46 +536,47 @@ rule all:
 rule all_counts:
     input:
         getOutputProjectConditionReplicateTypeSampling_helper(
-            "results/{project}/counts/{condition}_{replicate}_{type}_final_counts_{sampling}.tsv.gz"
+            "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts_{sampling}.tsv.gz"
         ),
 
 
 rule all_counts_stats:
     input:
         getOutputProjectConditionReplicateType_helper(
-            "results/{project}/stats/counts/freqUMIs_{condition}_{replicate}_{type}.txt"
+            "results/experiments/{project}/stats/counts/freqUMIs_{condition}_{replicate}_{type}.txt"
         ),
         getOutputProjectMergeTypeSampling_helper(
-            "results/{project}/stats/statistic_bc_correlation_merged_{mergeType}_{sampling}.tsv",
+            "results/experiments/{project}/stats/statistic_bc_correlation_merged_{mergeType}_{sampling}.tsv",
             True,
         ),
         getOutputProjectSampling_helper(
-            "results/{project}/stats/statistic_overlapBCs_counts_{sampling}.tsv", True
+            "results/experiments/{project}/stats/statistic_overlapBCs_counts_{sampling}.tsv",
+            True,
         ),
 
 
 rule all_assignments:
     input:
         getOutputProjectConditionAssignmentConfigSampling_helper(
-            "results/{project}/assigned_counts/{assignment}/{config}/{condition}_{sampling}_allreps_merged.tsv.gz"
+            "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{sampling}_allreps_merged.tsv.gz"
         ),
 
 
 rule all_assignments_stats:
     input:
         getOutputProjectAssignmentConfigSampling_helper(
-            "results/{project}/stats/statistic_assigned_counts_merged_{assignment}_{config}_{sampling}.tsv"
+            "results/experiments/{project}/stats/statistic_assigned_counts_merged_{assignment}_{config}_{sampling}.tsv"
         ),
         getOutputProjectAssignmentConfigSampling_helper(
-            "results/{project}/stats/statistic_oligo_correlation_merged_{assignment}_{config}_{sampling}.tsv",
+            "results/experiments/{project}/stats/statistic_oligo_correlation_merged_{assignment}_{config}_{sampling}.tsv",
             True,
         ),
         getOutputProjectAssignmentSampling_helper(
-            "results/{project}/stats/statistic_assigned_counts_single_{assignment}_{sampling}.tsv",
+            "results/experiments/{project}/stats/statistic_assigned_counts_single_{assignment}_{sampling}.tsv",
             True,
         ),
         getOutputProjectAssignmentSampling_helper(
-            "results/{project}/stats/statistic_overlapBCs_assigned_counts_{assignment}_{sampling}.tsv",
+            "results/experiments/{project}/stats/statistic_overlapBCs_assigned_counts_{assignment}_{sampling}.tsv",
             True,
         ),
 
@@ -549,7 +584,35 @@ rule all_assignments_stats:
 rule all_stats_BCNucleotideComposition:
     input:
         getOutputProjectConditionReplicateType_helper(
-            "results/{project}/stats/counts/BCNucleotideComposition/{condition}_{replicate}_{type}.tsv.gz"
+            "results/experiments/{project}/stats/counts/BCNucleotideComposition/{condition}_{replicate}_{type}.tsv.gz"
+        ),
+
+
+def getAssignment_helper(file):
+    return expand(
+        file,
+        assignment=getAssignments(),
+    )
+
+
+def getAssignmentConfig_helper(file):
+    output = []
+    for assignment in getAssignments():
+        output += expand(
+            file,
+            assignment=assignment,
+            config=config["assignments"][assignment]["configs"].keys(),
+        )
+    return output
+
+
+rule all_assignment:
+    input:
+        getAssignmentConfig_helper(
+            "results/assignment/{assignment}/assignment_barcodes_incl_other.{config}.sorted.tsv.gz",
+        ),
+        getAssignment_helper(
+            "results/assignment/{assignment}/stats/assignment/bam_stats.txt",
         ),
 
 
@@ -558,6 +621,8 @@ rule all_stats_BCNucleotideComposition:
 ###################
 
 
+# assignment workflow
+include: "rules/assignment.smk"
 # count workflow
 include: "rules/counts.smk"
 # assignimg BCs to oligos

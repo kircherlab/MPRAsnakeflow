@@ -1,0 +1,11 @@
+---
+name: fastqsplitter
+channels:
+  - bioconda
+  - defaults
+  - conda-forge
+dependencies:
+  - bwa
+  - samtools
+  - picard
+  - htslib

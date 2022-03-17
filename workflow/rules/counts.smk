@@ -7,7 +7,9 @@
 
 rule create_demultiplexed_index:
     output:
-        "results/{project}/counts/demultiplex_index.tsv",
+        "results/experiments/{project}/counts/demultiplex_index.tsv",
+    conda:
+        "../envs/mpraflow_pandas.yaml"
     run:
         import csv
 
@@ -38,11 +40,11 @@ checkpoint create_demultiplexed_BAM_umi:
         rev_fastq=lambda wc: getRevWithIndex(wc.project),
         umi_fastq=lambda wc: getUMIWithIndex(wc.project),
         index_fastq=lambda wc: getIndexWithIndex(wc.project),
-        index_list="results/{project}/counts/demultiplex_index.tsv",
+        index_list="results/experiments/{project}/counts/demultiplex_index.tsv",
     output:
-        "results/{project}/counts/demultiplex_{name}.bam",
+        "results/experiments/{project}/counts/demultiplex_{name}.bam",
     params:
-        outdir="results/{project}/counts/",
+        outdir="results/experiments/{project}/counts/",
     conda:
         "../envs/mpraflow_py27.yaml"
     shell:
@@ -95,18 +97,18 @@ rule aggregate_demultiplex:
     input:
         lambda wc: aggregate_input(wc.project),
     output:
-        touch("results/{project}/counts/demultiplex.done"),
+        touch("results/experiments/{project}/counts/demultiplex.done"),
 
 
 rule mergeTrimReads_demultiplexed_BAM_umi:
     input:
-        demultiplex="results/{project}/counts/demultiplex.done",
+        demultiplex="results/experiments/{project}/counts/demultiplex.done",
     output:
-        "results/{project}/counts/merged_demultiplex_{condition}_{replicate}_{type}.bam",
+        "results/experiments/{project}/counts/merged_demultiplex_{condition}_{replicate}_{type}.bam",
     conda:
         "../envs/mpraflow_py27.yaml"
     params:
-        bam="results/{project}/counts/demultiplex_{condition}_{replicate}_{type}.bam",
+        bam="results/experiments/{project}/counts/demultiplex_{condition}_{replicate}_{type}.bam",
     shell:
         """
         samtools view -h {params.bam} | \
@@ -124,9 +126,9 @@ rule create_BAM_umi:
         rev_fastq=lambda wc: getRev(wc.project, wc.condition, wc.replicate, wc.type),
         umi_fastq=lambda wc: getUMI(wc.project, wc.condition, wc.replicate, wc.type),
     output:
-        "results/{project}/counts/{condition}_{replicate}_{type}.bam",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}.bam",
     params:
-        bc_length=lambda wc: config[wc.project]["bc_length"],
+        bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
         datasetID="{condition}_{replicate}_{type}",
     conda:
         "../envs/mpraflow_py27.yaml"
@@ -162,7 +164,7 @@ def getBam(project, condition, replicate, type):
     """
     gelper to get the correct BAM file (demultiplexed or not)
     """
-    if config[project]["demultiplex"]:
+    if config["experiments"][project]["demultiplex"]:
         return "results/%s/counts/merged_demultiplex_%s_%s_%s.bam" % (
             project,
             condition,
@@ -170,7 +172,12 @@ def getBam(project, condition, replicate, type):
             type,
         )
     else:
-        return "results/%s/counts/%s_%s_%s.bam" % (project, condition, replicate, type)
+        return "results/experiments/%s/counts/%s_%s_%s.bam" % (
+            project,
+            condition,
+            replicate,
+            type,
+        )
 
 
 rule raw_counts_umi:
@@ -178,13 +185,13 @@ rule raw_counts_umi:
     Counting BCsxUMIs from the BAM files.
     """
     conda:
-        "../envs/mpraflow_py36.yaml"
+        "../envs/bwa_samtools_picard_htslib.yaml"
     input:
         lambda wc: getBam(wc.project, wc.condition, wc.replicate, wc.type),
     output:
-        "results/{project}/counts/{condition}_{replicate}_{type}_raw_counts.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_raw_counts.tsv.gz",
     params:
-        umi_length=lambda wc: config[wc.project]["umi_length"],
+        umi_length=lambda wc: config["experiments"][wc.project]["umi_length"],
         datasetID="{condition}_{replicate}_{type}",
     shell:
         """
@@ -205,11 +212,11 @@ rule filter_counts:
     conda:
         "../envs/mpraflow_py27.yaml"
     input:
-        "results/{project}/counts/{condition}_{replicate}_{type}_raw_counts.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_raw_counts.tsv.gz",
     output:
-        "results/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
     params:
-        bc_length=lambda wc: config[wc.project]["bc_length"],
+        bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
         datasetID="{condition}_{replicate}_{type}",
     shell:
         """
@@ -227,9 +234,9 @@ rule final_counts_umi:
     Discarding PCR duplicates (taking BCxUMI only one time)
     """
     input:
-        "results/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
     output:
-        counts="results/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
+        counts="results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
     shell:
         """
         zcat {input} | awk '{{print $1}}' | \
@@ -243,33 +250,45 @@ rule final_counts_umi_full:
     TODO
     """
     input:
-        "results/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
     output:
-        "results/{project}/counts/{condition}_{replicate}_{type}_final_counts_full.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts_full.tsv.gz",
     shell:
         """
         zcat  {input} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | gzip -c > {output}
         """
 
+
 def counts_getSamplingConfig(project, sampling, prop, command):
-    if prop in config[project]["sampling"][sampling]:
-        return "--%s %f" % (command, config[project]["sampling"][sampling][prop])
-    else:
-        return ""
+    if "sampling" in config["experiments"][project]:
+        if prop in config["experiments"][project]["sampling"][sampling]:
+            return "--%s %f" % (
+                command,
+                config["experiments"][project]["sampling"][sampling][prop],
+            )
+
+    return ""
+
 
 rule final_counts_umi_shiftDNA:
     """
     Creates full + new distribution DNA files
     """
     input:
-        "results/{project}/counts/{condition}_{replicate}_DNA_final_counts_full.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_DNA_final_counts_full.tsv.gz",
     output:
-        "results/{project}/counts/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
+    conda:
+        "../envs/mpraflow_py36.yaml"
     params:
-        samplingprop=lambda wc: counts_getSamplingConfig(wc.project, wc.sampling, "DNAprop", "prop"),
-        downsampling=lambda wc: counts_getSamplingConfig(wc.project, wc.sampling, "DNAdownsampling", "threshold"),
+        samplingprop=lambda wc: counts_getSamplingConfig(
+            wc.project, wc.sampling, "DNAprop", "prop"
+        ),
+        downsampling=lambda wc: counts_getSamplingConfig(
+            wc.project, wc.sampling, "DNAdownsampling", "threshold"
+        ),
     wildcard_constraints:
-        downsampling = '^full'
+        downsampling="^full",
     shell:
         """
         python {SCRIPTS_DIR}/count/samplerer.py --input {input} \
@@ -278,19 +297,26 @@ rule final_counts_umi_shiftDNA:
         --output {output}
         """
 
+
 rule final_counts_umi_shiftRNA:
     """
     Creates full + new distribution RNA files
     """
     input:
-        "results/{project}/counts/{condition}_{replicate}_RNA_final_counts_full.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_RNA_final_counts_full.tsv.gz",
     output:
-        "results/{project}/counts/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
+    conda:
+        "../envs/mpraflow_py36.yaml"
     params:
-        samplingprop=lambda wc: counts_getSamplingConfig(wc.project, wc.sampling, "RNAprop", "prop"),
-        downsampling=lambda wc: counts_getSamplingConfig(wc.project, wc.sampling, "RNAdownsampling", "threshold"),
+        samplingprop=lambda wc: counts_getSamplingConfig(
+            wc.project, wc.sampling, "RNAprop", "prop"
+        ),
+        downsampling=lambda wc: counts_getSamplingConfig(
+            wc.project, wc.sampling, "RNAdownsampling", "threshold"
+        ),
     wildcard_constraints:
-        downsampling = '^full'
+        downsampling="^full",
     shell:
         """
         python {SCRIPTS_DIR}/count/samplerer.py --input {input} \
@@ -298,6 +324,7 @@ rule final_counts_umi_shiftRNA:
         {params.downsampling} \
         --output {output}
         """
+
 
 rule dna_rna_merge_counts:
     """
@@ -308,10 +335,10 @@ rule dna_rna_merge_counts:
     conda:
         "../envs/mpraflow_py36.yaml"
     input:
-        dna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
-        rna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
+        dna="results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
+        rna="results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
     output:
-        "results/{project}/{raw_or_assigned}/merged/{mergeType}/{condition}_{replicate}_merged_counts_{sampling}.tsv.gz",
+        "results/experiments/{project}/{raw_or_assigned}/merged/{mergeType}/{condition}_{replicate}_merged_counts_{sampling}.tsv.gz",
     params:
         zero=lambda wc: "false" if wc.mergeType == "withoutZeros" else "true",
     shell:
