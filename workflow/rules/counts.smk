@@ -172,7 +172,12 @@ def getBam(project, condition, replicate, type):
             type,
         )
     else:
-        return "results/experiments/%s/counts/%s_%s_%s.bam" % (project, condition, replicate, type)
+        return "results/experiments/%s/counts/%s_%s_%s.bam" % (
+            project,
+            condition,
+            replicate,
+            type,
+        )
 
 
 rule raw_counts_umi:
@@ -253,12 +258,17 @@ rule final_counts_umi_full:
         zcat  {input} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | gzip -c > {output}
         """
 
+
 def counts_getSamplingConfig(project, sampling, prop, command):
-    if "sampling" in config['experiments'][project]:
-        if prop in config['experiments'][project]["sampling"][sampling]:
-            return "--%s %f" % (command, config['experiments'][project]["sampling"][sampling][prop])
-    
+    if "sampling" in config["experiments"][project]:
+        if prop in config["experiments"][project]["sampling"][sampling]:
+            return "--%s %f" % (
+                command,
+                config["experiments"][project]["sampling"][sampling][prop],
+            )
+
     return ""
+
 
 rule final_counts_umi_shiftDNA:
     """
@@ -271,10 +281,14 @@ rule final_counts_umi_shiftDNA:
     conda:
         "../envs/mpraflow_py36.yaml"
     params:
-        samplingprop=lambda wc: counts_getSamplingConfig(wc.project, wc.sampling, "DNAprop", "prop"),
-        downsampling=lambda wc: counts_getSamplingConfig(wc.project, wc.sampling, "DNAdownsampling", "threshold"),
+        samplingprop=lambda wc: counts_getSamplingConfig(
+            wc.project, wc.sampling, "DNAprop", "prop"
+        ),
+        downsampling=lambda wc: counts_getSamplingConfig(
+            wc.project, wc.sampling, "DNAdownsampling", "threshold"
+        ),
     wildcard_constraints:
-        downsampling = '^full'
+        downsampling="^full",
     shell:
         """
         python {SCRIPTS_DIR}/count/samplerer.py --input {input} \
@@ -282,6 +296,7 @@ rule final_counts_umi_shiftDNA:
         {params.downsampling} \
         --output {output}
         """
+
 
 rule final_counts_umi_shiftRNA:
     """
@@ -291,11 +306,17 @@ rule final_counts_umi_shiftRNA:
         "results/experiments/{project}/counts/{condition}_{replicate}_RNA_final_counts_full.tsv.gz",
     output:
         "results/experiments/{project}/counts/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
+    conda:
+        "../envs/mpraflow_py36.yaml"
     params:
-        samplingprop=lambda wc: counts_getSamplingConfig(wc.project, wc.sampling, "RNAprop", "prop"),
-        downsampling=lambda wc: counts_getSamplingConfig(wc.project, wc.sampling, "RNAdownsampling", "threshold"),
+        samplingprop=lambda wc: counts_getSamplingConfig(
+            wc.project, wc.sampling, "RNAprop", "prop"
+        ),
+        downsampling=lambda wc: counts_getSamplingConfig(
+            wc.project, wc.sampling, "RNAdownsampling", "threshold"
+        ),
     wildcard_constraints:
-        downsampling = '^full'
+        downsampling="^full",
     shell:
         """
         python {SCRIPTS_DIR}/count/samplerer.py --input {input} \
@@ -303,6 +324,7 @@ rule final_counts_umi_shiftRNA:
         {params.downsampling} \
         --output {output}
         """
+
 
 rule dna_rna_merge_counts:
     """
