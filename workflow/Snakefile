@@ -465,12 +465,103 @@ def getOutputVariants_helper(file, betweenReplicates=False):
     return output
 
 
+def getAssignment_helper(file):
+    return expand(
+        file,
+        assignment=getAssignments(),
+    )
+
+
+def getAssignmentConfig_helper(file):
+    output = []
+    for assignment in getAssignments():
+        output += expand(
+            file,
+            assignment=assignment,
+            config=config["assignments"][assignment]["configs"].keys(),
+        )
+    return output
+
+
 ###################
 #### ALL RULES ####
 ###################
 
 
 rule all:
+    input:
+        ## assignments
+        getAssignmentConfig_helper(
+            "results/assignment/{assignment}/assignment_barcodes_incl_other.{config}.sorted.tsv.gz",
+        ),
+        getAssignment_helper(
+            "results/assignment/{assignment}/stats/assignment/bam_stats.txt",
+        ),
+        ## experiments
+        # stats BC nucleotide composition
+        getOutputProjectConditionReplicateType_helper(
+            "results/experiments/{project}/stats/counts/BCNucleotideComposition/{condition}_{replicate}_{type}.tsv.gz"
+        ),
+        # barcode stats
+        expand(
+            "results/experiments/{project}/stats/statistic_count_{countType}.tsv",
+            project=getProjects(),
+            countType=["raw", "filtered"],
+        ),
+        # counts stats
+        getOutputProjectConditionReplicateType_helper(
+            "results/experiments/{project}/stats/counts/freqUMIs_{condition}_{replicate}_{type}.txt"
+        ),
+        getOutputProjectMergeTypeSampling_helper(
+            "results/experiments/{project}/stats/statistic_bc_correlation_merged_{mergeType}_{sampling}.tsv",
+            True,
+        ),
+        getOutputProjectMergeTypeAssignmentSampling_helper(
+            "results/experiments/{project}/stats/statistic_assigned_bc_correlation_merged_{mergeType}_{assignment}_{sampling}.tsv",
+            True,
+        ),
+        getOutputProjectSampling_helper(
+            "results/experiments/{project}/stats/statistic_overlapBCs_counts_{sampling}.tsv",
+            True,
+        ),
+        # assignment
+        getOutputProjectConditionAssignmentConfigSampling_helper(
+            "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{sampling}_allreps_merged.tsv.gz"
+        ),
+        # assignment stats
+        getOutputProjectAssignmentConfigSampling_helper(
+            "results/experiments/{project}/stats/statistic_assigned_counts_merged_{assignment}_{config}_{sampling}.tsv"
+        ),
+        getOutputProjectAssignmentConfigSampling_helper(
+            "results/experiments/{project}/stats/statistic_oligo_correlation_merged_{assignment}_{config}_{sampling}.tsv",
+            True,
+        ),
+        getOutputProjectAssignmentSampling_helper(
+            "results/experiments/{project}/stats/statistic_assigned_counts_single_{assignment}_{sampling}.tsv",
+            True,
+        ),
+        getOutputProjectAssignmentSampling_helper(
+            "results/experiments/{project}/stats/statistic_overlapBCs_assigned_counts_{assignment}_{sampling}.tsv",
+            True,
+        ),
+        # variants
+        getOutputVariants_helper(
+            "results/experiments/{project}/stats/variants/{assignment}/{config}/correlation_variantTable.tsv",
+            True,
+        ),
+
+
+rule all_assignments:
+    input:
+        getAssignmentConfig_helper(
+            "results/assignment/{assignment}/assignment_barcodes_incl_other.{config}.sorted.tsv.gz",
+        ),
+        getAssignment_helper(
+            "results/assignment/{assignment}/stats/assignment/bam_stats.txt",
+        ),
+
+
+rule all_experiments:
     input:
         # stats BC nucleotide composition
         getOutputProjectConditionReplicateType_helper(
@@ -533,14 +624,14 @@ rule all:
         ),
 
 
-rule all_counts:
+rule all_experiments_counts:
     input:
         getOutputProjectConditionReplicateTypeSampling_helper(
             "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts_{sampling}.tsv.gz"
         ),
 
 
-rule all_counts_stats:
+rule all_experiments_counts_stats:
     input:
         getOutputProjectConditionReplicateType_helper(
             "results/experiments/{project}/stats/counts/freqUMIs_{condition}_{replicate}_{type}.txt"
@@ -555,14 +646,14 @@ rule all_counts_stats:
         ),
 
 
-rule all_assignments:
+rule all_experiments_assignments:
     input:
         getOutputProjectConditionAssignmentConfigSampling_helper(
             "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{sampling}_allreps_merged.tsv.gz"
         ),
 
 
-rule all_assignments_stats:
+rule all_experiments_assignments_stats:
     input:
         getOutputProjectAssignmentConfigSampling_helper(
             "results/experiments/{project}/stats/statistic_assigned_counts_merged_{assignment}_{config}_{sampling}.tsv"
@@ -585,34 +676,6 @@ rule all_stats_BCNucleotideComposition:
     input:
         getOutputProjectConditionReplicateType_helper(
             "results/experiments/{project}/stats/counts/BCNucleotideComposition/{condition}_{replicate}_{type}.tsv.gz"
-        ),
-
-
-def getAssignment_helper(file):
-    return expand(
-        file,
-        assignment=getAssignments(),
-    )
-
-
-def getAssignmentConfig_helper(file):
-    output = []
-    for assignment in getAssignments():
-        output += expand(
-            file,
-            assignment=assignment,
-            config=config["assignments"][assignment]["configs"].keys(),
-        )
-    return output
-
-
-rule all_assignment:
-    input:
-        getAssignmentConfig_helper(
-            "results/assignment/{assignment}/assignment_barcodes_incl_other.{config}.sorted.tsv.gz",
-        ),
-        getAssignment_helper(
-            "results/assignment/{assignment}/stats/assignment/bam_stats.txt",
         ),
 
 

@@ -24,7 +24,7 @@ def getMergedCounts(project, raw_or_assigned, condition, mergeType, sampling):
 
 rule statistic_correlate_BC_counts:
     conda:
-        "../../envs/mpraflow_r.yaml"
+        "../../envs/r.yaml"
     input:
         lambda wc: getMergedCounts(
             wc.project, wc.raw_or_assigned, wc.condition, wc.mergeType, wc.sampling
@@ -59,8 +59,6 @@ rule statistic_correlate_BC_counts:
 
 
 rule statistic_combine_bc_correlation_raw:
-    conda:
-        "../../envs/mpraflow_py36.yaml"
     input:
         lambda wc: expand(
             "results/experiments/{{project}}/stats/barcode/counts/{{mergeType}}/{condition}_{{sampling}}_barcode_correlation.tsv",
@@ -85,8 +83,6 @@ rule statistic_combine_bc_correlation_raw:
 
 
 rule statistic_combine_bc_correlation_assigned:
-    conda:
-        "../../envs/mpraflow_py36.yaml"
     input:
         lambda wc: expand(
             "results/experiments/{{project}}/stats/barcode/assigned_counts/{{assignment}}/{{mergeType}}/{condition}_{{sampling}}_barcode_correlation.tsv",
@@ -117,7 +113,7 @@ rule statistic_combine_bc_correlation_assigned:
 
 rule statistic_calc_correlations:
     conda:
-        "../../envs/mpraflow_r.yaml"
+        "../../envs/r.yaml"
     input:
         counts=lambda wc: expand(
             "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts_{{sampling}}.tsv.gz",
@@ -177,8 +173,6 @@ rule statistic_calc_correlations:
 
 
 rule statistic_combine_oligo_correlation:
-    conda:
-        "../../envs/mpraflow_py36.yaml"
     input:
         correlation=lambda wc: expand(
             "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/{condition}_{{sampling}}_correlation.tsv",

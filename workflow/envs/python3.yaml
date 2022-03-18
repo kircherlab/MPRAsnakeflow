@@ -4,6 +4,10 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - python
-  - pandas
+  - biopython
   - click
+  - dask
+  - matplotlib
+  - numpy
+  - pandas
+  - python

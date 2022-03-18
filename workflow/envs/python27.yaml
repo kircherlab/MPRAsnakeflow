@@ -4,7 +4,7 @@ channels:
   - defaults
   - conda-forge
 dependencies:
-  - bwa
-  - samtools
-  - picard
   - htslib
+  - pysam
+  - python=2.7
+  - samtools

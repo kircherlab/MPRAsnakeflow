@@ -80,7 +80,7 @@ def getAssignedCountsStatistic(project, assignment, config, condition, sampling)
 
 rule statistic_combine_stats_dna_rna_merge:
     conda:
-        "../../envs/mpraflow_py36.yaml"
+        "../../envs/python3.yaml"
     input:
         lambda wc: expand(
             "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts_{{sampling}}.statistic.tsv.gz",
@@ -105,8 +105,6 @@ rule statistic_combine_stats_dna_rna_merge:
 
 
 rule statistic_combine_stats_dna_rna_merge_all:
-    conda:
-        "../../envs/mpraflow_py36.yaml"
     input:
         lambda wc: expand(
             "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/combined/{condition}_merged_assigned_counts_{{sampling}}.statistic.tsv.gz",

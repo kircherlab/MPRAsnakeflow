@@ -25,7 +25,7 @@ rule statistic_frequent_umis:
 
 rule statistic_barcode_base_composition:
     conda:
-        "../../envs/mpraflow_pandas.yaml"
+        "../../envs/python3.yaml"
     input:
         counts="results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
     output:
@@ -162,7 +162,7 @@ rule statistic_BC_in_RNA_DNA_merge:
 # making final count statistics
 rule statistic_counts_final:
     conda:
-        "../../envs/mpraflow_r.yaml"
+        "../../envs/r.yaml"
     input:
         counts="results/experiments/{project}/stats/counts/count_{countType}.tsv",
         shared="results/experiments/{project}/stats/counts/BC_in_RNA_DNA_{countType}.tsv",

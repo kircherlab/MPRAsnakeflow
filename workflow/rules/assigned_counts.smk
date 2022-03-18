@@ -8,7 +8,7 @@ rule assignBarcodes:
     Assign RNA and DNA barcodes seperately to make the statistic for assigned
     """
     conda:
-        "../envs/mpraflow_py36.yaml"
+        "../envs/python3.yaml"
     input:
         counts="results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts_{sampling}.tsv.gz",
         association=lambda wc: getAssignmentFile(wc.project, wc.assignment),
@@ -29,7 +29,7 @@ rule assignBarcodes:
 
 rule createAssignmentPickleFile:
     conda:
-        "envs/mpraflow_py36.yaml"
+        "envs/python3.yaml"
     input:
         lambda wc: getAssignmentFile(wc.project, wc.assignment),
     output:
@@ -42,7 +42,7 @@ rule createAssignmentPickleFile:
 
 rule dna_rna_merge:
     conda:
-        "../envs/mpraflow_py36.yaml"
+        "../envs/python3.yaml"
     input:
         counts=lambda wc: expand(
             "results/experiments/{{project}}/counts/merged/{mergeType}/{{condition}}_{{replicate}}_merged_counts_{{sampling}}.tsv.gz",
@@ -76,7 +76,7 @@ rule dna_rna_merge:
 
 rule make_master_tables:
     conda:
-        "../envs/mpraflow_r.yaml"
+        "../envs/r.yaml"
     input:
         counts=lambda wc: expand(
             "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts_{{sampling}}.tsv.gz",

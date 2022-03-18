@@ -5,7 +5,7 @@
 
 rule statistic_overlapBCs:
     conda:
-        "../../envs/mpraflow_r.yaml"
+        "../../envs/r.yaml"
     input:
         lambda wc: expand(
             "results/experiments/{{project}}/{{raw_or_assigned}}/{{condition}}_{replicate}_{{type}}_final_counts_{{sampling}}.tsv.gz",

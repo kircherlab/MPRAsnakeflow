@@ -61,7 +61,7 @@ rule assignment_merge:
     output:
         bam=temp("results/assignment/{assignment}/bam/merge_split{split}.bam"),
     conda:
-        "../envs/mpraflow_py27.yaml"
+        "../envs/python27.yaml"
     shell:
         """
         paste <( zcat {input.R1} ) <( zcat {input.R2} ) <( zcat {input.R3} ) | \
@@ -138,7 +138,7 @@ rule assignment_idx_bam:
     output:
         "results/assignment/{assignment}/aligned_merged_reads.bam.bai",
     conda:
-        "../envs/mpraflow_py36.yaml"
+        "../envs/bwa_samtools_picard_htslib.yaml"
     shell:
         """
         samtools index {input}
@@ -152,7 +152,7 @@ rule assignment_flagstat:
     output:
         "results/assignment/{assignment}/stats/assignment/bam_stats.txt",
     conda:
-        "../envs/mpraflow_py36.yaml"
+        "../envs/bwa_samtools_picard_htslib.yaml"
     shell:
         """
         samtools flagstat {input.bam} > {output}
@@ -166,7 +166,7 @@ rule assignment_getBCs:
     output:
         "results/assignment/{assignment}/barcodes_incl_other.sorted.tsv.gz",
     conda:
-        "../envs/mpraflow_py36.yaml"
+        "../envs/bwa_samtools_picard_htslib.yaml"
     shell:
         """
         samtools view -F 1792 {input} | \
@@ -190,7 +190,7 @@ rule assignment_filter:
     output:
         "results/assignment/{assignment}/assignment_barcodes_incl_other.{assignment_config}.sorted.tsv.gz",
     conda:
-        "../envs/mpraflow_py36.yaml"
+        "../envs/python3.yaml"
     params:
         min_support=lambda wc: config["assignments"][wc.assignment]["configs"][
             wc.assignment_config
