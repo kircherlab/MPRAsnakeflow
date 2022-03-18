@@ -555,14 +555,14 @@ rule all_counts_stats:
         ),
 
 
-rule all_assignments:
+rule all_experiment_assignments:
     input:
         getOutputProjectConditionAssignmentConfigSampling_helper(
             "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{sampling}_allreps_merged.tsv.gz"
         ),
 
 
-rule all_assignments_stats:
+rule all_experiment_assignments_stats:
     input:
         getOutputProjectAssignmentConfigSampling_helper(
             "results/experiments/{project}/stats/statistic_assigned_counts_merged_{assignment}_{config}_{sampling}.tsv"
@@ -606,7 +606,7 @@ def getAssignmentConfig_helper(file):
     return output
 
 
-rule all_assignment:
+rule all_assignments:
     input:
         getAssignmentConfig_helper(
             "results/assignment/{assignment}/assignment_barcodes_incl_other.{config}.sorted.tsv.gz",
