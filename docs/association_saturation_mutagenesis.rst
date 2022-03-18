@@ -32,7 +32,7 @@ Example file:
   TGCGCACGTGGGAAGCCCTGGCCCCGGCCACCCCCGCGAAAGCTTGCATGCCCTGCAGG
 
 association_saturationMutagenesis.nf
-============================
+=======================================
 
 Options
 ---------------

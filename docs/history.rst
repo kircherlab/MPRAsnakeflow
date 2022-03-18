@@ -1,4 +1,4 @@
-.. _history:
+.. _History:
 
 =======
 History

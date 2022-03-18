@@ -17,10 +17,10 @@ Prerequirements
 This example depends on the following data and software:
 
 
-Installation of MPRAflow
+Installation of MPRAsnakeflow
 ----------------------------------------
 
-Please install conda, the MPRAflow environment and clone the actual MPRAflow master branch. You will find more help under :ref:`Installation`.
+Please install conda, the MPRAsnakeflow environment and clone the actual MPRAsnakeflow master branch. You will find more help under :ref:`Installation`.
 
 
 Reads
@@ -157,10 +157,10 @@ Also two different sequencing runs where made in condition TERT-HEK using the sa
 
 .. note:: If you combine multiple sequence runs (e.g. you need more reads) you have to combine the reads before. Otherwise barcodes with the same UMI can be count twice. But it is important that all read lengths are the same. The easiest workaround is to cut them down to the minimum length. If you have a different library (but with the same barcodes) you should run the count utility with both runs separately using different conditions. Later you have to combine the final counts of both conditions.
 
-MPRAflow
+MPRAsnakeflow
 =================================
 
-Now we are close to start MPRAflow and count the number of barcodes. But before we need to generate an :code:`environment.csv` file to tell nextflow the conditions, replicates and the corresponding reads.
+Now we are close to start MPRAsnakeflow and count the number of barcodes. But before we need to generate an :code:`environment.csv` file to tell snakeflow the conditions, replicates and the corresponding reads.
 
 Create experiment.csv
 ---------------------------
@@ -180,39 +180,32 @@ Our experiment file looks exactly like this:
 
 Save it into the :code:`Count_TERT/data` folder under :code:`experiment.csv`.
 
-Run nextflow
+Run MPRAsnakeflow
 ------------------------------
 
-Now we have everything at hand to run the count MPRAflow pipeline. Therefore we have to be in the cloned MPRAflow folder. But we will change the working and output directory to the :code:`Count_TERT` folder. For the TERT example the barcode length is 20 bp and the UMI length 10 bp. The MPRAflow count command is:
+Now we have everything at hand to run the count MPRAsnakeflow pipeline. Therefore we have to be in the cloned MPRAsnakeflow folder. But we will change the working and output directory to the :code:`Count_TERT` folder. For the TERT example the barcode length is 20 bp and the UMI length 10 bp which has to be set in :code: `config/config.yaml`. The MPRAsnakeflow count command is:
 
 
 .. code-block:: bash
 
     cd <path/to/MPRAflow>/MPRAflow
-    conda activate MPRAflow
-    nextflow run -resume -w <path/to/TERT>/Count_TERT/work  count.nf --experiment-file "<path/to/TERT>/Count_TERT/data/experiment.csv" --dir "<path/to/TERT>/Count_TERT/data" --outdir "<path/to/TERT>/Count_TERT/output" --bc-length 20 --umi-length 10
+    conda activate MPRAsnakeflow
+    snakemake --configfile config/config.yaml --use-conda -p -c 4
 
-.. note:: Please check your :code:`conf/cluster.config` file if it is correctly configured (e.g. with your SGE cluster commands).
+.. note:: Please check your :code:`config/cluster.config` file if it is correctly configured (e.g. with your SGE cluster commands).
 
 If everything works fine the following 5 processes will run: :code:`create_BAM (make idx)` :code:`raw_counts`, :code:`filter_counts`, :code:`final_counts`, :code:`dna_rna_merge_counts`.
 
 .. code-block:: text
 
-    [fe/d8ac14] process > create_BAM (make idx)    [100%] 12 of 12 ✔
-    [7d/b56129] process > raw_counts (12)          [100%] 12 of 12 ✔
-    [06/2c938d] process > filter_counts (12)       [100%] 12 of 12 ✔
-    [2d/ce1afe] process > final_counts (12)        [100%] 12 of 12 ✔
-    [68/df8db0] process > dna_rna_merge_counts (6) [100%] 6 of 6 ✔
-    Completed at: 09-Jan-2020 15:38:32
-    Duration    : 3h 45m 17s
-    CPU hours   : 21.8
-    Succeeded   : 54
+    Finished job 100.
+    100 of 100 steps (100%) done
 
 
 Results
 -----------------
 
-All needed output files will be in the :code:`Count_TERT/output` folder. In this tutorial we are only interested in the counts per barcode, because we can use these outputs in the :ref:`Saturation mutagenesis of the TERT promoter` tutorial.
+All needed output files will be in the :code:`results/name of the project` folder. In this tutorial we are only interested in the counts per barcode, because we can use these outputs in the :ref:`Saturation mutagenesis of the TERT promoter` tutorial.
 
 .. code-block:: bash
 

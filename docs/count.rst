@@ -41,8 +41,8 @@ Example file:
     >CRS4
     TTAGACCGCCCTTTACCCCGAGAAAACTCAGCTACACACTC
     
-Association Pickle
-------------------
+Association tab separated
+-------------------------
 Python dictionary of CRS to Barcodes
 
 Label File (Optional)
@@ -59,7 +59,7 @@ Example file:
     CRS4  Positive_Control
 
 
-Count.nf
+snakemake
 ============================
  
 Options
@@ -67,26 +67,36 @@ Options
 
 With :code:`--help` or :code:`--h` you can see the help message.
 
-**Mandatory arguments:**
-  --dir                         Fasta directory (must be surrounded with quotes)
-  --e, --experiment-file        Experiment csv file
-  --design                      Fasta of ordered insert sequences.
-  --association                 Pickle dictionary from library association process.
- 
-**Optional:**
-  --labels                      tsv with the oligo pool fasta and a group label (ex: positive_control), a single label will be applied if a file is not specified
-  --outdir                      The output directory where the results will be saved (default outs)
-  --bc-length                   Barcode length (default 15)
-  --umi-length                  UMI length (default 10)
-  --no-umi                      Use this flag if no UMI is present in the experiment (default with UMI)
-  --merge_intersect             Only retain barcodes in RNA and DNA fraction (TRUE/FALSE, default: FALSE)
-  --mpranalyze                  Only generate MPRAnalyze outputs
-  --thresh                      minimum number of observed barcodes to retain insert (default 10)
+Mandatory arguments:
+  :-n:                      
+    Do not execute anything, and display what would be done. If you have a very large workflow, use --dry-run --quiet to just print a summary of the DAG of jobs. (default: False)                                          
+  :-snakefile:             
+    You should not need to specify this. By default, Snakemake will search for 'Snakefile', 'snakefile', 'workflow/Snakefile','workflow/snakefile' beneath the current working directory, in this order. Only if you definitely want a different layout, you need to use this parameter. (default: None)               
+  :-cores:                 
+    Use at most N CPU cores/jobs in parallel. If N is omitted or 'all', the limit is set to the number of available CPU cores. In case of cluster/cloud execution, this argument sets the number of total cores used over all jobs (made available to rules via workflow.cores).(default: None)                                                                                   
+  :-jobs, -j:                  
+    Use at most N CPU cluster/cloud jobs in parallel. For local execution this is an alias for --cores. (default: None)                                                                          
+  :-local-cores:         
+    In cluster/cloud mode, use at most N cores of the host machine in parallel (default: number of CPU cores of the host). The cores are used to execute local rules. This option is ignored when not in cluster/cloud mode. (default: 2)                                                           
+  :-config, -c:            
+    Set or overwrite values in the workflow config object. The workflow config object is accessible as variable config inside the workflow. Default values can be set by providing a JSON file (see Documentation). (default: None)
+  :-touch, -t:             
+    Touch output files (mark them up to date without really changing them) instead of running their commands. This is used to pretend that the rules were executed, in order to fool future invocations of snakemake. Fails if a file does not yet exist. Note that this will only touch files that would otherwise be recreated by Snakemake (e.g. because their input files are newer). For enforcing a touch, combine this with --force, --forceall, or --forcerun. Note however that you loose the provenance information when the files have been created in realitiy. Hence, this should be used only as a last resort. (default: False)
+  
+Optional
+  :-use-conda -p:             
+    If defined in the rule, run job in a conda environment. If this flag is not set, the conda directive is ignored. (default: False)
+  :-use-singularity:       
+    If defined in the rule, run job within a singularity container. If this flag is not set, the singularity directive is ignored. (default: False)
+  :-use-envmodules:        
+    If defined in the rule, run job within the given environment modules, loaded in the given order. This can be combined with --use-conda and --use-singularity, which will then be only used as a fallback for rules which don't define environment modules. (default: False)
+
+
 
 Processes
--------------
+---------
 
-Processes run by nextflow in the Association Utility. Some Processes will be run only if certain options used and are marked below.
+Processes run by snakemake in the Association Utility. Some Processes will be run only if certain options used and are marked below.
 
 create_BAM or create_BAM_noUMI (if no UMI sequence)
   creates a bamfile of barcode and UMI sequences
@@ -125,7 +135,7 @@ make_master_tables
 Output
 ==========
 
-The output can be found in the folder defined by the option :code:`--outdir`. It is structured in folders of the condition as
+The output can be found in the folder defined by the option :code:`results/`. It is structured in folders of the condition as
 
 Files
 -------------
@@ -147,7 +157,8 @@ File tree
             |-Reps
                 |-HepG2_1_counts.tsv
                 |-HepG2_1_counts.tsv.gz
-                |-HepG2_1_DNA_counts.tsv
+                |-HepG2_1_DNA_counts_full.tsv
+                |-HepG2_1_DNA_counts_full_samplingN.tsv
                 |-HepG2_1_DNA_raw_counts.tsv.gz  
                 |-HepG2_1_RNA_filtered_counts.tsv.gz
                 |-HepG2_1_DNA_filtered_counts.tsv.gz
@@ -181,8 +192,10 @@ HepG2_1_counts.tsv
   mean ratio, log2 ratio, and observed barcodes per condidition for each replicate
 HepG2_1_counts.tsv.gz
   table of barcodes with DNA counts and RNA counts
-HepG2_1_DNA_counts.tsv              
+HepG2_1_DNA_counts_full.tsv              
   table of barcodes with DNA counts
+HepG2_1_DNA_counts_full_samplingN.tsv              
+  table of barcodes with DNA counts with adjusted sampling.
 HepG2_1_DNA_raw_counts.tsv.gz  
   table of barcodes, UMI, and DNA counts raw
 HepG2_1_DNA_filtered_counts.tsv.gz  

@@ -17,7 +17,7 @@ Types of Contributions
 Report Bugs
 ===========
 
-Report bugs at https://github.com/shendurelab/MPRAflow/issues
+Report bugs at https://github.com/kircherlab/MPRAsnakeflow/issues
 
 If you are reporting a bug, please include:
 
@@ -43,9 +43,9 @@ If you want to start working on an issue then please write short message on the 
 Write Documentation
 ===================
 
-MPRAflow could always use more documentation, even on the web in blog posts, articles, and such.
+MPRAsnakeflow could always use more documentation, even on the web in blog posts, articles, and such.
 
-MPRAflow uses `Sphinx <https://www.sphinx-doc.org>`_ for the user documentation (that you are currently reading).
+MPRAsnakeflow uses `Sphinx <https://www.sphinx-doc.org>`_ for the user documentation (that you are currently reading).
 See `doc_guidelines` on how the documentation reStructuredText is used.
 See `doc_setup` on creating a local setup for building the documentation.
 
@@ -53,7 +53,7 @@ See `doc_setup` on creating a local setup for building the documentation.
 Submit Feedback
 ===============
 
-The best way to send feedback is to file an issue at https://github.com/shendurelab/MPRAflow/issues
+The best way to send feedback is to file an issue at https://github.com/kircherlab/MPRAsnakeflow/issues
 
 If you are proposing a feature:
 
@@ -124,11 +124,11 @@ For building the documentation, you have to install the Python program Sphinx.
 This is best done in a virtual environment.
 We created a conda environment to work with the actual documentation.
 
-Use the following steps for installing Sphinx and the dependencies for building the MPRAflow documentation:
+Use the following steps for installing Sphinx and the dependencies for building the MPRAsnakeflow documentation:
 
 .. code-block:: bash
 
-    cd MPRAflow/docs
+    cd MPRAsnakeflow/docs
     conda env create -f environment.yml -n sphinx
     conda activate sphinx
 
@@ -138,7 +138,7 @@ Afterwards, you can always use ``make html`` for building.
 
 .. code-block:: bash
 
-    cd MPRAflow/docs
+    cd MPRAsnakeflow/docs
     conda activate sphinx
     make html  # rebuild for changed files only
     make clean && make html  # force rebuild
@@ -151,10 +151,10 @@ Get Started!
 Ready to contribute?
 First, create your Documentation development setup.
 
-1. Fork the `MPRAflow` repo on GitHub.
+1. Fork the `MPRAsnakeflow` repo on GitHub.
 2. Clone your fork locally::
 
-    git clone git@github.com:your_name_here/MPRAflow.git
+    git clone git@github.com:your_name_here/MPRAsnakeflow.git
 
 3. Create a branch for local development::
 
@@ -162,10 +162,10 @@ First, create your Documentation development setup.
 
    Now you can make your changes locally.
 
-5. When you're done making your changes, make sure that nextflow runs properly
-   For nextflow::
+5. When you're done making your changes, make sure that snakemake runs properly
+   For snakemake::
 
-    nextflow run <your_nextflow_pipeline>
+    snakemake --use-conda -p -n
 
    For documentation::
 
