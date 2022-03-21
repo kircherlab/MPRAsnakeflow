@@ -233,7 +233,9 @@ rule final_counts_umi:
     input:
         "results/experiments/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
     output:
-        counts="results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
+        counts=temp(
+            "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz"
+        ),
     shell:
         """
         zcat {input} | awk '{{print $1}}' | \
@@ -249,19 +251,23 @@ rule final_counts_umi_full:
     input:
         "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
     output:
-        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts_full.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts_reordered.tsv.gz",
     shell:
         """
         zcat  {input} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | gzip -c > {output}
         """
 
 
-def counts_getSamplingConfig(project, sampling, prop, command):
-    if "sampling" in config["experiments"][project]:
-        if prop in config["experiments"][project]["sampling"][sampling]:
+def useSampling(project, conf):
+    return "sampling" in config["experiments"][project]["configs"][conf]
+
+
+def counts_getSamplingConfig(project, conf, prop, command):
+    if useSampling(project, conf):
+        if prop in config["experiments"][project]["configs"][conf]["sampling"]:
             return "--%s %f" % (
                 command,
-                config["experiments"][project]["sampling"][sampling][prop],
+                config["experiments"][project]["configs"][conf]["sampling"][prop],
             )
 
     return ""
@@ -272,17 +278,17 @@ rule final_counts_umi_shiftDNA:
     Creates full + new distribution DNA files
     """
     input:
-        "results/experiments/{project}/counts/{condition}_{replicate}_DNA_final_counts_full.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_DNA_final_counts_reordered.tsv.gz",
     output:
-        "results/experiments/{project}/counts/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_DNA_final_counts_reordered.sampling.{config}.tsv.gz",
     conda:
         "../envs/python3.yaml"
     params:
         samplingprop=lambda wc: counts_getSamplingConfig(
-            wc.project, wc.sampling, "DNAprop", "prop"
+            wc.project, wc.config, "DNAprop", "prop"
         ),
         downsampling=lambda wc: counts_getSamplingConfig(
-            wc.project, wc.sampling, "DNAdownsampling", "threshold"
+            wc.project, wc.config, "DNAdownsampling", "threshold"
         ),
     wildcard_constraints:
         downsampling="^full",
@@ -300,17 +306,17 @@ rule final_counts_umi_shiftRNA:
     Creates full + new distribution RNA files
     """
     input:
-        "results/experiments/{project}/counts/{condition}_{replicate}_RNA_final_counts_full.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_RNA_final_counts_reordered.tsv.gz",
     output:
-        "results/experiments/{project}/counts/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_RNA_final_counts_reordered.sampling.{config}.tsv.gz",
     conda:
         "../envs/python3.yaml"
     params:
         samplingprop=lambda wc: counts_getSamplingConfig(
-            wc.project, wc.sampling, "RNAprop", "prop"
+            wc.project, wc.config, "RNAprop", "prop"
         ),
         downsampling=lambda wc: counts_getSamplingConfig(
-            wc.project, wc.sampling, "RNAdownsampling", "threshold"
+            wc.project, wc.config, "RNAdownsampling", "threshold"
         ),
     wildcard_constraints:
         downsampling="^full",
@@ -323,6 +329,35 @@ rule final_counts_umi_shiftRNA:
         """
 
 
+def getFinalCounts(project, conf, rna_or_dna, raw_or_assigned):
+    output = ""
+    if raw_or_assigned == "counts":
+        if useSampling(project, conf):
+            output = (
+                "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts_reordered.sampling.{config}.tsv.gz"
+                % (raw_or_assigned, rna_or_dna)
+            )
+
+        else:
+            output = (
+                "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts_reordered.tsv.gz"
+                % (raw_or_assigned, rna_or_dna)
+            )
+    else:
+        output = (
+            "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts.config.{config}.tsv.gz"
+            % (raw_or_assigned, rna_or_dna)
+        )
+    return output
+
+
+def withoutZeros(project, conf):
+    return (
+        config["experiments"][project]["configs"][conf]["minDNACounts"] > 0
+        and config["experiments"][project]["configs"][conf]["minRNACounts"] > 0
+    )
+
+
 rule dna_rna_merge_counts:
     """
     Merge DNA and RNA counts together.
@@ -330,12 +365,12 @@ rule dna_rna_merge_counts:
     Second with zeros, so a BC can be defined only in the DNA or RNA (withZeros)
     """
     input:
-        dna="results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
-        rna="results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
+        dna=lambda wc: getFinalCounts(wc.project, wc.config, "DNA", wc.raw_or_assigned),
+        rna=lambda wc: getFinalCounts(wc.project, wc.config, "RNA", wc.raw_or_assigned),
     output:
-        "results/experiments/{project}/{raw_or_assigned}/merged/{mergeType}/{condition}_{replicate}_merged_counts_{sampling}.tsv.gz",
+        "results/experiments/{project}/{raw_or_assigned}/merged/{condition}_{replicate}_merged.config.{config}.tsv.gz",
     params:
-        zero=lambda wc: "false" if wc.mergeType == "withoutZeros" else "true",
+        zero=lambda wc: "false" if withoutZeros(wc.project, wc.config) else "true",
     shell:
         """
         zero={params.zero};
