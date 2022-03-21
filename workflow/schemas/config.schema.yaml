@@ -123,17 +123,17 @@ properties:
                 type: integer
               sampling:
                 type: object
-                properties:
-                  DNAdownsampling:
-                    type: integer
-                  RNAdownsampling:
-                    type: integer
-                  DNAprop:
-                    type: number
-                  seed:
-                    type: integer
-                  RNAprop:
-                    type: number
+                patternProperties:
+                  ^((DNA)|(RNA))$:
+                    type: object
+                    properties:
+                      threshold:
+                        type: integer
+                      prop:
+                        type: number
+                      seed:
+                        type: integer
+                    additionalProperties: False    
                 additionalProperties: False
             additionalProperties: False
             required:

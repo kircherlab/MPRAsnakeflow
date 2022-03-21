@@ -258,37 +258,40 @@ rule final_counts_umi_full:
         """
 
 
-def useSampling(project, conf):
-    return "sampling" in config["experiments"][project]["configs"][conf]
+def useSampling(project, conf, dna_or_rna):
+    return "sampling" in config["experiments"][project]["configs"][conf] and dna_or_rna in config["experiments"][project]["configs"][conf]["sampling"]
 
 
-def counts_getSamplingConfig(project, conf, prop, command):
-    if useSampling(project, conf):
-        if prop in config["experiments"][project]["configs"][conf]["sampling"]:
+def counts_getSamplingConfig(project, conf, dna_or_rna, command):
+    if useSampling(project, conf, dna_or_rna):
+        if dna_or_rna in config["experiments"][project]["configs"][conf]["sampling"]:
             return "--%s %f" % (
                 command,
-                config["experiments"][project]["configs"][conf]["sampling"][prop],
+                config["experiments"][project]["configs"][conf]["sampling"][dna_or_rna][command],
             )
 
     return ""
 
 
-rule final_counts_umi_shiftDNA:
+rule final_counts_umi_samplerer:
     """
     Creates full + new distribution DNA files
     """
     input:
-        "results/experiments/{project}/counts/{condition}_{replicate}_DNA_final_counts_reordered.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts_reordered.tsv.gz",
     output:
-        "results/experiments/{project}/counts/{condition}_{replicate}_DNA_final_counts_reordered.sampling.{config}.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts_reordered.sampling.{config}.tsv.gz",
     conda:
         "../envs/python3.yaml"
     params:
         samplingprop=lambda wc: counts_getSamplingConfig(
-            wc.project, wc.config, "DNAprop", "prop"
+            wc.project, wc.config, wc.type, "prop"
         ),
         downsampling=lambda wc: counts_getSamplingConfig(
-            wc.project, wc.config, "DNAdownsampling", "threshold"
+            wc.project, wc.config, wc.type, "threshold"
+        ),
+        seed=lambda wc: counts_getSamplingConfig(
+            wc.project, wc.config, wc.type, "seed"
         ),
     wildcard_constraints:
         downsampling="^full",
@@ -297,34 +300,7 @@ rule final_counts_umi_shiftDNA:
         python {SCRIPTS_DIR}/count/samplerer.py --input {input} \
         {params.samplingprop} \
         {params.downsampling} \
-        --output {output}
-        """
-
-
-rule final_counts_umi_shiftRNA:
-    """
-    Creates full + new distribution RNA files
-    """
-    input:
-        "results/experiments/{project}/counts/{condition}_{replicate}_RNA_final_counts_reordered.tsv.gz",
-    output:
-        "results/experiments/{project}/counts/{condition}_{replicate}_RNA_final_counts_reordered.sampling.{config}.tsv.gz",
-    conda:
-        "../envs/python3.yaml"
-    params:
-        samplingprop=lambda wc: counts_getSamplingConfig(
-            wc.project, wc.config, "RNAprop", "prop"
-        ),
-        downsampling=lambda wc: counts_getSamplingConfig(
-            wc.project, wc.config, "RNAdownsampling", "threshold"
-        ),
-    wildcard_constraints:
-        downsampling="^full",
-    shell:
-        """
-        python {SCRIPTS_DIR}/count/samplerer.py --input {input} \
-        {params.samplingprop} \
-        {params.downsampling} \
+        {params.seed} \
         --output {output}
         """
 
@@ -332,7 +308,7 @@ rule final_counts_umi_shiftRNA:
 def getFinalCounts(project, conf, rna_or_dna, raw_or_assigned):
     output = ""
     if raw_or_assigned == "counts":
-        if useSampling(project, conf):
+        if useSampling(project, conf, rna_or_dna):
             output = (
                 "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts_reordered.sampling.{config}.tsv.gz"
                 % (raw_or_assigned, rna_or_dna)

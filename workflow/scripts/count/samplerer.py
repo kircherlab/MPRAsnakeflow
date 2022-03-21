@@ -29,14 +29,21 @@ import random
 @click.option('--threshold', 
               ('threshold_val'), 
               required=False, type = int, 
-              help= 'Maximum number of barcodes allowed. e.g., 10, 20.')
+              help= 'Set upper limit of counts allowed. e.g., 10, 20.')
+@click.option('--seed', 
+              ('seed'), 
+              required=False, type = int, 
+              help= 'Use seed for random number generator')
 @click.option('--output',
               'output_file',
               required=True,
               type=click.Path(writable=True),
               help='Output file.')
 
-def cli(input_file, prop_val, threshold_val, output_file):
+def cli(input_file, prop_val, threshold_val, seed, output_file):
+    # set seed if defined
+    if seed:
+        random.seed(seed)
     # Filtering table 
     click.echo("Reading count file...")
     df_ = pd.read_csv(input_file, header=None, sep='\t')

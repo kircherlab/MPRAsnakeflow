@@ -20,6 +20,7 @@ experiments:
         minDNACounts: 1
         minRNACounts: 1
         sampling:
-          DNAprop: 30000000
-          RNAprop: 50000000
-
+          DNA:
+            prop: 30000000
+          RNA:
+            prop: 50000000
