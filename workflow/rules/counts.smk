@@ -214,7 +214,6 @@ rule filter_counts:
         "results/experiments/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
     params:
         bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
-        datasetID="{condition}_{replicate}_{type}",
     shell:
         """
         bc={params.bc_length};
@@ -233,28 +232,13 @@ rule final_counts_umi:
     input:
         "results/experiments/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
     output:
-        counts=temp(
-            "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz"
-        ),
+        counts="results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz"
     shell:
         """
         zcat {input} | awk '{{print $1}}' | \
         uniq -c | \
+        awk -v 'OFS=\\t' '{{ print $2,$1 }}' | \
         gzip -c > {output.counts}
-        """
-
-
-rule final_counts_umi_full:
-    """
-    TODO
-    """
-    input:
-        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
-    output:
-        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts_reordered.tsv.gz",
-    shell:
-        """
-        zcat  {input} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | gzip -c > {output}
         """
 
 
@@ -265,10 +249,11 @@ def useSampling(project, conf, dna_or_rna):
 def counts_getSamplingConfig(project, conf, dna_or_rna, command):
     if useSampling(project, conf, dna_or_rna):
         if dna_or_rna in config["experiments"][project]["configs"][conf]["sampling"]:
-            return "--%s %f" % (
-                command,
-                config["experiments"][project]["configs"][conf]["sampling"][dna_or_rna][command],
-            )
+            if command in config["experiments"][project]["configs"][conf]["sampling"][dna_or_rna]:
+                return "--%s %f" % (
+                    command,
+                    config["experiments"][project]["configs"][conf]["sampling"][dna_or_rna][command],
+                )
 
     return ""
 
@@ -278,9 +263,9 @@ rule final_counts_umi_samplerer:
     Creates full + new distribution DNA files
     """
     input:
-        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts_reordered.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
     output:
-        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts_reordered.sampling.{config}.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.sampling.{config}.tsv.gz",
     conda:
         "../envs/python3.yaml"
     params:
@@ -310,13 +295,13 @@ def getFinalCounts(project, conf, rna_or_dna, raw_or_assigned):
     if raw_or_assigned == "counts":
         if useSampling(project, conf, rna_or_dna):
             output = (
-                "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts_reordered.sampling.{config}.tsv.gz"
+                "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts.sampling.{config}.tsv.gz"
                 % (raw_or_assigned, rna_or_dna)
             )
 
         else:
             output = (
-                "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts_reordered.tsv.gz"
+                "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts.tsv.gz"
                 % (raw_or_assigned, rna_or_dna)
             )
     else:
@@ -344,7 +329,7 @@ rule dna_rna_merge_counts:
         dna=lambda wc: getFinalCounts(wc.project, wc.config, "DNA", wc.raw_or_assigned),
         rna=lambda wc: getFinalCounts(wc.project, wc.config, "RNA", wc.raw_or_assigned),
     output:
-        "results/experiments/{project}/{raw_or_assigned}/merged/{condition}_{replicate}_merged.config.{config}.tsv.gz",
+        "results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}.merged.config.{config}.tsv.gz",
     params:
         zero=lambda wc: "false" if withoutZeros(wc.project, wc.config) else "true",
     shell:

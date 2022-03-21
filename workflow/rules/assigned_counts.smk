@@ -44,7 +44,7 @@ rule dna_rna_merge:
     conda:
         "../envs/python3.yaml"
     input:
-        counts="results/experiments/{project}/counts/merged/{condition}_{replicate}_merged.config.{config}.tsv.gz",
+        counts="results/experiments/{project}/counts/{condition}_{replicate}.merged.config.{config}.tsv.gz",
         association=lambda wc: getAssignmentFile(wc.project, wc.assignment),
     output:
         counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",

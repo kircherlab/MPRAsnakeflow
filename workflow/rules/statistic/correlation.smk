@@ -10,7 +10,7 @@ def getMergedCounts(project, raw_or_assigned, condition, conf):
     replicates = []
     for index, row in exp.iterrows():
         files += expand(
-            "results/experiments/{project}/{raw_or_assigned}/merged/{condition}_{replicate}_merged.config.{config}.tsv.gz",
+            "results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}.merged.config.{config}.tsv.gz",
             raw_or_assigned=raw_or_assigned,
             project=project,
             condition=condition,
