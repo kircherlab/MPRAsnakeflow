@@ -232,7 +232,7 @@ rule final_counts_umi:
     input:
         "results/experiments/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
     output:
-        counts="results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz"
+        counts="results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
     shell:
         """
         zcat {input} | awk '{{print $1}}' | \
@@ -243,17 +243,38 @@ rule final_counts_umi:
 
 
 def useSampling(project, conf, dna_or_rna):
-    return "sampling" in config["experiments"][project]["configs"][conf] and dna_or_rna in config["experiments"][project]["configs"][conf]["sampling"]
+    return (
+        "sampling" in config["experiments"][project]["configs"][conf]
+        and dna_or_rna in config["experiments"][project]["configs"][conf]["sampling"]
+    )
 
 
 def counts_getSamplingConfig(project, conf, dna_or_rna, command):
     if useSampling(project, conf, dna_or_rna):
         if dna_or_rna in config["experiments"][project]["configs"][conf]["sampling"]:
-            if command in config["experiments"][project]["configs"][conf]["sampling"][dna_or_rna]:
-                return "--%s %f" % (
-                    command,
-                    config["experiments"][project]["configs"][conf]["sampling"][dna_or_rna][command],
-                )
+            if (
+                command
+                in config["experiments"][project]["configs"][conf]["sampling"][
+                    dna_or_rna
+                ]
+            ):
+                value = config["experiments"][project]["configs"][conf]["sampling"][
+                    dna_or_rna
+                ][command]
+                if isinstance(value, int):
+                    return "--%s %d" % (
+                        command,
+                        config["experiments"][project]["configs"][conf]["sampling"][
+                            dna_or_rna
+                        ][command],
+                    )
+                else:
+                    return "--%s %f" % (
+                        command,
+                        config["experiments"][project]["configs"][conf]["sampling"][
+                            dna_or_rna
+                        ][command],
+                    )
 
     return ""
 
@@ -275,9 +296,7 @@ rule final_counts_umi_samplerer:
         downsampling=lambda wc: counts_getSamplingConfig(
             wc.project, wc.config, wc.type, "threshold"
         ),
-        seed=lambda wc: counts_getSamplingConfig(
-            wc.project, wc.config, wc.type, "seed"
-        ),
+        seed=lambda wc: counts_getSamplingConfig(wc.project, wc.config, wc.type, "seed"),
     wildcard_constraints:
         downsampling="^full",
     shell:
