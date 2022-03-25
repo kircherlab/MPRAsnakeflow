@@ -66,25 +66,6 @@ rule statistic_combine_BC_assignment_stats:
 ###################################################
 
 
-def getAssignedCountsStatistic(project, assignment, conf, condition):
-    exp = getExperiments(project)
-    exp = exp[exp.Condition == condition]
-    output = []
-    for index, row in exp.iterrows():
-        output += [
-            "--statistic %s results/experiments/%s/stats/assigned_counts/%s/%s/%s_%s_merged_assigned_counts.statistic.tsv.gz"
-            % (
-                str(row["Replicate"]),
-                project,
-                assignment,
-                conf,
-                condition,
-                str(row["Replicate"]),
-            )
-        ]
-    return output
-
-
 rule statistic_combine_stats_dna_rna_merge:
     conda:
         "../../envs/python3.yaml"

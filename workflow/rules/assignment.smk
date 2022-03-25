@@ -1,17 +1,6 @@
 SPLIT_FILES_NUMBER = 100
 
 
-def getSplitNumber():
-    split = SPLIT_FILES_NUMBER
-
-    if "global" in config:
-        if "assignments" in config["global"]:
-            if "split_number" in config["global"]["assignments"]:
-                split = config["global"]["assignments"]["split_number"]
-
-    return split
-
-
 rule assignment_getInputs:
     conda:
         "../envs/default.yaml"

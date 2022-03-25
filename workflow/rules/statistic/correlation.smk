@@ -2,24 +2,6 @@
 ### Correlation of BC Counts ###
 ################################
 
-# get all barcodes of experiment (rule dna_rna_merge_counts_withoutZeros or rule dna_rna_merge_counts_withZeros)
-def getMergedCounts(project, raw_or_assigned, condition, conf):
-    exp = getExperiments(project)
-    exp = exp[exp.Condition == condition]
-    files = []
-    replicates = []
-    for index, row in exp.iterrows():
-        files += expand(
-            "results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}.merged.config.{config}.tsv.gz",
-            raw_or_assigned=raw_or_assigned,
-            project=project,
-            condition=condition,
-            replicate=row["Replicate"],
-            config=conf,
-        )
-        replicates += str(row["Replicate"])
-    return [files, replicates]
-
 
 rule statistic_correlate_BC_counts:
     conda:
