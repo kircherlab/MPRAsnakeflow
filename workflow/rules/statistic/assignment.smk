@@ -18,7 +18,7 @@ rule statistic_combine_BC_assignment_stats_helper:
             "results/experiments/{project}/stats/assigned_counts/{assignment}/helper.{condition}.{config}.statistic.tsv.gz"
         ),
     log:
-        "results/experiments/{project}/stats/assigned_counts/{assignment}/statistic_combine_BC_assignment_stats_helper.{condition}.{config}.log"
+        "results/experiments/{project}/stats/assigned_counts/{assignment}/statistic_combine_BC_assignment_stats_helper.{condition}.{config}.log",
     shell:
         """
         set +o pipefail;
@@ -47,7 +47,7 @@ rule statistic_combine_BC_assignment_stats:
             subcategory="Assignment",
         ),
     log:
-        "logs/experiments/{project}/stats/statistic_combine_BC_assignment_stats.{assignment}_{config}.log"
+        "logs/experiments/{project}/stats/statistic_combine_BC_assignment_stats.{assignment}_{config}.log",
     shell:
         """
         set +o pipefail;
@@ -93,7 +93,7 @@ rule statistic_combine_stats_dna_rna_merge:
             "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts.statistic.tsv.gz",
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
-        script=getScript("count/merge_statistic_tables.py"
+        script=getScript("count/merge_statistic_tables.py"),
     output:
         "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/combined/{condition}_merged_assigned_counts.statistic.tsv.gz",
     params:
@@ -104,7 +104,7 @@ rule statistic_combine_stats_dna_rna_merge:
             )
         ),
     log:
-        "logs/experiments/{project}/stats/assigned_counts/{assignment}/{config}/statistic_combine_stats_dna_rna_merge.{condition}.log"
+        "logs/experiments/{project}/stats/assigned_counts/{assignment}/{config}/statistic_combine_stats_dna_rna_merge.{condition}.log",
     shell:
         """
         python {input.script} \
@@ -130,7 +130,7 @@ rule statistic_combine_stats_dna_rna_merge_all:
             subcategory="Assignment",
         ),
     log:
-        "logs/experiments/{project}/stats/statistic_combine_stats_dna_rna_merge_all.{assignment}_{config}.log"
+        "logs/experiments/{project}/stats/statistic_combine_stats_dna_rna_merge_all.{assignment}_{config}.log",
     shell:
         """
         set +o pipefail;
