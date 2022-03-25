@@ -65,7 +65,7 @@ rule assignment_merge:
         R2="results/assignment/{assignment}/fastq/splits/R2.split{split}.fastq.gz",
         R3="results/assignment/{assignment}/fastq/splits/R3.split{split}.fastq.gz",
         script_FastQ2doubleIndexBAM=getScript("count/FastQ2doubleIndexBAM.py"),
-        script_MergeTrimReadsBAM=getScript("/count/MergeTrimReadsBAM.py"),
+        script_MergeTrimReadsBAM=getScript("count/MergeTrimReadsBAM.py"),
     output:
         bam=temp("results/assignment/{assignment}/bam/merge_split{split}.bam"),
     conda:
