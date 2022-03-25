@@ -32,7 +32,7 @@ rule statistic_barcode_base_composition:
         "../../envs/python3.yaml"
     input:
         counts="results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
-        script="../../scripts/count/nucleotideCountPerPosition.py",
+        script="../workflow/scripts/count/nucleotideCountPerPosition.py",
     output:
         bc=temp(
             "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final.BC.tsv.gz"
@@ -189,7 +189,7 @@ rule statistic_counts_final:
     input:
         counts="results/experiments/{project}/stats/counts/count_{countType}.tsv",
         shared="results/experiments/{project}/stats/counts/BC_in_RNA_DNA_{countType}.tsv",
-        script="../../scripts/count/combine_count_stats.R",
+        script="../workflow/scripts/count/combine_count_stats.R",
     output:
         "results/experiments/{project}/stats/statistic_count_{countType}.tsv",
     log:
