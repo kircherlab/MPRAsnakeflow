@@ -5,12 +5,16 @@
 
 # count frequent UMIs per condition, replicate and DNA/RNA
 rule statistic_frequent_umis:
+    conda:
+        "../../envs/default.yaml"
     input:
         "results/experiments/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
     output:
         freqUMIs=(
             "results/experiments/{project}/stats/counts/freqUMIs_{condition}_{replicate}_{type}.txt"
         ),
+    log:
+        "logs/experiments/{project}/stats/counts/statistic_frequent_umis.{condition}_{replicate}_{type}.log"
     shell:
         """
         set +o pipefail;
@@ -28,6 +32,7 @@ rule statistic_barcode_base_composition:
         "../../envs/python3.yaml"
     input:
         counts="results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
+        script=getScript("count/nucleotideCountPerPosition.py"),
     output:
         bc=temp(
             "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final.BC.tsv.gz"
@@ -35,14 +40,16 @@ rule statistic_barcode_base_composition:
         stats="results/experiments/{project}/stats/counts/BCNucleotideComposition/{condition}_{replicate}_{type}.tsv.gz",
     params:
         name="{condition}_{replicate}_{type}",
+    log:
+       "logs/experiments/{project}/stats/counts/BCNucleotideComposition/statistic_barcode_base_composition.{condition}_{replicate}_{type}.log"
     shell:
         """
         zcat {input.counts} | awk '{{print $1}}' | gzip -c > {output.bc};
-        python {SCRIPTS_DIR}/count/nucleotideCountPerPosition.py \
+        python {input.script} \
         --column 1 \
         --chunksize 100000 \
         --input {output.bc} \
-        --output {output.stats}
+        --output {output.stats} > {log}
         """
 
 
@@ -53,6 +60,8 @@ rule statistic_barcode_base_composition:
 
 # count Reads, Barcodes per UMI, Barcodes and Unique UMIs
 rule statistic_counts:
+    conda:
+        "../../envs/default.yaml"
     input:
         "results/experiments/{project}/counts/{condition}_{replicate}_{type}_{countType}_counts.tsv.gz",
     output:
@@ -61,6 +70,8 @@ rule statistic_counts:
         cond="{condition}",
         rep="{replicate}",
         type="{type}",
+    log:
+        "logs/experiments/{project}/stats/counts/statistic_counts.{condition}_{replicate}_{type}_{countType}.log",
     shell:
         """
         paste <( echo "{params.cond}") <( echo "{params.rep}") <( echo "{params.type}") \
@@ -85,28 +96,16 @@ rule statistic_counts:
         """
 
 
-# get all counts of experiment (rule statistic_counts)
-def getCountStats(wc):
-    exp = getExperiments(wc.project)
-    output = []
-    for index, row in exp.iterrows():
-        output += expand(
-            "results/experiments/{project}/stats/counts/{condition}_{replicate}_{type}_{countType}_counts.tsv.gz",
-            project=wc.project,
-            condition=row["Condition"],
-            replicate=row["Replicate"],
-            type=["DNA", "RNA"],
-            countType=wc.countType,
-        )
-    return output
-
-
 # concat DNA, RNA-counts (rule statistic_counts) for all experiments, and replicates
 rule statistic_count_stats_merge:
+    conda:
+        "../../envs/default.yaml"
     input:
         getCountStats,
     output:
         "results/experiments/{project}/stats/counts/count_{countType}.tsv",
+    log:
+        "logs/experiments/{project}/stats/counts/statistic_count_stats_merge.{countType}.log",
     shell:
         """
         zcat {input} | sort -k1,1 -k3,3 -k2,2 > {output}
@@ -115,6 +114,8 @@ rule statistic_count_stats_merge:
 
 # Statistic of barcodes shared between RNA&DNA per condition and replicate
 rule statistic_BC_in_RNA_DNA:
+    conda:
+        "../../envs/default.yaml"
     input:
         dna="results/experiments/{project}/counts/{condition}_{replicate}_DNA_{countType}_counts.tsv.gz",
         rna="results/experiments/{project}/counts/{condition}_{replicate}_RNA_{countType}_counts.tsv.gz",
@@ -123,6 +124,8 @@ rule statistic_BC_in_RNA_DNA:
     params:
         cond="{condition}",
         rep="{replicate}",
+    log:
+        "logs/experiments/{project}/stats/counts/statistic_BC_in_RNA_DNA.{condition}_{replicate}_{countType}.log",
     shell:
         """
         paste <( echo "{params.cond}") <( echo "{params.rep}") \
@@ -132,27 +135,17 @@ rule statistic_BC_in_RNA_DNA:
         """
 
 
-# get all barcodes of experiment (rule statistic_BC_in_RNA_DNA)
-def getBCinRNADNAStats(wc):
-    exp = getExperiments(wc.project)
-    output = []
-    for index, row in exp.iterrows():
-        output += expand(
-            "results/experiments/{project}/stats/counts/{condition}_{replicate}_{countType}_BC_in_RNA_DNA.tsv.gz",
-            project=wc.project,
-            condition=row["Condition"],
-            replicate=row["Replicate"],
-            countType=wc.countType,
-        )
-    return output
-
 
 # concat shared barcodes (rule statistic_BC_in_RNA_DNA) for all experiments, and replicates
 rule statistic_BC_in_RNA_DNA_merge:
+    conda:
+        "../../envs/default.yaml"
     input:
         getBCinRNADNAStats,
     output:
         "results/experiments/{project}/stats/counts/BC_in_RNA_DNA_{countType}.tsv",
+    log:
+        "logs/experiments/{project}/stats/counts/statistic_BC_in_RNA_DNA_merge.{countType}.log"
     shell:
         """
         zcat {input} | sort -k1,1 -k2,2 > {output}
@@ -166,9 +159,12 @@ rule statistic_counts_final:
     input:
         counts="results/experiments/{project}/stats/counts/count_{countType}.tsv",
         shared="results/experiments/{project}/stats/counts/BC_in_RNA_DNA_{countType}.tsv",
+        script=getScript("count/combine_count_stats.R"),
     output:
         "results/experiments/{project}/stats/statistic_count_{countType}.tsv",
+    log:
+        "logs/experiments/{project}/stats/statistic_counts_final.{countType}.log"
     shell:
         """
-        Rscript {SCRIPTS_DIR}/count/combine_count_stats.R --count {input.counts} --shared {input.shared} --output {output}
+        Rscript {input.script} --count {input.counts} --shared {input.shared} --output {output} > {log}
         """

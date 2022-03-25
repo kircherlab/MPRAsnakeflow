@@ -12,18 +12,21 @@ rule assignBarcodes:
     input:
         counts=lambda wc: getFinalCounts(wc.project, wc.config, wc.type, "counts"),
         association=lambda wc: getAssignmentFile(wc.project, wc.assignment),
+        script=getScript("count/merge_BC_and_assignment.py"),
     output:
         counts="results/experiments/{project}/assigned_counts/{assignment}/{condition}_{replicate}_{type}_final_counts.config.{config}.tsv.gz",
         stats="results/experiments/{project}/stats/assigned_counts/{assignment}/{condition}_{replicate}_{type}_{config}.statistic.tsv.gz",
     params:
         name="{condition}_{replicate}_{type}",
+    log:
+        "logs/experiments/{project}/assigned_counts/{assignment}/assignBarcodes.{condition}_{replicate}_{type}_{config}.log",
     shell:
         """
-        python {SCRIPTS_DIR}/count/merge_BC_and_assignment.py --counts {input.counts} \
+        python {input.script} --counts {input.counts} \
         --assignment {input.association} \
         --output {output.counts} \
         --statistic {output.stats} \
-        --name {params.name}
+        --name {params.name} > {log}
         """
 
 
@@ -31,12 +34,15 @@ rule createAssignmentPickleFile:
     conda:
         "envs/python3.yaml"
     input:
-        lambda wc: getAssignmentFile(wc.project, wc.assignment),
+        files=lambda wc: getAssignmentFile(wc.project, wc.assignment),
+        script=getScript("count/create_pickle.py"),
     output:
         "results/experiments/{project}/assigned_counts/{assignment}/assignment.pickle",
+    log:
+        "logs/experiments/{project}/assigned_counts/{assignment}/createAssignmentPickleFile.log",
     shell:
         """
-        python {SCRIPTS_DIR}/count/create_pickle.py -i {input} -o {output}
+        python {input.script} -i {input.files} -o {output} > {log}
         """
 
 
@@ -46,6 +52,7 @@ rule dna_rna_merge:
     input:
         counts="results/experiments/{project}/counts/{condition}_{replicate}.merged.config.{config}.tsv.gz",
         association=lambda wc: getAssignmentFile(wc.project, wc.assignment),
+        script=getScript("count/merge_label.py"),
     output:
         counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
         stats="results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.statistic.tsv.gz",
@@ -56,13 +63,15 @@ rule dna_rna_merge:
         minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
         ]["minDNACounts"],
+    log:
+        "logs/experiments/{project}/assigned_counts/{assignment}/{config}/dna_rna_merge.{condition}_{replicate}.log",
     shell:
         """
-        python {SCRIPTS_DIR}/count/merge_label.py --counts {input.counts} \
+        python {input.script} --counts {input.counts} \
         --minRNACounts {params.minRNACounts} --minDNACounts {params.minDNACounts} \
         --assignment {input.association} \
         --output {output.counts} \
-        --statistic {output.stats}
+        --statistic {output.stats} > {log}
         """
 
 
@@ -74,6 +83,7 @@ rule make_master_tables:
             "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts.tsv.gz",
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
+        script=getScript("count/make_master_tables.R"),
     output:
         statistic="results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_average_allreps_merged.tsv.gz",
         all="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.tsv.gz",
@@ -96,14 +106,16 @@ rule make_master_tables:
         thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
             "bc_threshold"
         ],
+    log:
+        "logs/experiments/{project}/assigned_counts/{assignment}/{config}/make_master_tables.{condition}.log",
     shell:
         """
-        Rscript {SCRIPTS_DIR}/count/make_master_tables.R \
+        Rscript {input.script} \
         --condition {params.cond} \
         --threshold {params.thresh} \
         --files {params.files} \
         --replicates {params.replicates} \
         --output {output.all} \
         --output-all {output.thresh} \
-        --statistic {output.statistic}
+        --statistic {output.statistic} > {log}
         """

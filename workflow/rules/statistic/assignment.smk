@@ -5,6 +5,8 @@
 
 
 rule statistic_combine_BC_assignment_stats_helper:
+    conda:
+        "../../envs/default.yaml"
     input:
         stats=lambda wc: expand(
             "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/{{condition}}_{replicate}_{type}_{{config}}.statistic.tsv.gz",
@@ -15,6 +17,8 @@ rule statistic_combine_BC_assignment_stats_helper:
         temp(
             "results/experiments/{project}/stats/assigned_counts/{assignment}/helper.{condition}.{config}.statistic.tsv.gz"
         ),
+    log:
+        "logs/experiments/{project}/stats/assigned_counts/{assignment}/statistic_combine_BC_assignment_stats_helper.{condition}.{config}.log",
     shell:
         """
         set +o pipefail;
@@ -28,6 +32,8 @@ rule statistic_combine_BC_assignment_stats_helper:
 
 
 rule statistic_combine_BC_assignment_stats:
+    conda:
+        "../../envs/default.yaml"
     input:
         stats=lambda wc: expand(
             "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/helper.{condition}.{{config}}.statistic.tsv.gz",
@@ -40,6 +46,8 @@ rule statistic_combine_BC_assignment_stats:
             category="{project}",
             subcategory="Assignment",
         ),
+    log:
+        "logs/experiments/{project}/stats/statistic_combine_BC_assignment_stats.{assignment}_{config}.log",
     shell:
         """
         set +o pipefail;
@@ -58,33 +66,15 @@ rule statistic_combine_BC_assignment_stats:
 ###################################################
 
 
-def getAssignedCountsStatistic(project, assignment, conf, condition):
-    exp = getExperiments(project)
-    exp = exp[exp.Condition == condition]
-    output = []
-    for index, row in exp.iterrows():
-        output += [
-            "--statistic %s results/experiments/%s/stats/assigned_counts/%s/%s/%s_%s_merged_assigned_counts.statistic.tsv.gz"
-            % (
-                str(row["Replicate"]),
-                project,
-                assignment,
-                conf,
-                condition,
-                str(row["Replicate"]),
-            )
-        ]
-    return output
-
-
 rule statistic_combine_stats_dna_rna_merge:
     conda:
         "../../envs/python3.yaml"
     input:
-        lambda wc: expand(
+        files=lambda wc: expand(
             "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts.statistic.tsv.gz",
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
+        script=getScript("count/merge_statistic_tables.py"),
     output:
         "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/combined/{condition}_merged_assigned_counts.statistic.tsv.gz",
     params:
@@ -94,18 +84,22 @@ rule statistic_combine_stats_dna_rna_merge:
                 wc.project, wc.assignment, wc.config, wc.condition
             )
         ),
+    log:
+        "logs/experiments/{project}/stats/assigned_counts/{assignment}/{config}/statistic_combine_stats_dna_rna_merge.{condition}.log",
     shell:
         """
-        python {SCRIPTS_DIR}/count/merge_statistic_tables.py \
+        python {input.script} \
         --condition {params.cond} \
         {params.statistic} \
-        --output {output}
+        --output {output} > {log}
         """
 
 
 rule statistic_combine_stats_dna_rna_merge_all:
+    conda:
+        "../../envs/default.yaml"
     input:
-        lambda wc: expand(
+        files=lambda wc: expand(
             "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/combined/{condition}_merged_assigned_counts.statistic.tsv.gz",
             condition=getConditions(wc.project),
         ),
@@ -116,12 +110,14 @@ rule statistic_combine_stats_dna_rna_merge_all:
             category="{project}",
             subcategory="Assignment",
         ),
+    log:
+        "logs/experiments/{project}/stats/statistic_combine_stats_dna_rna_merge_all.{assignment}_{config}.log",
     shell:
         """
         set +o pipefail;
         (
-            zcat {input[0]} | head -n 1;
-            for i in {input}; do
+            zcat {input.files[0]} | head -n 1;
+            for i in {input.files}; do
                 zcat $i | tail -n +2
             done
         ) > {output}
