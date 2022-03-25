@@ -26,6 +26,10 @@ from snakemake.workflow import srcdir
 SCRIPTS_DIR = srcdir("scripts")
 
 
+def getScript(name):
+    return "%s/%s" % (SCRIPTS_DIR, name)
+
+
 ##### report workflow #####
 report: "report/workflow.rst"
 

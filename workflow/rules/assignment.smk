@@ -64,8 +64,8 @@ rule assignment_merge:
         R1="results/assignment/{assignment}/fastq/splits/R1.split{split}.fastq.gz",
         R2="results/assignment/{assignment}/fastq/splits/R2.split{split}.fastq.gz",
         R3="results/assignment/{assignment}/fastq/splits/R3.split{split}.fastq.gz",
-        script_FastQ2doubleIndexBAM="workflow/scripts/count/FastQ2doubleIndexBAM.py",
-        script_MergeTrimReadsBAM="workflow/scripts/count/MergeTrimReadsBAM.py",
+        script_FastQ2doubleIndexBAM=getScript("count/FastQ2doubleIndexBAM.py"),
+        script_MergeTrimReadsBAM=getScript("/count/MergeTrimReadsBAM.py"),
     output:
         bam=temp("results/assignment/{assignment}/bam/merge_split{split}.bam"),
     conda:
@@ -207,7 +207,7 @@ rule assignment_getBCs:
 rule assignment_filter:
     input:
         assignment="results/assignment/{assignment}/barcodes_incl_other.sorted.tsv.gz",
-        script="workflow/scripts/assignment/filterAssignmentTsv.py",
+        script=getScript("assignment/filterAssignmentTsv.py"),
     output:
         "results/assignment/{assignment}/assignment_barcodes_incl_other.{assignment_config}.sorted.tsv.gz",
     conda:
