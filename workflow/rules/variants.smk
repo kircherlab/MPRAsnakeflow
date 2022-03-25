@@ -6,7 +6,7 @@ rule variants_generateVariantTable:
     input:
         variant_definition=lambda wc: getVariants(wc.project)["map"],
         counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
-        script="workflow/scripts/variants/generateVariantTable.py",
+        script=getScript("variants/generateVariantTable.py"),
     output:
         "results/experiments/{project}/variants/{assignment}/{config}/{condition}_{replicate}_variantTable.tsv.gz",
     log:
@@ -28,7 +28,7 @@ rule variants_correlate:
             "results/experiments/{{project}}/variants/{{assignment}}/{{config}}/{{condition}}_{replicate}_variantTable.tsv.gz",
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
-        script="workflow/scripts/variants/correlateVariantTables.py",
+        script=getScript("variants/correlateVariantTables.py"),
     output:
         "results/experiments/{project}/stats/variants/{assignment}/{config}/{condition}/{condition}_correlation_variantTable_minBC{threshold}.tsv.gz",
     params:

@@ -12,7 +12,7 @@ rule assignBarcodes:
     input:
         counts=lambda wc: getFinalCounts(wc.project, wc.config, wc.type, "counts"),
         association=lambda wc: getAssignmentFile(wc.project, wc.assignment),
-        script="workflow/scripts/count/merge_BC_and_assignment.py",
+        script=getScript("count/merge_BC_and_assignment.py"),
     output:
         counts="results/experiments/{project}/assigned_counts/{assignment}/{condition}_{replicate}_{type}_final_counts.config.{config}.tsv.gz",
         stats="results/experiments/{project}/stats/assigned_counts/{assignment}/{condition}_{replicate}_{type}_{config}.statistic.tsv.gz",
@@ -35,7 +35,7 @@ rule createAssignmentPickleFile:
         "envs/python3.yaml"
     input:
         files=lambda wc: getAssignmentFile(wc.project, wc.assignment),
-        script="workflow/scripts/count/create_pickle.py",
+        script=getScript("count/create_pickle.py"),
     output:
         "results/experiments/{project}/assigned_counts/{assignment}/assignment.pickle",
     log:
@@ -52,7 +52,7 @@ rule dna_rna_merge:
     input:
         counts="results/experiments/{project}/counts/{condition}_{replicate}.merged.config.{config}.tsv.gz",
         association=lambda wc: getAssignmentFile(wc.project, wc.assignment),
-        script="workflow/scripts/count/merge_label.py",
+        script=getScript("count/merge_label.py"),
     output:
         counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
         stats="results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.statistic.tsv.gz",
@@ -83,7 +83,7 @@ rule make_master_tables:
             "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts.tsv.gz",
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
-        script="workflow/scripts/count/make_master_tables.R",
+        script=getScript("count/make_master_tables.R"),
     output:
         statistic="results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_average_allreps_merged.tsv.gz",
         all="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.tsv.gz",

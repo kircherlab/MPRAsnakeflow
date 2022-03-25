@@ -28,7 +28,7 @@ rule statistic_correlate_BC_counts:
         files=lambda wc: getMergedCounts(
             wc.project, wc.raw_or_assigned, wc.condition, wc.config
         )[0],
-        script="../workflow/scripts/count/plot_perBCCounts_correlation.R",
+        script=getScript("count/plot_perBCCounts_correlation.R"),
     output:
         "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_barcode_DNA_pairwise.png",
         "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_barcode_RNA_pairwise.png",
@@ -130,7 +130,7 @@ rule statistic_calc_correlations:
             if "label_file" in config["experiments"][wc.project]
             else []
         ),
-        script="../workflow/scripts/count/plot_perInsertCounts_correlation.R",
+        script=getScript("count/plot_perInsertCounts_correlation.R"),
     output:
         "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box.png",
         "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box_minThreshold.png",

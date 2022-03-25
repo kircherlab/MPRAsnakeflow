@@ -14,7 +14,7 @@ rule statistic_overlapBCs:
             config=wc.config,
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
-        script="../workflow/scripts/count/BCCounts_betweenReplicates.R",
+        script=getScript("count/BCCounts_betweenReplicates.R"),
     output:
         "results/experiments/{project}/stats/{raw_or_assigned}/overlapBCandCounts_{condition}_{type}_{config}.tsv",
     params:

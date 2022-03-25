@@ -27,7 +27,7 @@ SCRIPTS_DIR = srcdir("scripts")
 
 
 def getScript(name):
-    return "%s/%s" % (SCRIPTS_DIR, name)
+    return "%s%s" % (SCRIPTS_DIR, name)
 
 
 ##### report workflow #####

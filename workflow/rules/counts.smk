@@ -10,7 +10,7 @@ rule create_demultiplexed_index:
         "../envs/python3.yaml"
     input:
         experiment_file=lambda wc: config["experiments"][wc.project]["experiment_file"],
-        script="workflow/scripts/count/create_demultiplexed_index.py",
+        script=getScript("count/create_demultiplexed_index.py"),
     output:
         "results/experiments/{project}/counts/demultiplex_index.tsv",
     log:
@@ -30,7 +30,7 @@ checkpoint create_demultiplexed_BAM_umi:
         umi_fastq=lambda wc: getUMIWithIndex(wc.project),
         index_fastq=lambda wc: getIndexWithIndex(wc.project),
         index_list="results/experiments/{project}/counts/demultiplex_index.tsv",
-        script="workflow/scripts/count/SplitFastQdoubleIndexBAM.py",
+        script=getScript("count/SplitFastQdoubleIndexBAM.py"),
     output:
         "results/experiments/{project}/counts/demultiplex_{name}.bam",
     params:
@@ -95,7 +95,7 @@ rule aggregate_demultiplex:
 rule mergeTrimReads_demultiplexed_BAM_umi:
     input:
         demultiplex="results/experiments/{project}/counts/demultiplex.done",
-        script="workflow/scripts/count/MergeTrimReadsBAM.py",
+        script=getScript("count/MergeTrimReadsBAM.py"),
     output:
         "results/experiments/{project}/counts/merged_demultiplex_{condition}_{replicate}_{type}.bam",
     conda:
@@ -120,8 +120,8 @@ rule create_BAM_umi:
         fw_fastq=lambda wc: getFW(wc.project, wc.condition, wc.replicate, wc.type),
         rev_fastq=lambda wc: getRev(wc.project, wc.condition, wc.replicate, wc.type),
         umi_fastq=lambda wc: getUMI(wc.project, wc.condition, wc.replicate, wc.type),
-        script_FastQ2doubleIndexBAM="workflow/scripts/count/FastQ2doubleIndexBAM.py",
-        script_MergeTrimReadsBAM="workflow/scripts/count/MergeTrimReadsBAM.py",
+        script_FastQ2doubleIndexBAM=getScript("count/FastQ2doubleIndexBAM.py"),
+        script_MergeTrimReadsBAM=getScript("count/MergeTrimReadsBAM.py"),
     output:
         "results/experiments/{project}/counts/{condition}_{replicate}_{type}.bam",
     params:
@@ -295,7 +295,7 @@ rule final_counts_umi_samplerer:
     """
     input:
         counts="results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
-        script="workflow/scripts/count/samplerer.py",
+        script=getScript("count/samplerer.py"),
     output:
         "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.sampling.{config}.tsv.gz",
     conda:

@@ -93,7 +93,7 @@ rule statistic_combine_stats_dna_rna_merge:
             "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts.statistic.tsv.gz",
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
-        script="../workflow/scripts/count/merge_statistic_tables.py"
+        script=getScript("count/merge_statistic_tables.py"
     output:
         "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/combined/{condition}_merged_assigned_counts.statistic.tsv.gz",
     params:
