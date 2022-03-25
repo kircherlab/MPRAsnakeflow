@@ -36,6 +36,7 @@ wildcard_constraints:
     assignment="[^/]+",
     condition="[^/]+",
 
+
 ##### localrules #####
 localrules:
     all,
@@ -154,13 +155,13 @@ def getFW(project, condition, replicate, rnaDna_type):
     exp = exp[exp.Replicate.astype(str) == replicate]
     return "%s/%s" % (
         config["experiments"][project]["data_folder"],
-        exp[rnaDna_type + "_BC_F"].iloc[0],
+        exp["%s_BC_F" % rnaDna_type].iloc[0],
     )
 
 
 def getFWWithIndex(project):
     return [
-        config["experiments"][project]["data_folder"] + f
+        "%s%s" % (config["experiments"][project]["data_folder"], f)
         for f in getExperiments(project).BC_F.iloc[0].split(";")
     ]
 
@@ -171,13 +172,13 @@ def getRev(project, condition, replicate, rnaDna_type):
     exp = exp[exp.Replicate.astype(str) == replicate]
     return "%s/%s" % (
         config["experiments"][project]["data_folder"],
-        exp[rnaDna_type + "_BC_R"].iloc[0],
+        exp["%s_BC_R" % rnaDna_type].iloc[0],
     )
 
 
 def getRevWithIndex(project):
     return [
-        config["experiments"][project]["data_folder"] + f
+        "%s%s" % (config["experiments"][project]["data_folder"], f)
         for f in getExperiments(project).BC_R.iloc[0].split(";")
     ]
 
@@ -188,7 +189,7 @@ def getUMI(project, condition, replicate, rnaDna_type):
     exp = exp[exp.Replicate.astype(str) == replicate]
     return "%s/%s" % (
         config["experiments"][project]["data_folder"],
-        exp[rnaDna_type + "_UMI"].iloc[0],
+        exp["%s_UMI" % rnaDna_type].iloc[0],
     )
 
 
@@ -547,6 +548,7 @@ rule all_experiments:
             "results/experiments/{project}/stats/variants/{assignment}/{config}/correlation_variantTable.tsv",
             True,
         ),
+
 
 rule all_experiments_counts_stats:
     input:

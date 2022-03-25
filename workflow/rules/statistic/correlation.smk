@@ -25,9 +25,10 @@ rule statistic_correlate_BC_counts:
     conda:
         "../../envs/r.yaml"
     input:
-        lambda wc: getMergedCounts(
+        files=lambda wc: getMergedCounts(
             wc.project, wc.raw_or_assigned, wc.condition, wc.config
         )[0],
+        script="../../scripts/count/plot_perBCCounts_correlation.R",
     output:
         "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_barcode_DNA_pairwise.png",
         "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_barcode_RNA_pairwise.png",
@@ -44,9 +45,11 @@ rule statistic_correlate_BC_counts:
         input=lambda wc: ",".join(
             getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[0]
         ),
+    log:
+        "logs/experiments/{project}/stats/barcode/{raw_or_assigned}/statistic_correlate_BC_counts.{condition}_{config}.log",
     shell:
         """
-        Rscript {SCRIPTS_DIR}/count/plot_perBCCounts_correlation.R \
+        Rscript {input.script} \
         --outdir {params.outdir} \
         --condition {params.cond} \
         --files {params.input} --replicates {params.replicates}
@@ -54,8 +57,10 @@ rule statistic_correlate_BC_counts:
 
 
 rule statistic_combine_bc_correlation_raw:
+    conda:
+        "../../envs/default.yaml"
     input:
-        lambda wc: expand(
+        files=lambda wc: expand(
             "results/experiments/{{project}}/stats/barcode/counts/{condition}_{{config}}_barcode_correlation.tsv",
             condition=getConditions(wc.project),
         ),
@@ -66,11 +71,13 @@ rule statistic_combine_bc_correlation_raw:
             category="{project}",
             subcategory="Barcodes",
         ),
+    log:
+        "logs/experiments/{project}/stats/statistic_combine_bc_correlation_raw.{config}.log",
     shell:
         """
         (
-        cat {input[0]} | head -n 1;
-        for i in {input}; do
+        cat {input.files[0]} | head -n 1;
+        for i in {input.files}; do
             cat $i | tail -n +2;
         done;
         ) > {output}
@@ -78,8 +85,10 @@ rule statistic_combine_bc_correlation_raw:
 
 
 rule statistic_combine_bc_correlation_assigned:
+    conda:
+        "../../envs/default.yaml"
     input:
-        lambda wc: expand(
+        files=lambda wc: expand(
             "results/experiments/{{project}}/stats/barcode/assigned_counts/{{assignment}}/{condition}_{{config}}_barcode_correlation.tsv",
             condition=getConditions(wc.project),
         ),
@@ -90,11 +99,13 @@ rule statistic_combine_bc_correlation_assigned:
             category="{project}",
             subcategory="Barcodes",
         ),
+    log:
+        "logs/experiments/{project}/stats/statistic_combine_bc_correlation_assigned{assignment}_{config}.log",
     shell:
         """
         (
-        cat {input[0]} | head -n 1;
-        for i in {input}; do
+        cat {input.files[0]} | head -n 1;
+        for i in {input.files}; do
             cat $i | tail -n +2;
         done;
         ) > {output}
@@ -119,6 +130,7 @@ rule statistic_calc_correlations:
             if "label_file" in config["experiments"][wc.project]
             else []
         ),
+        script="../../scripts/count/plot_perInsertCounts_correlation.R",
     output:
         "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box.png",
         "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box_minThreshold.png",
@@ -156,19 +168,23 @@ rule statistic_calc_correlations:
             if "label_file" in config["experiments"][wc.project]
             else ""
         ),
+    log:
+        "logs/experiments/{project}/stats/assigned_counts/{assignment}/{config}/statistic_calc_correlations.{condition}.log",
     shell:
         """
-        Rscript {SCRIPTS_DIR}/count/plot_perInsertCounts_correlation.R \
+        Rscript {input.script} \
         --condition {params.cond} \
         {params.label} \
         --files {params.files} \
         --replicates {params.replicates} \
         --threshold {params.thresh} \
-        --outdir {params.outdir}
+        --outdir {params.outdir} > {log}
         """
 
 
 rule statistic_combine_oligo_correlation:
+    conda:
+        "../../envs/default.yaml"
     input:
         correlation=lambda wc: expand(
             "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/{condition}_correlation.tsv",
@@ -189,6 +205,8 @@ rule statistic_combine_oligo_correlation:
         thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
             "bc_threshold"
         ],
+    log:
+        "logs/experiments/{project}/stats/statistic_combine_oligo_correlation.{assignment}_{config}.log",
     shell:
         """
         set +o pipefail;

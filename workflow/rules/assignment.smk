@@ -13,10 +13,14 @@ def getSplitNumber():
 
 
 rule assignment_getInputs:
+    conda:
+        "../envs/default.yaml"
     input:
         lambda wc: config["assignments"][wc.assignment][wc.R],
     output:
         R1=temp("results/assignment/{assignment}/fastq/{R}.fastq.gz"),
+    log:
+        "logs/assignment/{assignment}/fastq/assignment_getInputs.{R}.log",
     shell:
         """
         zcat {input} | gzip -c > {output}
@@ -35,6 +39,8 @@ rule assignment_fastq_split:
         ),
     conda:
         "../envs/fastqsplitter.yaml"
+    log:
+        "logs/assignment/{assignment}/fastq/splits/assignment_fastq_split.{R}.log",
     params:
         files=lambda wc: " ".join(
             [
@@ -49,7 +55,7 @@ rule assignment_fastq_split:
         ),
     shell:
         """
-        fastqsplitter -i {input} -t 10 {params.files} 
+        fastqsplitter -i {input} -t 10 {params.files} > {log}
         """
 
 
@@ -58,10 +64,14 @@ rule assignment_merge:
         R1="results/assignment/{assignment}/fastq/splits/R1.split{split}.fastq.gz",
         R2="results/assignment/{assignment}/fastq/splits/R2.split{split}.fastq.gz",
         R3="results/assignment/{assignment}/fastq/splits/R3.split{split}.fastq.gz",
+        script_FastQ2doubleIndexBAM="../scripts/count/FastQ2doubleIndexBAM.py",
+        script_MergeTrimReadsBAM="../scripts/count/MergeTrimReadsBAM.py",
     output:
         bam=temp("results/assignment/{assignment}/bam/merge_split{split}.bam"),
     conda:
         "../envs/python27.yaml"
+    log:
+        "logs/assignment/{assignment}/bam/assignment_merge.{split}.log",
     shell:
         """
         paste <( zcat {input.R1} ) <( zcat {input.R2} ) <( zcat {input.R3} ) | \
@@ -76,8 +86,8 @@ rule assignment_merge:
                 count=0 
             }} 
         }}' | \
-        python {SCRIPTS_DIR}/count/FastQ2doubleIndexBAM.py -p -s 162 -l 15 -m 0 | \
-        python {SCRIPTS_DIR}/count/MergeTrimReadsBAM.py -c '' -f CATTGCGTGAACCGACAATTCGTCGAGGGACCTAATAAC -s AGTTGATCCGGTCCTAGGTCTAGAGCGGGCCCTGGCAGA --mergeoverlap -p > {output}
+        python {input.script_FastQ2doubleIndexBAM} -p -s 162 -l 15 -m 0 | \
+        python {input.script_MergeTrimReadsBAM} -c '' -f CATTGCGTGAACCGACAATTCGTCGAGGGACCTAATAAC -s AGTTGATCCGGTCCTAGGTCTAGAGCGGGCCCTGGCAGA --mergeoverlap -p > {output} 2> {log}
         """
 
 
@@ -96,12 +106,14 @@ rule assignment_bwa_ref:
         d="results/assignment/{assignment}/reference/reference.fa.dict",
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
+    log:
+        "logs/assignment/{assignment}/reference/assignment_bwa_ref.log",
     shell:
         """
         cp {input} {output.ref};
-        bwa index -a bwtsw {output.ref};
-        samtools faidx {output.ref};
-        picard CreateSequenceDictionary REFERENCE={output.ref} OUTPUT={output.d}
+        bwa index -a bwtsw {output.ref} > {log};
+        samtools faidx {output.ref} >> {log};
+        picard CreateSequenceDictionary REFERENCE={output.ref} OUTPUT={output.d} >> {log}
         """
 
 
@@ -120,6 +132,8 @@ rule assignment_mapping:
         "results/assignment/{assignment}/aligned_merged_reads.bam",
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
+    log:
+        "logs/assignment/{assignment}/assignment_mapping.log",
     shell:
         """
         bwa mem -t 30 -L 80 -M -C {input.reference} <(
@@ -128,7 +142,7 @@ rule assignment_mapping:
             awk 'BEGIN{{ OFS="\\n"; FS="\\t" }}{{ print "@"$1" "$12","$13,$10,"+",$11 }}';
         ) | \
         samtools view -Su | \
-        samtools sort > {output}
+        samtools sort > {output} 2> {log}
         """
 
 
@@ -139,9 +153,11 @@ rule assignment_idx_bam:
         "results/assignment/{assignment}/aligned_merged_reads.bam.bai",
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
+    log:
+        "logs/assignment/{assignment}/assignment_idx_bam.log",
     shell:
         """
-        samtools index {input}
+        samtools index {input} 2> {log}
         """
 
 
@@ -153,13 +169,15 @@ rule assignment_flagstat:
         "results/assignment/{assignment}/stats/assignment/bam_stats.txt",
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
+    log:
+        "logs/assignment/{assignment}/stats/assignment/assignment_flagstat.log",
     shell:
         """
-        samtools flagstat {input.bam} > {output}
+        samtools flagstat {input.bam} > {output} 2> {log}
         """
 
 
-# TODO hard coded lengths of reference sequence (expected 200 bp match)
+# TODO hard coded lengths of reference sequence (expected 230 bp match)
 rule assignment_getBCs:
     input:
         "results/assignment/{assignment}/aligned_merged_reads.bam",
@@ -167,6 +185,8 @@ rule assignment_getBCs:
         "results/assignment/{assignment}/barcodes_incl_other.sorted.tsv.gz",
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
+    log:
+        "logs/assignment/{assignment}/assignment_getBCs.log",
     shell:
         """
         samtools view -F 1792 {input} | \
@@ -180,17 +200,20 @@ rule assignment_getBCs:
                     print a[1],"other","NA" 
                 }}
             }}
-        }}' | sort -k1,1 -k2,2 -k3,3 | gzip -c > {output}
+        }}' | sort -k1,1 -k2,2 -k3,3 | gzip -c > {output} 2> {log}
         """
 
 
 rule assignment_filter:
     input:
-        "results/assignment/{assignment}/barcodes_incl_other.sorted.tsv.gz",
+        assignment="results/assignment/{assignment}/barcodes_incl_other.sorted.tsv.gz",
+        script="../scripts/assignment/filterAssignmentTsv.py",
     output:
         "results/assignment/{assignment}/assignment_barcodes_incl_other.{assignment_config}.sorted.tsv.gz",
     conda:
         "../envs/python3.yaml"
+    log:
+        "logs/assignment/{assignment}/assignment_filter.{assignment_config}.log",
     params:
         min_support=lambda wc: config["assignments"][wc.assignment]["configs"][
             wc.assignment_config
@@ -208,7 +231,8 @@ rule assignment_filter:
         else "",
     shell:
         """
-        zcat  {input} | \
-        python {SCRIPTS_DIR}/assignment/filterAssignmentTsv.py -m {params.min_support} -f {params.fraction} {params.unknown_other} {params.ambiguous}| \
-        gzip -c > {output}
+        zcat  {input.assignment} | \
+        python {input.script} \
+        -m {params.min_support} -f {params.fraction} {params.unknown_other} {params.ambiguous}| \
+        gzip -c > {output} 2> {log}
         """

@@ -7,13 +7,14 @@ rule statistic_overlapBCs:
     conda:
         "../../envs/r.yaml"
     input:
-        lambda wc: expand(
+        files=lambda wc: expand(
             getFinalCounts(wc.project, wc.config, wc.type, wc.raw_or_assigned),
             project=wc.project,
             condition=wc.condition,
             config=wc.config,
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
+        script="../../scripts/count/BCCounts_betweenReplicates.R",
     output:
         "results/experiments/{project}/stats/{raw_or_assigned}/overlapBCandCounts_{condition}_{type}_{config}.tsv",
     params:
@@ -30,16 +31,20 @@ rule statistic_overlapBCs:
         replicates=lambda wc: ",".join(
             getReplicatesOfCondition(wc.project, wc.condition)
         ),
+    log:
+        "logs/experiments/{project}/stats/{raw_or_assigned}/statistic_overlapBCs.{condition}_{type}_{config}.log",
     shell:
         """
-        Rscript {SCRIPTS_DIR}/count/BCCounts_betweenReplicates.R \
+        Rscript {input.script} \
         --outfile {output} \
         --condition {params.cond} \
-        --files {params.input} --replicates {params.replicates}
+        --files {params.input} --replicates {params.replicates} > {log}
         """
 
 
 rule statistic_combine_overlapBCs_stats_raw:
+    conda:
+        "../../envs/default.yaml"
     input:
         stats=lambda wc: expand(
             "results/experiments/{{project}}/stats/counts/overlapBCandCounts_{condition}_{type}_{config}.tsv",
@@ -54,6 +59,8 @@ rule statistic_combine_overlapBCs_stats_raw:
             category="{project}",
             subcategory="Barcodes",
         ),
+    log:
+        "logs/experiments/{project}/stats/statistic_combine_overlapBCs_stats_raw.{config}.log",
     shell:
         """
         set +o pipefail;
@@ -67,6 +74,8 @@ rule statistic_combine_overlapBCs_stats_raw:
 
 
 rule statistic_combine_overlapBCs_stats_assigned:
+    conda:
+        "../../envs/default.yaml"
     input:
         stats=lambda wc: expand(
             "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/overlapBCandCounts_{condition}_{type}_{{config}}.tsv",
@@ -80,6 +89,8 @@ rule statistic_combine_overlapBCs_stats_assigned:
             category="{project}",
             subcategory="Barcodes",
         ),
+    log:
+        "logs/experiments/{project}/stats/statistic_combine_overlapBCs_stats_assigned.{assignment}_{config}.log",
     shell:
         """
         set +o pipefail;
