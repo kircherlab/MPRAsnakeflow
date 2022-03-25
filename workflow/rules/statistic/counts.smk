@@ -37,7 +37,7 @@ rule statistic_barcode_base_composition:
         name="{condition}_{replicate}_{type}",
     shell:
         """
-        zcat {input.counts} | awk '{{print $2}}' | gzip -c > {output.bc};
+        zcat {input.counts} | awk '{{print $1}}' | gzip -c > {output.bc};
         python {SCRIPTS_DIR}/count/nucleotideCountPerPosition.py \
         --column 1 \
         --chunksize 100000 \

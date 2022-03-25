@@ -110,22 +110,6 @@ properties:
               - type
               - value
             additionalProperties: False
-        sampling:
-          type: object
-          additionalProperties:
-            type: object
-            properties:
-              DNAdownsampling:
-                type: integer
-              RNAdownsampling:
-                type: integer
-              DNAprop:
-                type: number
-              seed:
-                type: integer
-              RNAprop:
-                type: number
-            additionalProperties: False
         configs:
           type: object
           additionalProperties:
@@ -137,6 +121,21 @@ properties:
                 type: integer
               minRNACounts:
                 type: integer
+              sampling:
+                type: object
+                patternProperties:
+                  ^((DNA)|(RNA))$:
+                    type: object
+                    properties:
+                      threshold:
+                        type: integer
+                      prop:
+                        type: number
+                      seed:
+                        type: integer
+                    additionalProperties: False    
+                additionalProperties: False
+            additionalProperties: False
             required:
               - bc_threshold
               - minDNACounts

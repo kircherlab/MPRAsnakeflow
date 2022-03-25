@@ -10,11 +10,11 @@ rule assignBarcodes:
     conda:
         "../envs/python3.yaml"
     input:
-        counts="results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts_{sampling}.tsv.gz",
+        counts=lambda wc: getFinalCounts(wc.project, wc.config, wc.type, "counts"),
         association=lambda wc: getAssignmentFile(wc.project, wc.assignment),
     output:
-        counts="results/experiments/{project}/assigned_counts/{assignment}/{condition}_{replicate}_{type}_final_counts_{sampling}.tsv.gz",
-        stats="results/experiments/{project}/stats/assigned_counts/{assignment}/{condition}_{replicate}_{type}_{sampling}.statistic.tsv.gz",
+        counts="results/experiments/{project}/assigned_counts/{assignment}/{condition}_{replicate}_{type}_final_counts.config.{config}.tsv.gz",
+        stats="results/experiments/{project}/stats/assigned_counts/{assignment}/{condition}_{replicate}_{type}_{config}.statistic.tsv.gz",
     params:
         name="{condition}_{replicate}_{type}",
     shell:
@@ -44,19 +44,11 @@ rule dna_rna_merge:
     conda:
         "../envs/python3.yaml"
     input:
-        counts=lambda wc: expand(
-            "results/experiments/{{project}}/counts/merged/{mergeType}/{{condition}}_{{replicate}}_merged_counts_{{sampling}}.tsv.gz",
-        mergeType="withoutZeros"
-            if config["experiments"][wc.project]["configs"][wc.config]["minRNACounts"]
-            > 0
-            and config["experiments"][wc.project]["configs"][wc.config]["minDNACounts"]
-            > 0
-            else "withZeros",
-        ),
+        counts="results/experiments/{project}/counts/{condition}_{replicate}.merged.config.{config}.tsv.gz",
         association=lambda wc: getAssignmentFile(wc.project, wc.assignment),
     output:
-        counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts_{sampling}.tsv.gz",
-        stats="results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts_{sampling}.statistic.tsv.gz",
+        counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
+        stats="results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.statistic.tsv.gz",
     params:
         minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
@@ -79,23 +71,22 @@ rule make_master_tables:
         "../envs/r.yaml"
     input:
         counts=lambda wc: expand(
-            "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts_{{sampling}}.tsv.gz",
+            "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts.tsv.gz",
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
     output:
-        statistic="results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_{sampling}_average_allreps_merged.tsv.gz",
-        all="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{sampling}_allreps_merged.tsv.gz",
-        thresh="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{sampling}_allreps_minThreshold_merged.tsv.gz",
+        statistic="results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_average_allreps_merged.tsv.gz",
+        all="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.tsv.gz",
+        thresh="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged.tsv.gz",
     params:
         cond="{condition}",
         files=lambda wc: ",".join(
             expand(
-                "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts_{sampling}.tsv.gz",
+                "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
                 replicate=getReplicatesOfCondition(wc.project, wc.condition),
                 project=wc.project,
                 condition=wc.condition,
                 assignment=wc.assignment,
-                sampling=wc.sampling,
                 config=wc.config,
             )
         ),

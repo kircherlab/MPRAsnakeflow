@@ -214,7 +214,6 @@ rule filter_counts:
         "results/experiments/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
     params:
         bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
-        datasetID="{condition}_{replicate}_{type}",
     shell:
         """
         bc={params.bc_length};
@@ -238,52 +237,66 @@ rule final_counts_umi:
         """
         zcat {input} | awk '{{print $1}}' | \
         uniq -c | \
+        awk -v 'OFS=\\t' '{{ print $2,$1 }}' | \
         gzip -c > {output.counts}
         """
 
 
-rule final_counts_umi_full:
-    """
-    TODO
-    """
-    input:
-        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
-    output:
-        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts_full.tsv.gz",
-    shell:
-        """
-        zcat  {input} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | gzip -c > {output}
-        """
+def useSampling(project, conf, dna_or_rna):
+    return (
+        "sampling" in config["experiments"][project]["configs"][conf]
+        and dna_or_rna in config["experiments"][project]["configs"][conf]["sampling"]
+    )
 
 
-def counts_getSamplingConfig(project, sampling, prop, command):
-    if "sampling" in config["experiments"][project]:
-        if prop in config["experiments"][project]["sampling"][sampling]:
-            return "--%s %f" % (
-                command,
-                config["experiments"][project]["sampling"][sampling][prop],
-            )
+def counts_getSamplingConfig(project, conf, dna_or_rna, command):
+    if useSampling(project, conf, dna_or_rna):
+        if dna_or_rna in config["experiments"][project]["configs"][conf]["sampling"]:
+            if (
+                command
+                in config["experiments"][project]["configs"][conf]["sampling"][
+                    dna_or_rna
+                ]
+            ):
+                value = config["experiments"][project]["configs"][conf]["sampling"][
+                    dna_or_rna
+                ][command]
+                if isinstance(value, int):
+                    return "--%s %d" % (
+                        command,
+                        config["experiments"][project]["configs"][conf]["sampling"][
+                            dna_or_rna
+                        ][command],
+                    )
+                else:
+                    return "--%s %f" % (
+                        command,
+                        config["experiments"][project]["configs"][conf]["sampling"][
+                            dna_or_rna
+                        ][command],
+                    )
 
     return ""
 
 
-rule final_counts_umi_shiftDNA:
+rule final_counts_umi_samplerer:
     """
     Creates full + new distribution DNA files
     """
     input:
-        "results/experiments/{project}/counts/{condition}_{replicate}_DNA_final_counts_full.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
     output:
-        "results/experiments/{project}/counts/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.sampling.{config}.tsv.gz",
     conda:
         "../envs/python3.yaml"
     params:
         samplingprop=lambda wc: counts_getSamplingConfig(
-            wc.project, wc.sampling, "DNAprop", "prop"
+            wc.project, wc.config, wc.type, "prop"
         ),
         downsampling=lambda wc: counts_getSamplingConfig(
-            wc.project, wc.sampling, "DNAdownsampling", "threshold"
+            wc.project, wc.config, wc.type, "threshold"
         ),
+        seed=lambda wc: counts_getSamplingConfig(wc.project, wc.config, wc.type, "seed"),
     wildcard_constraints:
         downsampling="^full",
     shell:
@@ -291,36 +304,38 @@ rule final_counts_umi_shiftDNA:
         python {SCRIPTS_DIR}/count/samplerer.py --input {input} \
         {params.samplingprop} \
         {params.downsampling} \
+        {params.seed} \
         --output {output}
         """
 
 
-rule final_counts_umi_shiftRNA:
-    """
-    Creates full + new distribution RNA files
-    """
-    input:
-        "results/experiments/{project}/counts/{condition}_{replicate}_RNA_final_counts_full.tsv.gz",
-    output:
-        "results/experiments/{project}/counts/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
-    conda:
-        "../envs/python3.yaml"
-    params:
-        samplingprop=lambda wc: counts_getSamplingConfig(
-            wc.project, wc.sampling, "RNAprop", "prop"
-        ),
-        downsampling=lambda wc: counts_getSamplingConfig(
-            wc.project, wc.sampling, "RNAdownsampling", "threshold"
-        ),
-    wildcard_constraints:
-        downsampling="^full",
-    shell:
-        """
-        python {SCRIPTS_DIR}/count/samplerer.py --input {input} \
-        {params.samplingprop} \
-        {params.downsampling} \
-        --output {output}
-        """
+def getFinalCounts(project, conf, rna_or_dna, raw_or_assigned):
+    output = ""
+    if raw_or_assigned == "counts":
+        if useSampling(project, conf, rna_or_dna):
+            output = (
+                "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts.sampling.{config}.tsv.gz"
+                % (raw_or_assigned, rna_or_dna)
+            )
+
+        else:
+            output = (
+                "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts.tsv.gz"
+                % (raw_or_assigned, rna_or_dna)
+            )
+    else:
+        output = (
+            "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts.config.{config}.tsv.gz"
+            % (raw_or_assigned, rna_or_dna)
+        )
+    return output
+
+
+def withoutZeros(project, conf):
+    return (
+        config["experiments"][project]["configs"][conf]["minDNACounts"] > 0
+        and config["experiments"][project]["configs"][conf]["minRNACounts"] > 0
+    )
 
 
 rule dna_rna_merge_counts:
@@ -330,12 +345,12 @@ rule dna_rna_merge_counts:
     Second with zeros, so a BC can be defined only in the DNA or RNA (withZeros)
     """
     input:
-        dna="results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}_DNA_final_counts_{sampling}.tsv.gz",
-        rna="results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}_RNA_final_counts_{sampling}.tsv.gz",
+        dna=lambda wc: getFinalCounts(wc.project, wc.config, "DNA", wc.raw_or_assigned),
+        rna=lambda wc: getFinalCounts(wc.project, wc.config, "RNA", wc.raw_or_assigned),
     output:
-        "results/experiments/{project}/{raw_or_assigned}/merged/{mergeType}/{condition}_{replicate}_merged_counts_{sampling}.tsv.gz",
+        "results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}.merged.config.{config}.tsv.gz",
     params:
-        zero=lambda wc: "false" if wc.mergeType == "withoutZeros" else "true",
+        zero=lambda wc: "false" if withoutZeros(wc.project, wc.config) else "true",
     shell:
         """
         zero={params.zero};

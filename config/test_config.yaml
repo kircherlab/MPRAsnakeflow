@@ -14,13 +14,13 @@ experiments:
         type: file
         value: resources/SRR10800986_filtered_coords_to_barcodes.tsv.gz
     design_file: reseources/design.fa
-    sampling:
-      samplingDist3:
-        DNAprop: 30000000
-        RNAprop: 50000000
     configs:
-      threshold1:
+      threshold1Withsampling:
         bc_threshold: 1
         minDNACounts: 1
         minRNACounts: 1
-
+        sampling:
+          DNA:
+            prop: 30000000
+          RNA:
+            prop: 50000000
