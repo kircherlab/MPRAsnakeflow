@@ -18,7 +18,7 @@ rule statistic_combine_BC_assignment_stats_helper:
             "results/experiments/{project}/stats/assigned_counts/{assignment}/helper.{condition}.{config}.statistic.tsv.gz"
         ),
     log:
-        "results/experiments/{project}/stats/assigned_counts/{assignment}/statistic_combine_BC_assignment_stats_helper.{condition}.{config}.log",
+        "logs/experiments/{project}/stats/assigned_counts/{assignment}/statistic_combine_BC_assignment_stats_helper.{condition}.{config}.log",
     shell:
         """
         set +o pipefail;

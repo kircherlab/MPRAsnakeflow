@@ -14,7 +14,7 @@ rule statistic_frequent_umis:
             "results/experiments/{project}/stats/counts/freqUMIs_{condition}_{replicate}_{type}.txt"
         ),
     log:
-        "results/experiments/{project}/stats/counts/statistic_frequent_umis.{condition}_{replicate}_{type}.log"
+        "logs/experiments/{project}/stats/counts/statistic_frequent_umis.{condition}_{replicate}_{type}.log"
     shell:
         """
         set +o pipefail;
