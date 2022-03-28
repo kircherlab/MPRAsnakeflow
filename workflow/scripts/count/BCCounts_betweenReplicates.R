@@ -49,11 +49,6 @@ num_replicates=length(replicates)
 data <- data.frame(File=files,Replicate=replicates)
 data$Condition <- cond
 
-print(data)
-
-
-
-
 
 getOverlapStats <- function(data1,data2,condition,r1,r2){
   sData1 <- data1 %>% summarize(size=n(), count=sum(Counts))
@@ -89,7 +84,6 @@ getOverlapStats <- function(data1,data2,condition,r1,r2){
 readData <- function(file) {
   data <- read.table(file,sep="\t",as.is=T,header=F,stringsAsFactors = F)
   colnames(data) <- c("Barcode","Counts")
-  print(data)
   return(data)
 }
 
