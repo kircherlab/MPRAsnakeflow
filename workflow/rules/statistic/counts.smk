@@ -108,7 +108,7 @@ rule statistic_count_stats_merge:
         "logs/experiments/{project}/stats/counts/statistic_count_stats_merge.{countType}.log",
     shell:
         """
-        zcat {input} | sort -k1,1 -k3,3 -k2,2 > {output}
+        zcat {input} | sort -k1,1 -k3,3 -k2,2 > {output} 2> {log}
         """
 
 
