@@ -7,7 +7,6 @@ __default__:
   error: "logs/%x_%j_%N.err"
   output: "logs/%x_%j_%N.log"
 
-
 ##################
 ### ASSIGNMENT ###
 ##################
@@ -35,7 +34,6 @@ assignment_getBCs:
 ##############
 ### COUNTS ###
 ##############
-
 
 create_demultiplexed_BAM_umi:
   time: "4-00:00"
@@ -66,6 +64,10 @@ raw_counts_umi:
   time: "0-22:00"
   mem: 6000
   queue: "medium"
+
+final_counts_umi_samplerer:
+  mem: 20G
+  queue: medium
 
 statistic_correlate_BC_counts:
   time: "0-22:00"
