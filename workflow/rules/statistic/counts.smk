@@ -14,7 +14,7 @@ rule statistic_frequent_umis:
             "results/experiments/{project}/stats/counts/freqUMIs_{condition}_{replicate}_{type}.txt"
         ),
     log:
-        "results/experiments/{project}/stats/counts/statistic_frequent_umis.{condition}_{replicate}_{type}.log"
+        "logs/experiments/{project}/stats/counts/statistic_frequent_umis.{condition}_{replicate}_{type}.log"
     shell:
         """
         set +o pipefail;
@@ -96,22 +96,6 @@ rule statistic_counts:
         """
 
 
-# get all counts of experiment (rule statistic_counts)
-def getCountStats(wc):
-    exp = getExperiments(wc.project)
-    output = []
-    for index, row in exp.iterrows():
-        output += expand(
-            "results/experiments/{project}/stats/counts/{condition}_{replicate}_{type}_{countType}_counts.tsv.gz",
-            project=wc.project,
-            condition=row["Condition"],
-            replicate=row["Replicate"],
-            type=["DNA", "RNA"],
-            countType=wc.countType,
-        )
-    return output
-
-
 # concat DNA, RNA-counts (rule statistic_counts) for all experiments, and replicates
 rule statistic_count_stats_merge:
     conda:
@@ -150,20 +134,6 @@ rule statistic_BC_in_RNA_DNA:
         gzip -c > {output}
         """
 
-
-# get all barcodes of experiment (rule statistic_BC_in_RNA_DNA)
-def getBCinRNADNAStats(wc):
-    exp = getExperiments(wc.project)
-    output = []
-    for index, row in exp.iterrows():
-        output += expand(
-            "results/experiments/{project}/stats/counts/{condition}_{replicate}_{countType}_BC_in_RNA_DNA.tsv.gz",
-            project=wc.project,
-            condition=row["Condition"],
-            replicate=row["Replicate"],
-            countType=wc.countType,
-        )
-    return output
 
 
 # concat shared barcodes (rule statistic_BC_in_RNA_DNA) for all experiments, and replicates

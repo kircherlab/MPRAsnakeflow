@@ -66,28 +66,10 @@ checkpoint create_demultiplexed_BAM_umi:
         """
 
 
-def aggregate_input(project):
-    output = []
-    conditions = getConditions(project)
-    for condition in conditions:
-        replicates = getReplicatesOfCondition(project, condition)
-        names = expand(
-            "{condition}_{replicate}_{type}",
-            condition=condition,
-            replicate=replicates,
-            type=["DNA", "RNA"],
-        )
-        for name in names:
-            with checkpoints.create_demultiplexed_BAM_umi.get(
-                project=project, name=name
-            ).output[0].open() as f:
-                output += [f.name]
-    return output
-
 
 rule aggregate_demultiplex:
     input:
-        lambda wc: aggregate_input(wc.project),
+        lambda wc: aggregate_demultiplex_input(wc.project),
     output:
         touch("results/experiments/{project}/counts/demultiplex.done"),
 
@@ -159,26 +141,6 @@ rule create_BAM_umi:
 ### START COUNTING ####
 
 
-def getBam(project, condition, replicate, type):
-    """
-    gelper to get the correct BAM file (demultiplexed or not)
-    """
-    if config["experiments"][project]["demultiplex"]:
-        return "results/%s/counts/merged_demultiplex_%s_%s_%s.bam" % (
-            project,
-            condition,
-            replicate,
-            type,
-        )
-    else:
-        return "results/experiments/%s/counts/%s_%s_%s.bam" % (
-            project,
-            condition,
-            replicate,
-            type,
-        )
-
-
 rule raw_counts_umi:
     """
     Counting BCsxUMIs from the BAM files.
@@ -186,7 +148,7 @@ rule raw_counts_umi:
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
     input:
-        lambda wc: getBam(wc.project, wc.condition, wc.replicate, wc.type),
+        lambda wc: getBamFile(wc.project, wc.condition, wc.replicate, wc.type),
     output:
         "results/experiments/{project}/counts/{condition}_{replicate}_{type}_raw_counts.tsv.gz",
     params:
@@ -252,43 +214,6 @@ rule final_counts_umi:
         """
 
 
-def useSampling(project, conf, dna_or_rna):
-    return (
-        "sampling" in config["experiments"][project]["configs"][conf]
-        and dna_or_rna in config["experiments"][project]["configs"][conf]["sampling"]
-    )
-
-
-def counts_getSamplingConfig(project, conf, dna_or_rna, command):
-    if useSampling(project, conf, dna_or_rna):
-        if dna_or_rna in config["experiments"][project]["configs"][conf]["sampling"]:
-            if (
-                command
-                in config["experiments"][project]["configs"][conf]["sampling"][
-                    dna_or_rna
-                ]
-            ):
-                value = config["experiments"][project]["configs"][conf]["sampling"][
-                    dna_or_rna
-                ][command]
-                if isinstance(value, int):
-                    return "--%s %d" % (
-                        command,
-                        config["experiments"][project]["configs"][conf]["sampling"][
-                            dna_or_rna
-                        ][command],
-                    )
-                else:
-                    return "--%s %f" % (
-                        command,
-                        config["experiments"][project]["configs"][conf]["sampling"][
-                            dna_or_rna
-                        ][command],
-                    )
-
-    return ""
-
-
 rule final_counts_umi_samplerer:
     """
     Creates full + new distribution DNA files
@@ -318,35 +243,6 @@ rule final_counts_umi_samplerer:
         {params.seed} \
         --output {output} > {log}
         """
-
-
-def getFinalCounts(project, conf, rna_or_dna, raw_or_assigned):
-    output = ""
-    if raw_or_assigned == "counts":
-        if useSampling(project, conf, rna_or_dna):
-            output = (
-                "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts.sampling.{config}.tsv.gz"
-                % (raw_or_assigned, rna_or_dna)
-            )
-
-        else:
-            output = (
-                "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts.tsv.gz"
-                % (raw_or_assigned, rna_or_dna)
-            )
-    else:
-        output = (
-            "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts.config.{config}.tsv.gz"
-            % (raw_or_assigned, rna_or_dna)
-        )
-    return output
-
-
-def withoutZeros(project, conf):
-    return (
-        config["experiments"][project]["configs"][conf]["minDNACounts"] > 0
-        and config["experiments"][project]["configs"][conf]["minRNACounts"] > 0
-    )
 
 
 rule dna_rna_merge_counts:
