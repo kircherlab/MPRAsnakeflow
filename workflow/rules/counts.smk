@@ -265,16 +265,18 @@ rule dna_rna_merge_counts:
     shell:
         """
         zero={params.zero};
-        if [[ $zero=false ]]
+        if [[ -z "${{zero//false}}" ]]
         then
+            echo "Using no zeros";
             join -1 1 -2 1 -t"$(echo -e '\\t')" \
             <( zcat  {input.dna} | sort ) \
             <( zcat {input.rna} | sort) | \
-            gzip -c > {output}
+            gzip -c > {output};
         else
+            echo "Allowing zeros!"
             join -e 0 -a1 -a2 -t"$(echo -e '\\t')" -o 0 1.2 2.2 \
             <( zcat  {input.dna} | sort ) \
             <( zcat {input.rna}  | sort) | \
             gzip -c > {output}
-        fi
+        fi > {log}
         """
