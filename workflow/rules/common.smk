@@ -3,7 +3,7 @@
 ################################
 from snakemake.workflow import srcdir
 
-SCRIPTS_DIR = srcdir("scripts")
+SCRIPTS_DIR = srcdir("../scripts")
 
 
 def getScript(name):
