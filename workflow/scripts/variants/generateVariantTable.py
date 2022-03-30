@@ -22,7 +22,6 @@ import click
               required=True,
               type=click.Path(writable=True),
               help='Output file with .')
-
 def cli(counts_file, declaration_file, output_file):
 
     # declaration file
