@@ -71,7 +71,7 @@ rule dna_rna_merge:
         --minRNACounts {params.minRNACounts} --minDNACounts {params.minDNACounts} \
         --assignment {input.association} \
         --output {output.counts} \
-        --statistic {output.stats} > {log}
+        --statistic {output.stats} &> {log}
         """
 
 
