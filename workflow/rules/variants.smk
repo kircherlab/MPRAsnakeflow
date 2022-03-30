@@ -1,5 +1,4 @@
-
-
+# --use-pseudo-counts
 rule variants_generateVariantTable:
     conda:
         "../envs/python3.yaml"
@@ -16,7 +15,7 @@ rule variants_generateVariantTable:
         python {input.script} \
         --counts {input.counts} \
         --declaration {input.variant_definition} \
-        --output {output} > {log}
+        --output {output} &> {log}
         """
 
 
@@ -45,14 +44,14 @@ rule variants_correlate:
             )
         ),
     log:
-        "logs/experiments/{project}/stats/variants/{assignment}/{config}/{condition}/variants_correlate.{condition}_minBC{threshold}.log",
+        "logs/experiments/{project}/variants/{assignment}/{config}/{condition}/variants_correlate.{condition}_minBC{threshold}.log",
     shell:
         """
         python {input.script} \
         --condition {params.cond} \
         {params.tables} \
         --bc-threshold {params.threshold} \
-        --output {output} > {log}
+        --output {output} &> {log}
         """
 
 
@@ -82,5 +81,5 @@ rule variants_combineVariantCorrelationTables:
         for i in {input.correlation}; do
             zcat $i | tail -n +2;
         done;
-        ) > {output}
+        ) > {output} 2> {log}
         """

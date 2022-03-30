@@ -1,5 +1,5 @@
 ################################
-#### Flobal functions       ####
+#### Global functions       ####
 ################################
 from snakemake.workflow import srcdir
 
@@ -505,17 +505,15 @@ def getFinalCounts(project, conf, rna_or_dna, raw_or_assigned):
 
 
 # get all counts of experiment (rule statistic_counts)
-def getCountStats(wc):
-    exp = getExperiments(wc.project)
+def getCountStats(project, countType):
+    exp = getExperiments(project)
     output = []
     for index, row in exp.iterrows():
         output += expand(
-            "results/experiments/{project}/stats/counts/{condition}_{replicate}_{type}_{countType}_counts.tsv.gz",
-            project=wc.project,
+            "results/experiments/{{project}}/stats/counts/{condition}_{replicate}_{type}_{{countType}}_counts.tsv.gz",
             condition=row["Condition"],
             replicate=row["Replicate"],
             type=["DNA", "RNA"],
-            countType=wc.countType,
         )
     return output
 
