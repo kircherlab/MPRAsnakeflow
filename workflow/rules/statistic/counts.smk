@@ -14,7 +14,7 @@ rule statistic_frequent_umis:
             "results/experiments/{project}/stats/counts/freqUMIs_{condition}_{replicate}_{type}.txt"
         ),
     log:
-        "logs/experiments/{project}/stats/counts/statistic_frequent_umis.{condition}_{replicate}_{type}.log"
+        "logs/experiments/{project}/stats/counts/statistic_frequent_umis.{condition}_{replicate}_{type}.log",
     shell:
         """
         set +o pipefail;
@@ -41,7 +41,7 @@ rule statistic_barcode_base_composition:
     params:
         name="{condition}_{replicate}_{type}",
     log:
-       "logs/experiments/{project}/stats/counts/BCNucleotideComposition/statistic_barcode_base_composition.{condition}_{replicate}_{type}.log"
+        "logs/experiments/{project}/stats/counts/BCNucleotideComposition/statistic_barcode_base_composition.{condition}_{replicate}_{type}.log",
     shell:
         """
         zcat {input.counts} | awk '{{print $1}}' | gzip -c > {output.bc};
@@ -101,7 +101,7 @@ rule statistic_count_stats_merge:
     conda:
         "../../envs/default.yaml"
     input:
-        getCountStats,
+        lambda wc: getCountStats(wc.project, wc.countType),
     output:
         "results/experiments/{project}/stats/counts/count_{countType}.tsv",
     log:
@@ -135,7 +135,6 @@ rule statistic_BC_in_RNA_DNA:
         """
 
 
-
 # concat shared barcodes (rule statistic_BC_in_RNA_DNA) for all experiments, and replicates
 rule statistic_BC_in_RNA_DNA_merge:
     conda:
@@ -145,7 +144,7 @@ rule statistic_BC_in_RNA_DNA_merge:
     output:
         "results/experiments/{project}/stats/counts/BC_in_RNA_DNA_{countType}.tsv",
     log:
-        "logs/experiments/{project}/stats/counts/statistic_BC_in_RNA_DNA_merge.{countType}.log"
+        "logs/experiments/{project}/stats/counts/statistic_BC_in_RNA_DNA_merge.{countType}.log",
     shell:
         """
         zcat {input} | sort -k1,1 -k2,2 > {output}
@@ -163,7 +162,7 @@ rule statistic_counts_final:
     output:
         "results/experiments/{project}/stats/statistic_count_{countType}.tsv",
     log:
-        "logs/experiments/{project}/stats/statistic_counts_final.{countType}.log"
+        "logs/experiments/{project}/stats/statistic_counts_final.{countType}.log",
     shell:
         """
         Rscript {input.script} --count {input.counts} --shared {input.shared} --output {output} > {log}
