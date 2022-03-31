@@ -115,7 +115,7 @@ rule make_master_tables:
         --threshold {params.thresh} \
         --files {params.files} \
         --replicates {params.replicates} \
-        --output {output.all} \
-        --output-all {output.thresh} \
+        --output {output.thresh} \
+        --output-all {output.all} \
         --statistic {output.statistic} > {log}
         """
