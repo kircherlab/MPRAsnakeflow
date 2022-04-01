@@ -235,7 +235,8 @@ plots_dna <- list()
 plots_rna <- list()
 
 for (n in 1:(data %>% nrow())) {
-  counts <- readData(as.character(data[n, ]$File))
+  counts <- readData(as.character(data[n, ]$File),
+    opt$mindnacounts, opt$minrnacounts, scaling)
   intercept <- median(counts$DNA)
   plots_dna[[n]] <- ggplot(counts, aes(x = DNA)) +
     geom_histogram(bins = 50) +
