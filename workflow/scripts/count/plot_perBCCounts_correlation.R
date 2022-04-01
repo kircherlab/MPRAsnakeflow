@@ -21,11 +21,11 @@ option_list <- list(
     type = "character",
     help = "Comma separated name of the replicates (same order than files)"
   ),
-  make_option(c("-md", "--mindnacounts"),
+  make_option(c("--mindnacounts"),
     type = "integer",
     help = "minimum DNA counts required"
   ),
-  make_option(c("-mr", "--minrnacounts"),
+  make_option(c("--minrnacounts"),
     type = "integer",
     help = "minimum RNA counts required"
   ),
