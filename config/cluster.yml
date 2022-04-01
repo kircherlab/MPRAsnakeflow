@@ -22,7 +22,7 @@ assignment_fastq_split:
   mem: 10G
   queue: debug
 assignment_mapping:
-  time: "0-08:00"
+  time: "0-20:00"
   threads: 30
   mem: 20G
   queue: medium
