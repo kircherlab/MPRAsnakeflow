@@ -231,14 +231,14 @@ all=data.frame()
 plots = list()
 
 for(n in 1:(data%>%nrow)){
+    print(data[n,]$File)
     assigned_counts <- read.table(as.character(data[n,]$File),as.is=T,sep="\t",header=T,stringsAsFactors = F) %>% filter(name != 'no_BC')
     intercept <- median(assigned_counts$n_obs_bc)
     plots[[n]] <- ggplot(assigned_counts, aes(x=n_obs_bc)) +
       geom_histogram(bins=300) +
       geom_vline(xintercept=intercept, colour="red") +
       xlim(0,300) + ggtitle(paste("replicate", data[n,]$Replicate, sep=' '))
-    all <- bind_rows(assigned_counts)
-
+    all <- all %>% bind_rows(assigned_counts)
 }
 
 hist_plot <- do.call("plot_grid", c(plots))
@@ -248,11 +248,11 @@ ggsave(sprintf("%s_barcodesPerInsert.png",outdir),hist_plot)
 #
 print('boxplot')
 
- if (useLabels){
-   all <- all %>% inner_join(label_f, by=c('name'))
- } else {
-   all$label = 'NA'
- }
+if (useLabels){
+    all <- all %>% inner_join(label_f, by=c('name'))
+} else {
+    all$label = 'NA'
+}
 
 print('merged')
 print(head(all))
@@ -283,7 +283,8 @@ plotGroupbarcodesPerInsert <- function(data){
       geom_boxplot(width=0.1,fill='white') +
       xlab('insert') +
       ylab('log2 fold change') +
-      theme(axis.text.x=element_text(angle=90,hjust=1,size=15), panel.grid.major=element_blank(), panel.grid.minor=element_blank(), panel.background=element_blank(), axis.line=element_line(colour="black"), axis.title.x=element_text(size=15), axis.title.y=element_text(size=15), axis.text.y=element_text(size=15), legend.text=element_text(size=15))
+      theme(axis.text.x=element_text(angle=90,hjust=1,size=15), panel.grid.major=element_blank(), panel.grid.minor=element_blank(), panel.background=element_blank(), axis.line=element_line(colour="black"), axis.title.x=element_text(size=15), axis.title.y=element_text(size=15), axis.text.y=element_text(size=15), legend.text=element_text(size=15)) +
+      guides(fill="none")
     return(bp)
 }
 
