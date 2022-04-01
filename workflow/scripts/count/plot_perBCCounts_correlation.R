@@ -1,11 +1,8 @@
 
-# cpath <- grep('conda', .libPaths(), value=TRUE, ignore.case=TRUE)
-# .libPaths(cpath)
-
 library(optparse)
 library(cowplot)
 library(tidyverse)
-# library(viridis)
+library(ggplot2)
 
 
 option_list <- list(
@@ -167,18 +164,20 @@ writeCorrelation <- function(correlations, name) {
   write.table(correlations, file = name, quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE)
 }
 
-readData <- function(file, minDNAcounts, minRNAcounts, scaling) {
-  data <- read.table(file, as.is = T, sep = "\t", header = F, stringsAsFactors = F)
+readData <- function(file, mindnacounts, minrnacounts, scaling) {
+  data <- read.table(file, as.is = T,
+    sep = "\t", header = F, stringsAsFactors = F
+  )
   colnames(data) <- c("Barcode", "DNA", "RNA")
 
-  pseudocountDNA <- if (minDNACounts == 0) 1 else 0
-  pseudocountRNA <- if (minRNACounts == 0) 1 else 0
+  pseudocountdna <- if (mindnacounts == 0) 1 else 0
+  pseudocountrna <- if (minrnacounts == 0) 1 else 0
 
   data <- data %>%
-    filter(DNA > minDNAcounts, RNA > minRNAcounts) %>%
+    filter(DNA > mindnacounts, RNA > minrnacounts) %>%
     mutate(
-      DNA_normalized = (DNA + pseudocountDNA) / sum(DNA + pseudocountDNA) * scaling, 
-      RNA_normalized = (RNA + pseudocountRNA)  / sum(RNA + pseudocountRNA) * scaling,
+      DNA_normalized = (DNA + pseudocountdna) / sum(DNA + pseudocountdna) * scaling, 
+      RNA_normalized = (RNA + pseudocountrna) / sum(RNA + pseudocountrna) * scaling,
       Ratio = DNA_normalized / RNA_normalized,
       DNA_normalized_log2 = log2(DNA_normalized),
       RNA_normalized_log2 = log2(RNA_normalized),
