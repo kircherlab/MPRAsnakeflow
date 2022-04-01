@@ -21,8 +21,8 @@ experiments:
         minRNACounts: 1
         sampling:
           DNA:
-            prop: 30000000
+            total: 30000000
             threshold: 300
           RNA:
-            prop: 50000000
+            total: 50000000
             threshold: 300

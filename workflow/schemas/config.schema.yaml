@@ -131,6 +131,8 @@ properties:
                         type: integer
                       prop:
                         type: number
+                      total:
+                        type: number
                       seed:
                         type: integer
                     additionalProperties: False    
