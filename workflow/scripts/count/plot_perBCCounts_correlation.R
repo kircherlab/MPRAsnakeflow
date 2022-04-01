@@ -172,11 +172,8 @@ readData <- function(file, mindnacounts, minrnacounts, scaling) {
 
   pseudocountdna <- if (mindnacounts == 0) 1 else 0
   pseudocountrna <- if (minrnacounts == 0) 1 else 0
-  print(data %>% head())
-  print(mindnacounts)
-  print(minrnacounts)
   data <- data %>%
-    filter(DNA > mindnacounts, RNA > minrnacounts) %>%
+    filter(DNA >= mindnacounts, RNA >= minrnacounts) %>%
     mutate(
       DNA_normalized = (DNA + pseudocountdna) / sum(DNA + pseudocountdna) * scaling, 
       RNA_normalized = (RNA + pseudocountrna) / sum(RNA + pseudocountrna) * scaling,
