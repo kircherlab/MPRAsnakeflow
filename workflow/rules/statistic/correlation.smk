@@ -40,7 +40,7 @@ rule statistic_correlate_BC_counts:
         Rscript {input.script} \
         --outdir {params.outdir} \
         --condition {params.cond} \
-        --mindnacounts {params.minDNACounts} --minrnacounts {params.minrNACounts} \
+        --mindnacounts {params.minDNACounts} --minrnacounts {params.minRNACounts} \
         --files {params.input} --replicates {params.replicates} &> {log}
         """
 
