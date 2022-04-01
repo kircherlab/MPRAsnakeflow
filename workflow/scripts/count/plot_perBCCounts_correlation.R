@@ -182,7 +182,6 @@ readData <- function(file, mindnacounts, minrnacounts, scaling) {
       RNA_normalized_log2 = log2(RNA_normalized),
       Ratio_log2 = log2(Ratio)
     )
-    print(data %>% head())
   return(data)
 }
 
