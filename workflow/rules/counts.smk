@@ -232,6 +232,9 @@ rule final_counts_umi_samplerer:
         downsampling=lambda wc: counts_getSamplingConfig(
             wc.project, wc.config, wc.type, "threshold"
         ),
+        samplingtotal=lambda wc: counts_getSamplingConfig(
+            wc.project, wc.config, wc.type, "total"
+        ),
         seed=lambda wc: counts_getSamplingConfig(wc.project, wc.config, wc.type, "seed"),
     log:
         "logs/experiments/{project}/counts/final_counts_umi_samplerer.{condition}_{replicate}_{type}_{config}.log",
@@ -240,6 +243,7 @@ rule final_counts_umi_samplerer:
         python {input.script} --input {input.counts} \
         {params.samplingprop} \
         {params.downsampling} \
+        {params.samplingtotal} \
         {params.seed} \
         --output {output} > {log}
         """
