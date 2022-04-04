@@ -12,7 +12,11 @@ rule assignment_getInputs:
         "logs/assignment/{assignment}/fastq/assignment_getInputs.{R}.log",
     shell:
         """
-        zcat {input} | gzip -c > {output}
+        if [[ "$(ls {input} | wc -l)" -eq 1 ]]; then 
+            ln -s {input} {output}; 
+        else
+            zcat {input} | gzip -c > {output};
+        fi &> {log}
         """
 
 
