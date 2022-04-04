@@ -99,7 +99,7 @@ rule assignment_bwa_ref:
         "logs/assignment/{assignment}/reference/assignment_bwa_ref.log",
     shell:
         """
-        cp {input} {output.ref};
+        cat {input} | awk '{{gsub(/[\\]\\[]/,"_")}}$0' | less {output.ref};
         bwa index -a bwtsw {output.ref} > {log};
         samtools faidx {output.ref} >> {log};
         picard CreateSequenceDictionary REFERENCE={output.ref} OUTPUT={output.d} >> {log}
