@@ -8,7 +8,7 @@ experiments:
     umi_length: 10
     data_folder: resources/Count_Basic/data
     experiment_file: resources/example_experiment.csv
-    demultiplex: False
+    demultiplex: false
     assignments:
       standard:
         type: file
