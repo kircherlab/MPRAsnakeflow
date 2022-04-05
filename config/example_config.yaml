@@ -17,8 +17,11 @@ experiments:
     configs:
       example_config:
         bc_threshold: 10
-        minDNACounts: 1
-        minRNACounts: 1
+        filter:
+          DNA:
+            minCounts: 1
+          RNA:
+            minCounts: 1
         sampling:
           DNA:
             total: 30000000
