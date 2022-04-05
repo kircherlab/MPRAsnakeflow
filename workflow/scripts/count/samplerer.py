@@ -38,13 +38,17 @@ import random
               ('seed'), 
               required=False, type = int, 
               help= 'Use seed for random number generator')
+@click.option('--minCounts', 
+              ('min_counts_val'), 
+              required=False, type = int, 
+              help= 'Remove all BCs with lower values.')
 @click.option('--output',
               'output_file',
               required=True,
               type=click.Path(writable=True),
               help='Output file.')
 
-def cli(input_file, prop_val, total_val, threshold_val, seed, output_file):
+def cli(input_file, prop_val, total_val, threshold_val, seed, min_counts_val, output_file):
     # set seed if defined
     if seed:
         random.seed(seed)
@@ -62,9 +66,12 @@ def cli(input_file, prop_val, total_val, threshold_val, seed, output_file):
             
         click.echo("Adjusting barcodes with given proportion %f" % pp)
         df_.iloc[:,1] = df_.iloc[:,1].astype(int).apply(lambda x: int(math.floor(x*pp) + (0.0 if random.random() > (x*pp-math.floor(x*pp)) else 1.0)))
-    if threshold_val != None:
+    if threshold_val:
         click.echo("Adjusting barcodes with counts > threshold...")
-        df_.iloc[:,1] = df_.iloc[:,1].astype(int).apply(lambda x: threshold_val if x > threshold_val else x)   
+        df_.iloc[:,1] = df_.iloc[:,1].astype(int).apply(lambda x: threshold_val if x > threshold_val else x)
+    
+    if min_counts_val:
+        df_ = df_[df_.iloc[:,1] >= min_counts_val]
     
     click.echo("Writing count file...")
     df_.to_csv(output_file, sep="\t", index=False, header=None, compression='gzip')
