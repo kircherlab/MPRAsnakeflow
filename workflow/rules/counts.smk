@@ -235,7 +235,7 @@ rule final_counts_umi_samplerer:
             wc.project, wc.config, wc.type, "total"
         ),
         seed=lambda wc: counts_getSamplingConfig(wc.project, wc.config, wc.type, "seed"),
-        filtermincounts=counts_getFilterConfig(
+        filtermincounts=lambda wc: counts_getFilterConfig(
             wc.project, wc.config, wc.type, "minCounts"
         ),
     log:

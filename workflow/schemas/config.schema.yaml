@@ -123,7 +123,8 @@ properties:
                   ^((DNA)|(RNA))$:
                     type: object
                     properties:
-                      minCounts: integer
+                      minCounts: 
+                        type: integer
                     additionalProperties: False
                     required:
                       - minCounts
