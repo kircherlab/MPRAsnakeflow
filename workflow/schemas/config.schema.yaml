@@ -117,10 +117,20 @@ properties:
             properties:
               bc_threshold:
                 type: integer
-              minDNACounts:
-                type: integer
-              minRNACounts:
-                type: integer
+              filter:
+                type: object
+                patternProperties:
+                  ^((DNA)|(RNA))$:
+                    type: object
+                    properties:
+                      minCounts: integer
+                    additionalProperties: False
+                    required:
+                      - minCounts
+                required:
+                  - DNA
+                  - RNA
+                additionalProperties: False
               sampling:
                 type: object
                 patternProperties:
@@ -135,13 +145,12 @@ properties:
                         type: number
                       seed:
                         type: integer
-                    additionalProperties: False    
+                    additionalProperties: False
                 additionalProperties: False
             additionalProperties: False
             required:
               - bc_threshold
-              - minDNACounts
-              - minRNACounts
+              - filter
         variants:
           type: object
           properties:
