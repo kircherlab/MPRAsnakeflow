@@ -56,23 +56,23 @@ def cli(input_file, prop_val, total_val, threshold_val, seed, min_counts_val, ou
     # Filtering table
     click.echo("Reading count file...")
     df_ = pd.read_csv(input_file, header=None, sep='\t')
-    if total_val != None or prop_val != None:
+    if total_val is not None or prop_val is not None:
         # taking the smalles proportion when prop_val and total_val givebn
         pp = 1.0
-        if prop_val != None:
+        if prop_val is not None:
             pp = prop_val
-        if total_val != None:
+        if total_val is not None:
             total_ = sum(df_.iloc[:, 1].values)
             pp = min(total_val/total_, pp)
 
         click.echo("Adjusting barcodes with given proportion %f" % pp)
         df_.iloc[:, 1] = df_.iloc[:, 1].astype(int).apply(lambda x: int(
             math.floor(x*pp) + (0.0 if random.random() > (x*pp-math.floor(x*pp)) else 1.0)))
-    if threshold_val != None:
+    if threshold_val is not None:
         click.echo("Adjusting barcodes with counts > threshold...")
         df_.iloc[:, 1] = df_.iloc[:, 1].astype(int).apply(lambda x: threshold_val if x > threshold_val else x)
 
-    if min_counts_val != None:
+    if min_counts_val is not None:
         click.echo("Filter barcodes with min counts...")
         df_ = df_[df_.iloc[:, 1] >= min_counts_val]
 
