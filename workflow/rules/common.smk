@@ -510,10 +510,12 @@ def getFinalCounts(project, conf, rna_or_dna, raw_or_assigned):
 
 def assignedCounts_getAssignmentSamplingConfig(project, assignment, command):
     if "sampling" in config["experiments"][project]["assignments"][assignment]:
+        print(assignment)
         if (
             command
             in config["experiments"][project]["assignments"][assignment]["sampling"]
         ):
+            print(command)
             value = config["experiments"][project]["assignments"][assignment][
                 "sampling"
             ][command]
