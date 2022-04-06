@@ -388,8 +388,12 @@ def useSampling(project, conf, dna_or_rna):
 
 def withoutZeros(project, conf):
     return (
-        config["experiments"][project]["configs"][conf]["minDNACounts"] > 0
-        and config["experiments"][project]["configs"][conf]["minRNACounts"] > 0
+        config["experiments"][project]["configs"][conf]["filter"]["DNA"]["minCounts"]
+        > 0
+        and config["experiments"][project]["configs"][conf]["filter"]["RNA"][
+            "minCounts"
+        ]
+        > 0
     )
 
 
@@ -449,6 +453,16 @@ def aggregate_demultiplex_input(project):
     return output
 
 
+def counts_getFilterConfig(project, conf, dna_or_rna, command):
+    value = config["experiments"][project]["configs"][conf]["filter"][dna_or_rna][
+        command
+    ]
+    if isinstance(value, int):
+        return "--%s %d" % (command, value)
+    else:
+        return "--%s %f" % (command, value)
+
+
 def counts_getSamplingConfig(project, conf, dna_or_rna, command):
     if useSampling(project, conf, dna_or_rna):
         if dna_or_rna in config["experiments"][project]["configs"][conf]["sampling"]:
@@ -462,19 +476,9 @@ def counts_getSamplingConfig(project, conf, dna_or_rna, command):
                     dna_or_rna
                 ][command]
                 if isinstance(value, int):
-                    return "--%s %d" % (
-                        command,
-                        config["experiments"][project]["configs"][conf]["sampling"][
-                            dna_or_rna
-                        ][command],
-                    )
+                    return "--%s %d" % (command, value)
                 else:
-                    return "--%s %f" % (
-                        command,
-                        config["experiments"][project]["configs"][conf]["sampling"][
-                            dna_or_rna
-                        ][command],
-                    )
+                    return "--%s %f" % (command, value)
 
     return ""
 

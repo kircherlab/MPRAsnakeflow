@@ -59,10 +59,10 @@ rule dna_rna_merge:
     params:
         minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["minRNACounts"],
+        ]["filter"]["RNA"]["minCounts"],
         minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["minDNACounts"],
+        ]["filter"]["DNA"]["minCounts"],
     log:
         "logs/experiments/{project}/assigned_counts/{assignment}/{config}/dna_rna_merge.{condition}_{replicate}.log",
     shell:
