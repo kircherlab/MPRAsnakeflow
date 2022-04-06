@@ -505,6 +505,26 @@ def getFinalCounts(project, conf, rna_or_dna, raw_or_assigned):
     return output
 
 
+# assigned_counts.smk specific functions
+
+
+def assignedCounts_getAssignmentSamplingConfig(project, assignment, command):
+    if "sampling" in config["experiments"][project]["assignments"][assignment]:
+        if (
+            command
+            in config["experiments"][project]["assignments"][assignment]["sampling"]
+        ):
+            value = config["experiments"][project]["assignments"][assignment][
+                "sampling"
+            ][command]
+            if isinstance(value, int):
+                return "--%s %d" % (command, value)
+            else:
+                return "--%s %f" % (command, value)
+
+    return ""
+
+
 # statistic.smk specific functions
 
 
