@@ -29,7 +29,7 @@ rule assignedCounts_filterAssignment:
     shell:
         """
         python {input.script} \
-        --input {input.assignment}
+        --input {input.assignment} \
         {params.samplingprop} \
         {params.samplingtotal} \
         {params.seed} \
