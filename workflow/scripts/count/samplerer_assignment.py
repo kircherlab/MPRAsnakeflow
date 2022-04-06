@@ -44,7 +44,7 @@ def cli(input_file, prop_val, total_val, seed, output_file):
     df_ = pd.read_csv(input_file, header=None, sep='\t')
 
     click.echo("Removing duplicate assignments...")
-    df_.drop_duplicates(subset=[0], keep = False, inplace=True)
+    df_.drop_duplicates(subset=[0], keep=False, inplace=True)
 
     if total_val is not None or prop_val is not None:
         # taking the smalles proportion when prop_val and total_val givebn
@@ -54,9 +54,9 @@ def cli(input_file, prop_val, total_val, seed, output_file):
         if total_val is not None:
             total_ = len(df_)
             pp = min(total_val/total_, pp)
-        
+
         click.echo("Adjusting barcodes with given proportion %f" % pp)
-        df_ = df_.sample(frac = pp, replace = False, random_state = seed).sort_values(by=[1,0])
+        df_ = df_.sample(frac=pp, replace=False, random_state=seed).sort_values(by=[1, 0])
 
     click.echo("Writing count file...")
     df_.to_csv(output_file, sep="\t", index=False, header=None, compression='gzip')
