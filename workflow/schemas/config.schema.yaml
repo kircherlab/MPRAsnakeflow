@@ -16,8 +16,8 @@ properties:
         properties:
           split_number:
             type: integer
-        additionalProperties: False
-    additionalProperties: False
+        additionalProperties: false
+    additionalProperties: false
   assignments:
     description: Assignments to run with configurations
     type: object
@@ -64,7 +64,7 @@ properties:
             required:
               - min_support
               - fraction
-            additionalProperties: False
+            additionalProperties: false
           minProperties: 1
       required:
         - R1
@@ -72,7 +72,7 @@ properties:
         - R3
         - reference
         - configs
-      additionalProperties: False
+      additionalProperties: false
   experiments:
     description: MPRA experiments to run with configurations
     type: object
@@ -109,7 +109,7 @@ properties:
             required:
               - type
               - value
-            additionalProperties: False
+            additionalProperties: false
         configs:
           type: object
           additionalProperties:
@@ -117,10 +117,21 @@ properties:
             properties:
               bc_threshold:
                 type: integer
-              minDNACounts:
-                type: integer
-              minRNACounts:
-                type: integer
+              filter:
+                type: object
+                patternProperties:
+                  ^((DNA)|(RNA))$:
+                    type: object
+                    properties:
+                      minCounts:
+                        type: integer
+                    additionalProperties: false
+                    required:
+                      - minCounts
+                required:
+                  - DNA
+                  - RNA
+                additionalProperties: false
               sampling:
                 type: object
                 patternProperties:
@@ -135,13 +146,12 @@ properties:
                         type: number
                       seed:
                         type: integer
-                    additionalProperties: False    
-                additionalProperties: False
-            additionalProperties: False
+                    additionalProperties: false
+                additionalProperties: false
+            additionalProperties: false
             required:
               - bc_threshold
-              - minDNACounts
-              - minRNACounts
+              - filter
         variants:
           type: object
           properties:
@@ -163,5 +173,5 @@ properties:
         - demultiplex
         - design_file
         - assignments
-additionalProperties: False
+additionalProperties: false
 minProperties: 1

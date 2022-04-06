@@ -66,7 +66,6 @@ checkpoint create_demultiplexed_BAM_umi:
         """
 
 
-
 rule aggregate_demultiplex:
     input:
         lambda wc: aggregate_demultiplex_input(wc.project),
@@ -236,6 +235,9 @@ rule final_counts_umi_samplerer:
             wc.project, wc.config, wc.type, "total"
         ),
         seed=lambda wc: counts_getSamplingConfig(wc.project, wc.config, wc.type, "seed"),
+        filtermincounts=lambda wc: counts_getFilterConfig(
+            wc.project, wc.config, wc.type, "minCounts"
+        ),
     log:
         "logs/experiments/{project}/counts/final_counts_umi_samplerer.{condition}_{replicate}_{type}_{config}.log",
     shell:
@@ -245,7 +247,8 @@ rule final_counts_umi_samplerer:
         {params.downsampling} \
         {params.samplingtotal} \
         {params.seed} \
-        --output {output} > {log}
+        {params.filtermincounts} \
+        --output {output} &> {log}
         """
 
 
@@ -264,6 +267,12 @@ rule dna_rna_merge_counts:
         "results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}.merged.config.{config}.tsv.gz",
     params:
         zero=lambda wc: "false" if withoutZeros(wc.project, wc.config) else "true",
+        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
+            wc.config
+        ]["filter"]["RNA"]["minCounts"],
+        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
+            wc.config
+        ]["filter"]["DNA"]["minCounts"],
     log:
         "logs/experiments/{project}/{raw_or_assigned}/dna_rna_merge_counts.{condition}_{replicate}_{config}.log",
     shell:
@@ -271,16 +280,14 @@ rule dna_rna_merge_counts:
         zero={params.zero};
         if [[ -z "${{zero//false}}" ]]
         then
-            echo "Using no zeros";
             join -1 1 -2 1 -t"$(echo -e '\\t')" \
             <( zcat  {input.dna} | sort ) \
-            <( zcat {input.rna} | sort) | \
-            gzip -c > {output};
+            <( zcat {input.rna} | sort);
         else
-            echo "Allowing zeros!"
             join -e 0 -a1 -a2 -t"$(echo -e '\\t')" -o 0 1.2 2.2 \
             <( zcat  {input.dna} | sort ) \
-            <( zcat {input.rna}  | sort) | \
-            gzip -c > {output}
-        fi > {log}
+            <( zcat {input.rna}  | sort);
+        fi  | \
+        awk -v 'OFS=\\t' '{{if ($2 >= {params.minDNACounts} && $3 >= {params.minRNACounts}) {{print $0}}}}' | \
+        gzip -c > {output};
         """
