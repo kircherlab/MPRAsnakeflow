@@ -29,10 +29,10 @@ rule statistic_correlate_BC_counts:
         ),
         minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["minRNACounts"],
+        ]["filter"]["RNA"]["minCounts"],
         minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["minDNACounts"],
+        ]["filter"]["DNA"]["minCounts"],
     log:
         "logs/experiments/{project}/stats/barcode/{raw_or_assigned}/statistic_correlate_BC_counts.{condition}_{config}.log",
     shell:
