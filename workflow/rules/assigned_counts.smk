@@ -3,6 +3,56 @@
 ##################################
 
 
+rule assignedCounts_filterAssignment:
+    """
+    Use only unique assignments and do sampling if needed.
+    """
+    conda:
+        "envs/python3.yaml"
+    input:
+        assignment=lambda wc: getAssignmentFile(wc.project, wc.assignment),
+        script=getScript("count/samplerer_assignment.py"),
+    output:
+        "results/experiments/{project}/assignment/{assignment}.tsv.gz",
+    params:
+        samplingprop=lambda wc: assignedCounts_getAssignmentSamplingConfig(
+            wc.project, wc.assignment, "prop"
+        ),
+        samplingtotal=lambda wc: assignedCounts_getAssignmentSamplingConfig(
+            wc.project, wc.assignment, "total"
+        ),
+        seed=lambda wc: assignedCounts_getAssignmentSamplingConfig(
+            wc.project, wc.assignment, "seed"
+        ),
+    log:
+        "logs/experiments/{project}/assignment/filterAssignment_{assignment}.log",
+    shell:
+        """
+        python {input.script} \
+        --input {input.assignment}
+        {params.samplingprop} \
+        {params.samplingtotal} \
+        {params.seed} \
+        --output {output} | &> {log}
+        """
+
+
+rule assignedCounts_createAssignmentPickleFile:
+    conda:
+        "envs/python3.yaml"
+    input:
+        files="results/experiments/{project}/assignment/{assignment}.tsv.gz",
+        script=getScript("count/create_pickle.py"),
+    output:
+        "results/experiments/{project}/assignment/{assignment}.pickle",
+    log:
+        "logs/experiments/{project}/assignment/createAssignmentPickleFile_{assignment}.log",
+    shell:
+        """
+        python {input.script} -i {input.files} -o {output} &> {log}
+        """
+
+
 rule assignBarcodes:
     """
     Assign RNA and DNA barcodes seperately to make the statistic for assigned
@@ -11,7 +61,7 @@ rule assignBarcodes:
         "../envs/python3.yaml"
     input:
         counts=lambda wc: getFinalCounts(wc.project, wc.config, wc.type, "counts"),
-        association=lambda wc: getAssignmentFile(wc.project, wc.assignment),
+        association="results/experiments/{project}/assignment/{assignment}.tsv.gz",
         script=getScript("count/merge_BC_and_assignment.py"),
     output:
         counts="results/experiments/{project}/assigned_counts/{assignment}/{condition}_{replicate}_{type}_final_counts.config.{config}.tsv.gz",
@@ -30,28 +80,12 @@ rule assignBarcodes:
         """
 
 
-rule createAssignmentPickleFile:
-    conda:
-        "envs/python3.yaml"
-    input:
-        files=lambda wc: getAssignmentFile(wc.project, wc.assignment),
-        script=getScript("count/create_pickle.py"),
-    output:
-        "results/experiments/{project}/assigned_counts/{assignment}/assignment.pickle",
-    log:
-        "logs/experiments/{project}/assigned_counts/{assignment}/createAssignmentPickleFile.log",
-    shell:
-        """
-        python {input.script} -i {input.files} -o {output} > {log}
-        """
-
-
 rule dna_rna_merge:
     conda:
         "../envs/python3.yaml"
     input:
         counts="results/experiments/{project}/counts/{condition}_{replicate}.merged.config.{config}.tsv.gz",
-        association=lambda wc: getAssignmentFile(wc.project, wc.assignment),
+        association="results/experiments/{project}/assignment/{assignment}.tsv.gz",
         script=getScript("count/merge_label.py"),
     output:
         counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
