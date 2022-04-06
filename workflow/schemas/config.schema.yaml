@@ -106,6 +106,14 @@ properties:
                   - config
               value:
                 type: string
+              sampling:
+                type: object
+                properties:
+                  prop:
+                    type: number
+                  total:
+                    type: integer
+                additionalProperties: false
             required:
               - type
               - value
