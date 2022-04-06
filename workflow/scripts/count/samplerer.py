@@ -51,7 +51,7 @@ import random
               help='Output file.')
 def cli(input_file, prop_val, total_val, threshold_val, seed, min_counts_val, output_file):
     # set seed if defined
-    if seed:
+    if seed is not None:
         random.seed(seed)
     # Filtering table
     click.echo("Reading count file...")
