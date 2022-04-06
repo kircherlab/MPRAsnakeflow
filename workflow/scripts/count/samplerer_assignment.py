@@ -38,7 +38,7 @@ import click
               required=True,
               type=click.Path(writable=True),
               help='Output file.')
-def cli(input_file, prop_val, total_val, threshold_val, seed, min_counts_val, output_file):
+def cli(input_file, prop_val, total_val, seed, output_file):
     # Filtering table
     click.echo("Reading assignment file...")
     df_ = pd.read_csv(input_file, header=None, sep='\t')
