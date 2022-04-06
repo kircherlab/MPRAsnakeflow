@@ -8,7 +8,7 @@ rule assignedCounts_filterAssignment:
     Use only unique assignments and do sampling if needed.
     """
     conda:
-        "envs/python3.yaml"
+        "../envs/python3.yaml"
     input:
         assignment=lambda wc: getAssignmentFile(wc.project, wc.assignment),
         script=getScript("count/samplerer_assignment.py"),
@@ -39,7 +39,7 @@ rule assignedCounts_filterAssignment:
 
 rule assignedCounts_createAssignmentPickleFile:
     conda:
-        "envs/python3.yaml"
+        "../envs/python3.yaml"
     input:
         files="results/experiments/{project}/assignment/{assignment}.tsv.gz",
         script=getScript("count/create_pickle.py"),
