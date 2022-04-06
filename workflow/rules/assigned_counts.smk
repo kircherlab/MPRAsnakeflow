@@ -33,7 +33,7 @@ rule assignedCounts_filterAssignment:
         {params.samplingprop} \
         {params.samplingtotal} \
         {params.seed} \
-        --output {output} | &> {log}
+        --output {output} &> {log}
         """
 
 
