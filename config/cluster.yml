@@ -109,3 +109,8 @@ statistic_barcode_base_composition:
   time: "1-00:00"
   queue: "medium"
   mem: 20000
+
+assignedCounts_filterAssignment:
+  time: "0-01:00"
+  queue: "medium"
+  mem: 10G
