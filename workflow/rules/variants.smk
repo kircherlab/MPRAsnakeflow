@@ -40,7 +40,7 @@ rule variants_MasterTable:
                     project=wc.project,
                     assignment=wc.assignment,
                     config=wc.config,
-                    condition=condition,
+                    condition=wc.condition,
                 )
             ]
         ),
