@@ -35,8 +35,12 @@ rule variants_MasterTable:
             [
                 "--input %s" % i
                 for i in expand(
-                    "results/experiments/{{project}}/variants/{{assignment}}/{{config}}/{{condition}}_{replicate}_variantTable.tsv.gz",
+                    "results/experiments/{project}/variants/{assignment}/{config}/{condition}_{replicate}_variantTable.tsv.gz",
                     replicate=getReplicatesOfCondition(wc.project, wc.condition),
+                    project=wc.project,
+                    assignment=wc.assignment,
+                    config=wc.config,
+                    condition=condition,
                 )
             ]
         ),
