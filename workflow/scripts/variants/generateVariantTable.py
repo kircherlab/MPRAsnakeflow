@@ -1,4 +1,4 @@
-# Author: Max Schubach 20202
+# Author: Max Schubach 2022
 
 import pandas as pd
 import numpy as np
