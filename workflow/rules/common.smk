@@ -357,7 +357,6 @@ def getOutputVariants_helper(file, betweenReplicates=False):
                     )
     return output
 
-
 def getAssignment_helper(file):
     return expand(
         file,
