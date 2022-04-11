@@ -44,8 +44,10 @@ def cli(input_files, minRNACounts, minDNACounts, output_file):
     click.echo("Create new expression values...")
     df = df.groupby(['ID', 'REF', 'ALT']).agg(
         dna_counts_REF=('dna_counts_REF', sum),
-        rna_counts_REF=('rna_counts_REF', sum), n_obs_bc_REF=('n_obs_bc_REF', sum),
-        dna_counts_ALT=('dna_counts_ALT', sum), rna_counts_ALT=('rna_counts_ALT', sum),
+        rna_counts_REF=('rna_counts_REF', sum),
+        n_obs_bc_REF=('n_obs_bc_REF', sum),
+        dna_counts_ALT=('dna_counts_ALT', sum),
+        rna_counts_ALT=('rna_counts_ALT', sum),
         n_obs_bc_ALT=('n_obs_bc_ALT', sum)
     ).reset_index()
 
