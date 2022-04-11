@@ -44,7 +44,7 @@ def cli(counts_file, declaration_file, output_file):
     output.fillna(0, inplace=True)
     output = output.astype(dtype={'dna_counts_REF': 'int64', 'rna_counts_REF': 'int64', 'n_obs_bc_REF': 'int64',
                                   'dna_counts_ALT': 'int64', 'rna_counts_ALT': 'int64', 'n_obs_bc_ALT': 'int64'},
-                                  copy=False)
+                           copy=False)
 
     # write output
     click.echo("Write files...")
