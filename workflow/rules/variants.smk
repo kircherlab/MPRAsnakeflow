@@ -19,6 +19,49 @@ rule variants_generateVariantTable:
         """
 
 
+rule variants_MasterTable:
+    conda:
+        "../envs/python3.yaml"
+    input:
+        variants=lambda wc: expand(
+            "results/experiments/{{project}}/variants/{{assignment}}/{{config}}/{{condition}}_{replicate}_variantTable.tsv.gz",
+            replicate=getReplicatesOfCondition(wc.project, wc.condition),
+        ),
+        script=getScript("variants/generateMasterVariantTable.py"),
+    output:
+        "results/experiments/{project}/variants/{assignment}/{config}/{condition}_variantTable.tsv.gz",
+    params:
+        input=lambda wc: " ".join(
+            [
+                "--input %s" % i
+                for i in expand(
+                    "results/experiments/{project}/variants/{assignment}/{config}/{condition}_{replicate}_variantTable.tsv.gz",
+                    replicate=getReplicatesOfCondition(wc.project, wc.condition),
+                    project=wc.project,
+                    assignment=wc.assignment,
+                    config=wc.config,
+                    condition=wc.condition,
+                )
+            ]
+        ),
+        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
+            wc.config
+        ]["filter"]["RNA"]["minCounts"],
+        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
+            wc.config
+        ]["filter"]["DNA"]["minCounts"],
+    log:
+        "logs/experiments/{project}/variants/{assignment}/{config}/variants_MasterTable.{condition}.log",
+    shell:
+        """
+        python {input.script} \
+        {params.input} \
+        --minRNACounts {params.minRNACounts} \
+        --minDNACounts {params.minDNACounts} \
+        --output {output} &> {log}
+        """
+
+
 rule variants_correlate:
     conda:
         "../envs/python3.yaml"

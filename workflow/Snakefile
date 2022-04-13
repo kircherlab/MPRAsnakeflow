@@ -30,7 +30,8 @@ report: "report/workflow.rst"
 wildcard_constraints:
     project="[^/]+",
     assignment="[^/]+",
-    condition="[^/]+",
+    condition="[^/_]+",
+    replicate="[^/_]+",
 
 
 ##### localrules #####
@@ -108,6 +109,10 @@ rule all:
         getOutputVariants_helper(
             "results/experiments/{project}/stats/variants/{assignment}/{config}/correlation_variantTable.tsv",
             True,
+        ),
+        getOutputVariants_helper(
+            "results/experiments/{project}/variants/{assignment}/{config}/{condition}_variantTable.tsv.gz",
+            False,
         ),
 
 
@@ -229,6 +234,18 @@ rule all_stats_BCNucleotideComposition:
     input:
         getOutputProjectConditionReplicateType_helper(
             "results/experiments/{project}/stats/counts/BCNucleotideComposition/{condition}_{replicate}_{type}.tsv.gz"
+        ),
+
+
+rule all_variants:
+    input:
+        getOutputVariants_helper(
+            "results/experiments/{project}/stats/variants/{assignment}/{config}/correlation_variantTable.tsv",
+            True,
+        ),
+        getOutputVariants_helper(
+            "results/experiments/{project}/variants/{assignment}/{config}/{condition}_variantTable.tsv.gz",
+            False,
         ),
 
 
