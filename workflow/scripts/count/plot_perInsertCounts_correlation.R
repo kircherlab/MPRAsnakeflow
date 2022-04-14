@@ -167,7 +167,7 @@ plot_correlations_ratio <- function(data, condition, r1, r2, name) {
         xlab(sprintf(paste("log2 RNA/DNA per insert,\n replicate", r1))) +
         ylab(sprintf(paste("log2 RNA/DNA per insert,\n replicate", r2))) +
         geom_text(x = 0, y = 4.5,
-            label = sprintf("   r = %.2f",cor(data$ratio_log2.x, res$ratio_log2.y, method = "pearson")), size = 10) +
+            label = sprintf("   r = %.2f", cor(data$ratio_log2.x, res$ratio_log2.y, method = "pearson")), size = 10) +
         geom_text(x = 0, y = 4,
             label = sprintf("rho = %.2f", cor(data$ratio.x, data$ratio.y, method = "spearman")), size = 10) +
         geom_abline(intercept = 0, slope = 1) +
@@ -329,7 +329,7 @@ plot_all_bc_per_insert <- function(data) {
 
     data <- data[order(data$log2), ]
 
-    bymedian <- with(data, reorder(name, -log2, median, order = TRUE))
+    bymedian <- with(data, reorder(name, -log2, median, order = TRUE)) # nolint
     data$name <- factor(data$name, levels = levels(bymedian))
     bp <- ggplot(data, aes(x = name, y = log2, color = label)) +
         geom_boxplot() +
