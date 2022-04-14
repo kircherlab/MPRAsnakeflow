@@ -166,8 +166,10 @@ plot_correlations_ratio <- function(data, condition, r1, r2, name) {
         ylim(-5, 5) +
         xlab(sprintf(paste("log2 RNA/DNA per insert,\n replicate", r1))) +
         ylab(sprintf(paste("log2 RNA/DNA per insert,\n replicate", r2))) +
-        geom_text(x = 0, y = 4.5, label = sprintf("   r = %.2f", cor(data$ratio_log2.x, res$ratio_log2.y, method = "pearson")), size = 10) +
-        geom_text(x = 0, y = 4, label = sprintf("rho = %.2f", cor(data$ratio.x, data$ratio.y, method = "spearman")), size = 10) +
+        geom_text(x = 0, y = 4.5,
+            label = sprintf("   r = %.2f",cor(data$ratio_log2.x, res$ratio_log2.y, method = "pearson")), size = 10) +
+        geom_text(x = 0, y = 4,
+            label = sprintf("rho = %.2f", cor(data$ratio.x, data$ratio.y, method = "spearman")), size = 10) +
         geom_abline(intercept = 0, slope = 1) +
         theme_classic(base_size = 30)
     return(ratio_p)
@@ -177,7 +179,7 @@ correlate <- function(x, y, method) {
     return(sprintf("%.5f", cor(x, y, method = method)))
 }
 
-getCorrelationStats <- function(data, n_oligos_r1, n_oligos_r2, condition, r1, r2, name) {
+get_correlation_stats <- function(data, n_oligos_r1, n_oligos_r2, condition, r1, r2, name) {
     norm <- abs(length(which((data$ratio.x - data$ratio.y) > 0)) - length(which((data$ratio.x - data$ratio.y) < 0)))
     +abs(length(which((data$ratio.x - data$ratio.y) > 0)) - length(which((data$ratio.x - data$ratio.y) < 0)))
     +abs(length(which((data$ratio.x - data$ratio.y) > 0)) - length(which((data$ratio.x - data$ratio.y) < 0)))
@@ -204,21 +206,21 @@ getCorrelationStats <- function(data, n_oligos_r1, n_oligos_r2, condition, r1, r
     return(outs)
 }
 
-writeCorrelationPlots <- function(plots, name) {
+write_correlation_plots <- function(plots, name) {
     correlation_plots <- cowplot::plot_grid(plotlist = plots, ncol = 1)
     # correlation_plots <- do.call("grid.arrange", c(plots))
 
-    ggsave(name, correlation_plots, width = 15, height = 10 * length(plots))
+    ggplot2::ggsave(name, correlation_plots, width = 15, height = 10 * length(plots))
 }
 
-writeCorrelation <- function(correlations, name) {
+write_correlation <- function(correlations, name) {
     write.table(correlations,
         file = name,
         quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE
     )
 }
 
-readData <- function(file) {
+read_data <- function(file) {
     data <- read.table(file,
         as.is = T,
         sep = "\t", header = T, stringsAsFactors = F
@@ -237,7 +239,7 @@ all <- data.frame()
 
 for (n in 1:(data %>% nrow())) {
     print(data[n, ]$File)
-    assigned_counts <- readData(as.character(data[n, ]$File))
+    assigned_counts <- read_data(as.character(data[n, ]$File))
     assigned_counts["replicate"] <- toString(data[n, ]$Replicate)
     all <- all %>% bind_rows(assigned_counts)
 }
@@ -258,11 +260,11 @@ if (data %>% nrow() > 1) {
     plots_correlations_rna <- list()
     plots_correlations_dna <- list()
     plots_correlations_ratio <- list()
-    plots_correlations_minThreshold_rna <- list()
-    plots_correlations_minThreshold_dna <- list()
-    plots_correlations_minThreshold_ratio <- list()
+    plots_cor_min_thresh_rna <- list()
+    plots_cor_min_thresh_dna <- list()
+    plots_cor_min_thresh_ratio <- list()
     stats_correlations <- data.frame()
-    stats_correlations_minThreshold <- data.frame()
+    stats_cor_min_thresh <- data.frame()
 
     for (i in seq(1, dim(selected)[2])) {
         print(selected[, i])
@@ -288,39 +290,40 @@ if (data %>% nrow() > 1) {
         plots_correlations_ratio[[i]] <- plot_correlations_ratio(res, cond, r1, r2, "pairwise")
 
         stats_correlations <- stats_correlations %>%
-            bind_rows(getCorrelationStats(
+            bind_rows(get_correlation_stats(
                 res, n_oligos_r1,
                 n_oligos_r2, cond, r1, r2, "correlation"
             ))
 
         # Min Threshold
         res <- res %>% filter(n_obs_bc.x >= thresh, n_obs_bc.y >= thresh)
-        plots_correlations_minThreshold_dna[[i]] <- plot_correlations_dna(res, cond, r1, r2, "pairwise_minThreshold")
-        plots_correlations_minThreshold_rna[[i]] <- plot_correlations_rna(res, cond, r1, r2, "pairwise_minThreshold")
-        plots_correlations_minThreshold_ratio[[i]] <- plot_correlations_ratio(res, cond, r1, r2, "pairwise_minThreshold")
+        plots_cor_min_thresh_dna[[i]] <- plot_correlations_dna(res, cond, r1, r2, "pairwise_minThreshold")
+        plots_cor_min_thresh_rna[[i]] <- plot_correlations_rna(res, cond, r1, r2, "pairwise_minThreshold")
+        plots_cor_min_thresh_ratio[[i]] <- plot_correlations_ratio(res, cond, r1, r2, "pairwise_minThreshold")
 
-        stats_correlations_minThreshold <- stats_correlations_minThreshold %>%
-            bind_rows(getCorrelationStats(
+        stats_cor_min_thresh <- stats_cor_min_thresh %>%
+            bind_rows(get_correlation_stats(
                 res, n_oligos_r1_thres,
                 n_oligos_r2_thres, cond, r1, r2, "correlation_minThreshold"
             ))
     }
 
-    writeCorrelationPlots(plots_correlations_dna, sprintf("%s_DNA_pairwise.png", outdir))
-    writeCorrelationPlots(plots_correlations_rna, sprintf("%s_RNA_pairwise.png", outdir))
-    writeCorrelationPlots(plots_correlations_ratio, sprintf("%s_Ratio_pairwise.png", outdir))
-    writeCorrelationPlots(plots_correlations_minThreshold_dna, sprintf("%s_DNA_pairwise_minThreshold.png", outdir))
-    writeCorrelationPlots(plots_correlations_minThreshold_rna, sprintf("%s_RNA_pairwise_minThreshold.png", outdir))
-    writeCorrelationPlots(plots_correlations_minThreshold_ratio, sprintf("%s_Ratio_pairwise_minThreshold.png", outdir))
+    write_correlation_plots(plots_correlations_dna, sprintf("%s_DNA_pairwise.png", outdir))
+    write_correlation_plots(plots_correlations_rna, sprintf("%s_RNA_pairwise.png", outdir))
+    write_correlation_plots(plots_correlations_ratio, sprintf("%s_Ratio_pairwise.png", outdir))
+    write_correlation_plots(plots_cor_min_thresh_dna, sprintf("%s_DNA_pairwise_minThreshold.png", outdir))
+    write_correlation_plots(plots_cor_min_thresh_rna, sprintf("%s_RNA_pairwise_minThreshold.png", outdir))
+    write_correlation_plots(plots_cor_min_thresh_ratio,
+        sprintf("%s_Ratio_pairwise_minThreshold.png", outdir))
 
-    writeCorrelation(stats_correlations, sprintf("%s_correlation.tsv", outdir))
-    writeCorrelation(stats_correlations_minThreshold, sprintf("%s_correlation_minThreshold.tsv", outdir))
+    write_correlation(stats_correlations, sprintf("%s_correlation.tsv", outdir))
+    write_correlation(stats_cor_min_thresh, sprintf("%s_correlation_minThreshold.tsv", outdir))
 }
 
 
 print("Histogram plots, Boxplots, Violinplots")
 
-plotAllBarcodesPerInsert <- function(data) {
+plot_all_bc_per_insert <- function(data) {
     data$name <- factor(data$name)
     data$label <- as.factor(data$label)
 
@@ -346,7 +349,7 @@ plotAllBarcodesPerInsert <- function(data) {
     return(bp)
 }
 
-plotGroupbarcodesPerInsert <- function(data) {
+plot_group_bc_per_insert <- function(data) {
     bp <- ggplot(data, aes(x = label, y = log2, fill = label)) +
         geom_violin() +
         geom_boxplot(width = 0.1, fill = "white") +
@@ -391,21 +394,21 @@ for (n in 1:(data %>% nrow())) {
     assigned_counts_subsample <- assigned_counts %>%
         sample_n(min(10000, assigned_counts %>% nrow()))
 
-    box_plot_list[[n]] <- plotAllBarcodesPerInsert(
+    box_plot_list[[n]] <- plot_all_bc_per_insert(
         assigned_counts_subsample
     ) +
         ggtitle(paste("replicate", rep, sep = " "))
 
-    box_plot_thresh_list[[n]] <- plotAllBarcodesPerInsert(
+    box_plot_thresh_list[[n]] <- plot_all_bc_per_insert(
         assigned_counts_subsample %>%
             filter(n_obs_bc >= thresh)
     ) +
         ggtitle(paste("replicate", rep, sep = " "))
 
-    box_plot_insert_list[[n]] <- plotGroupbarcodesPerInsert(assigned_counts) +
+    box_plot_insert_list[[n]] <- plot_group_bc_per_insert(assigned_counts) +
         ggtitle(paste("replicate", rep, sep = " "))
 
-    box_plot_insert_thresh_list[[n]] <- plotGroupbarcodesPerInsert(
+    box_plot_insert_thresh_list[[n]] <- plot_group_bc_per_insert(
         assigned_counts %>%
             filter(n_obs_bc >= thresh)
     ) +
