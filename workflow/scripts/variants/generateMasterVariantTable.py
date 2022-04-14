@@ -42,20 +42,19 @@ def cli(input_files, minRNACounts, minDNACounts, output_file):
         df = pd.concat([df, pd.read_csv(input_file, header=0, sep="\t")], axis=0, sort=False)
 
     click.echo("Create new expression values...")
-    df = df.groupby(['ID', 'REF', 'ALT']).agg(
-        dna_counts_REF=('dna_counts_REF', sum),
-        rna_counts_REF=('rna_counts_REF', sum), n_obs_bc_REF=('n_obs_bc_REF', sum),
-        dna_counts_ALT=('dna_counts_ALT', sum), rna_counts_ALT=('rna_counts_ALT', sum),
-        n_obs_bc_ALT=('n_obs_bc_ALT', sum)
-    ).reset_index()
+    df = df.groupby(['ID', 'REF', 'ALT']).agg(dna_counts_REF=('dna_counts_REF', sum),
+                                              rna_counts_REF=('rna_counts_REF', sum),
+                                              n_obs_bc_REF=('n_obs_bc_REF', sum),
+                                              dna_counts_ALT=('dna_counts_ALT', sum),
+                                              rna_counts_ALT=('rna_counts_ALT', sum),
+                                              n_obs_bc_ALT=('n_obs_bc_ALT', sum)
+                                              ).reset_index()
 
     scaling = 10**6
 
-
-
     df_total = df[['dna_counts_REF', 'rna_counts_REF', 'n_obs_bc_REF',
                    'dna_counts_ALT', 'rna_counts_ALT', 'n_obs_bc_ALT']].sum()
- 
+
     total_bc = df_total['n_obs_bc_REF'] + df_total['n_obs_bc_ALT']
     total_dna = df_total['dna_counts_REF'] + df_total['dna_counts_ALT'] + total_bc * pseudocountDNA
     total_rna = df_total['rna_counts_REF'] + df_total['rna_counts_ALT'] + total_bc * pseudocountRNA
@@ -63,7 +62,9 @@ def cli(input_files, minRNACounts, minDNACounts, output_file):
     scaling = 10**6
 
     def normalize(df, total, count_type, ref_alt, pseudocount, scaling):
-        return(((df["%s_counts_%s" % (count_type, ref_alt)] + pseudocount * df['n_obs_bc_%s' % ref_alt])/df['n_obs_bc_%s' % ref_alt])/total*scaling)
+        return(((
+            df["%s_counts_%s" % (count_type, ref_alt)] + pseudocount * df['n_obs_bc_%s' % ref_alt]
+        )/df['n_obs_bc_%s' % ref_alt])/total*scaling)
 
     for ref_alt in ["REF", "ALT"]:
         for count_type in ["dna", "rna"]:

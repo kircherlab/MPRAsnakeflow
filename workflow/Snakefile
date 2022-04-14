@@ -236,6 +236,7 @@ rule all_stats_BCNucleotideComposition:
             "results/experiments/{project}/stats/counts/BCNucleotideComposition/{condition}_{replicate}_{type}.tsv.gz"
         ),
 
+
 rule all_variants:
     input:
         getOutputVariants_helper(
@@ -246,6 +247,7 @@ rule all_variants:
             "results/experiments/{project}/variants/{assignment}/{config}/{condition}_variantTable.tsv.gz",
             False,
         ),
+
 
 ###################
 ## SUB-WORKFLOWS ##
