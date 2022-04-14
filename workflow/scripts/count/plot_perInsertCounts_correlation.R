@@ -7,6 +7,7 @@ library(ggplot2)
 library(optparse)
 library(cowplot)
 library(dplyr)
+library(tidyr)
 
 
 option_list <- list(
