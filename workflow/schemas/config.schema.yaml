@@ -25,6 +25,18 @@ properties:
       description: name of the assignment
     configs:
       type: object
+      patternProperties:
+        ^((sequence_length)|(alignment_start))$:
+          type: object
+          properties:
+            min:
+              type: integer
+            max:
+              type: integer
+          additionalProperties: false
+          required:
+            - min
+            - max
       properties:
         R1:
           type: array
@@ -72,6 +84,8 @@ properties:
         - R3
         - reference
         - configs
+        - alignment_start
+        - sequence_length
       additionalProperties: false
   experiments:
     description: MPRA experiments to run with configurations

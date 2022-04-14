@@ -27,6 +27,12 @@ rule statistic_correlate_BC_counts:
         input=lambda wc: ",".join(
             getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[0]
         ),
+        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
+            wc.config
+        ]["filter"]["RNA"]["minCounts"],
+        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
+            wc.config
+        ]["filter"]["DNA"]["minCounts"],
     log:
         "logs/experiments/{project}/stats/barcode/{raw_or_assigned}/statistic_correlate_BC_counts.{condition}_{config}.log",
     shell:
@@ -34,7 +40,8 @@ rule statistic_correlate_BC_counts:
         Rscript {input.script} \
         --outdir {params.outdir} \
         --condition {params.cond} \
-        --files {params.input} --replicates {params.replicates}
+        --mindnacounts {params.minDNACounts} --minrnacounts {params.minRNACounts} \
+        --files {params.input} --replicates {params.replicates} &> {log}
         """
 
 
@@ -160,7 +167,7 @@ rule statistic_calc_correlations:
         --files {params.files} \
         --replicates {params.replicates} \
         --threshold {params.thresh} \
-        --outdir {params.outdir} > {log}
+        --outdir {params.outdir} &> {log}
         """
 
 

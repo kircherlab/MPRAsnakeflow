@@ -25,6 +25,7 @@ jobs:
           VALIDATE_YAML: true
           YAML_CONFIG_FILE: .yamllint.yml
           VALIDATE_SNAKEMAKE_SNAKEFMT: true
+          VALIDATE_R: true
 
   Linting:
     runs-on: ubuntu-latest

@@ -170,7 +170,6 @@ rule assignment_flagstat:
         """
 
 
-# TODO hard coded lengths of reference sequence (expected 230 bp match)
 rule assignment_getBCs:
     input:
         "results/assignment/{assignment}/aligned_merged_reads.bam",
@@ -178,16 +177,29 @@ rule assignment_getBCs:
         "results/assignment/{assignment}/barcodes_incl_other.sorted.tsv.gz",
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
+    params:
+        alignment_start_min=lambda wc: config["assignments"][wc.assignment][
+            "alignment_start"
+        ]["min"],
+        alignment_start_max=lambda wc: config["assignments"][wc.assignment][
+            "alignment_start"
+        ]["max"],
+        sequence_length_min=lambda wc: config["assignments"][wc.assignment][
+            "sequence_length"
+        ]["min"],
+        sequence_length_max=lambda wc: config["assignments"][wc.assignment][
+            "sequence_length"
+        ]["max"],
     log:
         "logs/assignment/{assignment}/assignment_getBCs.log",
     shell:
         """
         samtools view -F 1792 {input} | \
-        awk -v "OFS=\t" '{{
+        awk -v "OFS=\\t" '{{
             split($(NF),a,":");
             split(a[3],a,",");
             if (a[1] !~ /N/) {{
-                if (($5 > 0) && ($4 >= 15) && ($4 <= 17) && (length($10) >= 195) && (length($10) <= 205)) {{
+                if (($5 > 0) && ($4 >= {params.alignment_start_min}) && ($4 <= {params.alignment_start_max}) && (length($10) >= {params.sequence_length_min}) && (length($10) <= {params.sequence_length_max})) {{
                     print a[1],$3,$4";"$6";"$12";"$13";"$5 
                 }} else {{
                     print a[1],"other","NA" 
