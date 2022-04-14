@@ -167,7 +167,7 @@ rule statistic_calc_correlations:
         --files {params.files} \
         --replicates {params.replicates} \
         --threshold {params.thresh} \
-        --outdir {params.outdir} > {log}
+        --outdir {params.outdir} &> {log}
         """
 
 
