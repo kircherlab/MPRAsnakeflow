@@ -3,7 +3,7 @@
 ################################
 
 
-rule statistic_correlate_BC_counts:
+rule statistic_correlation_bc_counts:
     conda:
         "../../envs/r.yaml"
     input:
@@ -34,7 +34,9 @@ rule statistic_correlate_BC_counts:
             wc.config
         ]["filter"]["DNA"]["minCounts"],
     log:
-        "logs/experiments/{project}/stats/barcode/{raw_or_assigned}/statistic_correlate_BC_counts.{condition}_{config}.log",
+        temp(
+            "results/logs/statistic/correlation/correlate_bc_counts.{project}.{condition}.{config}.{raw_or_assigned}.log"
+        ),
     shell:
         """
         Rscript {input.script} \
@@ -45,7 +47,7 @@ rule statistic_correlate_BC_counts:
         """
 
 
-rule statistic_combine_bc_correlation_raw:
+rule statistic_correlation_combine_bc_raw:
     conda:
         "../../envs/default.yaml"
     input:
@@ -58,10 +60,15 @@ rule statistic_combine_bc_correlation_raw:
             "results/experiments/{project}/stats/statistic_bc_correlation_merged_{config}.tsv",
             caption="../../report/bc_correlation.rst",
             category="{project}",
-            subcategory="Barcodes",
+            subcategory="Correlation",
+            labels={
+                "Analysis": "Barcode correlation",
+                "Configuration": "{config}",
+                "Assignment": "-",
+            },
         ),
     log:
-        "logs/experiments/{project}/stats/statistic_combine_bc_correlation_raw.{config}.log",
+        "results/logs/statistic/correlation/combine_bc_raw.{project}.{config}.log",
     shell:
         """
         (
@@ -69,11 +76,11 @@ rule statistic_combine_bc_correlation_raw:
         for i in {input.files}; do
             cat $i | tail -n +2;
         done;
-        ) > {output}
+        ) > {output} 2> {log}
         """
 
 
-rule statistic_combine_bc_correlation_assigned:
+rule statistic_correlation_combine_bc_assigned:
     conda:
         "../../envs/default.yaml"
     input:
@@ -86,10 +93,17 @@ rule statistic_combine_bc_correlation_assigned:
             "results/experiments/{project}/stats/statistic_assigned_bc_correlation_merged_{assignment}_{config}.tsv",
             caption="../../report/bc_correlation_assigned.rst",
             category="{project}",
-            subcategory="Barcodes",
+            subcategory="Correlation",
+            labels={
+                "Analysis": "Assigned barcode correlation",
+                "Configuration": "{config}",
+                "Assignment": "{assignment}",
+            },
         ),
     log:
-        "logs/experiments/{project}/stats/statistic_combine_bc_correlation_assigned{assignment}_{config}.log",
+        temp(
+            "results/logs/statistic/correlation/combine_bc_assigned.{project}.{assignment}_{config}.log"
+        ),
     shell:
         """
         (
@@ -97,7 +111,7 @@ rule statistic_combine_bc_correlation_assigned:
         for i in {input.files}; do
             cat $i | tail -n +2;
         done;
-        ) > {output}
+        ) > {output} 2> {log}
         """
 
 
@@ -106,7 +120,7 @@ rule statistic_combine_bc_correlation_assigned:
 #############################
 
 
-rule statistic_calc_correlations:
+rule statistic_correlation_calculate:
     conda:
         "../../envs/r.yaml"
     input:
@@ -158,7 +172,9 @@ rule statistic_calc_correlations:
             else ""
         ),
     log:
-        "logs/experiments/{project}/stats/assigned_counts/{assignment}/{config}/statistic_calc_correlations.{condition}.log",
+        temp(
+            "results/logs/statistic/correlation/calculate.{project}.{condition}.{config}.{assignment}.log"
+        ),
     shell:
         """
         Rscript {input.script} \
@@ -171,7 +187,7 @@ rule statistic_calc_correlations:
         """
 
 
-rule statistic_combine_oligo_correlation:
+rule statistic_correlation_combine_oligo:
     conda:
         "../../envs/default.yaml"
     input:
@@ -188,14 +204,21 @@ rule statistic_combine_oligo_correlation:
             "results/experiments/{project}/stats/statistic_oligo_correlation_merged_{assignment}_{config}.tsv",
             caption="../../report/oligo_correlation.rst",
             category="{project}",
-            subcategory="Oligos",
+            subcategory="Correlation",
+            labels={
+                "Analysis": "Oligo correlation",
+                "Configuration": "{config}",
+                "Assignment": "{assignment}",
+            },
         ),
     params:
         thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
             "bc_threshold"
         ],
     log:
-        "logs/experiments/{project}/stats/statistic_combine_oligo_correlation.{assignment}_{config}.log",
+        temp(
+            "results/logs/statistic/correlation/combine_oligo.{project}.{config}.{assignment}.log"
+        ),
     shell:
         """
         set +o pipefail;
@@ -207,5 +230,5 @@ rule statistic_combine_oligo_correlation:
         for i in {input.correlation_thresh}; do
             cat $i | tail -n +2 | awk -v 'OFS=\\t' '{{print $0,"True"}}'
         done;
-        ) > {output}
+        ) > {output} 2> {log}
         """

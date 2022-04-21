@@ -1,0 +1,130 @@
+---
+__default__:
+  time: "0-01:00"
+  threads: 1
+  mem: 2G
+  queue: "debug"
+  error: "logs/%x_%j_%N.err"
+  output: "logs/%x_%j_%N.log"
+
+##################
+### ASSIGNMENT ###
+##################
+assignment_getInputs:
+  time: "0-10:00"
+  queue: medium
+assignment_merge:
+  time: "0-08:00"
+  queue: medium
+assignment_fastq_split:
+  time: "0-01:00"
+  threads: 10
+  mem: 10G
+  queue: debug
+assignment_mapping:
+  time: "0-20:00"
+  threads: 30
+  mem: 20G
+  queue: medium
+assignment_getBCs:
+  time: "0-04:00"
+  threads: 1
+  queue: short
+
+##############
+### COUNTS ###
+##############
+
+counts_demultiplexed_BAM_umi:
+  time: "4-00:00"
+  mem: 22G
+  queue: "medium"
+
+counts_mergeTrimReads_demultiplexed_BAM_umi:
+  time: "4-00:00"
+  mem: 12G
+  queue: "medium"
+
+counts_create_BAM_umi:
+  time: "4-00:00"
+  mem: 12G
+  queue: "medium"
+
+counts_raw_counts_umi:
+  time: "0-22:00"
+  mem: 6G
+  queue: "medium"
+
+counts_final_counts_umi_samplerer:
+  mem: 20G
+  queue: medium
+
+#########################
+### (ASSIGNED) COUNTS ###
+#########################
+
+counts_dna_rna_merge_counts:
+  time: "0-10:00"
+  queue: "medium"
+
+#######################
+### ASSIGNED COUNTS ###
+#######################
+
+assigned_counts_dna_rna_merge:
+  time: "4-00:00"
+  mem: 2G
+  queue: "medium"
+
+assigned_counts_assignBarcodes:
+  time: "4-00:00"
+  queue: "medium"
+  mem: 10G
+
+assigned_counts_createAssignmentPickleFile:
+  mem: 10G
+
+assigned_counts_filterAssignment:
+  time: "0-01:00"
+  queue: "medium"
+  mem: 10G
+
+#################
+### Statistic ###
+#################
+
+########################
+### Statistic/counts ###
+########################
+
+statistic_counts_frequent_umis:
+  time: "0-04:00"
+  queue: "medium"
+
+statistic_counts_barcode_base_composition:
+  time: "1-00:00"
+  queue: "medium"
+  mem: 20G
+
+#############################
+### Statistic/correlation ###
+#############################
+
+statistic_correlation_bc_counts:
+  time: "0-22:00"
+  mem: 80G
+  queue: "medium"
+
+statistic_correlation_calculate:
+  time: "2-00:00"
+  mem: 120G
+  queue: "medium"
+
+############################
+### Statistic/bc_overlap ###
+############################
+
+statistic_bc_overlap_run:
+  time: "0-05:00"
+  mem: 10G
+  queue: "medium"

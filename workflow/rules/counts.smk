@@ -5,25 +5,27 @@
 ### Create_BAM_umi with demultiplexing ###
 
 
-rule create_demultiplexed_index:
+rule counts_create_demultiplexed_index:
     conda:
         "../envs/python3.yaml"
     input:
-        experiment_file=lambda wc: config["experiments"][wc.project]["experiment_file"],
+        experiment_file=lambda wc: config["experiments"][wc.project][
+            "experiment_file"
+        ],
         script=getScript("count/create_demultiplexed_index.py"),
     output:
         "results/experiments/{project}/counts/demultiplex_index.tsv",
     log:
-        "logs/experiments/{project}/counts/create_demultiplexed_index.log",
+        temp("results/logs/counts/create_demultiplexed_index.{project}.log"),
     shell:
         """
         python {input.script} \
         --experiment {input.experiment_file} \
-        --output {output} > {log}
+        --output {output} &> {log}
         """
 
 
-checkpoint create_demultiplexed_BAM_umi:
+checkpoint counts_demultiplexed_BAM_umi:
     input:
         fw_fastq=lambda wc: getFWWithIndex(wc.project),
         rev_fastq=lambda wc: getRevWithIndex(wc.project),
@@ -38,7 +40,7 @@ checkpoint create_demultiplexed_BAM_umi:
     conda:
         "../envs/python27.yaml"
     log:
-        "logs/experiments/{project}/counts/create_demultiplexed_BAM_umi.{name}.log",
+        temp("results/logs/counts/demultiplexed_BAM_umi.{project}.{name}.log"),
     shell:
         """
             set +o pipefail;
@@ -62,18 +64,18 @@ checkpoint create_demultiplexed_BAM_umi:
             <(\
         paste <( zcat {input.fw_fastq} ) <( zcat {input.index_fastq} ) <( zcat {input.rev_fastq} ) <( zcat {input.umi_fastq} ) | \
             awk '{{ count+=1; if ((count == 1) || (count == 3)) {{ print $1 }} else {{ print $1$2$3$4 }}; if (count == 4) {{ count=0 }} }}'\
-            ) > {log}
+            ) &> {log}
         """
 
 
-rule aggregate_demultiplex:
+rule counts_aggregate_demultiplex:
     input:
-        lambda wc: aggregate_demultiplex_input(wc.project),
+        lambda wc: counts_aggregate_demultiplex_input(wc.project),
     output:
         touch("results/experiments/{project}/counts/demultiplex.done"),
 
 
-rule mergeTrimReads_demultiplexed_BAM_umi:
+rule counts_mergeTrimReads_demultiplexed_BAM_umi:
     input:
         demultiplex="results/experiments/{project}/counts/demultiplex.done",
         script=getScript("count/MergeTrimReadsBAM.py"),
@@ -84,7 +86,9 @@ rule mergeTrimReads_demultiplexed_BAM_umi:
     params:
         bam="results/experiments/{project}/counts/demultiplex_{condition}_{replicate}_{type}.bam",
     log:
-        "logs/experiments/{project}/counts/mergeTrimReads_demultiplexed_BAM_umi.{condition}_{replicate}_{type}.log",
+        temp(
+            "results/logs/counts/mergeTrimReads_demultiplexed_BAM_umi.{project}.{condition}.{replicate}.{type}.log"
+        ),
     shell:
         """
         samtools view -h {params.bam} | \
@@ -96,7 +100,7 @@ rule mergeTrimReads_demultiplexed_BAM_umi:
 ### Create_BAM_umi without demultiplexing ###
 
 
-rule create_BAM_umi:
+rule counts_create_BAM_umi:
     input:
         fw_fastq=lambda wc: getFW(wc.project, wc.condition, wc.replicate, wc.type),
         rev_fastq=lambda wc: getRev(wc.project, wc.condition, wc.replicate, wc.type),
@@ -111,7 +115,9 @@ rule create_BAM_umi:
     conda:
         "../envs/python27.yaml"
     log:
-        "logs/experiments/{project}/counts/create_BAM_umi.{condition}_{replicate}_{type}.log",
+        temp(
+            "results/logs/counts/create_BAM_umi.{project}.{condition}.{replicate}.{type}.log"
+        ),
     shell:
         """
         set +o pipefail;
@@ -140,7 +146,7 @@ rule create_BAM_umi:
 ### START COUNTING ####
 
 
-rule raw_counts_umi:
+rule counts_raw_counts_umi:
     """
     Counting BCsxUMIs from the BAM files.
     """
@@ -154,7 +160,9 @@ rule raw_counts_umi:
         umi_length=lambda wc: config["experiments"][wc.project]["umi_length"],
         datasetID="{condition}_{replicate}_{type}",
     log:
-        "logs/experiments/{project}/counts/raw_counts_umi.{condition}_{replicate}_{type}.log",
+        temp(
+            "results/logs/counts/raw_counts_umi.{project}.{condition}.{replicate}.{type}.log"
+        ),
     shell:
         """
         samtools view -F 1 -r {params.datasetID} {input} | \
@@ -163,11 +171,11 @@ rule raw_counts_umi:
         }}}}' | \
         sort | uniq -c | \
         awk -v 'OFS=\\t' '{{ print $2,$3,$1 }}' | \
-        gzip -c > {output}
+        gzip -c > {output} 2> {log}
         """
 
 
-rule filter_counts:
+rule counts_filter_counts:
     """
     Filter the counts to BCs only of the correct length (defined in the config file)
     """
@@ -180,7 +188,9 @@ rule filter_counts:
     params:
         bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
     log:
-        "logs/experiments/{project}/counts/filter_counts.{condition}_{replicate}_{type}",
+        temp(
+            "results/logs/counts/filter_counts.{project}.{condition}.{replicate}.{type}"
+        ),
     shell:
         """
         bc={params.bc_length};
@@ -192,7 +202,7 @@ rule filter_counts:
         """
 
 
-rule final_counts_umi:
+rule counts_final_counts_umi:
     """
     Discarding PCR duplicates (taking BCxUMI only one time)
     """
@@ -203,17 +213,19 @@ rule final_counts_umi:
     output:
         counts="results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
     log:
-        "logs/experiments/{project}/counts/final_counts_umi.{condition}_{replicate}_{type}.log",
+        temp(
+            "results/logs/counts/final_counts_umi.{project}.{condition}.{replicate}.{type}.log"
+        ),
     shell:
         """
         zcat {input} | awk '{{print $1}}' | \
         uniq -c | \
         awk -v 'OFS=\\t' '{{ print $2,$1 }}' | \
-        gzip -c > {output.counts}
+        gzip -c > {output.counts} 2> {log}
         """
 
 
-rule final_counts_umi_samplerer:
+rule counts_final_counts_umi_samplerer:
     """
     Creates full + new distribution DNA files
     """
@@ -234,12 +246,16 @@ rule final_counts_umi_samplerer:
         samplingtotal=lambda wc: counts_getSamplingConfig(
             wc.project, wc.config, wc.type, "total"
         ),
-        seed=lambda wc: counts_getSamplingConfig(wc.project, wc.config, wc.type, "seed"),
+        seed=lambda wc: counts_getSamplingConfig(
+            wc.project, wc.config, wc.type, "seed"
+        ),
         filtermincounts=lambda wc: counts_getFilterConfig(
             wc.project, wc.config, wc.type, "minCounts"
         ),
     log:
-        "logs/experiments/{project}/counts/final_counts_umi_samplerer.{condition}_{replicate}_{type}_{config}.log",
+        temp(
+            "results/logs/counts/final_counts_umi_samplerer.{project}.{condition}.{replicate}.{type}.{config}.log"
+        ),
     shell:
         """
         python {input.script} --input {input.counts} \
@@ -252,7 +268,7 @@ rule final_counts_umi_samplerer:
         """
 
 
-rule dna_rna_merge_counts:
+rule counts_dna_rna_merge_counts:
     """
     Merge DNA and RNA counts together.
     Is done in two ways. First no not allow zeros in DNA or RNA BCs (withoutZeros).
@@ -261,8 +277,12 @@ rule dna_rna_merge_counts:
     conda:
         "../envs/default.yaml"
     input:
-        dna=lambda wc: getFinalCounts(wc.project, wc.config, "DNA", wc.raw_or_assigned),
-        rna=lambda wc: getFinalCounts(wc.project, wc.config, "RNA", wc.raw_or_assigned),
+        dna=lambda wc: getFinalCounts(
+            wc.project, wc.config, "DNA", wc.raw_or_assigned
+        ),
+        rna=lambda wc: getFinalCounts(
+            wc.project, wc.config, "RNA", wc.raw_or_assigned
+        ),
     output:
         "results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}.merged.config.{config}.tsv.gz",
     params:
@@ -274,7 +294,9 @@ rule dna_rna_merge_counts:
             wc.config
         ]["filter"]["DNA"]["minCounts"],
     log:
-        "logs/experiments/{project}/{raw_or_assigned}/dna_rna_merge_counts.{condition}_{replicate}_{config}.log",
+        temp(
+            "results/logs/{raw_or_assigned}/dna_rna_merge_counts.{project}.{condition}.{replicate}.{config}.log"
+        ),
     shell:
         """
         zero={params.zero};
@@ -289,5 +311,5 @@ rule dna_rna_merge_counts:
             <( zcat {input.rna}  | sort);
         fi  | \
         awk -v 'OFS=\\t' '{{if ($2 >= {params.minDNACounts} && $3 >= {params.minRNACounts}) {{print $0}}}}' | \
-        gzip -c > {output};
+        gzip -c > {output} 2> {log}
         """

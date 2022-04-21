@@ -9,7 +9,7 @@ rule assignment_getInputs:
     output:
         R1=temp("results/assignment/{assignment}/fastq/{R}.fastq.gz"),
     log:
-        "logs/assignment/{assignment}/fastq/assignment_getInputs.{R}.log",
+        temp("results/logs/assignment/getInputs.{assignment}.{R}.log"),
     shell:
         """
         if [[ "$(ls {input} | wc -l)" -eq 1 ]]; then 
@@ -33,7 +33,7 @@ rule assignment_fastq_split:
     conda:
         "../envs/fastqsplitter.yaml"
     log:
-        "logs/assignment/{assignment}/fastq/splits/assignment_fastq_split.{R}.log",
+        temp("results/logs/assignment/fastq_split.{assignment}.{R}.log"),
     params:
         files=lambda wc: " ".join(
             [
@@ -48,7 +48,7 @@ rule assignment_fastq_split:
         ),
     shell:
         """
-        fastqsplitter -i {input} -t 10 {params.files} > {log}
+        fastqsplitter -i {input} -t 10 {params.files} &> {log}
         """
 
 
@@ -64,7 +64,7 @@ rule assignment_merge:
     conda:
         "../envs/python27.yaml"
     log:
-        "logs/assignment/{assignment}/bam/assignment_merge.{split}.log",
+        temp("results/logs/assignment/merge.{assignment}.{split}.log"),
     shell:
         """
         paste <( zcat {input.R1} ) <( zcat {input.R2} ) <( zcat {input.R3} ) | \
@@ -100,13 +100,13 @@ rule assignment_bwa_ref:
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
     log:
-        "logs/assignment/{assignment}/reference/assignment_bwa_ref.log",
+        temp("results/logs/assignment/bwa_ref.{assignment}.log"),
     shell:
         """
         cat {input} | awk '{{gsub(/[\\]\\[]/,"_")}}$0' > {output.ref};
-        bwa index -a bwtsw {output.ref} > {log};
-        samtools faidx {output.ref} >> {log};
-        picard CreateSequenceDictionary REFERENCE={output.ref} OUTPUT={output.d} >> {log}
+        bwa index -a bwtsw {output.ref} &> {log};
+        samtools faidx {output.ref} &>> {log};
+        picard CreateSequenceDictionary REFERENCE={output.ref} OUTPUT={output.d} &>> {log}
         """
 
 
@@ -126,7 +126,7 @@ rule assignment_mapping:
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
     log:
-        "logs/assignment/{assignment}/assignment_mapping.log",
+        temp("results/logs/assignment/mapping.{assignment}.log"),
     shell:
         """
         bwa mem -t 30 -L 80 -M -C {input.reference} <(
@@ -147,7 +147,7 @@ rule assignment_idx_bam:
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
     log:
-        "logs/assignment/{assignment}/assignment_idx_bam.log",
+        "results/logs/assignment/{assignment}/assignment_idx_bam.log",
     shell:
         """
         samtools index {input} 2> {log}
@@ -163,7 +163,7 @@ rule assignment_flagstat:
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
     log:
-        "logs/assignment/{assignment}/stats/assignment/assignment_flagstat.log",
+        temp("results/logs/assignment/flagstat.{assignment}.log"),
     shell:
         """
         samtools flagstat {input.bam} > {output} 2> {log}
@@ -191,7 +191,7 @@ rule assignment_getBCs:
             "sequence_length"
         ]["max"],
     log:
-        "logs/assignment/{assignment}/assignment_getBCs.log",
+        temp("results/logs/assignment/getBCs.{assignment}.log"),
     shell:
         """
         samtools view -F 1792 {input} | \
@@ -218,7 +218,7 @@ rule assignment_filter:
     conda:
         "../envs/python3.yaml"
     log:
-        "logs/assignment/{assignment}/assignment_filter.{assignment_config}.log",
+        temp("results/logs/assignment/filter.{assignment}.{assignment_config}.log"),
     params:
         min_support=lambda wc: config["assignments"][wc.assignment]["configs"][
             wc.assignment_config

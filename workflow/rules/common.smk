@@ -434,7 +434,7 @@ def getBamFile(project, condition, replicate, type):
         )
 
 
-def aggregate_demultiplex_input(project):
+def counts_aggregate_demultiplex_input(project):
     output = []
     conditions = getConditions(project)
     for condition in conditions:
@@ -446,7 +446,7 @@ def aggregate_demultiplex_input(project):
             type=["DNA", "RNA"],
         )
         for name in names:
-            with checkpoints.create_demultiplexed_BAM_umi.get(
+            with checkpoints.counts_demultiplexed_BAM_umi.get(
                 project=project, name=name
             ).output[0].open() as f:
                 output += [f.name]
@@ -534,7 +534,7 @@ def getCountStats(project, countType):
     output = []
     for index, row in exp.iterrows():
         output += expand(
-            "results/experiments/{{project}}/stats/counts/{condition}_{replicate}_{type}_{{countType}}_counts.tsv.gz",
+            "results/experiments/{{project}}/statistic/counts/{condition}_{replicate}_{type}_{{countType}}_counts.tsv.gz",
             condition=row["Condition"],
             replicate=row["Replicate"],
             type=["DNA", "RNA"],
@@ -548,7 +548,7 @@ def getBCinRNADNAStats(wc):
     output = []
     for index, row in exp.iterrows():
         output += expand(
-            "results/experiments/{project}/stats/counts/{condition}_{replicate}_{countType}_BC_in_RNA_DNA.tsv.gz",
+            "results/experiments/{project}/statistic/counts/{condition}_{replicate}_{countType}_BC_in_RNA_DNA.tsv.gz",
             project=wc.project,
             condition=row["Condition"],
             replicate=row["Replicate"],
