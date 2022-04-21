@@ -9,9 +9,7 @@ rule counts_create_demultiplexed_index:
     conda:
         "../envs/python3.yaml"
     input:
-        experiment_file=lambda wc: config["experiments"][wc.project][
-            "experiment_file"
-        ],
+        experiment_file=lambda wc: config["experiments"][wc.project]["experiment_file"],
         script=getScript("count/create_demultiplexed_index.py"),
     output:
         "results/experiments/{project}/counts/demultiplex_index.tsv",
@@ -246,9 +244,7 @@ rule counts_final_counts_umi_samplerer:
         samplingtotal=lambda wc: counts_getSamplingConfig(
             wc.project, wc.config, wc.type, "total"
         ),
-        seed=lambda wc: counts_getSamplingConfig(
-            wc.project, wc.config, wc.type, "seed"
-        ),
+        seed=lambda wc: counts_getSamplingConfig(wc.project, wc.config, wc.type, "seed"),
         filtermincounts=lambda wc: counts_getFilterConfig(
             wc.project, wc.config, wc.type, "minCounts"
         ),
@@ -277,12 +273,8 @@ rule counts_dna_rna_merge_counts:
     conda:
         "../envs/default.yaml"
     input:
-        dna=lambda wc: getFinalCounts(
-            wc.project, wc.config, "DNA", wc.raw_or_assigned
-        ),
-        rna=lambda wc: getFinalCounts(
-            wc.project, wc.config, "RNA", wc.raw_or_assigned
-        ),
+        dna=lambda wc: getFinalCounts(wc.project, wc.config, "DNA", wc.raw_or_assigned),
+        rna=lambda wc: getFinalCounts(wc.project, wc.config, "RNA", wc.raw_or_assigned),
     output:
         "results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}.merged.config.{config}.tsv.gz",
     params:

@@ -199,7 +199,8 @@ rule all_experiments_counts_stats:
         getOutputProjectConfig_helper(
             "results/experiments/{project}/stats/statistic_bc_correlation_merged_{config}.tsv",
             True,
-        )
+        ),
+
 
 rule all_bc_overlap_statistic:
     input:
@@ -211,6 +212,7 @@ rule all_bc_overlap_statistic:
             "results/experiments/{project}/statistic/bc_overlap.assigned_counts.{config}.{assignment}.tsv",
             True,
         ),
+
 
 rule all_experiments_assignments:
     input:
@@ -231,7 +233,7 @@ rule all_experiments_assignments_statistic:
         getOutputProjectAssignmentConfig_helper(
             "results/experiments/{project}/stats/statistic_assigned_counts_single_{assignment}_{config}.tsv",
             True,
-        )
+        ),
 
 
 rule all_stats_BCNucleotideComposition:
