@@ -47,6 +47,12 @@ rule statistic_assigned_counts_combine_BC_assignment_stats:
             caption="../../report/assigned_counts_beforeMerge.rst",
             category="{project}",
             subcategory="Assignment",
+            labels={
+                "Analysis": "Statistic",
+                "DNA/RNA merge": "No",
+                "Configuration": "{config}",
+                "Assignment": "{assignment}",
+            },
         ),
     log:
         temp(
@@ -115,6 +121,12 @@ rule statistic_assigned_counts_combine_stats_dna_rna_merge_all:
             caption="../../report/assigned_counts_afterMerge.rst",
             category="{project}",
             subcategory="Assignment",
+            labels={
+                "Analysis": "Statistic",
+                "DNA/RNA merge": "Yes",
+                "Configuration": "{config}",
+                "Assignment": "{assignment}",
+            },
         ),
     log:
         temp(

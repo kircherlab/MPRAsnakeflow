@@ -12,9 +12,39 @@ rule statistic_correlation_bc_counts:
         )[0],
         script=getScript("count/plot_perBCCounts_correlation.R"),
     output:
-        "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_barcode_DNA_pairwise.png",
-        "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_barcode_RNA_pairwise.png",
-        "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_barcode_Ratio_pairwise.png",
+        report(
+            "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_barcode_DNA_pairwise.png",
+            category="{project}",
+            subcategory="Correlation plots",
+            labels={
+                "Step": "{raw_or_assigned}",
+                "Condition": "{condition}",
+                "Configuration": "{config}",
+                "Plot": "DNA",
+            },
+        ),
+        report(
+            "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_barcode_RNA_pairwise.png",
+            category="{project}",
+            subcategory="Correlation plots",
+            labels={
+                "Step": "{raw_or_assigned}",
+                "Condition": "{condition}",
+                "Configuration": "{config}",
+                "Plot": "RNA",
+            },
+        ),
+        report(
+            "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_barcode_Ratio_pairwise.png",
+            category="{project}",
+            subcategory="Correlation plots",
+            labels={
+                "Step": "{raw_or_assigned}",
+                "Condition": "{condition}",
+                "Configuration": "{config}",
+                "Plot": "Ratio",
+            },
+        ),
         "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_barcode_correlation.tsv",
         "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_DNA_perBarcode.png",
         "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_RNA_perBarcode.png",
@@ -60,12 +90,8 @@ rule statistic_correlation_combine_bc_raw:
             "results/experiments/{project}/stats/statistic_bc_correlation_merged_{config}.tsv",
             caption="../../report/bc_correlation.rst",
             category="{project}",
-            subcategory="Correlation",
-            labels={
-                "Analysis": "Barcode correlation",
-                "Configuration": "{config}",
-                "Assignment": "-",
-            },
+            subcategory="Barcode correlation",
+            labels={"Configuration": "{config}", "Assignment": "-",},
         ),
     log:
         "results/logs/statistic/correlation/combine_bc_raw.{project}.{config}.log",
@@ -93,12 +119,8 @@ rule statistic_correlation_combine_bc_assigned:
             "results/experiments/{project}/stats/statistic_assigned_bc_correlation_merged_{assignment}_{config}.tsv",
             caption="../../report/bc_correlation_assigned.rst",
             category="{project}",
-            subcategory="Correlation",
-            labels={
-                "Analysis": "Assigned barcode correlation",
-                "Configuration": "{config}",
-                "Assignment": "{assignment}",
-            },
+            subcategory="Barcode correlation",
+            labels={"Configuration": "{config}", "Assignment": "{assignment}",},
         ),
     log:
         temp(
@@ -204,7 +226,7 @@ rule statistic_correlation_combine_oligo:
             "results/experiments/{project}/stats/statistic_oligo_correlation_merged_{assignment}_{config}.tsv",
             caption="../../report/oligo_correlation.rst",
             category="{project}",
-            subcategory="Correlation",
+            subcategory="Oligo correlation",
             labels={
                 "Analysis": "Oligo correlation",
                 "Configuration": "{config}",
