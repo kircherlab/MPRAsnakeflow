@@ -28,16 +28,18 @@ report: "report/workflow.rst"
 
 ##### General wirldcard constrains #####
 wildcard_constraints:
-    project="[^/]+",
-    assignment="[^/]+",
-    condition="[^/_]+",
-    replicate="[^/_]+",
+    project="[^/\.]+",
+    assignment="[^/\.]+",
+    condition="[^/_\.]+",
+    replicate="[^/_\.]+",
+    type="(DNA)|(RNA)",
+    config="[^/\.]+",
 
 
 ##### localrules #####
 localrules:
     all,
-    aggregate_demultiplex,
+    counts_aggregate_demultiplex,
 
 
 # common workflow
@@ -61,17 +63,16 @@ rule all:
         ## experiments
         # stats BC nucleotide composition
         getOutputProjectConditionReplicateType_helper(
-            "results/experiments/{project}/stats/counts/BCNucleotideComposition/{condition}_{replicate}_{type}.tsv.gz"
+            "results/experiments/{project}/statistic/counts/BCNucleotideComposition.{condition}_{replicate}_{type}.tsv.gz"
         ),
-        # barcode stats
+        # counts stats
         expand(
-            "results/experiments/{project}/stats/statistic_count_{countType}.tsv",
+            "results/experiments/{project}/statistic/counts.{countType}.tsv",
             project=getProjects(),
             countType=["raw", "filtered"],
         ),
-        # counts stats
         getOutputProjectConditionReplicateType_helper(
-            "results/experiments/{project}/stats/counts/freqUMIs_{condition}_{replicate}_{type}.txt"
+            "results/experiments/{project}/statistic/counts.freqUMIs.{condition}_{replicate}_{type}.txt"
         ),
         getOutputProjectConfig_helper(
             "results/experiments/{project}/stats/statistic_bc_correlation_merged_{config}.tsv",
@@ -81,15 +82,20 @@ rule all:
             "results/experiments/{project}/stats/statistic_assigned_bc_correlation_merged_{assignment}_{config}.tsv",
             True,
         ),
+        # bc_overlap statistic
         getOutputProjectConfig_helper(
-            "results/experiments/{project}/stats/statistic_overlapBCs_counts_{config}.tsv",
+            "results/experiments/{project}/statistic/bc_overlap.counts.{config}.tsv",
+            True,
+        ),
+        getOutputProjectAssignmentConfig_helper(
+            "results/experiments/{project}/statistic/bc_overlap.assigned_counts.{config}.{assignment}.tsv",
             True,
         ),
         # assignment
         getOutputProjectConditionAssignmentConfig_helper(
             "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.tsv.gz"
         ),
-        # assignment stats
+        # assignment statistic
         getOutputProjectAssignmentConfig_helper(
             "results/experiments/{project}/stats/statistic_assigned_counts_merged_{assignment}_{config}.tsv"
         ),
@@ -99,10 +105,6 @@ rule all:
         ),
         getOutputProjectAssignmentConfig_helper(
             "results/experiments/{project}/stats/statistic_assigned_counts_single_{assignment}_{config}.tsv",
-            True,
-        ),
-        getOutputProjectAssignmentConfig_helper(
-            "results/experiments/{project}/stats/statistic_overlapBCs_assigned_counts_{assignment}_{config}.tsv",
             True,
         ),
         # variants
@@ -130,7 +132,7 @@ rule all_experiments:
     input:
         # stats BC nucleotide composition
         getOutputProjectConditionReplicateType_helper(
-            "results/experiments/{project}/stats/counts/BCNucleotideComposition/{condition}_{replicate}_{type}.tsv.gz"
+            "results/experiments/{project}/statistic/counts/BCNucleotideComposition.{condition}_{replicate}_{type}.tsv.gz"
         ),
         # counts
         getOutputProjectConditionReplicateType_helper(
@@ -140,15 +142,14 @@ rule all_experiments:
         getOutputProjectConditionReplicateType_helper(
             "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz"
         ),
-        # barcode stats
+        # counts statistic
         expand(
-            "results/experiments/{project}/stats/statistic_count_{countType}.tsv",
+            "results/experiments/{project}/statistic/counts.{countType}.tsv",
             project=getProjects(),
             countType=["raw", "filtered"],
         ),
-        # counts stats
         getOutputProjectConditionReplicateType_helper(
-            "results/experiments/{project}/stats/counts/freqUMIs_{condition}_{replicate}_{type}.txt"
+            "results/experiments/{project}/statistic/counts.freqUMIs.{condition}_{replicate}_{type}.txt"
         ),
         getOutputProjectConfig_helper(
             "results/experiments/{project}/stats/statistic_bc_correlation_merged_{config}.tsv",
@@ -158,8 +159,13 @@ rule all_experiments:
             "results/experiments/{project}/stats/statistic_assigned_bc_correlation_merged_{assignment}_{config}.tsv",
             True,
         ),
+        # bc_overlap statistic
         getOutputProjectConfig_helper(
-            "results/experiments/{project}/stats/statistic_overlapBCs_counts_{config}.tsv",
+            "results/experiments/{project}/statistic/bc_overlap.counts.{config}.tsv",
+            True,
+        ),
+        getOutputProjectAssignmentConfig_helper(
+            "results/experiments/{project}/statistic/bc_overlap.assigned_counts.{config}.{assignment}.tsv",
             True,
         ),
         # assignment
@@ -178,10 +184,6 @@ rule all_experiments:
             "results/experiments/{project}/stats/statistic_assigned_counts_single_{assignment}_{config}.tsv",
             True,
         ),
-        getOutputProjectAssignmentConfig_helper(
-            "results/experiments/{project}/stats/statistic_overlapBCs_assigned_counts_{assignment}_{config}.tsv",
-            True,
-        ),
         # variants
         getOutputVariants_helper(
             "results/experiments/{project}/stats/variants/{assignment}/{config}/correlation_variantTable.tsv",
@@ -192,14 +194,22 @@ rule all_experiments:
 rule all_experiments_counts_stats:
     input:
         getOutputProjectConditionReplicateType_helper(
-            "results/experiments/{project}/stats/counts/freqUMIs_{condition}_{replicate}_{type}.txt"
+            "results/experiments/{project}/statistic/counts.freqUMIs.{condition}_{replicate}_{type}.txt"
         ),
         getOutputProjectConfig_helper(
             "results/experiments/{project}/stats/statistic_bc_correlation_merged_{config}.tsv",
             True,
         ),
+
+
+rule all_bc_overlap_statistic:
+    input:
         getOutputProjectConfig_helper(
-            "results/experiments/{project}/stats/statistic_overlapBCs_counts_{config}.tsv",
+            "results/experiments/{project}/statistic/bc_overlap.counts.{config}.tsv",
+            True,
+        ),
+        getOutputProjectAssignmentConfig_helper(
+            "results/experiments/{project}/statistic/bc_overlap.assigned_counts.{config}.{assignment}.tsv",
             True,
         ),
 
@@ -211,7 +221,7 @@ rule all_experiments_assignments:
         ),
 
 
-rule all_experiments_assignments_stats:
+rule all_experiments_assignments_statistic:
     input:
         getOutputProjectAssignmentConfig_helper(
             "results/experiments/{project}/stats/statistic_assigned_counts_merged_{assignment}_{config}.tsv"
@@ -224,16 +234,12 @@ rule all_experiments_assignments_stats:
             "results/experiments/{project}/stats/statistic_assigned_counts_single_{assignment}_{config}.tsv",
             True,
         ),
-        getOutputProjectAssignmentConfig_helper(
-            "results/experiments/{project}/stats/statistic_overlapBCs_assigned_counts_{assignment}_{config}.tsv",
-            True,
-        ),
 
 
 rule all_stats_BCNucleotideComposition:
     input:
         getOutputProjectConditionReplicateType_helper(
-            "results/experiments/{project}/stats/counts/BCNucleotideComposition/{condition}_{replicate}_{type}.tsv.gz"
+            "results/experiments/{project}/statistic/counts/BCNucleotideComposition.{condition}_{replicate}_{type}.tsv.gz"
         ),
 
 

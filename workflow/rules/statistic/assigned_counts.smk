@@ -4,7 +4,7 @@
 ####################################################
 
 
-rule statistic_combine_BC_assignment_stats_helper:
+rule statistic_assigned_counts_combine_BC_assignment_stats_helper:
     conda:
         "../../envs/default.yaml"
     input:
@@ -18,7 +18,9 @@ rule statistic_combine_BC_assignment_stats_helper:
             "results/experiments/{project}/stats/assigned_counts/{assignment}/helper.{condition}.{config}.statistic.tsv.gz"
         ),
     log:
-        "logs/experiments/{project}/stats/assigned_counts/{assignment}/statistic_combine_BC_assignment_stats_helper.{condition}.{config}.log",
+        temp(
+            "results/logs/statistic/assigned_counts/combine_BC_assignment_stats_helper.{project}.{condition}.{config}.{assignment}.log"
+        ),
     shell:
         """
         set +o pipefail;
@@ -27,11 +29,11 @@ rule statistic_combine_BC_assignment_stats_helper:
             for i in {input.stats}; do
                 zcat $i | tail -n +2
             done;
-        ) | gzip -c > {output}
+        ) | gzip -c > {output} 2> {log}
         """
 
 
-rule statistic_combine_BC_assignment_stats:
+rule statistic_assigned_counts_combine_BC_assignment_stats:
     conda:
         "../../envs/default.yaml"
     input:
@@ -45,9 +47,17 @@ rule statistic_combine_BC_assignment_stats:
             caption="../../report/assigned_counts_beforeMerge.rst",
             category="{project}",
             subcategory="Assignment",
+            labels={
+                "Analysis": "Statistic",
+                "DNA/RNA merge": "No",
+                "Configuration": "{config}",
+                "Assignment": "{assignment}",
+            },
         ),
     log:
-        "logs/experiments/{project}/stats/statistic_combine_BC_assignment_stats.{assignment}_{config}.log",
+        temp(
+            "results/logs/statistic/assigned_counts/combine_BC_assignment_stats.{project}.{assignment}_{config}.log"
+        ),
     shell:
         """
         set +o pipefail;
@@ -56,7 +66,7 @@ rule statistic_combine_BC_assignment_stats:
             for i in {input.stats}; do
                 zcat $i | tail -n +2
             done;
-        ) > {output}
+        ) > {output} 2> {log}
         """
 
 
@@ -66,7 +76,7 @@ rule statistic_combine_BC_assignment_stats:
 ###################################################
 
 
-rule statistic_combine_stats_dna_rna_merge:
+rule statistic_assigned_counts_combine_stats_dna_rna_merge:
     conda:
         "../../envs/python3.yaml"
     input:
@@ -85,17 +95,19 @@ rule statistic_combine_stats_dna_rna_merge:
             )
         ),
     log:
-        "logs/experiments/{project}/stats/assigned_counts/{assignment}/{config}/statistic_combine_stats_dna_rna_merge.{condition}.log",
+        temp(
+            "results/logs/statistic/assigned_counts/combine_stats_dna_rna_merge.{project}.{condition}.{config}.{assignment}.log"
+        ),
     shell:
         """
         python {input.script} \
         --condition {params.cond} \
         {params.statistic} \
-        --output {output} > {log}
+        --output {output} &> {log}
         """
 
 
-rule statistic_combine_stats_dna_rna_merge_all:
+rule statistic_assigned_counts_combine_stats_dna_rna_merge_all:
     conda:
         "../../envs/default.yaml"
     input:
@@ -109,9 +121,17 @@ rule statistic_combine_stats_dna_rna_merge_all:
             caption="../../report/assigned_counts_afterMerge.rst",
             category="{project}",
             subcategory="Assignment",
+            labels={
+                "Analysis": "Statistic",
+                "DNA/RNA merge": "Yes",
+                "Configuration": "{config}",
+                "Assignment": "{assignment}",
+            },
         ),
     log:
-        "logs/experiments/{project}/stats/statistic_combine_stats_dna_rna_merge_all.{assignment}_{config}.log",
+        temp(
+            "results/logs/statistic/assigned_counts/combine_stats_dna_rna_merge_all.{project}.{config}.{assignment}.log"
+        ),
     shell:
         """
         set +o pipefail;
@@ -120,5 +140,5 @@ rule statistic_combine_stats_dna_rna_merge_all:
             for i in {input.files}; do
                 zcat $i | tail -n +2
             done
-        ) > {output}
+        ) > {output} 2> {log}
         """

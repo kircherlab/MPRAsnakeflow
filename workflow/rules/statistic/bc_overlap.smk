@@ -3,7 +3,7 @@
 ###################################
 
 
-rule statistic_overlapBCs:
+rule statistic_bc_overlap_run:
     conda:
         "../../envs/r.yaml"
     input:
@@ -16,7 +16,9 @@ rule statistic_overlapBCs:
         ),
         script=getScript("count/BCCounts_betweenReplicates.R"),
     output:
-        "results/experiments/{project}/stats/{raw_or_assigned}/overlapBCandCounts_{condition}_{type}_{config}.tsv",
+        temp(
+            "results/experiments/{project}/statistic/bc_overlap/{raw_or_assigned}/overlapBCandCounts.{condition}_{type}.{config}.tsv"
+        ),
     params:
         input=lambda wc: ",".join(
             expand(
@@ -32,35 +34,42 @@ rule statistic_overlapBCs:
             getReplicatesOfCondition(wc.project, wc.condition)
         ),
     log:
-        "logs/experiments/{project}/stats/{raw_or_assigned}/statistic_overlapBCs.{condition}_{type}_{config}.log",
+        temp(
+            "results/logs/statistic/bc_overlap/run.{project}.{condition}.{type}.{config}.{raw_or_assigned}.log"
+        ),
     shell:
         """
         Rscript {input.script} \
         --outfile {output} \
         --condition {params.cond} \
-        --files {params.input} --replicates {params.replicates} > {log}
+        --files {params.input} --replicates {params.replicates} &> {log}
         """
 
 
-rule statistic_combine_overlapBCs_stats_raw:
+rule statistic_bc_overlap_combine_counts:
     conda:
         "../../envs/default.yaml"
     input:
         stats=lambda wc: expand(
-            "results/experiments/{{project}}/stats/counts/overlapBCandCounts_{condition}_{type}_{config}.tsv",
+            "results/experiments/{{project}}/statistic/bc_overlap/counts/overlapBCandCounts.{condition}_{type}.{config}.tsv",
             type=["DNA", "RNA"],
             condition=getConditions(wc.project),
             config=wc.config,
         ),
     output:
         report(
-            "results/experiments/{project}/stats/statistic_overlapBCs_counts_{config}.tsv",
+            "results/experiments/{project}/statistic/bc_overlap.counts.{config}.tsv",
             caption="../../report/bc_overlap.rst",
             category="{project}",
             subcategory="Barcodes",
+            labels={
+                "Analysis": "Overlap between replicates (not assigned)",
+                "Configuration": "{config}",
+                "Assignment": "-",
+            },
         ),
     log:
-        "logs/experiments/{project}/stats/statistic_combine_overlapBCs_stats_raw.{config}.log",
+        temp("results/logs/statistic/bc_overlap/combine_counts.{project}.{config}.log"),
     shell:
         """
         set +o pipefail;
@@ -69,28 +78,35 @@ rule statistic_combine_overlapBCs_stats_raw:
             for i in {input.stats}; do
                 cat $i | tail -n +2
             done;
-        ) > {output}
+        ) > {output} 2> {log}
         """
 
 
-rule statistic_combine_overlapBCs_stats_assigned:
+rule statistic_bc_overlap_combine_assigned_counts:
     conda:
         "../../envs/default.yaml"
     input:
         stats=lambda wc: expand(
-            "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/overlapBCandCounts_{condition}_{type}_{{config}}.tsv",
+            "results/experiments/{{project}}/statistic/bc_overlap/assigned_counts/{{assignment}}/overlapBCandCounts.{condition}_{type}.{{config}}.tsv",
             type=["DNA", "RNA"],
             condition=getConditions(wc.project),
         ),
     output:
         report(
-            "results/experiments/{project}/stats/statistic_overlapBCs_assigned_counts_{assignment}_{config}.tsv",
+            "results/experiments/{project}/statistic/bc_overlap.assigned_counts.{config}.{assignment}.tsv",
             caption="../../report/bc_overlap_assignment.rst",
             category="{project}",
             subcategory="Barcodes",
+            labels={
+                "Analysis": "Overlap between replicates (assigned)",
+                "Configuration": "{config}",
+                "Assignment": "{assignment}",
+            },
         ),
     log:
-        "logs/experiments/{project}/stats/statistic_combine_overlapBCs_stats_assigned.{assignment}_{config}.log",
+        temp(
+            "results/logs/statistic/bc_overlap/combine_assigned_counts.{project}.{config}.{assignment}.log"
+        ),
     shell:
         """
         set +o pipefail;
@@ -99,5 +115,5 @@ rule statistic_combine_overlapBCs_stats_assigned:
             for i in {input.stats}; do
                 cat $i | tail -n +2
             done;
-        ) > {output}
+        ) > {output} 2> {log}
         """

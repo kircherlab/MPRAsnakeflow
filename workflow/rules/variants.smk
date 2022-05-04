@@ -113,6 +113,11 @@ rule variants_combineVariantCorrelationTables:
             caption="../report/variants/correlation.rst",
             category="{project}",
             subcategory="Variants",
+            labels={
+                "Analysis": "Correlation",
+                "Configuration": "{config}",
+                "Assignment": "{assignment}",
+            },
         ),
     log:
         "logs/experiments/{project}/stats/variants/{assignment}/{config}/variants_combineVariantCorrelationTables.log",

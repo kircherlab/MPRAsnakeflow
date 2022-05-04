@@ -3,7 +3,7 @@
 ##################################
 
 
-rule assignedCounts_filterAssignment:
+rule assigned_counts_filterAssignment:
     """
     Use only unique assignments and do sampling if needed.
     """
@@ -25,7 +25,7 @@ rule assignedCounts_filterAssignment:
             wc.project, wc.assignment, "seed"
         ),
     log:
-        "logs/experiments/{project}/assignment/filterAssignment_{assignment}.log",
+        temp("results/logs/assigned_counts/filterAssignment.{project}.{assignment}.log"),
     shell:
         """
         python {input.script} \
@@ -37,7 +37,7 @@ rule assignedCounts_filterAssignment:
         """
 
 
-rule assignedCounts_createAssignmentPickleFile:
+rule assigned_counts_createAssignmentPickleFile:
     conda:
         "../envs/python3.yaml"
     input:
@@ -46,14 +46,16 @@ rule assignedCounts_createAssignmentPickleFile:
     output:
         "results/experiments/{project}/assignment/{assignment}.pickle",
     log:
-        "logs/experiments/{project}/assignment/createAssignmentPickleFile_{assignment}.log",
+        temp(
+            "results/logs/assigned_counts/assignment/createAssignmentPickleFile.{project}.{assignment}.log"
+        ),
     shell:
         """
         python {input.script} -i {input.files} -o {output} &> {log}
         """
 
 
-rule assignBarcodes:
+rule assigned_counts_assignBarcodes:
     """
     Assign RNA and DNA barcodes seperately to make the statistic for assigned
     """
@@ -69,18 +71,20 @@ rule assignBarcodes:
     params:
         name="{condition}_{replicate}_{type}",
     log:
-        "logs/experiments/{project}/assigned_counts/{assignment}/assignBarcodes.{condition}_{replicate}_{type}_{config}.log",
+        temp(
+            "results/logs/assigned_counts/assignBarcodes.{project}.{condition}.{replicate}.{type}.{config}.{assignment}.log"
+        ),
     shell:
         """
         python {input.script} --counts {input.counts} \
         --assignment {input.association} \
         --output {output.counts} \
         --statistic {output.stats} \
-        --name {params.name} > {log}
+        --name {params.name} &> {log}
         """
 
 
-rule dna_rna_merge:
+rule assigned_counts_dna_rna_merge:
     conda:
         "../envs/python3.yaml"
     input:
@@ -98,7 +102,9 @@ rule dna_rna_merge:
             wc.config
         ]["filter"]["DNA"]["minCounts"],
     log:
-        "logs/experiments/{project}/assigned_counts/{assignment}/{config}/dna_rna_merge.{condition}_{replicate}.log",
+        temp(
+            "results/logs/assigned_counts/{assignment}/dna_rna_merge.{project}.{condition}.{replicate}.{config}.log"
+        ),
     shell:
         """
         python {input.script} --counts {input.counts} \
@@ -109,7 +115,7 @@ rule dna_rna_merge:
         """
 
 
-rule make_master_tables:
+rule assigned_counts_make_master_tables:
     conda:
         "../envs/r.yaml"
     input:
@@ -141,7 +147,9 @@ rule make_master_tables:
             "bc_threshold"
         ],
     log:
-        "logs/experiments/{project}/assigned_counts/{assignment}/{config}/make_master_tables.{condition}.log",
+        temp(
+            "results/logs/assigned_counts/make_master_tables.{project}.{condition}.{config}.{assignment}.log"
+        ),
     shell:
         """
         Rscript {input.script} \
@@ -151,5 +159,5 @@ rule make_master_tables:
         --replicates {params.replicates} \
         --output {output.thresh} \
         --output-all {output.all} \
-        --statistic {output.statistic} > {log}
+        --statistic {output.statistic} &> {log}
         """
