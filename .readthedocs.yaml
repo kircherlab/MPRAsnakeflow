@@ -24,4 +24,3 @@ formats:
 # Optionally declare the Python requirements required to build your docs
 conda:
   environment: docs/environment.yml
-    - requirements:docs/environment.yml
