@@ -28,7 +28,7 @@ Getting started
 
 3. Run Association if using a design with randomly paired candidate sequences and barcodes
 
-  .. note:: The association is now in-built in MPRAsnakeflow and doesn't require running this step separately.
+  .. note:: The association is now in-built in MPRAsnakeflow and doesn't require running this step separately unless stated in ``config.yaml`` otherwise.
 
 4. Run Count
 
