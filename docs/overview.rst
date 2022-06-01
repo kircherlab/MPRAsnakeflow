@@ -19,7 +19,3 @@ This utility processes sequence data (FASTQ) of barcodes from the DNA and RNA fr
 ASSIGNMENT 
 -----
 Not documented yet.
-
-STARRseq
------
-Coming soon!
