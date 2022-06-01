@@ -151,7 +151,7 @@ Get Started!
 Ready to contribute?
 First, create your Documentation development setup.
 
-1. Fork the `MPRAsnakeflow` repo on GitHub.
+1. Fork the `MPRAsnakeflow` repo on GitHub (master branch).
 2. Clone your fork locally::
 
     git clone git@github.com:your_name_here/MPRAsnakeflow.git

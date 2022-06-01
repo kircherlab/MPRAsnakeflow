@@ -9,20 +9,19 @@ If you have more question please write us a ticket on `github <https://github.co
 MPRAsnakeflow is not able to create a Conda environment
     If you get a message like::
 
-        Caused by: java.lang.IllegalStateException: Failed to create Conda environment
-        command: conda env create --prefix /home/user/MPRAsnakeflow/work/conda/mpraflow_py27-a6601743cee3b1029d4f3c810b7ebf02 --file /home/user/MPRAsnakeflow/conf/mprasnakeflow_py27.yml`
+        Caused by: json.decoder.JSONDecodeError: Extra data: line 1 column 2785 (char 2784)#
 
-    Try to run conda separately using::
+    Try to do the following steps ::
 
-        conda env create --prefix /home/user/MPRAsnakeflow/work/conda/mprasnakeflow_py27-a6601743cee3b1029d4f3c810b7ebf02 --file /home/user/MPRAsnakeflow/conf/mprasnakeflow_py27.yml
+        rm -r .snakemake/metadata .snakemake/incomplete
 
-    Afterwards try MPRAsnakeflow again. Please be sure that you are connected to the internet!
+    Afterwards try MPRAsnakeflow again. If the above error still occurs, rerun after deleting the entire ``.snakemake`` folder.
 
 
 
 Can I use STARR-seq with MPRAsnakeflow?
-    No. For more details have a look at this `comment <https://github.com/kircherlab/MPRAsnakeflow/issues/27#issuecomment-636515565>`_.
+    No, not yet!
 
 
-The pipeline is giving an error **"QXcbConnection: Could not connect to display"** and won't run. How can I fix this?
-    Depending on your cluser configuration, the QT_QPA_PLATFORM variable may not be compatible with the plotting scripts in the pipeline. To resolve this error, add **QT_QPA_PLATFORM='offscreen'** to your **.bash_profile**.
+The pipeline is giving an error **"BUG: Out of jobs ready to be started, but not all files built yet."** and won't run. How can I fix this?
+    Please update snakemake, as this error is highly likely to have occured from snakemake internal issues. 

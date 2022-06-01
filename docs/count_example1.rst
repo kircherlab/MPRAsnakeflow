@@ -28,7 +28,7 @@ Alternatively, if the association file is in pickle (.pickle) format, you can co
 
 .. code-block:: bash
     
-    conda activate snakemake
+    conda activate mprasnakeflow
     python assignment_pickle_to_tsv.py --input <assignment_file in pickle format>
 
 
@@ -123,7 +123,7 @@ Now we have everything at hand to run the count MPRAsnakeflow pipeline. Therefor
 .. code-block:: bash
 
     cd <path/to/MPRAsnakeflow>/MPRAsnakeflow
-    conda activate MPRAsnakeflow
+    conda activate mprasnakeflow
     snakemake --configfile config/config.yaml --use-conda -p -c 4
 
 .. note:: Please check your :code:`config/cluster.config` file and :code:`config/config.yaml` if it is correctly configured (e.g. with your SGE cluster commands).

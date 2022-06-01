@@ -4,19 +4,19 @@
 MPRAsnakeflow's documentation
 ====================================
 
-.. image:: https://img.shields.io/badge/snakemake-≥7.2.1-brightgreen.svg
+.. image:: https://img.shields.io/badge/snakemake-≥7.7.1-brightgreen.svg
     :target: https://snakemake.bitbucket.io
 
-.. image:: https://img.shields.io/badge/click-≥8.0.4-brightgreen.svg
-    :target: https://click.palletsprojects.com/en/8.0.x/
+.. image:: https://img.shields.io/badge/mamba-≥4.6-brightgreen.svg
+    :target: https://docs.conda.io/en/latest/miniconda.html
 
 
 **Welcome!**
 
-This pipeline processes sequencing data from Massively Parallel Reporter Assays (MPRAs)
+MPRAsnakeflow pipeline processes sequencing data from Massively Parallel Reporter Assays (MPRAs)
 to create count tables for candidate sequences tested in the experiment.
 
-MPRAsnakeflow is built on top of `Snakemake <https://snakemake.readthedocs.io/>`_. Replace this text with a comprehensive description covering the purpose and domain. Insert your code into the respective folders, i.e. ``scripts``, ``rules``, and ``envs``. Define the entry point of the workflow in the ``Snakefile`` and the main configuration in a ``config.yaml`` file.
+MPRAsnakeflow is built on top of `Snakemake <https://snakemake.readthedocs.io/>`_. Insert your code into the respective folders, i.e. ``scripts``, ``rules``, and ``envs``. Define the entry point of the workflow in the ``Snakefile`` and the main configuration in a ``config.yaml`` file.
 
 Authors
     Max Schubach (`@visze <https://github.com/visze>`_)
