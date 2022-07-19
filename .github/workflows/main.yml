@@ -12,14 +12,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: mamba-org/provision-with-micromamba@v12
+      - name: install micromamba
+        uses: mamba-org/provision-with-micromamba@v12
         with:
           environment-file: docs/environment.yml
           environment-name: sphinx
-      - uses: ammaraskar/sphinx-action@master
-        with:
-          pre-build-command: "conda activate sphinx"
-          docs-folder: "docs/"
+      - name: Run sphinx
+        shell: bash -l {0}
+        run: |
+          cd docs && make html
   Formatting:
     runs-on: ubuntu-latest
     steps:
