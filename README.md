@@ -1,7 +1,7 @@
 # Snakemake workflow: MPRAsnakeflow
 
-[![Snakemake](https://img.shields.io/badge/snakemake-≥5.32.0-brightgreen.svg)](https://snakemake.bitbucket.io)
-![Tests](https://github.com/visze/MPRAsnakeflow/workflows/Tests/badge.svg)
+[![Snakemake](https://img.shields.io/badge/snakemake-≥7.2.1-brightgreen.svg)](https://snakemake.bitbucket.io)
+[![Tests](https://github.com/kircherlab/MPRAsnakeflow/actions/workflows/main.yml/badge.svg)](https://github.com/kircherlab/MPRAsnakeflow/actions/workflows/main.yml)
 
 [![Build Status](https://travis-ci.org/snakemake-workflows/MPRAsnakeflow.svg?branch=master)](https://travis-ci.org/snakemake-workflows/MPRAsnakeflow)
 

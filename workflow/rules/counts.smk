@@ -5,46 +5,40 @@
 ### Create_BAM_umi with demultiplexing ###
 
 
-rule create_demultiplexed_index:
+rule counts_create_demultiplexed_index:
+    conda:
+        "../envs/python3.yaml"
+    input:
+        experiment_file=lambda wc: config["experiments"][wc.project]["experiment_file"],
+        script=getScript("count/create_demultiplexed_index.py"),
     output:
-        "results/{project}/counts/demultiplex_index.tsv",
-    run:
-        import csv
-
-        exp = getExperiments(wildcards.project).astype(str)
-
-        exp_dna = pd.concat(
-            [
-                exp[["BC_DNA"]],
-                exp[["Condition", "Replicate"]].agg("_".join, axis=1) + "_DNA",
-            ],
-            axis=1,
-        ).rename(columns={"BC_DNA": "BC", 0: "Sample"})
-
-        exp_rna = pd.concat(
-            [
-                exp[["BC_RNA"]],
-                exp[["Condition", "Replicate"]].agg("_".join, axis=1) + "_RNA",
-            ],
-            axis=1,
-        ).rename(columns={"BC_RNA": "BC", 0: "Sample"})
-
-        exp_dna.append(exp_rna).to_csv(output[0], sep="\t", header=False, index=False)
+        "results/experiments/{project}/counts/demultiplex_index.tsv",
+    log:
+        temp("results/logs/counts/create_demultiplexed_index.{project}.log"),
+    shell:
+        """
+        python {input.script} \
+        --experiment {input.experiment_file} \
+        --output {output} &> {log}
+        """
 
 
-checkpoint create_demultiplexed_BAM_umi:
+checkpoint counts_demultiplexed_BAM_umi:
     input:
         fw_fastq=lambda wc: getFWWithIndex(wc.project),
         rev_fastq=lambda wc: getRevWithIndex(wc.project),
         umi_fastq=lambda wc: getUMIWithIndex(wc.project),
         index_fastq=lambda wc: getIndexWithIndex(wc.project),
-        index_list="results/{project}/counts/demultiplex_index.tsv",
+        index_list="results/experiments/{project}/counts/demultiplex_index.tsv",
+        script=getScript("count/SplitFastQdoubleIndexBAM.py"),
     output:
-        "results/{project}/counts/demultiplex_{name}.bam",
+        "results/experiments/{project}/counts/demultiplex_{name}.bam",
     params:
-        outdir="results/{project}/counts/",
+        outdir=lambda w, output: os.path.split(output[0])[0],
     conda:
-        "../envs/mpraflow_py27.yaml"
+        "../envs/python27.yaml"
+    log:
+        temp("results/logs/counts/demultiplexed_BAM_umi.{project}.{name}.log"),
     shell:
         """
             set +o pipefail;
@@ -64,72 +58,64 @@ checkpoint create_demultiplexed_BAM_umi:
             echo $idx_length
             echo $umi_length
 
-            python {SCRIPTS_DIR}/count/SplitFastQdoubleIndexBAM.py -s $rev_start -l $idx_length -m $umi_length -i {input.index_list} --outdir {params.outdir} --remove --summary --separate_files \
+            python {input.script} -s $rev_start -l $idx_length -m $umi_length -i {input.index_list} --outdir {params.outdir} --remove --summary --separate_files \
             <(\
         paste <( zcat {input.fw_fastq} ) <( zcat {input.index_fastq} ) <( zcat {input.rev_fastq} ) <( zcat {input.umi_fastq} ) | \
             awk '{{ count+=1; if ((count == 1) || (count == 3)) {{ print $1 }} else {{ print $1$2$3$4 }}; if (count == 4) {{ count=0 }} }}'\
-            )
+            ) &> {log}
         """
 
 
-def aggregate_input(project):
-    output = []
-    conditions = getConditions(project)
-    for condition in conditions:
-        replicates = getReplicatesOfCondition(project, condition)
-        names = expand(
-            "{condition}_{replicate}_{type}",
-            condition=condition,
-            replicate=replicates,
-            type=["DNA", "RNA"],
-        )
-        for name in names:
-            with checkpoints.create_demultiplexed_BAM_umi.get(
-                project=project, name=name
-            ).output[0].open() as f:
-                output += [f.name]
-    return output
-
-
-rule aggregate_demultiplex:
+rule counts_aggregate_demultiplex:
     input:
-        lambda wc: aggregate_input(wc.project),
+        lambda wc: counts_aggregate_demultiplex_input(wc.project),
     output:
-        touch("results/{project}/counts/demultiplex.done"),
+        touch("results/experiments/{project}/counts/demultiplex.done"),
 
 
-rule mergeTrimReads_demultiplexed_BAM_umi:
+rule counts_mergeTrimReads_demultiplexed_BAM_umi:
     input:
-        demultiplex="results/{project}/counts/demultiplex.done",
+        demultiplex="results/experiments/{project}/counts/demultiplex.done",
+        script=getScript("count/MergeTrimReadsBAM.py"),
     output:
-        "results/{project}/counts/merged_demultiplex_{condition}_{replicate}_{type}.bam",
+        "results/experiments/{project}/counts/merged_demultiplex_{condition}_{replicate}_{type}.bam",
     conda:
-        "../envs/mpraflow_py27.yaml"
+        "../envs/python27.yaml"
     params:
-        bam="results/{project}/counts/demultiplex_{condition}_{replicate}_{type}.bam",
+        bam="results/experiments/{project}/counts/demultiplex_{condition}_{replicate}_{type}.bam",
+    log:
+        temp(
+            "results/logs/counts/mergeTrimReads_demultiplexed_BAM_umi.{project}.{condition}.{replicate}.{type}.log"
+        ),
     shell:
         """
         samtools view -h {params.bam} | \
-        python {SCRIPTS_DIR}/count/MergeTrimReadsBAM.py -p --mergeoverlap -f ACCGGTCGCCACCATGGTGAGCAAGGGCGAGGA -s CTTAGCTTTCGCTTAGCGATGTGTTCACTTTGC \
-        > {output}
+        python {input.script} -p --mergeoverlap -f ACCGGTCGCCACCATGGTGAGCAAGGGCGAGGA -s CTTAGCTTTCGCTTAGCGATGTGTTCACTTTGC \
+        > {output} 2> {log}
         """
 
 
 ### Create_BAM_umi without demultiplexing ###
 
 
-rule create_BAM_umi:
+rule counts_create_BAM_umi:
     input:
         fw_fastq=lambda wc: getFW(wc.project, wc.condition, wc.replicate, wc.type),
         rev_fastq=lambda wc: getRev(wc.project, wc.condition, wc.replicate, wc.type),
         umi_fastq=lambda wc: getUMI(wc.project, wc.condition, wc.replicate, wc.type),
+        script_FastQ2doubleIndexBAM=getScript("count/FastQ2doubleIndexBAM.py"),
+        script_MergeTrimReadsBAM=getScript("count/MergeTrimReadsBAM.py"),
     output:
-        "results/{project}/counts/{condition}_{replicate}_{type}.bam",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}.bam",
     params:
-        bc_length=lambda wc: config[wc.project]["bc_length"],
+        bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
         datasetID="{condition}_{replicate}_{type}",
     conda:
-        "../envs/mpraflow_py27.yaml"
+        "../envs/python27.yaml"
+    log:
+        temp(
+            "results/logs/counts/create_BAM_umi.{project}.{condition}.{replicate}.{type}.log"
+        ),
     shell:
         """
         set +o pipefail;
@@ -150,42 +136,31 @@ rule create_BAM_umi:
 
         paste <( zcat {input.fw_fastq} ) <( zcat {input.rev_fastq}  ) <( zcat {input.umi_fastq} ) | \
         awk '{{if (NR % 4 == 2 || NR % 4 == 0) {{print $1$2$3}} else {{print $1}}}}' | \
-        python {SCRIPTS_DIR}/count/FastQ2doubleIndexBAM.py -p -s $rev_start -l 0 -m $umi_length --RG {params.datasetID} | \
-        python {SCRIPTS_DIR}/count/MergeTrimReadsBAM.py --FirstReadChimeraFilter '' --adapterFirstRead '' --adapterSecondRead '' -p --mergeoverlap --minoverlap $minoverlap > {output}
+        python {input.script_FastQ2doubleIndexBAM} -p -s $rev_start -l 0 -m $umi_length --RG {params.datasetID} | \
+        python {input.script_MergeTrimReadsBAM} --FirstReadChimeraFilter '' --adapterFirstRead '' --adapterSecondRead '' -p --mergeoverlap --minoverlap $minoverlap > {output} 2> {log}
         """
 
 
 ### START COUNTING ####
 
 
-def getBam(project, condition, replicate, type):
-    """
-    gelper to get the correct BAM file (demultiplexed or not)
-    """
-    if config[project]["demultiplex"]:
-        return "results/%s/counts/merged_demultiplex_%s_%s_%s.bam" % (
-            project,
-            condition,
-            replicate,
-            type,
-        )
-    else:
-        return "results/%s/counts/%s_%s_%s.bam" % (project, condition, replicate, type)
-
-
-rule raw_counts_umi:
+rule counts_raw_counts_umi:
     """
     Counting BCsxUMIs from the BAM files.
     """
     conda:
-        "../envs/mpraflow_py36.yaml"
+        "../envs/bwa_samtools_picard_htslib.yaml"
     input:
-        lambda wc: getBam(wc.project, wc.condition, wc.replicate, wc.type),
+        lambda wc: getBamFile(wc.project, wc.condition, wc.replicate, wc.type),
     output:
-        "results/{project}/counts/{condition}_{replicate}_{type}_raw_counts.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_raw_counts.tsv.gz",
     params:
-        umi_length=lambda wc: config[wc.project]["umi_length"],
+        umi_length=lambda wc: config["experiments"][wc.project]["umi_length"],
         datasetID="{condition}_{replicate}_{type}",
+    log:
+        temp(
+            "results/logs/counts/raw_counts_umi.{project}.{condition}.{replicate}.{type}.log"
+        ),
     shell:
         """
         samtools view -F 1 -r {params.datasetID} {input} | \
@@ -194,23 +169,26 @@ rule raw_counts_umi:
         }}}}' | \
         sort | uniq -c | \
         awk -v 'OFS=\\t' '{{ print $2,$3,$1 }}' | \
-        gzip -c > {output}
+        gzip -c > {output} 2> {log}
         """
 
 
-rule filter_counts:
+rule counts_filter_counts:
     """
     Filter the counts to BCs only of the correct length (defined in the config file)
     """
     conda:
-        "../envs/mpraflow_py27.yaml"
+        "../envs/default.yaml"
     input:
-        "results/{project}/counts/{condition}_{replicate}_{type}_raw_counts.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_raw_counts.tsv.gz",
     output:
-        "results/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
     params:
-        bc_length=lambda wc: config[wc.project]["bc_length"],
-        datasetID="{condition}_{replicate}_{type}",
+        bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
+    log:
+        temp(
+            "results/logs/counts/filter_counts.{project}.{condition}.{replicate}.{type}"
+        ),
     shell:
         """
         bc={params.bc_length};
@@ -222,64 +200,108 @@ rule filter_counts:
         """
 
 
-rule final_counts_umi:
+rule counts_final_counts_umi:
     """
     Discarding PCR duplicates (taking BCxUMI only one time)
     """
+    conda:
+        "../envs/default.yaml"
     input:
-        "results/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
     output:
-        counts="results/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
+        counts="results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
+    log:
+        temp(
+            "results/logs/counts/final_counts_umi.{project}.{condition}.{replicate}.{type}.log"
+        ),
     shell:
         """
         zcat {input} | awk '{{print $1}}' | \
         uniq -c | \
-        gzip -c > {output.counts}
+        awk -v 'OFS=\\t' '{{ print $2,$1 }}' | \
+        gzip -c > {output.counts} 2> {log}
         """
 
 
-rule final_counts_umi_full:
+rule counts_final_counts_umi_samplerer:
     """
-    TODO
+    Creates full + new distribution DNA files
     """
     input:
-        "results/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
+        counts="results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
+        script=getScript("count/samplerer.py"),
     output:
-        "results/{project}/counts/{condition}_{replicate}_{type}_final_counts_full.tsv.gz",
+        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.sampling.{config}.tsv.gz",
+    conda:
+        "../envs/python3.yaml"
+    params:
+        samplingprop=lambda wc: counts_getSamplingConfig(
+            wc.project, wc.config, wc.type, "prop"
+        ),
+        downsampling=lambda wc: counts_getSamplingConfig(
+            wc.project, wc.config, wc.type, "threshold"
+        ),
+        samplingtotal=lambda wc: counts_getSamplingConfig(
+            wc.project, wc.config, wc.type, "total"
+        ),
+        seed=lambda wc: counts_getSamplingConfig(wc.project, wc.config, wc.type, "seed"),
+        filtermincounts=lambda wc: counts_getFilterConfig(
+            wc.project, wc.config, wc.type, "minCounts"
+        ),
+    log:
+        temp(
+            "results/logs/counts/final_counts_umi_samplerer.{project}.{condition}.{replicate}.{type}.{config}.log"
+        ),
     shell:
         """
-        zcat  {input} | awk -v 'OFS=\\t' '{{ print $2,$1 }}' | gzip -c > {output}
+        python {input.script} --input {input.counts} \
+        {params.samplingprop} \
+        {params.downsampling} \
+        {params.samplingtotal} \
+        {params.seed} \
+        {params.filtermincounts} \
+        --output {output} &> {log}
         """
 
 
-rule dna_rna_merge_counts:
+rule counts_dna_rna_merge_counts:
     """
     Merge DNA and RNA counts together.
     Is done in two ways. First no not allow zeros in DNA or RNA BCs (withoutZeros).
     Second with zeros, so a BC can be defined only in the DNA or RNA (withZeros)
     """
     conda:
-        "../envs/mpraflow_py36.yaml"
+        "../envs/default.yaml"
     input:
-        dna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_DNA_final_counts_full.tsv.gz",
-        rna="results/{project}/{raw_or_assigned}/{condition}_{replicate}_RNA_final_counts_full.tsv.gz",
+        dna=lambda wc: getFinalCounts(wc.project, wc.config, "DNA", wc.raw_or_assigned),
+        rna=lambda wc: getFinalCounts(wc.project, wc.config, "RNA", wc.raw_or_assigned),
     output:
-        "results/{project}/{raw_or_assigned}/merged/{mergeType}/{condition}_{replicate}_merged_counts_full.tsv.gz",
+        "results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}.merged.config.{config}.tsv.gz",
     params:
-        zero=lambda wc: "false" if wc.mergeType == "withoutZeros" else "true",
+        zero=lambda wc: "false" if withoutZeros(wc.project, wc.config) else "true",
+        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
+            wc.config
+        ]["filter"]["RNA"]["minCounts"],
+        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
+            wc.config
+        ]["filter"]["DNA"]["minCounts"],
+    log:
+        temp(
+            "results/logs/{raw_or_assigned}/dna_rna_merge_counts.{project}.{condition}.{replicate}.{config}.log"
+        ),
     shell:
         """
         zero={params.zero};
-        if [[ $zero=false ]]
+        if [[ -z "${{zero//false}}" ]]
         then
             join -1 1 -2 1 -t"$(echo -e '\\t')" \
             <( zcat  {input.dna} | sort ) \
-            <( zcat {input.rna} | sort) | \
-            gzip -c > {output}
+            <( zcat {input.rna} | sort);
         else
             join -e 0 -a1 -a2 -t"$(echo -e '\\t')" -o 0 1.2 2.2 \
             <( zcat  {input.dna} | sort ) \
-            <( zcat {input.rna}  | sort) | \
-            gzip -c > {output}
-        fi
+            <( zcat {input.rna}  | sort);
+        fi  | \
+        awk -v 'OFS=\\t' '{{if ($2 >= {params.minDNACounts} && $3 >= {params.minRNACounts}) {{print $0}}}}' | \
+        gzip -c > {output} 2> {log}
         """

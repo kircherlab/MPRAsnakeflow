@@ -1,0 +1,31 @@
+---
+global:
+  assignments:
+    split_number: 300
+experiments:
+  example:
+    bc_length: 15
+    umi_length: 10
+    data_folder: resources/Count_Basic/data
+    experiment_file: resources/example_experiment.csv
+    demultiplex: false
+    assignments:
+      standard:
+        type: file
+        value: resources/SRR10800986_filtered_coords_to_barcodes.tsv.gz
+    design_file: reseources/design.fa
+    configs:
+      example_config:
+        bc_threshold: 10
+        filter:
+          DNA:
+            minCounts: 1
+          RNA:
+            minCounts: 1
+        sampling:
+          DNA:
+            total: 30000000
+            threshold: 300
+          RNA:
+            total: 50000000
+            threshold: 300

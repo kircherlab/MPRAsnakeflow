@@ -2,88 +2,137 @@
 ### Assign BCs and afterwards ###
 ##################################
 
-rule assignBarcodes:
+
+rule assigned_counts_filterAssignment:
+    """
+    Use only unique assignments and do sampling if needed.
+    """
+    conda:
+        "../envs/python3.yaml"
+    input:
+        assignment=lambda wc: getAssignmentFile(wc.project, wc.assignment),
+        script=getScript("count/samplerer_assignment.py"),
+    output:
+        "results/experiments/{project}/assignment/{assignment}.tsv.gz",
+    params:
+        samplingprop=lambda wc: assignedCounts_getAssignmentSamplingConfig(
+            wc.project, wc.assignment, "prop"
+        ),
+        samplingtotal=lambda wc: assignedCounts_getAssignmentSamplingConfig(
+            wc.project, wc.assignment, "total"
+        ),
+        seed=lambda wc: assignedCounts_getAssignmentSamplingConfig(
+            wc.project, wc.assignment, "seed"
+        ),
+    log:
+        temp("results/logs/assigned_counts/filterAssignment.{project}.{assignment}.log"),
+    shell:
+        """
+        python {input.script} \
+        --input {input.assignment} \
+        {params.samplingprop} \
+        {params.samplingtotal} \
+        {params.seed} \
+        --output {output} &> {log}
+        """
+
+
+rule assigned_counts_createAssignmentPickleFile:
+    conda:
+        "../envs/python3.yaml"
+    input:
+        files="results/experiments/{project}/assignment/{assignment}.tsv.gz",
+        script=getScript("count/create_pickle.py"),
+    output:
+        "results/experiments/{project}/assignment/{assignment}.pickle",
+    log:
+        temp(
+            "results/logs/assigned_counts/assignment/createAssignmentPickleFile.{project}.{assignment}.log"
+        ),
+    shell:
+        """
+        python {input.script} -i {input.files} -o {output} &> {log}
+        """
+
+
+rule assigned_counts_assignBarcodes:
     """
     Assign RNA and DNA barcodes seperately to make the statistic for assigned
     """
     conda:
-        "../envs/mpraflow_py36.yaml"
+        "../envs/python3.yaml"
     input:
-        counts="results/{project}/counts/{condition}_{replicate}_{type}_final_counts_full.tsv.gz",
-        association=lambda wc: config[wc.project]["assignments"][wc.assignment],
+        counts=lambda wc: getFinalCounts(wc.project, wc.config, wc.type, "counts"),
+        association="results/experiments/{project}/assignment/{assignment}.tsv.gz",
+        script=getScript("count/merge_BC_and_assignment.py"),
     output:
-        counts="results/{project}/assigned_counts/{assignment}/{condition}_{replicate}_{type}_final_counts_full.tsv.gz",
-        stats="results/{project}/stats/assigned_counts/{assignment}/{condition}_{replicate}_{type}.statistic.tsv.gz",
+        counts="results/experiments/{project}/assigned_counts/{assignment}/{condition}_{replicate}_{type}_final_counts.config.{config}.tsv.gz",
+        stats="results/experiments/{project}/stats/assigned_counts/{assignment}/{condition}_{replicate}_{type}_{config}.statistic.tsv.gz",
     params:
         name="{condition}_{replicate}_{type}",
+    log:
+        temp(
+            "results/logs/assigned_counts/assignBarcodes.{project}.{condition}.{replicate}.{type}.{config}.{assignment}.log"
+        ),
     shell:
         """
-        python {SCRIPTS_DIR}/count/merge_BC_and_assignment.py --counts {input.counts} \
+        python {input.script} --counts {input.counts} \
         --assignment {input.association} \
         --output {output.counts} \
         --statistic {output.stats} \
-        --name {params.name}
+        --name {params.name} &> {log}
         """
 
 
-rule createAssignmentPickleFile:
+rule assigned_counts_dna_rna_merge:
     conda:
-        "envs/mpraflow_py36.yaml"
+        "../envs/python3.yaml"
     input:
-        lambda wc: config[wc.project]["assignments"][wc.assignment],
+        counts="results/experiments/{project}/counts/{condition}_{replicate}.merged.config.{config}.tsv.gz",
+        association="results/experiments/{project}/assignment/{assignment}.tsv.gz",
+        script=getScript("count/merge_label.py"),
     output:
-        "results/{project}/assigned_counts/{assignment}/assignment.pickle",
-    shell:
-        """
-        python {SCRIPTS_DIR}/count/create_pickle.py -i {input} -o {output}
-        """
-
-
-rule dna_rna_merge:
-    conda:
-        "../envs/mpraflow_py36.yaml"
-    input:
-        counts=lambda wc: expand(
-            "results/{{project}}/counts/merged/{mergeType}/{{condition}}_{{replicate}}_merged_counts_full.tsv.gz",
-        mergeType="withoutZeros"
-            if config[wc.project]["configs"][wc.config]["minRNACounts"] > 0
-            and config[wc.project]["configs"][wc.config]["minDNACounts"] > 0
-            else "withZeros",
-        ),
-        association=lambda wc: config[wc.project]["assignments"][wc.assignment],
-    output:
-        counts="results/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
-        stats="results/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.statistic.tsv.gz",
+        counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
+        stats="results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.statistic.tsv.gz",
     params:
-        minRNACounts=lambda wc: config[wc.project]["configs"][wc.config]["minRNACounts"],
-        minDNACounts=lambda wc: config[wc.project]["configs"][wc.config]["minDNACounts"],
+        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
+            wc.config
+        ]["filter"]["RNA"]["minCounts"],
+        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
+            wc.config
+        ]["filter"]["DNA"]["minCounts"],
+    log:
+        temp(
+            "results/logs/assigned_counts/{assignment}/dna_rna_merge.{project}.{condition}.{replicate}.{config}.log"
+        ),
     shell:
         """
-        python {SCRIPTS_DIR}/count/merge_label.py --counts {input.counts} \
+        python {input.script} --counts {input.counts} \
         --minRNACounts {params.minRNACounts} --minDNACounts {params.minDNACounts} \
         --assignment {input.association} \
         --output {output.counts} \
-        --statistic {output.stats}
+        --statistic {output.stats} &> {log}
         """
 
 
-rule make_master_tables:
+rule assigned_counts_make_master_tables:
     conda:
-        "../envs/mpraflow_r.yaml"
+        "../envs/r.yaml"
     input:
         counts=lambda wc: expand(
-            "results/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts.tsv.gz",
+            "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts.tsv.gz",
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
+        script=getScript("count/make_master_tables.R"),
     output:
-        statistic="results/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_average_allreps_merged.tsv.gz",
-        all="results/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.tsv.gz",
-        thresh="results/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged.tsv.gz",
+        statistic="results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_average_allreps_merged.tsv.gz",
+        all="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.tsv.gz",
+        thresh="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged.tsv.gz",
     params:
         cond="{condition}",
         files=lambda wc: ",".join(
             expand(
-                "results/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
+                "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
                 replicate=getReplicatesOfCondition(wc.project, wc.condition),
                 project=wc.project,
                 condition=wc.condition,
@@ -94,15 +143,21 @@ rule make_master_tables:
         replicates=lambda wc: ",".join(
             getReplicatesOfCondition(wc.project, wc.condition)
         ),
-        thresh=lambda wc: config[wc.project]["configs"][wc.config]["bc_threshold"],
+        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
+            "bc_threshold"
+        ],
+    log:
+        temp(
+            "results/logs/assigned_counts/make_master_tables.{project}.{condition}.{config}.{assignment}.log"
+        ),
     shell:
         """
-        Rscript {SCRIPTS_DIR}/count/make_master_tables.R \
+        Rscript {input.script} \
         --condition {params.cond} \
         --threshold {params.thresh} \
         --files {params.files} \
         --replicates {params.replicates} \
-        --output {output.all} \
-        --output-all {output.thresh} \
-        --statistic {output.statistic}
+        --output {output.thresh} \
+        --output-all {output.all} \
+        --statistic {output.statistic} &> {log}
         """

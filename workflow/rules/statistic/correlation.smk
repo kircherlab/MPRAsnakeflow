@@ -2,102 +2,138 @@
 ### Correlation of BC Counts ###
 ################################
 
-# get all barcodes of experiment (rule dna_rna_merge_counts_withoutZeros or rule dna_rna_merge_counts_withZeros)
-def getMergedCounts(project, raw_or_assigned, condition, mergeType):
-    exp = getExperiments(project)
-    exp = exp[exp.Condition == condition]
-    files = []
-    replicates = []
-    for index, row in exp.iterrows():
-        files += expand(
-            "results/{project}/{raw_or_assigned}/merged/{mergeType}/{condition}_{replicate}_merged_counts_full.tsv.gz",
-            raw_or_assigned=raw_or_assigned,
-            project=project,
-            condition=condition,
-            replicate=row["Replicate"],
-            mergeType=mergeType,
-        )
-        replicates += str(row["Replicate"])
-    return [files, replicates]
 
-
-rule statistic_correlate_BC_counts:
+rule statistic_correlation_bc_counts:
     conda:
-        "../../envs/mpraflow_r.yaml"
+        "../../envs/r.yaml"
     input:
-        lambda wc: getMergedCounts(
-            wc.project, wc.raw_or_assigned, wc.condition, wc.mergeType
+        files=lambda wc: getMergedCounts(
+            wc.project, wc.raw_or_assigned, wc.condition, wc.config
         )[0],
+        script=getScript("count/plot_perBCCounts_correlation.R"),
     output:
-        "results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}/{condition}_barcode_DNA_pairwise.png",
-        "results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}/{condition}_barcode_RNA_pairwise.png",
-        "results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}/{condition}_barcode_Ratio_pairwise.png",
-        "results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}/{condition}_barcode_correlation.tsv",
-        "results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}/{condition}_DNA_perBarcode.png",
-        "results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}/{condition}_RNA_perBarcode.png",
+        report(
+            "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_barcode_DNA_pairwise.png",
+            category="{project}",
+            subcategory="Correlation plots",
+            labels={
+                "Step": "{raw_or_assigned}",
+                "Condition": "{condition}",
+                "Configuration": "{config}",
+                "Plot": "DNA",
+            },
+        ),
+        report(
+            "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_barcode_RNA_pairwise.png",
+            category="{project}",
+            subcategory="Correlation plots",
+            labels={
+                "Step": "{raw_or_assigned}",
+                "Condition": "{condition}",
+                "Configuration": "{config}",
+                "Plot": "RNA",
+            },
+        ),
+        report(
+            "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_barcode_Ratio_pairwise.png",
+            category="{project}",
+            subcategory="Correlation plots",
+            labels={
+                "Step": "{raw_or_assigned}",
+                "Condition": "{condition}",
+                "Configuration": "{config}",
+                "Plot": "Ratio",
+            },
+        ),
+        "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_barcode_correlation.tsv",
+        "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_DNA_perBarcode.png",
+        "results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}_RNA_perBarcode.png",
     params:
-        replicates=lambda wc: ",".join(getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.mergeType)[1]),
+        replicates=lambda wc: ",".join(
+            getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[1]
+        ),
         cond="{condition}",
-        outdir="results/{project}/stats/barcode/{raw_or_assigned}/{mergeType}",
-        input=lambda wc: ",".join(getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.mergeType)[0]),
+        outdir="results/experiments/{project}/stats/barcode/{raw_or_assigned}/{condition}_{config}",
+        input=lambda wc: ",".join(
+            getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[0]
+        ),
+        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
+            wc.config
+        ]["filter"]["RNA"]["minCounts"],
+        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
+            wc.config
+        ]["filter"]["DNA"]["minCounts"],
+    log:
+        temp(
+            "results/logs/statistic/correlation/correlate_bc_counts.{project}.{condition}.{config}.{raw_or_assigned}.log"
+        ),
     shell:
         """
-        Rscript {SCRIPTS_DIR}/count/plot_perBCCounts_correlation.R \
+        Rscript {input.script} \
         --outdir {params.outdir} \
         --condition {params.cond} \
-        --files {params.input} --replicates {params.replicates}
+        --mindnacounts {params.minDNACounts} --minrnacounts {params.minRNACounts} \
+        --files {params.input} --replicates {params.replicates} &> {log}
         """
 
 
-rule statistic_combine_bc_correlation_raw:
+rule statistic_correlation_combine_bc_raw:
     conda:
-        "../../envs/mpraflow_py36.yaml"
+        "../../envs/default.yaml"
     input:
-        lambda wc: expand(
-            "results/{{project}}/stats/barcode/counts/{{mergeType}}/{condition}_barcode_correlation.tsv",
+        files=lambda wc: expand(
+            "results/experiments/{{project}}/stats/barcode/counts/{condition}_{{config}}_barcode_correlation.tsv",
             condition=getConditions(wc.project),
         ),
     output:
         report(
-            "results/{project}/stats/statistic_bc_correlation_merged_{mergeType}.tsv",
+            "results/experiments/{project}/stats/statistic_bc_correlation_merged_{config}.tsv",
             caption="../../report/bc_correlation.rst",
             category="{project}",
-            subcategory="Barcodes",
+            subcategory="Barcode correlation",
+            labels={"Configuration": "{config}", "Assignment": "-",},
         ),
+    log:
+        "results/logs/statistic/correlation/combine_bc_raw.{project}.{config}.log",
     shell:
         """
         (
-        cat {input[0]} | head -n 1;
-        for i in {input}; do
+        cat {input.files[0]} | head -n 1;
+        for i in {input.files}; do
             cat $i | tail -n +2;
         done;
-        ) > {output}
+        ) > {output} 2> {log}
         """
 
 
-rule statistic_combine_bc_correlation_assigned:
+rule statistic_correlation_combine_bc_assigned:
     conda:
-        "../../envs/mpraflow_py36.yaml"
+        "../../envs/default.yaml"
     input:
-        lambda wc: expand(
-            "results/{{project}}/stats/barcode/assigned_counts/{{assignment}}/{{mergeType}}/{condition}_barcode_correlation.tsv",
+        files=lambda wc: expand(
+            "results/experiments/{{project}}/stats/barcode/assigned_counts/{{assignment}}/{condition}_{{config}}_barcode_correlation.tsv",
             condition=getConditions(wc.project),
         ),
     output:
         report(
-            "results/{project}/stats/statistic_assigned_bc_correlation_merged_{mergeType}_{assignment}.tsv",
+            "results/experiments/{project}/stats/statistic_assigned_bc_correlation_merged_{assignment}_{config}.tsv",
             caption="../../report/bc_correlation_assigned.rst",
             category="{project}",
-            subcategory="Barcodes",
+            subcategory="Barcode correlation",
+            labels={"Configuration": "{config}", "Assignment": "{assignment}",},
+        ),
+    log:
+        temp(
+            "results/logs/statistic/correlation/combine_bc_assigned.{project}.{assignment}_{config}.log"
         ),
     shell:
         """
         (
-        cat {input[0]} | head -n 1;
-        for i in {input}; do
+        cat {input.files[0]} | head -n 1;
+        for i in {input.files}; do
             cat $i | tail -n +2;
         done;
-        ) > {output}
+        ) > {output} 2> {log}
         """
 
 
@@ -106,37 +142,38 @@ rule statistic_combine_bc_correlation_assigned:
 #############################
 
 
-rule statistic_calc_correlations:
+rule statistic_correlation_calculate:
     conda:
-        "../../envs/mpraflow_r.yaml"
+        "../../envs/r.yaml"
     input:
         counts=lambda wc: expand(
-            "results/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts.tsv.gz",
+            "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts.tsv.gz",
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
         label=(
-            lambda wc: config[wc.project]["label_file"]
-            if "label_file" in config[wc.project]
+            lambda wc: config["experiments"][wc.project]["label_file"]
+            if "label_file" in config["experiments"][wc.project]
             else []
         ),
+        script=getScript("count/plot_perInsertCounts_correlation.R"),
     output:
-        "results/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box.png",
-        "results/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box_minThreshold.png",
-        "results/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_DNA_pairwise.png",
-        "results/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_DNA_pairwise_minThreshold.png",
-        "results/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png",
-        "results/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png",
-        "results/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_Ratio_pairwise.png",
-        "results/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_Ratio_pairwise_minThreshold.png",
-        "results/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_RNA_pairwise.png",
-        "results/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_RNA_pairwise_minThreshold.png",
-        "results/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_correlation.tsv",
-        "results/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_correlation_minThreshold.tsv",
+        "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box.png",
+        "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box_minThreshold.png",
+        "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_DNA_pairwise.png",
+        "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_DNA_pairwise_minThreshold.png",
+        "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png",
+        "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png",
+        "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_Ratio_pairwise.png",
+        "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_Ratio_pairwise_minThreshold.png",
+        "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_RNA_pairwise.png",
+        "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_RNA_pairwise_minThreshold.png",
+        "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_correlation.tsv",
+        "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_correlation_minThreshold.tsv",
     params:
         cond="{condition}",
         files=lambda wc: ",".join(
             expand(
-                "results/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
+                "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
                 replicate=getReplicatesOfCondition(wc.project, wc.condition),
                 project=wc.project,
                 condition=wc.condition,
@@ -147,46 +184,63 @@ rule statistic_calc_correlations:
         replicates=lambda wc: ",".join(
             getReplicatesOfCondition(wc.project, wc.condition)
         ),
-        thresh=lambda wc: config[wc.project]["configs"][wc.config]["bc_threshold"],
-        outdir="results/{project}/stats/assigned_counts/{assignment}/{config}",
+        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
+            "bc_threshold"
+        ],
+        outdir="results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}",
         label=(
-            lambda wc: "--label %s" % config[wc.project]["label_file"]
-            if "label_file" in config[wc.project]
+            lambda wc: "--label %s" % config["experiments"][wc.project]["label_file"]
+            if "label_file" in config["experiments"][wc.project]
             else ""
+        ),
+    log:
+        temp(
+            "results/logs/statistic/correlation/calculate.{project}.{condition}.{config}.{assignment}.log"
         ),
     shell:
         """
-        Rscript {SCRIPTS_DIR}/count/plot_perInsertCounts_correlation.R \
+        Rscript {input.script} \
         --condition {params.cond} \
         {params.label} \
         --files {params.files} \
         --replicates {params.replicates} \
         --threshold {params.thresh} \
-        --outdir {params.outdir}
+        --outdir {params.outdir} &> {log}
         """
 
 
-rule statistic_combine_oligo_correlation:
+rule statistic_correlation_combine_oligo:
     conda:
-        "../../envs/mpraflow_py36.yaml"
+        "../../envs/default.yaml"
     input:
         correlation=lambda wc: expand(
-            "results/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/{condition}_correlation.tsv",
+            "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/{condition}_correlation.tsv",
             condition=getConditions(wc.project),
         ),
         correlation_thresh=lambda wc: expand(
-            "results/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/{condition}_correlation_minThreshold.tsv",
+            "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/{condition}_correlation_minThreshold.tsv",
             condition=getConditions(wc.project),
         ),
     output:
         report(
-            "results/{project}/stats/statistic_oligo_correlation_merged_{assignment}_{config}.tsv",
+            "results/experiments/{project}/stats/statistic_oligo_correlation_merged_{assignment}_{config}.tsv",
             caption="../../report/oligo_correlation.rst",
             category="{project}",
-            subcategory="Oligos",
+            subcategory="Oligo correlation",
+            labels={
+                "Analysis": "Oligo correlation",
+                "Configuration": "{config}",
+                "Assignment": "{assignment}",
+            },
         ),
     params:
-        thresh=lambda wc: config[wc.project]["configs"][wc.config]["bc_threshold"],
+        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
+            "bc_threshold"
+        ],
+    log:
+        temp(
+            "results/logs/statistic/correlation/combine_oligo.{project}.{config}.{assignment}.log"
+        ),
     shell:
         """
         set +o pipefail;
@@ -198,5 +252,5 @@ rule statistic_combine_oligo_correlation:
         for i in {input.correlation_thresh}; do
             cat $i | tail -n +2 | awk -v 'OFS=\\t' '{{print $0,"True"}}'
         done;
-        ) > {output}
+        ) > {output} 2> {log}
         """

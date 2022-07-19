@@ -3,7 +3,6 @@
 
 import pandas as pd
 import numpy as np
-
 import click
 
 # options
@@ -69,6 +68,9 @@ def cli(counts_file, assignment_file, minRNACounts, minDNACounts, output_file, s
     # get count df
     click.echo("Read count file...")
     counts = pd.read_csv(counts_file, sep='\t', header=None, names=['Barcode', 'dna_count', 'rna_count'])
+    # filter
+    counts = counts[(counts['dna_count'] >= minDNACounts) & (counts['rna_count'] >= minRNACounts)]
+
     statistic['barcodes dna/rna'] = counts.shape[0]
 
     # fill in labels from dictionary
@@ -94,12 +96,12 @@ def cli(counts_file, assignment_file, minRNACounts, minDNACounts, output_file, s
     statistic['avg dna counts per bc'] = statistic['total dna counts']/statistic['barcodes dna/rna']
     statistic['avg rna counts per bc'] = statistic['total rna counts']/statistic['barcodes dna/rna']
 
-    # filter
-    counts = counts[(counts['dna_count'] >= minDNACounts) & (counts['rna_count'] >= minRNACounts)]
-
     grouped_label = counts.groupby('name').agg({'dna_count': ['sum', 'count'], 'rna_count': ['sum', 'count']})
-
     grouped_label.reset_index(inplace=True)
+
+    # add pseudo BC counts to total number of counts if needed
+    total_dna_counts = total_dna_counts + sum(grouped_label.dna_count['count']) * pseudocountDNA
+    total_rna_counts = total_rna_counts + sum(grouped_label.rna_count['count']) * pseudocountRNA
 
     output = pd.DataFrame()
 
@@ -117,13 +119,13 @@ def cli(counts_file, assignment_file, minRNACounts, minDNACounts, output_file, s
     # scaling = 10**min([len(str(total_dna_counts))-1,len(str(total_rna_counts))-1])
     scaling = 10**6
 
-    output['dna_normalized'] = (grouped_label.dna_count['sum']+pseudocountDNA) / \
-        ((grouped_label.dna_count['count']+pseudocountDNA))/total_dna_counts*scaling
+    output['dna_normalized'] = ((grouped_label.dna_count['sum'] + pseudocountDNA * grouped_label.dna_count['count']) /
+                                grouped_label.dna_count['count']) / total_dna_counts * scaling
 
-    output['rna_normalized'] = (grouped_label.rna_count['sum']+pseudocountRNA) / \
-        ((grouped_label.rna_count['count']+pseudocountRNA))/total_rna_counts*scaling
+    output['rna_normalized'] = ((grouped_label.rna_count['sum'] + pseudocountRNA * grouped_label.rna_count['count']) /
+                                grouped_label.rna_count['count']) / total_rna_counts * scaling
 
-    output['ratio'] = output.rna_normalized/output.dna_normalized
+    output['ratio'] = output['rna_normalized'] / output['dna_normalized']
     output['log2'] = np.log2(output.ratio)
 
     output['n_obs_bc'] = grouped_label.dna_count['count']
