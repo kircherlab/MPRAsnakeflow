@@ -12,9 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - uses: mamba-org/provision-with-micromamba@v12
+        with:
+          environment-file: docs/environment.yml
       - uses: ammaraskar/sphinx-action@master
         with:
-          pre-build-command: "apt-get update -y && apt-get install -y python-sphinx-rtd-theme"
           docs-folder: "docs/"
   Formatting:
     runs-on: ubuntu-latest
