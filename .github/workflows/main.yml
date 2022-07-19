@@ -18,6 +18,7 @@ jobs:
           environment-name: sphinx
       - uses: ammaraskar/sphinx-action@master
         with:
+          pre-build-command: "conda activate sphinx"
           docs-folder: "docs/"
   Formatting:
     runs-on: ubuntu-latest
