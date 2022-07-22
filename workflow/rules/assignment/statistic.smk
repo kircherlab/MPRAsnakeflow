@@ -31,6 +31,7 @@ rule assignment_statistic_assignedCounts:
         python {input.script} --input {input.bc} --output {output} &> {log}
         """
 
+
 rule assignment_statistic_assignment:
     conda:
         "../../envs/r.yaml"
