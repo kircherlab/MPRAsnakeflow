@@ -1,6 +1,9 @@
 SPLIT_FILES_NUMBER = 100
 
 
+include: "assignment/statistic.smk"
+
+
 rule assignment_getInputs:
     conda:
         "../envs/default.yaml"
@@ -214,7 +217,7 @@ rule assignment_filter:
         assignment="results/assignment/{assignment}/barcodes_incl_other.sorted.tsv.gz",
         script=getScript("assignment/filterAssignmentTsv.py"),
     output:
-        "results/assignment/{assignment}/assignment_barcodes_incl_other.{assignment_config}.sorted.tsv.gz",
+        "results/assignment/{assignment}/assignment_barcodes.{assignment_config}.sorted.tsv.gz",
     conda:
         "../envs/python3.yaml"
     log:
@@ -227,17 +230,19 @@ rule assignment_filter:
             wc.assignment_config
         ]["fraction"],
         unknown_other=lambda wc: "-o"
-        if "unknown_other"
-        in config["assignments"][wc.assignment]["configs"][wc.assignment_config]
+        if config["assignments"][wc.assignment]["configs"][wc.assignment_config][
+            "unknown_other"
+        ]
         else "",
         ambiguous=lambda wc: "-a"
-        if "ambiguous"
-        in config["assignments"][wc.assignment]["configs"][wc.assignment_config]
+        if config["assignments"][wc.assignment]["configs"][wc.assignment_config][
+            "ambiguous"
+        ]
         else "",
     shell:
         """
         zcat  {input.assignment} | \
         python {input.script} \
-        -m {params.min_support} -f {params.fraction} {params.unknown_other} {params.ambiguous}| \
+        -m {params.min_support} -f {params.fraction} {params.unknown_other} {params.ambiguous} | \
         gzip -c > {output} 2> {log}
         """
