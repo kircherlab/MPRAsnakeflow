@@ -23,7 +23,6 @@ properties:
     type: object
     additionalProperties:
       description: name of the assignment
-    configs:
       type: object
       patternProperties:
         ^((sequence_length)|(alignment_start))$:
