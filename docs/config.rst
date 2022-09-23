@@ -23,8 +23,11 @@ The general settings are located in the :code:`global` section. The following se
 
 .. include:: ../workflow/schemas/config.schema.yaml
    :code: yaml
-   :start-line: start_global
+   :start-after: start_global
    :end-before: start_assignments
+
+:split_number
+  To parallize mapping for assignment the reads are split into :code:`split_number` files. E.g. setting to 300 this means that the reads are split into 300 files and each file is mapped in parallel.
 
 --------------------
 Assignment workflow
