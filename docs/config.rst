@@ -23,8 +23,8 @@ The general settings are located in the :code:`global` section. The following se
 
 .. include:: ../workflow/schemas/config.schema.yaml
    :code: yaml
-   :start-after: properties:
-   :end-before: assignments
+   :start-line: # start global
+   :end-before: # start assignments
 
 --------------------
 Assignment workflow

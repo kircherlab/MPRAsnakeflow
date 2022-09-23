@@ -8,6 +8,7 @@ type: object
 # possible entries of the config file
 
 properties:
+  # start global
   global:
     type: object
     properties:
@@ -18,6 +19,7 @@ properties:
             type: integer
         additionalProperties: false
     additionalProperties: false
+  # start assignments
   assignments:
     description: Assignments to run with configurations
     type: object
