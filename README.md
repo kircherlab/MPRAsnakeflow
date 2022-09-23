@@ -52,11 +52,11 @@ Execute the workflow locally via
 
     snakemake --use-conda --cores $N --configfile conf/config.yaml
 
-using `$N` cores or run it in a cluster environment via
+using `$N` cores or run it in a cluster environment (SLURM using sbatch) via
 
     snakemake --use-conda --configfile conf/config.yaml --cluster "sbatch --nodes=1 --ntasks={cluster.threads} --mem={cluster.mem} -t {cluster.time} -p {cluster.queue} -o {cluster.output}" --jobs 100 --cluster-config config/sbatch.yaml
 
-for SLURM or
+or
 
     snakemake --use-conda --configfile conf/config.yaml --drmaa "-n {cluster.threads} --mem={cluster.mem} -t {cluster.time} -p {cluster.queue} -o {cluster.output}" --jobs 100
 
