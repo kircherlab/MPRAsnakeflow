@@ -21,7 +21,6 @@ The general settings are located in the :code:`global` section. The following se
 
 .. include:: ../workflow/schemas/config.schema.yaml
    :code: yaml
-   :start-after: global
    :end-before: assignments
 
 --------------------
@@ -32,7 +31,7 @@ The assignment workflow is configured in the :code:`assignments` section. The fo
 
 .. include:: ../workflow/schemas/config.schema.yaml
    :code: yaml
-   :start-after: assignments
+   :start: assignments
    :end-before: experiments
 
 --------------------------------------
