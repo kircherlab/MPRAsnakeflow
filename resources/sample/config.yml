@@ -1,0 +1,24 @@
+---
+global: # generall configs effecting one or multiple parts
+  assignments:
+    split_number: 300 # number of files fastq should be split for parallelization
+experiments:
+  example_count:
+    bc_length: 15
+    umi_length: 10
+    data_folder: resources/sample/data
+    experiment_file: resources/sample/experiment.csv
+    demultiplex: false
+    assignments:
+      from_file:
+        type: file
+        value: resources/sample/SRR10800986_filtered_coords_to_barcodes.tsv.gz
+    design_file: resources/sample/design.fa
+    configs:
+      example_config:
+        bc_threshold: 10
+        filter:
+          DNA:
+            minCounts: 3
+          RNA:
+            minCounts: 3

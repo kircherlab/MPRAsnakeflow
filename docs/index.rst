@@ -78,7 +78,7 @@ After successful execution, you can create a self-contained interactive HTML rep
 
 .. code-block:: bash
 
-    snakemake --report report.html
+    snakemake --report report.html --configfile conf/config.yaml
 
 
 This report can be forwarded to your collaborators.
@@ -105,6 +105,7 @@ Indices and tables
 
     quickstart
     install
+    config
     cluster
 
 
