@@ -44,8 +44,9 @@ The experiment workflow is configured in the :code:`experiments` section. The fo
 .. include:: ../workflow/schemas/config.schema.yaml
    :code: yaml
    :start-after: experiments
-   :end-before: end
 
+
+Experiment
 
 .. include:: ../workflow/schemas/samples.schema.yaml
    :code: yaml
