@@ -21,7 +21,7 @@ General settings
 
 The general settings are located in the :code:`global` section. The following settings are possible:
 
-.. literalinclude:: ../workflow/schemas/config.schema.yaml
+.. include:: ../workflow/schemas/config.schema.yaml
    :code: yaml
    :start-after: start_global
    :end-before: start_assignments
