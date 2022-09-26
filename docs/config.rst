@@ -10,10 +10,11 @@ The config file is a yaml file that contains the configuration. Different runs c
    :code: yaml
 
 
-Note that teh config file is conrolled by jscon schema. This means that the config file is validated against the schema. If the config file is not valid, the program will exit with an error message. The schema is located in :code:`../workflow/schemas/config.schema.yaml`.
+Note that teh config file is conrolled by jscon schema. This means that the config file is validated against the schema. If the config file is not valid, the program will exit with an error message. The schema is located in :download:`../workflow/schemas/config.schema.yaml`.
 
-.. include:: ../workflow/schemas/config.schema.yaml
-   :code: yaml
+.. literalinclude:: ../workflow/schemas/config.schema.yaml
+   :language: yaml
+   :linenos:
 
 ----------------
 General settings
@@ -21,8 +22,8 @@ General settings
 
 The general settings are located in the :code:`global` section. The following settings are possible:
 
-.. include:: ../workflow/schemas/config.schema.yaml
-   :code: yaml
+.. literalinclude:: ../workflow/schemas/config.schema.yaml
+   :language: yaml
    :start-after: start_global
    :end-before: start_assignments
 
@@ -35,10 +36,9 @@ Assignment workflow
 
 The assignment workflow is configured in the :code:`assignments` section. The following settings are possible:
 
-.. include:: ../workflow/schemas/config.schema.yaml
-   :code: yaml
-   :start-after: split_number
-   :end-before: experiments
+.. literalinclude:: ../workflow/schemas/config.schema.yaml
+   :language: yaml
+   :lines: 91-198
 
 Each asignment you want to process you have to giv him a name like :code:`example_assignment`. The name is used to name the output files.
 
