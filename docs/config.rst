@@ -83,10 +83,22 @@ data_folder
     Folder where the fastq files are located. Files are defined in the :code:`experiment_file`. The full or relative path to the folder should be used.
 experiment_file
     Path to the experiment file. The full or relative path to the file should be used. The experiment file is a comma separated file and is decribed in the `Experiment file`_ section.
-demultiplex:
+demultiplex
     If set to :code:`true` the reads are demultiplexed. This means that the reads are split into different files for each barcode. This is usefull for further analysis. Default is :code:`false`.
 design_file
     Design file (full or relative path) in fasta format. The design file should contain the oligos in fasta format. The header should contain the oligo name and should be unique. The sequence should be the sequence of the oligo and must also be unique. When having multiple oligo names with the same sequence please merge them into one fasta entry. Should be the same as :code:`reference` in the `Assignment workflow`_.
+label_file
+    (Optional) Path to the label file. The full or relative path to the file should be used. The label file is a tab separated file and contais the oligo name and the label of it. The oligo name should be the same as in the design file. The label is used to group the oligos in the final output, e.g. for plotting. 
+    
+    .. code-block:: text
+
+        insert1_name label1
+        insert2_name label1
+        insert3_name label2
+
+assignments
+    Per experiments multiple assignments can be defined. 
+
 
 Experiment file
 ----------------
