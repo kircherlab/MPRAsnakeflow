@@ -17,6 +17,7 @@ properties:
         properties:
           split_number:
             type: integer
+            default: 1
         additionalProperties: false
     additionalProperties: false
   # start_assignments
@@ -64,16 +65,18 @@ properties:
           additionalProperties:
             type: object
             properties:
-              min_support:
+              min_support: # 3 recommended
                 type: integer
-              fraction:
+              fraction: # 0.7 recommended
                 type: number
                 minimum: 0
                 maximum: 1
               unknown_other:
                 type: boolean
+                default: false
               ambiguous:
                 type: boolean
+                default: false
             required:
               - min_support
               - fraction
@@ -88,6 +91,7 @@ properties:
         - alignment_start
         - sequence_length
       additionalProperties: false
+  # start_experiments
   experiments:
     description: MPRA experiments to run with configurations
     type: object
@@ -196,5 +200,6 @@ properties:
         - demultiplex
         - design_file
         - assignments
+# end_experiments
 additionalProperties: false
 minProperties: 1
