@@ -117,9 +117,7 @@ Indices and tables
 
     overview
     association
-    count
-    association_saturation_mutagenesis
-    saturation_mutagenesis
+    experiment
 
 .. toctree::
     :caption: MPRAsnakeflow Examples
@@ -129,9 +127,6 @@ Indices and tables
 
     association_example1
     count_example1
-    count_example2
-    association_saturation_mutagenesis_example1
-    saturation_mutagenesis_example1
 
 
 .. toctree::

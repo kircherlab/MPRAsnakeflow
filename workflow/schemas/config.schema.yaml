@@ -142,20 +142,24 @@ properties:
           additionalProperties:
             type: object
             properties:
-              bc_threshold:
-                type: integer
               filter:
                 type: object
+                properties:
+                  bc_threshold:
+                    type: integer
+                    default: 10
                 patternProperties:
                   ^((DNA)|(RNA))$:
                     type: object
                     properties:
-                      minCounts:
+                      min_counts:
                         type: integer
+                        default: 1
                     additionalProperties: false
                     required:
-                      - minCounts
+                      - min_counts
                 required:
+                  - bc_threshold
                   - DNA
                   - RNA
                 additionalProperties: false
@@ -177,7 +181,6 @@ properties:
                 additionalProperties: false
             additionalProperties: false
             required:
-              - bc_threshold
               - filter
         variants:
           type: object

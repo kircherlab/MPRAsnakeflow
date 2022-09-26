@@ -44,12 +44,12 @@ rule variants_MasterTable:
                 )
             ]
         ),
-        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
-            wc.config
-        ]["filter"]["RNA"]["minCounts"],
-        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
-            wc.config
-        ]["filter"]["DNA"]["minCounts"],
+        minRNACounts=lambda wc: counts_getFilterConfig(
+            wc.project, wc.config, "RNA", "min_counts"
+        ),
+        minDNACounts=lambda wc: counts_getFilterConfig(
+            wc.project, wc.config, "DNA", "min_counts"
+        ),
     log:
         "logs/experiments/{project}/variants/{assignment}/{config}/variants_MasterTable.{condition}.log",
     shell:

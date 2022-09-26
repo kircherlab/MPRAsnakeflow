@@ -1,4 +1,4 @@
-SPLIT_FILES_NUMBER = 100
+SPLIT_FILES_NUMBER = 1
 
 
 include: "assignment/statistic.smk"

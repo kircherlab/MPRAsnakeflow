@@ -97,10 +97,10 @@ rule assigned_counts_dna_rna_merge:
     params:
         minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["filter"]["RNA"]["minCounts"],
+        ]["filter"]["RNA"]["min_counts"],
         minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["filter"]["DNA"]["minCounts"],
+        ]["filter"]["DNA"]["min_counts"],
     log:
         temp(
             "results/logs/assigned_counts/{assignment}/dna_rna_merge.{project}.{condition}.{replicate}.{config}.log"
@@ -144,8 +144,8 @@ rule assigned_counts_make_master_tables:
             getReplicatesOfCondition(wc.project, wc.condition)
         ),
         thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
-            "bc_threshold"
-        ],
+            "filter"
+        ]["bc_threshold"],
     log:
         temp(
             "results/logs/assigned_counts/make_master_tables.{project}.{condition}.{config}.{assignment}.log"

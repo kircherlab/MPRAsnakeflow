@@ -1,7 +1,7 @@
 ---
 global: # generall configs effecting one or multiple parts
   assignments:
-    split_number: 300 # number of files fastq should be split for parallelization
+    split_number: 1 # number of files fastq should be split for parallelization
 assignments:
   example_assignment: # name of an example assignment (can be any string)
     sequence_length: # sequence length of design excluding adapters.
@@ -41,12 +41,12 @@ experiments:
     label_file: resources/labels.tsv # optional
     configs:
       example_config:
-        bc_threshold: 10
         filter:
+          bc_threshold: 10
           DNA:
-            minCounts: 1
+            min_counts: 1
           RNA:
-            minCounts: 1
+            min_counts: 1
         sampling: # optional, just for benmarking
           DNA:
             total: 30000000

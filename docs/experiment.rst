@@ -1,7 +1,7 @@
-.. _Count:
+.. _Experiment:
 
 =====================
-Count
+Experiment (Count)
 =====================
 
 .. image:: Count_util.png

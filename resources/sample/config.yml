@@ -1,7 +1,7 @@
 ---
 global: # generall configs effecting one or multiple parts
   assignments:
-    split_number: 300 # number of files fastq should be split for parallelization
+    split_number: 1 # number of files fastq should be split for parallelization
 experiments:
   example_count:
     bc_length: 15
@@ -16,9 +16,9 @@ experiments:
     design_file: resources/sample/design.fa
     configs:
       example_config:
-        bc_threshold: 10
         filter:
+          bc_threshold: 10
           DNA:
-            minCounts: 3
+            min_counts: 3
           RNA:
-            minCounts: 3
+            min_counts: 3

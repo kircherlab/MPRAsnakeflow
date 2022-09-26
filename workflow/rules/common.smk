@@ -388,10 +388,10 @@ def useSampling(project, conf, dna_or_rna):
 
 def withoutZeros(project, conf):
     return (
-        config["experiments"][project]["configs"][conf]["filter"]["DNA"]["minCounts"]
+        config["experiments"][project]["configs"][conf]["filter"]["DNA"]["min_counts"]
         > 0
         and config["experiments"][project]["configs"][conf]["filter"]["RNA"][
-            "minCounts"
+            "min_counts"
         ]
         > 0
     )

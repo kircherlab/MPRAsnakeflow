@@ -246,7 +246,7 @@ rule counts_final_counts_umi_samplerer:
         ),
         seed=lambda wc: counts_getSamplingConfig(wc.project, wc.config, wc.type, "seed"),
         filtermincounts=lambda wc: counts_getFilterConfig(
-            wc.project, wc.config, wc.type, "minCounts"
+            wc.project, wc.config, wc.type, "min_counts"
         ),
     log:
         temp(
@@ -279,12 +279,12 @@ rule counts_dna_rna_merge_counts:
         "results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}.merged.config.{config}.tsv.gz",
     params:
         zero=lambda wc: "false" if withoutZeros(wc.project, wc.config) else "true",
-        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
-            wc.config
-        ]["filter"]["RNA"]["minCounts"],
-        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
-            wc.config
-        ]["filter"]["DNA"]["minCounts"],
+        minRNACounts=lambda wc: counts_getFilterConfig(
+            wc.project, wc.config, "RNA", "min_counts"
+        ),
+        minDNACounts=lambda wc: counts_getFilterConfig(
+            wc.project, wc.config, "DNA", "min_counts"
+        ),
     log:
         temp(
             "results/logs/{raw_or_assigned}/dna_rna_merge_counts.{project}.{condition}.{replicate}.{config}.log"
