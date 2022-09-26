@@ -4,14 +4,14 @@
 Config File
 =====================
 
-The config file is a yaml file that contains the configuration. Different runs can be configured. We recommend to use one config file per MPRA experiment or MPRA roject. But in theory many different experiments can be configured in only one file. It is divided into :code:`global` (generell settings), :code:`assignments` (assigment workflow), and :code:`experiments` (count workflow including variants). This is a full example file with all possible configurations. 
+The config file is a yaml file that contains the configuration. Different runs can be configured. We recommend to use one config file per MPRA experiment or MPRA roject. But in theory many different experiments can be configured in only one file. It is divided into :code:`global` (generell settings), :code:`assignments` (assigment workflow), and :code:`experiments` (count workflow including variants). This is a full example file with all possible configurations. :download:`config/example_config.yaml <../config/example_config.yaml>`.
 
-.. include:: ../config/example_config.yaml
-   :code: yaml
+.. literalinclude:: ../config/example_config.yaml
+   :language: yaml
    :linenos:
 
 
-Note that teh config file is conrolled by jscon schema. This means that the config file is validated against the schema. If the config file is not valid, the program will exit with an error message. The schema is located in :download:`../workflow/schemas/config.schema.yaml`.
+Note that teh config file is conrolled by jscon schema. This means that the config file is validated against the schema. If the config file is not valid, the program will exit with an error message. The schema is located in :download:`workflow/schemas/config.schema.yaml <../workflow/schemas/config.schema.yaml>`.
 
 ----------------
 General settings
@@ -51,33 +51,47 @@ R2
 R3
     list of reverse read files in gzipped fastq format. The full or relative path to the files should be used. Same order in R1, R2, and R3 is important.
 reference
-    Design file (full or relative path) in fasta format. The design file should contain the oligos in fasta format. The header should contain the oligo name and should be unique. The sequence should be the sequence of the oligo and must also be uniq. When having multiple oligo name swith the same sequence please merge them into one fatsa entry. The oligo name later used to link barcode to oligo. The sequence is used to map the reads to the oligos. Adapters can be in the seuqence and therefore :code:`alignment_start` has to be adjusted.
+    Design file (full or relative path) in fasta format. The design file should contain the oligos in fasta format. The header should contain the oligo name and should be unique. The sequence should be the sequence of the oligo and must also be unique. When having multiple oligo names with the same sequence please merge them into one fasta entry. The oligo name later used to link barcode to oligo. The sequence is used to map the reads to the oligos. Adapters can be in the seuqence and therefore :code:`alignment_start` has to be adjusted.
 configs
     After mapping the reads to the design file and extracting the barcodes per oligo the configuration (using different names) can be used to generate multiple filtering and configuration settings of the final maq oligo to barcode. Each configuration is a dictionary with the following keys:
-        min_support
-            Minimum number of same BC that map to teh same oligo. Larger value gives more evidence to be correct. But can remove lot's of BCs (depedning on the complexity, sequencing depth and quality of sequencing). Recommended option is :code:`3`.
-        fraction
-            Minumum fraction of same BC that map to teh same oligo. E.g. :code:`0.7` means that at least 70% of the BC map to the same oligo. Larger value gives more evidence to be correct. But can remove lot's of BCs (depedning on the complexity, sequencing depth and quality of sequencing). Recommended option is :code:`0.7`.
-        unknown_other
+    
+    min_support
+        Minimum number of same BC that map to teh same oligo. Larger value gives more evidence to be correct. But can remove lot's of BCs (depedning on the complexity, sequencing depth and quality of sequencing). Recommended option is :code:`3`.
+    fraction
+        Minumum fraction of same BC that map to teh same oligo. E.g. :code:`0.7` means that at least 70% of the BC map to the same oligo. Larger value gives more evidence to be correct. But can remove lot's of BCs (depedning on the complexity, sequencing depth and quality of sequencing). Recommended option is :code:`0.7`.
+    unknown_other
             (Optional) Shows not mapped BCs in the final output map. Not recommended to use as mapping file fore the experiment workflow. But can be usefull for debugging. Default is :code:`false`. 
-        ambigous
+    ambigous
             (Optional) Shows ambigous BCs in the final output map. Not recommended to use as mapping file fore the experiment workflow. But can be usefull for debugging. Default is :code:`false`.
-
-
 
 --------------------------------------
 Experiment workflow (including counts)
 --------------------------------------
 
-The experiment workflow is configured in the :code:`experiments` section. The following settings are possible:
+The experiment workflow is configured in the :code:`experiments` section. Each experiment run (contains one experiment file with all replicates of an experiment). The following settings are possible:
 
 .. literalinclude:: ../workflow/schemas/config.schema.yaml
    :language: yaml
    :start-after: start_experiments
    :end-before: end_experiments
 
+bc_length
+    Length of the barcode. This is used to extract the barcode from the index read. The barcode is extracted from the first :code:`bc_length` bases of the index read.
+umi_length
+    Length of the UMI. This is used to extract the UMI from the index read. The UMI is extracted from the last :code:`umi_length` bases of the index read.
+data_folder
+    Folder where the fastq files are located. Files are defined in the :code:`experiment_file`. The full or relative path to the folder should be used.
+experiment_file
+    Path to the experiment file. The full or relative path to the file should be used. The experiment file is a comma separated file and is decribed in the `Experiment file`_ section.
+demultiplex:
+    If set to :code:`true` the reads are demultiplexed. This means that the reads are split into different files for each barcode. This is usefull for further analysis. Default is :code:`false`.
+design_file
+    Design file (full or relative path) in fasta format. The design file should contain the oligos in fasta format. The header should contain the oligo name and should be unique. The sequence should be the sequence of the oligo and must also be unique. When having multiple oligo names with the same sequence please merge them into one fasta entry. Should be the same as :code:`reference` in the `Assignment workflow`_.
 
-Experiment
+Experiment file
+----------------
 
-.. literalinclude:: ../workflow/schemas/samples.schema.yaml
-   :language: yaml
+Experiment file has a header with Condition, Replicate, DNA_BC_F, DNA_UMI, DNA_BC_R, RNA_BC_F, RNA_UMI, and RNA_BC_R. Condition together with replicate have to be a uniqe name. Both field entries are not allowed to have :code:`_` and :code:`.`. Multiple file names are allowd seperating them via :code:`;`. An example experiment file can be found here: :download:`resources/example_experiment.csv <../resources/example_experiment.csv>`.
+
+.. literalinclude:: ../resources/example_experiment.csv
+   :language: csv

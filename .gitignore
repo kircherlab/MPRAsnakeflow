@@ -19,3 +19,4 @@ results
 .snakemake
 .ipynb_checkpoints
 *.pyc
+docs/_build/
