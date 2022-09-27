@@ -54,6 +54,6 @@ experiments:
           RNA:
             total: 50000000
             threshold: 300
-      variants: # optional
-        map: resources/variant_map.tsv
-        min_barcodes: 10 # min BC for ref and alt sequence
+    variants: # optional
+      map: resources/variant_map.tsv
+      min_barcodes: 10 # min BC for ref and alt sequence
