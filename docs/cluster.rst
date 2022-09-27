@@ -18,4 +18,4 @@ Please note that the log folder of the cluster environment has to be generated f
 
     mkdir -p logs
 
-  .. note:: Please consult your cluster's wiki page for cluster specific commands and change cluster Options to reflect these specifications. Additionally, for large libraries, more memory can be specified in this location.
+.. note:: Please consult your cluster's wiki page for cluster specific commands and change cluster Options to reflect these specifications. Additionally, for large libraries, more memory can be specified in this location.

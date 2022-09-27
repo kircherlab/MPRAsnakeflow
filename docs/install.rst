@@ -24,7 +24,7 @@ Download here: https://docs.conda.io/en/latest/miniconda.html
 
     snakemake 7.4,1 or above
 
-Download here: https://snakemake.readthedocs.io/en/stable/
+Download here: https://snakemake.readthedocs.io/
 
 
 Clone repository

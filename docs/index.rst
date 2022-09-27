@@ -116,7 +116,7 @@ Indices and tables
     :hidden:
 
     overview
-    association
+    assignment
     experiment
 
 .. toctree::
@@ -125,7 +125,7 @@ Indices and tables
     :maxdepth: 2
     :hidden:
 
-    association_example1
+    assignment_example1
     count_example1
 
 
