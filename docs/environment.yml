@@ -9,5 +9,6 @@ dependencies:
   - sphinx
   - rstcheck
   - recommonmark
+  - urllib3
   - pip:
       - sphinx-rtd-theme
