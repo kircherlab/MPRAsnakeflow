@@ -3,9 +3,9 @@
 .. role:: bash(code)
       :language: bash
 
-=====================
-Basic Count workflow
-=====================
+=========================
+Basic Experiment workflow
+=========================
 
 This example runs the count workflow on 5'/5' WT MPRA data in the HEPG2 cell line from `Klein J., Agarwal, V., Keith, A., et al. 2019 <https://www.biorxiv.org/content/10.1101/576405v1.full.pdf>`_.
 
@@ -22,7 +22,7 @@ Please install conda, the MPRAsnakeflow environment, and clone the actual ``MPRA
 
 Producing an association (.tsv) file 
 ------------------------------------
-This workflow requires a python dictionary of candidate regulatory sequence (CRS) mapped to their barcodes in a tab separated (.tsv) format. For this example the file can be generated using :ref:`Association example` or it can be found in `sample` folder in `MPRAsnakelfow <https://github.com/kircherlab/MPRAsnakeflow/>`_.
+This workflow requires a python dictionary of candidate regulatory sequence (CRS) mapped to their barcodes in a tab separated (.tsv) format. For this example the file can be generated using :ref:`Assignment example` or it can be found in `sample` folder in `MPRAsnakelfow <https://github.com/kircherlab/MPRAsnakeflow/>`_.
 
 Alternatively, if the association file is in pickle (.pickle) format, you can convert the same file to .tsv format with the in-built function in MPRsnakeflow with the following code:
 
@@ -35,7 +35,7 @@ Alternatively, if the association file is in pickle (.pickle) format, you can co
 Design (.fa) file
 -----------------
 
-    File can be generated using the :ref:`Association example` or downloaded from the `sample` folder in `MPRAsnakelfow <https://github.com/kircherlab/MPRAsnakeflow/>`_.
+    File can be generated using the :ref:`Assignment example` or downloaded from the `sample` folder in `MPRAsnakelfow <https://github.com/kircherlab/MPRAsnakeflow/>`_.
 
 
 
@@ -117,24 +117,26 @@ Save it into the :code:`Count_Basic/data` folder under :code:`experiment.csv`.
 Running MPRAsnakeflow
 ---------------------
 
-Now we have everything at hand to run the count MPRAsnakeflow pipeline. Therefore we have to be in the cloned MPRAsnakeflow folder. But we will change the working and output directory to the :code:`Count_Basic` folder in :code: `config.yaml` file. The MPRAsnakeflow count command is:
+Now we have everything at hand to run the count MPRAsnakeflow pipeline. We will run the pipeline directly in the :code:`Count_Basic` folder. The MPRAsnakeflow workflow can be in a different directory. Let's assume :code:`/home/user/MPRAsnakeflow`.  The MPRAsnakeflow count command is:
 
 
 .. code-block:: bash
 
     cd <path/to/MPRAsnakeflow>/MPRAsnakeflow
     conda activate mprasnakeflow
-    snakemake --configfile config/config.yaml --use-conda -p -c 4
+    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --config config.yml
 
-.. note:: Please check your :code:`config/cluster.config` file and :code:`config/config.yaml` if it is correctly configured (e.g. with your SGE cluster commands).
+.. note:: Please modify your code when running in a cluster environment. We have an example SLURM config file here :code:`config/sbatch.yml`.
 
-If everything works fine the following 5 processes will run: :code:`create_BAM (make idx)` :code:`raw_counts`, :code:`filter_counts`, :code:`final_counts` and :code:`add-ons`, :code:`dna_rna_merge_counts`, :code:`calc_correlations`, :code:`make_master_tables`.
+If everything works fine the following 5 rules will run: :code:`create_BAM (make idx)` :code:`raw_counts`, :code:`filter_counts`, :code:`final_counts` and :code:`add-ons`, :code:`dna_rna_merge_counts`, :code:`calc_correlations`, :code:`make_master_tables`.
 
+
+.. todo:: Rules not correct in example experiment workflow
 
 Results
 -----------------
 
-All output files will be in the :code:`results/(name of the project)` folder.
+All output files will be in the :code:`results/experiments/(name of the project)` folder.
 
 We expect the program to output the following status when complete:
 
@@ -147,4 +149,4 @@ To generate a final report, the following code can be used
 
 .. code-block:: bash
 
-    snakemake --report report.html
+    snakemake --config config.yml --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --report report.html 

@@ -78,7 +78,7 @@ After successful execution, you can create a self-contained interactive HTML rep
 
 .. code-block:: bash
 
-    snakemake --report report.html
+    snakemake --report report.html --configfile conf/config.yaml
 
 
 This report can be forwarded to your collaborators.
@@ -105,6 +105,7 @@ Indices and tables
 
     quickstart
     install
+    config
     cluster
 
 
@@ -115,10 +116,8 @@ Indices and tables
     :hidden:
 
     overview
-    association
-    count
-    association_saturation_mutagenesis
-    saturation_mutagenesis
+    assignment
+    experiment
 
 .. toctree::
     :caption: MPRAsnakeflow Examples
@@ -126,11 +125,8 @@ Indices and tables
     :maxdepth: 2
     :hidden:
 
-    association_example1
+    assignment_example1
     count_example1
-    count_example2
-    association_saturation_mutagenesis_example1
-    saturation_mutagenesis_example1
 
 
 .. toctree::

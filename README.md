@@ -1,21 +1,25 @@
 # Snakemake workflow: MPRAsnakeflow
 
+[![Documentation Status](https://readthedocs.org/projects/mprasnakeflow/badge/?version=latest)](https://mprasnakeflow.readthedocs.io/en/latest/?badge=latest)
 [![Snakemake](https://img.shields.io/badge/snakemake-≥7.2.1-brightgreen.svg)](https://snakemake.bitbucket.io)
 [![Tests](https://github.com/kircherlab/MPRAsnakeflow/actions/workflows/main.yml/badge.svg)](https://github.com/kircherlab/MPRAsnakeflow/actions/workflows/main.yml)
 
-[![Build Status](https://travis-ci.org/snakemake-workflows/MPRAsnakeflow.svg?branch=master)](https://travis-ci.org/snakemake-workflows/MPRAsnakeflow)
-
 This pipeline processes sequencing data from Massively Parallel Reporter Assays (MPRA) to create count tables for candidate sequences tested in the experiment.
 
-MPRAsnakeflow is built on top of `Snakemake <https://snakemake.readthedocs.io/>`_. Insert your code into the respective folders, i.e. ``scripts``, ``rules``, and ``envs``. Define the entry point of the workflow in the ``Snakefile`` and the main configuration in a ``config.yaml`` file.
+MPRAsnakeflow is built on top of [Snakemake](https://snakemake.readthedocs.io). Insert your code into the respective folders, i.e. ``scripts``, ``rules``, and ``envs``. Define the entry point of the workflow in the ``Snakefile`` and the main configuration in a ``config.yaml`` file.
 
 ## Authors
 
 * Max Schubach (@visze), Berlin Institute of Health at Charité -- Universitätsklinikum Berlin, [Computational Genome Biology Group](https://kircherlab.bihealth.org)
 
+## Documentation
+
+You can find a extensive documentations [here](https://mprasnakeflow.readthedocs.io)
+
+
 ## Usage
 
-If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of this (original) repository and, if available, its DOI (see above).
+If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of this (original) repository and, if available, its DOI (see above). 
 
 ### Step 1: Obtain a copy of this workflow
 
@@ -30,7 +34,7 @@ Configure the workflow according to your needs via editing the files in the `con
 
 Install Snakemake using [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html):
 
-    conda create -c bioconda -c conda-forge -n snakemake snakemake
+    conda create -c bioconda -n snakemake snakemake
 
 For installation details, see the [instructions in the Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
 
@@ -48,17 +52,21 @@ Execute the workflow locally via
 
     snakemake --use-conda --cores $N --configfile conf/config.yaml
 
-using `$N` cores or run it in a cluster environment via
+using `$N` cores or run it in a cluster environment (SLURM using sbatch) via
 
-    snakemake --use-conda --configfile conf/config.yaml --cluster "sbatch --nodes=1 --ntasks={cluster.threads} --mem={cluster.mem} -t {cluster.time} -p {cluster.queue} -o {cluster.output}" --jobs 100 --cluster-config config/cluster.yaml
+    snakemake --use-conda --configfile conf/config.yaml --cluster "sbatch --nodes=1 --ntasks={cluster.threads} --mem={cluster.mem} -t {cluster.time} -p {cluster.queue} -o {cluster.output}" --jobs 100 --cluster-config config/sbatch.yaml
 
 or
 
     snakemake --use-conda --configfile conf/config.yaml --drmaa "-n {cluster.threads} --mem={cluster.mem} -t {cluster.time} -p {cluster.queue} -o {cluster.output}" --jobs 100
-    
+
+using DRMAA.
+
 Please note that the log folder of the cluster environment has to be generated first, e.g:
 
     mkdir -p logs
+
+For other cluster environments please check the [Snakemake](https://snakemake.readthedocs.io) documentation and adapt accodingly.
 
 If you not only want to fix the software stack but also the underlying OS, use
 
@@ -76,10 +84,9 @@ See the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/exe
 
 After successful execution, you can create a self-contained interactive HTML report with all results via:
 
-    snakemake --report report.html
+    snakemake --report report.html --configfile conf/config.yaml
 
 This report can, e.g., be forwarded to your collaborators.
-An example (using some trivial test data) can be seen [here](https://cdn.rawgit.com/snakemake-workflows/rna-seq-kallisto-sleuth/master/.test/report.html).
 
 ### Step 6: Commit changes
 

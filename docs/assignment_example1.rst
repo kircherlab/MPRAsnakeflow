@@ -1,13 +1,13 @@
-.. _Association example:
+.. _Assignment example:
 
 .. role:: bash(code)
    :language: bash
 
 ============================
-Basic association workflow
+Basic assignment workflow
 ============================
 
-This example runs the association workflow on 5'/5' WT MRPA data in the HEPG2 cell line from `Klein J., Agarwal, V., Keith, A., et al. 2019 <https://www.biorxiv.org/content/10.1101/576405v1.full.pdf>`_.
+This example runs the assignment workflow on 5'/5' WT MRPA data in the HEPG2 cell line from `Klein J., Agarwal, V., Keith, A., et al. 2019 <https://www.biorxiv.org/content/10.1101/576405v1.full.pdf>`_.
 
 Prerequirements
 ======================
@@ -15,10 +15,10 @@ Prerequirements
 This example depends on the following data and software:
 
 
-Installation of MPRAflow
+Installation of MPRAsnakeflow
 ----------------------------------------
 
-Please install conda, the MPRAflow environment and clone the actual MPRAflow master branch. You will find more help under :ref:`Installation`.
+Please install conda, the MPRAsnakeflow environment and clone the actual MPRAsnakeflow master branch. You will find more help under :ref:`Installation`.
 
 Meta Data
 ___________
@@ -57,7 +57,7 @@ For large files and unstable internet connection we reccommend the comand `prefe
     fastq-dump --gzip --split-files SRR10800986
     cd ..
 
-.. note:: Please be sure that all files are downloaded completely without errors! Depending on your internet connection this can take a while. If you just want some data to run MPRAflow you can just limit yourself to one condition and/or just one replicate. 
+.. note:: Please be sure that all files are downloaded completely without errors! Depending on your internet connection this can take a while. If you just want some data to run MPRsnakeAflow you can just limit yourself to one condition and/or just one replicate. 
 
 
 With
@@ -82,29 +82,37 @@ Here is an overview of the files:
    "HEPG2-association: HEPG2 library association", GSM4237954, SRX7474872, "SRR10800986"
 
 
-MPRAflow
+MPRAsnakeflow
 =================================
 
-Now we are ready to run MPRAflow and create CRS-barcode mappings.
+Now we are ready to run MPRAsnakeflow and create CRS-barcode mappings.
 
-Run nextflow
+Run snakemake
 ------------------------------
 
-Now we have everything at hand to run the count MPRAflow pipeline. Therefore we have to be in the cloned MPRAflow folder. But we will change the working and output directory to the :code:`Assoc_Basic` folder. The MPRAflow count command is:
+Now we have everything at hand to run the count MPRAsnakeflow pipeline. We will run the pipeline directly in the :code:`Assoc_Basic` folder. The MPRAsnakeflow workflow can be in a different directory. Let's assume :code:`/home/user/MPRAsnakeflow`. 
+
+First we have to configure the config file:
+
+.. todo:: config file of assignment example
+
+The MPRAsnakeflow command is:
 
 
 .. code-block:: bash
 
-    cd <path/to/MPRAflow>/MPRAflow
-    conda activate MPRAflow
-    nextflow run association.nf -w <path/to/Basic>/Assoc_Basic/work --fastq-insert "<path/to/Basic>/Assoc_Basic/data/SRR10800986_1.fastq.gz" --fastq-insertPE "<path/to/Basic>/Assoc_Basic/data/SRR10800986_3.fastq.gz" --fastq-bc "<path/to/Basic>/Assoc_Basic/data/SRR10800986_2.fastq.gz" --design "<path/to/Basic>/Assoc_Basic/data/design.fa" --name assoc_basic --outdir <path/to/Basic>/Assoc_Basic/output
+    cd Assoc_Basic
+    conda activate mprasnakeflow
+    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --config config.yml
 
-.. note:: Please check your :code:`conf/cluster.config` file if it is correctly configured (e.g. with your SGE cluster commands).
+.. note:: Please modify your code when running in a cluster environment. We have an example SLURM config file here :code:`config/sbatch.yml`.
 
-If everything works fine the following 7 processes will run: :code:`count_bc_nolab` :code:`create_BWA_ref`, :code:`PE_merge`, :code:`align_BWA_PE`, :code:`collect_chunks`, :code:`map_element_barcodes`, :code:`filter_barcodes`.
+If everything works fine the following 7 rules will run: :code:`count_bc_nolab` :code:`create_BWA_ref`, :code:`PE_merge`, :code:`align_BWA_PE`, :code:`collect_chunks`, :code:`map_element_barcodes`, :code:`filter_barcodes`.
+
+.. todo:: Rules not correct in example assignment workflow
 
 
 Results
 -----------------
 
-All needed output files will be in the :code:`Assoc_Basic/output` folder.
+All needed output files will be in the :code:`results/assignemnts/assoc_basic` folder.

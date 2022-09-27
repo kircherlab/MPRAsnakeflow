@@ -1,7 +1,7 @@
-.. _Count:
+.. _Experiment:
 
 =====================
-Count
+Experiment (Count)
 =====================
 
 .. image:: Count_util.png
@@ -41,9 +41,32 @@ Example file:
     >CRS4
     TTAGACCGCCCTTTACCCCGAGAAAACTCAGCTACACACTC
     
-Association tab separated
--------------------------
-Python dictionary of CRS to Barcodes
+Assignment File or configuration
+--------------------------------
+Tab separated gzipped file with barcode mapped to sequence. Can be generated using the :ref:`Assignment` workflow. Config file must be configured similar to this:
+
+.. code-block:: yaml
+
+    example_assignment:
+        type: file
+        value: /path/to/your/file.tsv.gz
+
+Example assignment file:
+
+.. code-block:: text
+
+    ATGCGT  CRS1
+    GTCGA   CRS2
+    CCGTT   CRS3
+    CCCCT   CRS4
+
+Another option would be referring to an assignment defined in a config file.
+
+.. code-block:: yaml
+
+    example_assignment:
+        type: config
+        value: example_config
 
 Label File (Optional)
 ---------------------
@@ -58,6 +81,8 @@ Example file:
     CRS3  Test
     CRS4  Positive_Control
 
+.. note:: If you provide a label file, the first column of the label file must exactly match the FASTA file or the files will not merge properly in the pipeline.
+
 
 snakemake
 ============================
@@ -65,38 +90,29 @@ snakemake
 Options
 ---------------
 
-With :code:`--help` or :code:`--h` you can see the help message.
+With :code:`--help` or :code:`-h` you can see the help message.
 
 Mandatory arguments:
-  :-n:                      
-    Do not execute anything, and display what would be done. If you have a very large workflow, use --dry-run --quiet to just print a summary of the DAG of jobs. (default: False)                                          
-  :-snakefile:             
-    You should not need to specify this. By default, Snakemake will search for 'Snakefile', 'snakefile', 'workflow/Snakefile','workflow/snakefile' beneath the current working directory, in this order. Only if you definitely want a different layout, you need to use this parameter. (default: None)               
-  :-cores:                 
-    Use at most N CPU cores/jobs in parallel. If N is omitted or 'all', the limit is set to the number of available CPU cores. In case of cluster/cloud execution, this argument sets the number of total cores used over all jobs (made available to rules via workflow.cores).(default: None)                                                                                   
-  :-jobs, -j:                  
-    Use at most N CPU cluster/cloud jobs in parallel. For local execution this is an alias for --cores. (default: None)                                                                          
-  :-local-cores:         
-    In cluster/cloud mode, use at most N cores of the host machine in parallel (default: number of CPU cores of the host). The cores are used to execute local rules. This option is ignored when not in cluster/cloud mode. (default: 2)                                                           
-  :-config, -c:            
+  :\-\-cores:                 
+    Use at most N CPU cores/jobs in parallel. If N is omitted or 'all', the limit is set to the number of available CPU cores. In case of cluster/cloud execution, this argument sets the number of total cores used over all jobs (made available to rules via workflow.cores).(default: None)
+  :\-\-config, -c:            
     Set or overwrite values in the workflow config object. The workflow config object is accessible as variable config inside the workflow. Default values can be set by providing a JSON file (see Documentation). (default: None)
-  :-touch, -t:             
+  :\-\-use-conda:             
+    **Required to run MPRAsnakeflow.** If defined in the rule, run job in a conda environment. If this flag is not set, the conda directive is ignored. (default: False)
+Recommended arguments:
+  :\-\-snakefile:             
+    You should not need to specify this. By default, Snakemake will search for 'Snakefile', 'snakefile', 'workflow/Snakefile','workflow/snakefile' beneath the current working directory, in this order. Only if you definitely want a different layout, you need to use this parameter. This is very usefull when you want to have the results in a different folder than MPRAsnakeflow is in. (default: None)
+Usefull arguments:
+  :-n:                      
+    Do not execute anything, and display what would be done. If you have a very large workflow, use --dry-run --quiet to just print a summary of the DAG of jobs. (default: False)                                                       
+  :\-\-touch, -t:             
     Touch output files (mark them up to date without really changing them) instead of running their commands. This is used to pretend that the rules were executed, in order to fool future invocations of snakemake. Fails if a file does not yet exist. Note that this will only touch files that would otherwise be recreated by Snakemake (e.g. because their input files are newer). For enforcing a touch, combine this with --force, --forceall, or --forcerun. Note however that you loose the provenance information when the files have been created in realitiy. Hence, this should be used only as a last resort. (default: False)
-  
-Optional
-  :-use-conda -p:             
-    If defined in the rule, run job in a conda environment. If this flag is not set, the conda directive is ignored. (default: False)
-  :-use-singularity:       
-    If defined in the rule, run job within a singularity container. If this flag is not set, the singularity directive is ignored. (default: False)
-  :-use-envmodules:        
-    If defined in the rule, run job within the given environment modules, loaded in the given order. This can be combined with --use-conda and --use-singularity, which will then be only used as a fallback for rules which don't define environment modules. (default: False)
 
 
-
-Processes
+Rules
 ---------
 
-Processes run by snakemake in the Association Utility. Some Processes will be run only if certain options used and are marked below.
+Rules run by snakemake in the assignment utility. Some rules will be run only if certain options used and are marked below.
 
 create_BAM or create_BAM_noUMI (if no UMI sequence)
   creates a bamfile of barcode and UMI sequences
@@ -135,7 +151,7 @@ make_master_tables
 Output
 ==========
 
-The output can be found in the folder defined by the option :code:`results/`. It is structured in folders of the condition as
+The output can be found in the folder defined by the option :code:`results/experiments/`. It is structured in folders of the condition as
 
 Files
 -------------
@@ -144,7 +160,7 @@ File tree
 
 .. code-block:: text
 
-    outdir
+    experimet_name
       |-Condition
         |-allreps.tsv
         |-average_allreps.tsv
@@ -164,6 +180,8 @@ File tree
                 |-HepG2_1_DNA_filtered_counts.tsv.gz
                 |-HepG2_1_RNA_counts.tsv
                 |-HepG2_1_RNA_raw_counts.tsv.gz
+
+.. todo:: This is not the correct file tree for the experiment workflow
 
 Files for each Condition
 ------------------------
@@ -186,7 +204,9 @@ HepG2_barcodesPerInsert.png
 HepG2_group_barcodesPerInsert_box.png
   Boxplot of CRS normalized per insert, grouped by labels
 
-Files for each replicate in each condidtion
+.. todo:: These are not the correct files for each condition in the experiment workflow
+
+Files for each replicate in each condition
 -------------------------------------------
 HepG2_1_counts.tsv  
   mean ratio, log2 ratio, and observed barcodes per condidition for each replicate
@@ -206,3 +226,5 @@ HepG2_1_RNA_raw_counts.tsv.gz
   table of barcodes, UMI, and RNA counts raw
 HepG2_1_RNA_filtered_counts.tsv.gz
   table of barcodes, UMI, and DNA counts raw, filtered for barcodes of correct length
+
+.. todo:: These are not the correct files for the experiment workflow

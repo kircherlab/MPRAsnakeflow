@@ -59,10 +59,10 @@ rule statistic_correlation_bc_counts:
         ),
         minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["filter"]["RNA"]["minCounts"],
+        ]["filter"]["RNA"]["min_counts"],
         minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["filter"]["DNA"]["minCounts"],
+        ]["filter"]["DNA"]["min_counts"],
     log:
         temp(
             "results/logs/statistic/correlation/correlate_bc_counts.{project}.{condition}.{config}.{raw_or_assigned}.log"
@@ -91,7 +91,10 @@ rule statistic_correlation_combine_bc_raw:
             caption="../../report/bc_correlation.rst",
             category="{project}",
             subcategory="Barcode correlation",
-            labels={"Configuration": "{config}", "Assignment": "-",},
+            labels={
+                "Configuration": "{config}",
+                "Assignment": "-",
+            },
         ),
     log:
         "results/logs/statistic/correlation/combine_bc_raw.{project}.{config}.log",
@@ -120,7 +123,10 @@ rule statistic_correlation_combine_bc_assigned:
             caption="../../report/bc_correlation_assigned.rst",
             category="{project}",
             subcategory="Barcode correlation",
-            labels={"Configuration": "{config}", "Assignment": "{assignment}",},
+            labels={
+                "Configuration": "{config}",
+                "Assignment": "{assignment}",
+            },
         ),
     log:
         temp(
@@ -185,8 +191,8 @@ rule statistic_correlation_calculate:
             getReplicatesOfCondition(wc.project, wc.condition)
         ),
         thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
-            "bc_threshold"
-        ],
+            "filter"
+        ]["bc_threshold"],
         outdir="results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}",
         label=(
             lambda wc: "--label %s" % config["experiments"][wc.project]["label_file"]
@@ -235,8 +241,8 @@ rule statistic_correlation_combine_oligo:
         ),
     params:
         thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
-            "bc_threshold"
-        ],
+            "filter"
+        ]["bc_threshold"],
     log:
         temp(
             "results/logs/statistic/correlation/combine_oligo.{project}.{config}.{assignment}.log"
