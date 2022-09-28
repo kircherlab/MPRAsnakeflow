@@ -203,6 +203,7 @@ properties:
         - demultiplex
         - design_file
         - assignments
+        - configs
 # end_experiments
 additionalProperties: false
 minProperties: 1
