@@ -16,7 +16,7 @@ rule assignment_getInputs:
     shell:
         """
         if [[ "$(ls {input} | wc -l)" -eq 1 ]]; then 
-            ln -s {input} {output}; 
+            ln -rs {input} {output}; 
         else
             zcat {input} | gzip -c > {output};
         fi &> {log}
@@ -51,7 +51,7 @@ rule assignment_fastq_split:
         ),
     shell:
         """
-        fastqsplitter -i {input} -t 10 {params.files} &> {log}
+        fastqsplitter -i {input} -t 1 {params.files} &> {log}
         """
 
 
@@ -128,11 +128,12 @@ rule assignment_mapping:
         "results/assignment/{assignment}/aligned_merged_reads.bam",
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
+    threads: config["global"]["threads"]
     log:
         temp("results/logs/assignment/mapping.{assignment}.log"),
     shell:
         """
-        bwa mem -t 30 -L 80 -M -C {input.reference} <(
+        bwa mem -t {threads} -L 80 -M -C {input.reference} <(
             samtools cat {input.bams} | \
             samtools view -F 514 | \
             awk 'BEGIN{{ OFS="\\n"; FS="\\t" }}{{ print "@"$1" "$12","$13,$10,"+",$11 }}';
@@ -162,7 +163,7 @@ rule assignment_flagstat:
         bam="results/assignment/{assignment}/aligned_merged_reads.bam",
         idx="results/assignment/{assignment}/aligned_merged_reads.bam.bai",
     output:
-        "results/assignment/{assignment}/stats/assignment/bam_stats.txt",
+        "results/assignment/{assignment}/statistic/assignment/bam_stats.txt",
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
     log:

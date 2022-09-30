@@ -124,7 +124,7 @@ Now we have everything at hand to run the count MPRAsnakeflow pipeline. We will 
 
     cd <path/to/MPRAsnakeflow>/MPRAsnakeflow
     conda activate mprasnakeflow
-    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --config config.yml
+    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/count_basic/config.yml
 
 .. note:: Please modify your code when running in a cluster environment. We have an example SLURM config file here :code:`config/sbatch.yml`.
 

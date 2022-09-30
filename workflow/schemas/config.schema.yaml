@@ -11,6 +11,10 @@ properties:
   # start_global
   global:
     type: object
+    default:
+      threads: 1
+      assignments:
+        split_number: 1
     properties:
       assignments:
         type: object
@@ -19,6 +23,9 @@ properties:
             type: integer
             default: 1
         additionalProperties: false
+      threads:
+        type: integer
+        default: 1
     additionalProperties: false
   # start_assignments
   assignments:

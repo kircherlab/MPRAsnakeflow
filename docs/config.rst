@@ -24,8 +24,13 @@ The general settings are located in the :code:`global` section. The following se
    :start-after: start_global
    :end-before: start_assignments
 
-:split_number:
-    To parallize mapping for assignment the reads are split into :code:`split_number` files. E.g. setting to 300 this means that the reads are split into 300 files and each file is mapped in parallel. This is only usefull when using on a cluster. Running the workflow only on one machine the default value shopuld be used. Default is set to 1. 
+:threads:
+    Number of threads that are available to run a rule. Right now this is used for bwa mem in the assignment workflow. Be sure to set up the snakemake option :code:`-c` correctly when using larger number of possible threads. Default is set to 1.
+:assignments:
+    Global parameters that hold for the assignment workflow.
+
+    :split_number:
+        To parallize mapping for assignment the reads are split into :code:`split_number` files. E.g. setting to 300 this means that the reads are split into 300 files and each file is mapped in parallel. This is only usefull when using on a cluster. Running the workflow only on one machine the default value shopuld be used. Default is set to 1. 
 
 --------------------
 Assignment workflow

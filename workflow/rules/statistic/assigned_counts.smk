@@ -9,13 +9,13 @@ rule statistic_assigned_counts_combine_BC_assignment_stats_helper:
         "../../envs/default.yaml"
     input:
         stats=lambda wc: expand(
-            "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/{{condition}}_{replicate}_{type}_{{config}}.statistic.tsv.gz",
+            "results/experiments/{{project}}/statistic/assigned_counts/{{assignment}}/{{condition}}_{replicate}_{type}_{{config}}.statistic.tsv.gz",
             type=["DNA", "RNA"],
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
     output:
         temp(
-            "results/experiments/{project}/stats/assigned_counts/{assignment}/helper.{condition}.{config}.statistic.tsv.gz"
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/helper.{condition}.{config}.statistic.tsv.gz"
         ),
     log:
         temp(
@@ -38,12 +38,12 @@ rule statistic_assigned_counts_combine_BC_assignment_stats:
         "../../envs/default.yaml"
     input:
         stats=lambda wc: expand(
-            "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/helper.{condition}.{{config}}.statistic.tsv.gz",
+            "results/experiments/{{project}}/statistic/assigned_counts/{{assignment}}/helper.{condition}.{{config}}.statistic.tsv.gz",
             condition=getConditions(wc.project),
         ),
     output:
         report(
-            "results/experiments/{project}/stats/statistic_assigned_counts_single_{assignment}_{config}.tsv",
+            "results/experiments/{project}/statistic/statistic_assigned_counts_single_{assignment}_{config}.tsv",
             caption="../../report/assigned_counts_beforeMerge.rst",
             category="{project}",
             subcategory="Assignment",
@@ -81,12 +81,12 @@ rule statistic_assigned_counts_combine_stats_dna_rna_merge:
         "../../envs/python3.yaml"
     input:
         files=lambda wc: expand(
-            "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts.statistic.tsv.gz",
+            "results/experiments/{{project}}/statistic/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts.statistic.tsv.gz",
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
         script=getScript("count/merge_statistic_tables.py"),
     output:
-        "results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/combined/{condition}_merged_assigned_counts.statistic.tsv.gz",
+        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/combined/{condition}_merged_assigned_counts.statistic.tsv.gz",
     params:
         cond="{condition}",
         statistic=lambda wc: " ".join(
@@ -112,12 +112,12 @@ rule statistic_assigned_counts_combine_stats_dna_rna_merge_all:
         "../../envs/default.yaml"
     input:
         files=lambda wc: expand(
-            "results/experiments/{{project}}/stats/assigned_counts/{{assignment}}/{{config}}/combined/{condition}_merged_assigned_counts.statistic.tsv.gz",
+            "results/experiments/{{project}}/statistic/assigned_counts/{{assignment}}/{{config}}/combined/{condition}_merged_assigned_counts.statistic.tsv.gz",
             condition=getConditions(wc.project),
         ),
     output:
         report(
-            "results/experiments/{project}/stats/statistic_assigned_counts_merged_{assignment}_{config}.tsv",
+            "results/experiments/{project}/statistic/statistic_assigned_counts_merged_{assignment}_{config}.tsv",
             caption="../../report/assigned_counts_afterMerge.rst",
             category="{project}",
             subcategory="Assignment",

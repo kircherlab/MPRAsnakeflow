@@ -94,20 +94,78 @@ Now we have everything at hand to run the count MPRAsnakeflow pipeline. We will 
 
 First we have to configure the config file:
 
-.. todo:: config file of assignment example
+.. literalinclude:: ../resources/assoc_basic/config.yml
+   :language: yaml
 
-The MPRAsnakeflow command is:
 
+First we do a try run using snakemake :code:`-n` option. The MPRAsnakeflow command is:
 
 .. code-block:: bash
 
     cd Assoc_Basic
     conda activate mprasnakeflow
-    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --config config.yml
+    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/assoc_basic/config.yml -n
+
+You should see a list of rules that will be executed. This is the summary:
+
+.. code-block:: text
+   
+   Job stats:
+   job                                    count    min threads    max threads
+   -----------------------------------  -------  -------------  -------------
+   all                                        1              1              1
+   assignment_bwa_ref                         1              1              1
+   assignment_fastq_split                     3              1              1
+   assignment_filter                          2              1              1
+   assignment_flagstat                        1              1              1
+   assignment_getBCs                          1              1              1
+   assignment_getInputs                       3              1              1
+   assignment_idx_bam                         1              1              1
+   assignment_mapping                         1              1              1
+   assignment_merge                           30             1              1
+   assignment_statistic_assignedCounts        2              1              1
+   assignment_statistic_assignment            2              1              1
+   assignment_statistic_totalCounts           1              1              1
+   total                                     49              1              1
+
+
+When dry-drun does not give any errors we will run the workflow. We use a machine with 30 threads/cores to run the workflow. Therefore :code:`split_number` is set to 30 to parallize the workflow. Also we are using 10 threads for mapping (bwa mem). But snakemake takes care that no more than 30 threads are used.
+
+.. code-block:: bash
+
+    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/assoc_basic/config.yml
+
 
 .. note:: Please modify your code when running in a cluster environment. We have an example SLURM config file here :code:`config/sbatch.yml`.
 
-If everything works fine the following 7 rules will run: :code:`count_bc_nolab` :code:`create_BWA_ref`, :code:`PE_merge`, :code:`align_BWA_PE`, :code:`collect_chunks`, :code:`map_element_barcodes`, :code:`filter_barcodes`.
+If everything works fine the  13 rules showed above will run:
+
+all
+   describe
+assignment_bwa_ref
+   Create mapping reference for BWA from design file
+assignment_fastq_split
+   describe
+assignment_filter
+   describe
+assignment_flagstat
+   describe
+assignment_getBCs
+   describe
+assignment_getInputs
+   describe
+assignment_idx_bam
+   describe
+assignment_mapping
+   describe
+assignment_merge
+   describe
+assignment_statistic_assignedCounts
+   describe
+assignment_statistic_assignment
+   describe
+assignment_statistic_totalCounts
+   describe
 
 .. todo:: Rules not correct in example assignment workflow
 

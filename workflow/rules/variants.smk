@@ -9,7 +9,9 @@ rule variants_generateVariantTable:
     output:
         "results/experiments/{project}/variants/{assignment}/{config}/{condition}_{replicate}_variantTable.tsv.gz",
     log:
-        "logs/experiments/{project}/variants/{assignment}/{config}/variants_generateVariantTable.{condition}_{replicate}.log",
+        temp(
+            "tesults/logs/experiments/variants/generateVariantTable.{project}.{assignment}.{config}.{condition}.{replicate}.log"
+        ),
     shell:
         """
         python {input.script} \
@@ -51,7 +53,9 @@ rule variants_MasterTable:
             wc.project, wc.config, "DNA", "min_counts"
         ),
     log:
-        "logs/experiments/{project}/variants/{assignment}/{config}/variants_MasterTable.{condition}.log",
+        temp(
+            "results/logs/experiments/variants/MasterTable.{project}.{assignment}/{config}.{condition}.log"
+        ),
     shell:
         """
         python {input.script} \
@@ -72,7 +76,7 @@ rule variants_correlate:
         ),
         script=getScript("variants/correlateVariantTables.py"),
     output:
-        "results/experiments/{project}/stats/variants/{assignment}/{config}/{condition}/{condition}_correlation_variantTable_minBC{threshold}.tsv.gz",
+        "results/experiments/{project}/statistic/variants/{assignment}/{config}/{condition}/{condition}_correlation_variantTable_minBC{threshold}.tsv.gz",
     params:
         cond="{condition}",
         threshold="{threshold}",
@@ -87,7 +91,9 @@ rule variants_correlate:
             )
         ),
     log:
-        "logs/experiments/{project}/variants/{assignment}/{config}/{condition}/variants_correlate.{condition}_minBC{threshold}.log",
+        temp(
+            "results/logs/experiments/variants/correlate.{project}.{assignment}.{config}.{condition}.{condition}.{threshold}.log"
+        ),
     shell:
         """
         python {input.script} \
@@ -103,13 +109,13 @@ rule variants_combineVariantCorrelationTables:
         "../envs/default.yaml"
     input:
         correlation=lambda wc: expand(
-            "results/experiments/{{project}}/stats/variants/{{assignment}}/{{config}}/{condition}/{condition}_correlation_variantTable_minBC{threshold}.tsv.gz",
+            "results/experiments/{{project}}/statistic/variants/{{assignment}}/{{config}}/{condition}/{condition}_correlation_variantTable_minBC{threshold}.tsv.gz",
             condition=getConditions(wc.project),
             threshold=getVariantsBCThreshold(wc.project),
         ),
     output:
         report(
-            "results/experiments/{project}/stats/variants/{assignment}/{config}/correlation_variantTable.tsv",
+            "results/experiments/{project}/statistic/variants/{assignment}/{config}/correlation_variantTable.tsv",
             caption="../report/variants/correlation.rst",
             category="{project}",
             subcategory="Variants",
@@ -120,7 +126,9 @@ rule variants_combineVariantCorrelationTables:
             },
         ),
     log:
-        "logs/experiments/{project}/stats/variants/{assignment}/{config}/variants_combineVariantCorrelationTables.log",
+        temp(
+            "results/logs/experiments/variants/combineVariantCorrelationTables.{project}.{assignment}.{config}.log"
+        ),
     shell:
         """
         set +o pipefail;
