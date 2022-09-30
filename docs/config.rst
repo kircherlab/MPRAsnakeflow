@@ -45,6 +45,8 @@ The assignment workflow is configured in the :code:`assignments` section. The fo
 
 Each asignment you want to process you have to giv him a name like :code:`example_assignment`. The name is used to name the output files.
 
+:bc_length:
+    Length of the barcode. Must match with the length of :code:`R2`.
 :sequence_length:
     Defines the :code:`min` and :code:`max` of a :code:`sequence_length` specify . :code:`sequence_length` is basically the length of a sequence alignment to an oligo in the reference file. Because there can be insertion and deletions we recommend to vary it a bit around the exact length (e.g. +-5). In theory this option enables designs with multiple sequence lengths.
 :alignment_start:
