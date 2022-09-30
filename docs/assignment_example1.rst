@@ -141,34 +141,31 @@ When dry-drun does not give any errors we will run the workflow. We use a machin
 If everything works fine the  13 rules showed above will run:
 
 all
-   describe
+   The overall all rule. Here is defined what final output files are expected.
 assignment_bwa_ref
-   Create mapping reference for BWA from design file
+   Create mapping reference for BWA from design file.
 assignment_fastq_split
-   describe
-assignment_filter
-   describe
-assignment_flagstat
-   describe
-assignment_getBCs
-   describe
+   Split the fastq files into n files for parallelisation. N is given by split_read in the configuration file.
 assignment_getInputs
-   describe
-assignment_idx_bam
-   describe
-assignment_mapping
-   describe
+   Concat the input fastq files per R1,R2,R3. If only single fastq file is provided a symbolic link is created.
 assignment_merge
-   describe
-assignment_statistic_assignedCounts
-   describe
-assignment_statistic_assignment
-   describe
+   Merge the FW,REV and BC fastq files into one. Extract the index sequence from the middle and end of an Illumina run. Separates reads for Paired End runs. Merge/Adapter trim reads stored in BAM.
+assignment_mapping
+   Map the reads to the reference.
+assignment_idx_bam
+   Index the BAM file
+assignment_flagstat
+   Run samtools flagstat. Results are in :code:`results/assignment/assoc_basic/statistic/assignment/bam_stats.txt`
+assignment_getBCs
+   Get the barcodes (not filtered). Results are in :code:`results/assignment/assoc_basic/barcodes_incl_other.sorted.tsv.gz`
+assignment_filter
+   Filter the barcodes file based on the config given in the config-file.
 assignment_statistic_totalCounts
-   describe
-
-.. todo:: Rules not correct in example assignment workflow
-
+   Statistic of the total (unfiltered counts). Results are in 
+assignment_statistic_assignedCounts
+   Statistic of filtered the assigned counts. Result is here :code:`results/assignment/{assignment}/statistic/assigned_counts.example_config.tsv.gz`
+assignment_statistic_assignment
+   Statistic of the filtered assignment.  Result is here :code:`results/assignment/{assignment}/statistic/assignment.example_config.tsv.gz` and a plot here  Result is here :code:`results/assignment/{assignment}/statistic/assignment.example_config.png`
 
 Results
 -----------------

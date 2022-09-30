@@ -1,6 +1,9 @@
 
 
 rule assignment_statistic_totalCounts:
+    """
+    Statistic of the total (unfiltered counts).
+    """
     conda:
         "../../envs/python3.yaml"
     input:
@@ -17,6 +20,9 @@ rule assignment_statistic_totalCounts:
 
 
 rule assignment_statistic_assignedCounts:
+    """
+    Statistic of the assigned counts.
+    """
     conda:
         "../../envs/python3.yaml"
     input:
@@ -33,6 +39,9 @@ rule assignment_statistic_assignedCounts:
 
 
 rule assignment_statistic_assignment:
+    """
+    Statistic of the filtered assignment.
+    """
     conda:
         "../../envs/r.yaml"
     input:

@@ -5,6 +5,7 @@ global:
     split_number: 30
 assignments:
   assoc_basic:
+    bc_length: 15
     sequence_length:
       min: 166
       max: 175

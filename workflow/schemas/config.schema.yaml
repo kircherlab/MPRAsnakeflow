@@ -47,6 +47,8 @@ properties:
             - min
             - max
       properties:
+        bc_length:
+          type: integer
         R1:
           type: array
           items:
@@ -93,6 +95,7 @@ properties:
         - R1
         - R2
         - R3
+        - bc_length
         - reference
         - configs
         - alignment_start
