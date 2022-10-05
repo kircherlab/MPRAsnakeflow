@@ -21,6 +21,7 @@ from snakemake.utils import validate
 
 validate(config, schema="schemas/config.schema.yaml")
 
+
 ##### report workflow #####
 report: "report/workflow.rst"
 
