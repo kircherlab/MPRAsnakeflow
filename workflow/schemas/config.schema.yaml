@@ -11,6 +11,10 @@ properties:
   # start_global
   global:
     type: object
+    default:
+      threads: 1
+      assignments:
+        split_number: 1
     properties:
       assignments:
         type: object
@@ -19,6 +23,9 @@ properties:
             type: integer
             default: 1
         additionalProperties: false
+      threads:
+        type: integer
+        default: 1
     additionalProperties: false
   # start_assignments
   assignments:
@@ -40,6 +47,8 @@ properties:
             - min
             - max
       properties:
+        bc_length:
+          type: integer
         R1:
           type: array
           items:
@@ -86,6 +95,7 @@ properties:
         - R1
         - R2
         - R3
+        - bc_length
         - reference
         - configs
         - alignment_start

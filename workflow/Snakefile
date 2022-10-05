@@ -67,14 +67,14 @@ rule all:
             "results/assignment/{assignment}/statistic/total_counts.tsv.gz"
         ),
         getAssignment_helper(
-            "results/assignment/{assignment}/stats/assignment/bam_stats.txt",
+            "results/assignment/{assignment}/statistic/assignment/bam_stats.txt",
         ),
         ## experiments
-        # stats BC nucleotide composition
+        # statistic BC nucleotide composition
         getOutputProjectConditionReplicateType_helper(
             "results/experiments/{project}/statistic/counts/BCNucleotideComposition.{condition}_{replicate}_{type}.tsv.gz"
         ),
-        # counts stats
+        # counts statistic
         expand(
             "results/experiments/{project}/statistic/counts.{countType}.tsv",
             project=getProjects(),
@@ -84,11 +84,11 @@ rule all:
             "results/experiments/{project}/statistic/counts.freqUMIs.{condition}_{replicate}_{type}.txt"
         ),
         getOutputProjectConfig_helper(
-            "results/experiments/{project}/stats/statistic_bc_correlation_merged_{config}.tsv",
+            "results/experiments/{project}/statistic/statistic_bc_correlation_merged_{config}.tsv",
             True,
         ),
         getOutputProjectAssignmentConfig_helper(
-            "results/experiments/{project}/stats/statistic_assigned_bc_correlation_merged_{assignment}_{config}.tsv",
+            "results/experiments/{project}/statistic/statistic_assigned_bc_correlation_merged_{assignment}_{config}.tsv",
             True,
         ),
         # bc_overlap statistic
@@ -106,19 +106,19 @@ rule all:
         ),
         # assignment statistic
         getOutputProjectAssignmentConfig_helper(
-            "results/experiments/{project}/stats/statistic_assigned_counts_merged_{assignment}_{config}.tsv"
+            "results/experiments/{project}/statistic/statistic_assigned_counts_merged_{assignment}_{config}.tsv"
         ),
         getOutputProjectAssignmentConfig_helper(
-            "results/experiments/{project}/stats/statistic_oligo_correlation_merged_{assignment}_{config}.tsv",
+            "results/experiments/{project}/statistic/statistic_oligo_correlation_merged_{assignment}_{config}.tsv",
             True,
         ),
         getOutputProjectAssignmentConfig_helper(
-            "results/experiments/{project}/stats/statistic_assigned_counts_single_{assignment}_{config}.tsv",
+            "results/experiments/{project}/statistic/statistic_assigned_counts_single_{assignment}_{config}.tsv",
             True,
         ),
         # variants
         getOutputVariants_helper(
-            "results/experiments/{project}/stats/variants/{assignment}/{config}/correlation_variantTable.tsv",
+            "results/experiments/{project}/statistic/variants/{assignment}/{config}/correlation_variantTable.tsv",
             True,
         ),
         getOutputVariants_helper(
@@ -142,7 +142,7 @@ rule all_assignments:
             "results/assignment/{assignment}/statistic/total_counts.tsv.gz"
         ),
         getAssignment_helper(
-            "results/assignment/{assignment}/stats/assignment/bam_stats.txt",
+            "results/assignment/{assignment}/statistic/assignment/bam_stats.txt",
         ),
 
 
@@ -170,11 +170,11 @@ rule all_experiments:
             "results/experiments/{project}/statistic/counts.freqUMIs.{condition}_{replicate}_{type}.txt"
         ),
         getOutputProjectConfig_helper(
-            "results/experiments/{project}/stats/statistic_bc_correlation_merged_{config}.tsv",
+            "results/experiments/{project}/statistic/statistic_bc_correlation_merged_{config}.tsv",
             True,
         ),
         getOutputProjectAssignmentConfig_helper(
-            "results/experiments/{project}/stats/statistic_assigned_bc_correlation_merged_{assignment}_{config}.tsv",
+            "results/experiments/{project}/statistic/statistic_assigned_bc_correlation_merged_{assignment}_{config}.tsv",
             True,
         ),
         # bc_overlap statistic
@@ -190,21 +190,21 @@ rule all_experiments:
         getOutputProjectConditionAssignmentConfig_helper(
             "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.tsv.gz"
         ),
-        # assignment stats
+        # assignment statistic
         getOutputProjectAssignmentConfig_helper(
-            "results/experiments/{project}/stats/statistic_assigned_counts_merged_{assignment}_{config}.tsv"
+            "results/experiments/{project}/statistic/statistic_assigned_counts_merged_{assignment}_{config}.tsv"
         ),
         getOutputProjectAssignmentConfig_helper(
-            "results/experiments/{project}/stats/statistic_oligo_correlation_merged_{assignment}_{config}.tsv",
+            "results/experiments/{project}/statistic/statistic_oligo_correlation_merged_{assignment}_{config}.tsv",
             True,
         ),
         getOutputProjectAssignmentConfig_helper(
-            "results/experiments/{project}/stats/statistic_assigned_counts_single_{assignment}_{config}.tsv",
+            "results/experiments/{project}/statistic/statistic_assigned_counts_single_{assignment}_{config}.tsv",
             True,
         ),
         # variants
         getOutputVariants_helper(
-            "results/experiments/{project}/stats/variants/{assignment}/{config}/correlation_variantTable.tsv",
+            "results/experiments/{project}/statistic/variants/{assignment}/{config}/correlation_variantTable.tsv",
             True,
         ),
 
@@ -215,7 +215,7 @@ rule all_experiments_counts_stats:
             "results/experiments/{project}/statistic/counts.freqUMIs.{condition}_{replicate}_{type}.txt"
         ),
         getOutputProjectConfig_helper(
-            "results/experiments/{project}/stats/statistic_bc_correlation_merged_{config}.tsv",
+            "results/experiments/{project}/statistic/statistic_bc_correlation_merged_{config}.tsv",
             True,
         ),
 
@@ -242,14 +242,14 @@ rule all_experiments_assignments:
 rule all_experiments_assignments_statistic:
     input:
         getOutputProjectAssignmentConfig_helper(
-            "results/experiments/{project}/stats/statistic_assigned_counts_merged_{assignment}_{config}.tsv"
+            "results/experiments/{project}/statistic/statistic_assigned_counts_merged_{assignment}_{config}.tsv"
         ),
         getOutputProjectAssignmentConfig_helper(
-            "results/experiments/{project}/stats/statistic_oligo_correlation_merged_{assignment}_{config}.tsv",
+            "results/experiments/{project}/statistic/statistic_oligo_correlation_merged_{assignment}_{config}.tsv",
             True,
         ),
         getOutputProjectAssignmentConfig_helper(
-            "results/experiments/{project}/stats/statistic_assigned_counts_single_{assignment}_{config}.tsv",
+            "results/experiments/{project}/statistic/statistic_assigned_counts_single_{assignment}_{config}.tsv",
             True,
         ),
 
@@ -264,7 +264,7 @@ rule all_stats_BCNucleotideComposition:
 rule all_variants:
     input:
         getOutputVariants_helper(
-            "results/experiments/{project}/stats/variants/{assignment}/{config}/correlation_variantTable.tsv",
+            "results/experiments/{project}/statistic/variants/{assignment}/{config}/correlation_variantTable.tsv",
             True,
         ),
         getOutputVariants_helper(

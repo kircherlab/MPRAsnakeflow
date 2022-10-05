@@ -66,7 +66,7 @@ def getAssignmentFile(project, assignment):
     if config["experiments"][project]["assignments"][assignment]["type"] == "config":
         conf = config["experiments"][project]["assignments"][assignment]["value"]
         return expand(
-            "results/assignment/{assignment}/assignment_barcodes_incl_other.{config}.sorted.tsv.gz",
+            "results/assignment/{assignment}/assignment_barcodes.{config}.sorted.tsv.gz",
             assignment=assignment,
             config=conf,
         )

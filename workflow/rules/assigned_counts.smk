@@ -67,7 +67,7 @@ rule assigned_counts_assignBarcodes:
         script=getScript("count/merge_BC_and_assignment.py"),
     output:
         counts="results/experiments/{project}/assigned_counts/{assignment}/{condition}_{replicate}_{type}_final_counts.config.{config}.tsv.gz",
-        stats="results/experiments/{project}/stats/assigned_counts/{assignment}/{condition}_{replicate}_{type}_{config}.statistic.tsv.gz",
+        stats="results/experiments/{project}/statistic/assigned_counts/{assignment}/{condition}_{replicate}_{type}_{config}.statistic.tsv.gz",
     params:
         name="{condition}_{replicate}_{type}",
     log:
@@ -93,7 +93,7 @@ rule assigned_counts_dna_rna_merge:
         script=getScript("count/merge_label.py"),
     output:
         counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
-        stats="results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.statistic.tsv.gz",
+        stats="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.statistic.tsv.gz",
     params:
         minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
@@ -125,7 +125,7 @@ rule assigned_counts_make_master_tables:
         ),
         script=getScript("count/make_master_tables.R"),
     output:
-        statistic="results/experiments/{project}/stats/assigned_counts/{assignment}/{config}/{condition}_average_allreps_merged.tsv.gz",
+        statistic="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_average_allreps_merged.tsv.gz",
         all="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.tsv.gz",
         thresh="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged.tsv.gz",
     params:

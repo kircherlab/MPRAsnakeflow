@@ -5,6 +5,10 @@ include: "assignment/statistic.smk"
 
 
 rule assignment_getInputs:
+    """
+    Concat the input fastq files per R1,R2,R3. 
+    If only single fastq file is provided a symbolic link is created.
+    """
     conda:
         "../envs/default.yaml"
     input:
@@ -16,7 +20,7 @@ rule assignment_getInputs:
     shell:
         """
         if [[ "$(ls {input} | wc -l)" -eq 1 ]]; then 
-            ln -s {input} {output}; 
+            ln -rs {input} {output}; 
         else
             zcat {input} | gzip -c > {output};
         fi &> {log}
@@ -24,6 +28,10 @@ rule assignment_getInputs:
 
 
 rule assignment_fastq_split:
+    """
+    Split the fastq files into n files for parallelisation. 
+    n is given by split_read in the configuration file.
+    """
     input:
         "results/assignment/{assignment}/fastq/{R}.fastq.gz",
     output:
@@ -51,11 +59,18 @@ rule assignment_fastq_split:
         ),
     shell:
         """
-        fastqsplitter -i {input} -t 10 {params.files} &> {log}
+        fastqsplitter -i {input} -t 1 {params.files} &> {log}
         """
 
 
 rule assignment_merge:
+    """
+    Merge the FW,REV and BC fastq files into one. 
+    Extract the index sequence from the middle and end of an Illumina run. 
+    Separates reads for Paired End runs. Merge/Adapter trim reads stored in BAM.
+    """
+    conda:
+        "../envs/python27.yaml"
     input:
         R1="results/assignment/{assignment}/fastq/splits/R1.split{split}.fastq.gz",
         R2="results/assignment/{assignment}/fastq/splits/R2.split{split}.fastq.gz",
@@ -64,12 +79,20 @@ rule assignment_merge:
         script_MergeTrimReadsBAM=getScript("count/MergeTrimReadsBAM.py"),
     output:
         bam=temp("results/assignment/{assignment}/bam/merge_split{split}.bam"),
-    conda:
-        "../envs/python27.yaml"
+    params:
+        bc_length=lambda wc: config["assignments"][wc.assignment]["bc_length"],
     log:
         temp("results/logs/assignment/merge.{assignment}.{split}.log"),
     shell:
         """
+        set +o pipefail;
+
+        fwd_length=`zcat {input.R1} | head -2 | tail -1 | wc -c`;
+        fwd_length=$(expr $(($fwd_length-1)));
+
+        rev_start=$(expr $(($fwd_length+1+{params.bc_length})));
+
+
         paste <( zcat {input.R1} ) <( zcat {input.R2} ) <( zcat {input.R3} ) | \
         awk '{{ 
             count+=1; 
@@ -82,7 +105,7 @@ rule assignment_merge:
                 count=0 
             }} 
         }}' | \
-        python {input.script_FastQ2doubleIndexBAM} -p -s 162 -l 15 -m 0 | \
+        python {input.script_FastQ2doubleIndexBAM} -p -s $rev_start -l {params.bc_length} -m 0 | \
         python {input.script_MergeTrimReadsBAM} -c '' -f CATTGCGTGAACCGACAATTCGTCGAGGGACCTAATAAC -s AGTTGATCCGGTCCTAGGTCTAGAGCGGGCCCTGGCAGA --mergeoverlap -p > {output} 2> {log}
         """
 
@@ -91,6 +114,9 @@ assignment_bwa_dicts = ["bwt", "sa", "pac", "ann", "amb"]
 
 
 rule assignment_bwa_ref:
+    """
+    Create mapping reference for BWA from design file.
+    """
     input:
         lambda wc: config["assignments"][wc.assignment]["reference"],
     output:
@@ -114,6 +140,9 @@ rule assignment_bwa_ref:
 
 
 rule assignment_mapping:
+    """
+    Map the reads to the reference.
+    """
     input:
         bams=expand(
             "results/assignment/{{assignment}}/bam/merge_split{split}.bam",
@@ -128,11 +157,12 @@ rule assignment_mapping:
         "results/assignment/{assignment}/aligned_merged_reads.bam",
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
+    threads: config["global"]["threads"]
     log:
         temp("results/logs/assignment/mapping.{assignment}.log"),
     shell:
         """
-        bwa mem -t 30 -L 80 -M -C {input.reference} <(
+        bwa mem -t {threads} -L 80 -M -C {input.reference} <(
             samtools cat {input.bams} | \
             samtools view -F 514 | \
             awk 'BEGIN{{ OFS="\\n"; FS="\\t" }}{{ print "@"$1" "$12","$13,$10,"+",$11 }}';
@@ -143,6 +173,9 @@ rule assignment_mapping:
 
 
 rule assignment_idx_bam:
+    """
+    Index the BAM file
+    """
     input:
         "results/assignment/{assignment}/aligned_merged_reads.bam",
     output:
@@ -158,11 +191,14 @@ rule assignment_idx_bam:
 
 
 rule assignment_flagstat:
+    """
+    Run samtools flagstat
+    """
     input:
         bam="results/assignment/{assignment}/aligned_merged_reads.bam",
         idx="results/assignment/{assignment}/aligned_merged_reads.bam.bai",
     output:
-        "results/assignment/{assignment}/stats/assignment/bam_stats.txt",
+        "results/assignment/{assignment}/statistic/assignment/bam_stats.txt",
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
     log:
@@ -174,6 +210,9 @@ rule assignment_flagstat:
 
 
 rule assignment_getBCs:
+    """
+    Get the barcodes.
+    """
     input:
         "results/assignment/{assignment}/aligned_merged_reads.bam",
     output:
@@ -213,6 +252,9 @@ rule assignment_getBCs:
 
 
 rule assignment_filter:
+    """
+    Filter the barcodes file based on the config given in the config-file.
+    """
     input:
         assignment="results/assignment/{assignment}/barcodes_incl_other.sorted.tsv.gz",
         script=getScript("assignment/filterAssignmentTsv.py"),

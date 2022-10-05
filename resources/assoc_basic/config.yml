@@ -1,0 +1,32 @@
+---
+global:
+  threads: 10
+  assignments:
+    split_number: 30
+assignments:
+  assoc_basic:
+    bc_length: 15
+    sequence_length:
+      min: 166
+      max: 175
+    alignment_start:
+      min: 1
+      max: 3
+    R1:
+      - data/Assoc_Basic/SRR10800986_1.fastq.gz
+    R2:
+      - data/Assoc_Basic/SRR10800986_2.fastq.gz
+    R3:
+      - data/Assoc_Basic/SRR10800986_3.fastq.gz
+    reference: data/Assoc_Basic/design.fa
+    configs:
+      example_config:
+        min_support: 3
+        fraction: 0.7
+        unknown_other: true
+        ambiguous: true
+      example_config_true_matches:
+        min_support: 3
+        fraction: 0.7
+        unknown_other: false
+        ambiguous: false

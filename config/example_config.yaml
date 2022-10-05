@@ -1,9 +1,11 @@
 ---
 global: # generall configs effecting one or multiple parts
+  threads: 1
   assignments:
     split_number: 1 # number of files fastq should be split for parallelization
 assignments:
   example_assignment: # name of an example assignment (can be any string)
+    bc_length: 15
     sequence_length: # sequence length of design excluding adapters.
       min: 195
       max: 205

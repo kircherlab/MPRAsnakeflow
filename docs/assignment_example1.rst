@@ -94,25 +94,114 @@ Now we have everything at hand to run the count MPRAsnakeflow pipeline. We will 
 
 First we have to configure the config file:
 
-.. todo:: config file of assignment example
+.. literalinclude:: ../resources/assoc_basic/config.yml
+   :language: yaml
 
-The MPRAsnakeflow command is:
 
+First we do a try run using snakemake :code:`-n` option. The MPRAsnakeflow command is:
 
 .. code-block:: bash
 
     cd Assoc_Basic
     conda activate mprasnakeflow
-    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --config config.yml
+    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/assoc_basic/config.yml -n
+
+You should see a list of rules that will be executed. This is the summary:
+
+.. code-block:: text
+   
+   Job stats:
+   job                                    count    min threads    max threads
+   -----------------------------------  -------  -------------  -------------
+   all                                        1              1              1
+   assignment_bwa_ref                         1              1              1
+   assignment_fastq_split                     3              1              1
+   assignment_filter                          2              1              1
+   assignment_flagstat                        1              1              1
+   assignment_getBCs                          1              1              1
+   assignment_getInputs                       3              1              1
+   assignment_idx_bam                         1              1              1
+   assignment_mapping                         1              1              1
+   assignment_merge                           30             10             10
+   assignment_statistic_assignedCounts        2              1              1
+   assignment_statistic_assignment            2              1              1
+   assignment_statistic_totalCounts           1              1              1
+   total                                     49              1              1
+
+
+When dry-drun does not give any errors we will run the workflow. We use a machine with 30 threads/cores to run the workflow. Therefore :code:`split_number` is set to 30 to parallize the workflow. Also we are using 10 threads for mapping (bwa mem). But snakemake takes care that no more than 30 threads are used.
+
+.. code-block:: bash
+
+    snakemake -c 30 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/assoc_basic/config.yml
+
 
 .. note:: Please modify your code when running in a cluster environment. We have an example SLURM config file here :code:`config/sbatch.yml`.
 
-If everything works fine the following 7 rules will run: :code:`count_bc_nolab` :code:`create_BWA_ref`, :code:`PE_merge`, :code:`align_BWA_PE`, :code:`collect_chunks`, :code:`map_element_barcodes`, :code:`filter_barcodes`.
+If everything works fine the 13 rules showed above will run:
 
-.. todo:: Rules not correct in example assignment workflow
-
+all
+   The overall all rule. Here is defined what final output files are expected.
+assignment_bwa_ref
+   Create mapping reference for BWA from design file.
+assignment_fastq_split
+   Split the fastq files into n files for parallelisation. N is given by split_read in the configuration file.
+assignment_getInputs
+   Concat the input fastq files per R1,R2,R3. If only single fastq file is provided a symbolic link is created.
+assignment_merge
+   Merge the FW,REV and BC fastq files into one. Extract the index sequence from the middle and end of an Illumina run. Separates reads for Paired End runs. Merge/Adapter trim reads stored in BAM.
+assignment_mapping
+   Map the reads to the reference.
+assignment_idx_bam
+   Index the BAM file
+assignment_flagstat
+   Run samtools flagstat. Results are in :code:`results/assignment/assoc_basic/statistic/assignment/bam_stats.txt`
+assignment_getBCs
+   Get the barcodes (not filtered). Results are in :code:`results/assignment/assoc_basic/barcodes_incl_other.sorted.tsv.gz`
+assignment_statistic_totalCounts
+   Statistic of the total (unfiltered counts). Results are in :code:`results/assignment/assoc_basic/statistic/total_counts.tsv.gz`
+assignment_filter
+   Filter the barcodes file based on the config given in the config-file. Results for this run are here :code:`results/assignment/assoc_basic/assignment_barcodes.example_config_true_matches.sorted.tsv.gz` (example_config_true_matches) and here :code:`results/assignment/assoc_basic/assignment_barcodes.example_config.sorted.tsv.gz` (example_config)
+assignment_statistic_assignedCounts
+   Statistic of filtered the assigned counts. Result is here :code:`results/assignment/assoc_basic/statistic/assigned_counts.example_config_true_matches.tsv.gz` (example_config_true_matches) or :code:`results/assignment/assoc_basic/statistic/assigned_counts.example_config.tsv.gz` (example_config)
+assignment_statistic_assignment
+   Statistic of the filtered assignment.  Result is here :code:`results/assignment/assoc_basic/statistic/assignment.example_config_true_matches.tsv.gz` and a plot here :code:`results/assignment/assoc_basic/statistic/assignment.example_config_true_matches.png`. (also files are available for the config :code:`example_config`).
 
 Results
 -----------------
 
-All needed output files will be in the :code:`results/assignemnts/assoc_basic` folder.
+All needed output files will be in the :code:`results/assignemnts/assoc_basic` folder. The final assignment is in :code:`results/assignment/assoc_basic/assignment_barcodes.example_config_true_matches.sorted.tsv.gz` or :code:`results/assignment/assoc_basic/assignment_barcodes.example_config.sorted.tsv.gz` depeding on the filtering in the config file. 
+
+.. note:: Please note that for the experiment/count workflow you have to remove ambigous BCs. Therefore the file :code:`results/assignment/assoc_basic/assignment_barcodes.example_config_true_matches.sorted.tsv.gz` is the correct wone
+
+
+Total file tree of the results folder:
+
+.. code-block:: text
+
+    ├── assignment
+    │   └── assoc_basic
+    │       ├── aligned_merged_reads.bam
+    │       ├── aligned_merged_reads.bam.bai
+    │       ├── assignment_barcodes.example_config.sorted.tsv.gz
+    │       ├── assignment_barcodes.example_config_true_matches.sorted.tsv.gz
+    │       ├── barcodes_incl_other.sorted.tsv.gz
+    │       ├── reference
+    │       │   ├── reference.fa
+    │       │   ├── reference.fa.amb
+    │       │   ├── reference.fa.ann
+    │       │   ├── reference.fa.bwt
+    │       │   ├── reference.fa.dict
+    │       │   ├── reference.fa.fai
+    │       │   ├── reference.fa.pac
+    │       │   └── reference.fa.sa
+    │       └── statistic
+    │           ├── assigned_counts.example_config_true_matches.tsv.gz
+    │           ├── assigned_counts.example_config.tsv.gz
+    │           ├── assignment
+    │           │   └── bam_stats.txt
+    │           ├── assignment.example_config.png
+    │           ├── assignment.example_config_true_matches.png
+    │           ├── assignment.example_config_true_matches.tsv.gz
+    │           ├── assignment.example_config.tsv.gz
+    │           └── total_counts.tsv.gz

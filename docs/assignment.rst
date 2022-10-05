@@ -44,8 +44,8 @@ With :code:`--help` or :code:`-h` you can see the help message.
 Mandatory arguments:
   :\-\-cores:                 
     Use at most N CPU cores/jobs in parallel. If N is omitted or 'all', the limit is set to the number of available CPU cores. In case of cluster/cloud execution, this argument sets the number of total cores used over all jobs (made available to rules via workflow.cores).(default: None)
-  :\-\-config, -c:            
-    Set or overwrite values in the workflow config object. The workflow config object is accessible as variable config inside the workflow. Default values can be set by providing a JSON file (see Documentation). (default: None)
+  :\-\-configfile:
+    Specify or overwrite the config file of the workflow (see the docs). Values specified in JSON or YAML format are available in the global config dictionary inside the workflow. Multiple files overwrite each other in the given order. Thereby missing keys in previous config files are extended by following configfiles. Note that this order also includes a config file defined in the workflow definition itself (which will come first). (default: None)
   :\-\-use-conda:             
     **Required to run MPRAsnakeflow.** If defined in the rule, run job in a conda environment. If this flag is not set, the conda directive is ignored. (default: False)
 Recommended arguments:
@@ -60,61 +60,89 @@ Usefull arguments:
 Rules
 -------------
 
-Rules run by snakemake in the assignment utility. Some rules will be run only if certain options used and are marked below.
+Rules run by snakemake in the assignment utility.
 
-count_bc or count_bc_nolab (if no label file is provided)
-  Removes any illegal characters (defined by Piccard) in the label file and design file. Counts the number of reads in the fastq file.
+all
+   The overall all rule. Here is defined what final output files are expected.
+assignment_bwa_ref
+   Create mapping reference for BWA from design file.
+assignment_fastq_split
+   Split the fastq files into n files for parallelisation. N is given by split_read in the configuration file.
+assignment_getInputs
+   Concat the input fastq files per R1,R2,R3. If only single fastq file is provided a symbolic link is created.
+assignment_merge
+   Merge the FW,REV and BC fastq files into one. Extract the index sequence from the middle and end of an Illumina run. Separates reads for Paired End runs. Merge/Adapter trim reads stored in BAM.
+assignment_mapping
+   Map the reads to the reference.
+assignment_idx_bam
+   Index the BAM file
+assignment_flagstat
+   Run samtools flagstat. Results are in :code:`results/assignment/<assignment_name>/statistic/assignment/bam_stats.txt`
+assignment_getBCs
+   Get the barcodes (not filtered). Results are in :code:`results/assignment/<assignment_name>/barcodes_incl_other.sorted.tsv.gz`
+assignment_statistic_totalCounts
+   Statistic of the total (unfiltered counts). Results are in :code:`results/assignment/<assignment_name>/statistic/total_counts.tsv.gz`
+assignment_filter
+   Filter the barcodes file based on the config given in the config-file. Results for this run are here :code:`results/assignment/<assignment_name>/assignment_barcodes.<config_name>.sorted.tsv.gz`.
+assignment_statistic_assignedCounts
+   Statistic of filtered the assigned counts. Result is here :code:`results/assignment/<assignment_name>/statistic/assigned_counts.<config_name>.tsv.gz`.
+assignment_statistic_assignment
+   Statistic of the filtered assignment.  Result is here :code:`results/assignment/<assignment_name>/statistic/assignment.<config_name>.tsv.gz` and a plot here :code:`results/assignment/<assignment_name>/statistic/assignment.<config_name>.png`.
 
-create_BWA_ref
-  Creates a BWA reference based on the design file
-
-PE_merge (if paired end fastq files provided)
-  Merges the forward and reverse reads covering the CRS using fastq-join
-
-align_BWA_PE or align_BWA_S (if single end mode)
-  Uses BWA to align the CRS fastq files to the reference created from the Design File. This will be done for each fastq file chunk based on the split option.
-
-collect_chunks
-  merges all bamfiles from each separate alignment
-
-map_element_barcodes
-  Assign barcodes to CRS and filters barcodes by user defined parameters for coverage and mapping percentage
-
-filter_barcodes
-  Visualize results
-
-.. todo:: These are not the correct files for each cindition in the experiment workflow
 
 Output
 ==========
 
-The output can be found in the folder defined by the option :code:`results/assignments/`. It is structured in folders of the condition as
+The output can be found in the folder defined by the option :code:`results/assignment/`. It is structured in folders of the condition as
 
 Files
 -------------
 
-File tree
+File tree of the result folder (names in :code:`< >` can be specified in the config file.)
 
 .. code-block:: text
 
+    ├── assignment
+    │   └── <assignment_name>
+    │       ├── aligned_merged_reads.bam
+    │       ├── aligned_merged_reads.bam.bai
+    │       ├── assignment_barcodes.<config_name>.sorted.tsv.gz
+    │       ├── barcodes_incl_other.sorted.tsv.gz
+    │       ├── reference
+    │       │   ├── reference.fa
+    │       │   ├── reference.fa.amb
+    │       │   ├── reference.fa.ann
+    │       │   ├── reference.fa.bwt
+    │       │   ├── reference.fa.dict
+    │       │   ├── reference.fa.fai
+    │       │   ├── reference.fa.pac
+    │       │   └── reference.fa.sa
+    │       └── statistic
+    │           ├── assigned_counts.<config_name>.tsv.gz
+    │           ├── assignment
+    │           │   └── bam_stats.txt
+    │           ├── assignment.<config_name>.png
+    │           ├── assignment.<config_name>.tsv.gz
+    │           └── total_counts.tsv.gz
 
 
-.. todo:: File tree for the assignment workflow
 
 
-count_fastq.txt
-    number of barcode reads
-count_merged.txt
-    number of aligned CRS reads
-design_rmIllegalChars.fa
-    Design file with illegal characters removed
-label_rmIllegalChars.txt
-    Label file with illegal characters removed
-s_merged.bam
-    sorted bamfile for CRS alignment
-${name}_coords_to_barcodes.pickle
-    pickle file containing a python dictionary of CRS/barcode mappings
-\*.png
-    Visualization of number of barcodes mapping to enhancers
-
-.. todo:: These are not the correct filesin the experiment workflow
+total_counts.tsv.gz
+    Statistic of BCs mapped to oligos.
+assigned_counts.<config_name>.tsv.gz
+    Statistic of BCs mapped to oligos after fitering defined by config.
+assignment.<config_name>.tsv.gz
+    Average/median support of BC per oligo. Oligos with >= 15 BCs.
+reference.fa
+    Design file.
+aligned_merged_reads.bam
+    Sorted bamfile for oligo alignment
+barcodes_incl_other.sorted.tsv.gz
+    Complete list of all barcodes found in mapping file (ambigous and unambigous) with mappings (if possible)
+assignment_barcodes.<config_name>.sorted.tsv.gz
+    Mapping file of barcodes to sequence. 
+assignment.<config_name>.png
+    Visualization of number of barcodes mapping to oligo.
+bam_stats.txt
+    samtools bamstat output.
