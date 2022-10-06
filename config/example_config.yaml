@@ -35,10 +35,11 @@ experiments:
     assignments:
       from_file:
         type: file
-        value: resources/SRR10800986_filtered_coords_to_barcodes.tsv.gz
+        assignment_file: resources/SRR10800986_filtered_coords_to_barcodes.tsv.gz
       from_workflow:
         type: config
-        value: example_assignment
+        assignment_name: example_assignment
+        assignment_config: example_config
     design_file: resources/design.fa
     label_file: resources/labels.tsv # optional
     configs:
