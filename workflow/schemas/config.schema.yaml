@@ -1,5 +1,5 @@
 ---
-$schema: "http://json-schema.org/draft-04/schema#"
+$schema: "https://json-schema.org/draft/2020-12/schema"
 
 description: snakemake configuration file
 
@@ -133,7 +133,11 @@ properties:
                 enum:
                   - file
                   - config
-              value:
+              assignment_file:
+                type: string
+              assignment_name:
+                type: string
+              assignment_config:
                 type: string
               sampling:
                 type: object
@@ -142,11 +146,29 @@ properties:
                     type: number
                   total:
                     type: integer
-                additionalProperties: false
             required:
               - type
-              - value
             additionalProperties: false
+            allOf:
+              - if:
+                  properties:
+                    type:
+                      const: config
+                  required:
+                    - type
+                then:
+                  required:
+                    - assignment_name
+                    - assignment_config
+              - if:
+                  properties:
+                    type:
+                      const: file
+                  required:
+                    - type
+                then:
+                  required:
+                    - assignment_file
         configs:
           type: object
           additionalProperties:
