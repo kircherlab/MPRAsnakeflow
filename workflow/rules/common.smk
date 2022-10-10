@@ -570,7 +570,7 @@ def getAssignedCountsStatistic(project, assignment, conf, condition):
     output = []
     for index, row in exp.iterrows():
         output += [
-            "--statistic %s results/experiments/%s/stats/assigned_counts/%s/%s/%s_%s_merged_assigned_counts.statistic.tsv.gz"
+            "--statistic %s results/experiments/%s/statistic/assigned_counts/%s/%s/%s_%s_merged_assigned_counts.statistic.tsv.gz"
             % (
                 str(row["Replicate"]),
                 project,

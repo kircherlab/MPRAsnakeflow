@@ -15,7 +15,7 @@ rule statistic_correlation_bc_counts:
         report(
             "results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}_{config}_barcode_DNA_pairwise.png",
             category="{project}",
-            subcategory="Correlation plots",
+            subcategory="BC correlation plots",
             labels={
                 "Step": "{raw_or_assigned}",
                 "Condition": "{condition}",
@@ -26,7 +26,7 @@ rule statistic_correlation_bc_counts:
         report(
             "results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}_{config}_barcode_RNA_pairwise.png",
             category="{project}",
-            subcategory="Correlation plots",
+            subcategory="BC correlation plots",
             labels={
                 "Step": "{raw_or_assigned}",
                 "Condition": "{condition}",
@@ -37,7 +37,7 @@ rule statistic_correlation_bc_counts:
         report(
             "results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}_{config}_barcode_Ratio_pairwise.png",
             category="{project}",
-            subcategory="Correlation plots",
+            subcategory="BC correlation plots",
             labels={
                 "Step": "{raw_or_assigned}",
                 "Condition": "{condition}",
@@ -163,16 +163,94 @@ rule statistic_correlation_calculate:
         ),
         script=getScript("count/plot_perInsertCounts_correlation.R"),
     output:
+        report(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_DNA_pairwise.png",
+            category="{project}",
+            subcategory="Oligo correlation plots",
+            labels={
+                "Assignment": "{assignment}",
+                "Condition": "{condition}",
+                "Configuration": "{config}",
+                "Plot": "DNA",
+                "Threshold": "All",
+            },
+        ),
+        report(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_RNA_pairwise.png",
+            category="{project}",
+            subcategory="Oligo correlation plots",
+            labels={
+                "Assignment": "{assignment}",
+                "Condition": "{condition}",
+                "Configuration": "{config}",
+                "Plot": "RNA",
+                "Threshold": "All",
+            },
+        ),
+        report(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_Ratio_pairwise.png",
+            category="{project}",
+            subcategory="Oligo correlation plots",
+            labels={
+                "Assignment": "{assignment}",
+                "Condition": "{condition}",
+                "Configuration": "{config}",
+                "Plot": "Ratio",
+                "Threshold": "All",
+            },
+        ),
+        report(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_DNA_pairwise_minThreshold.png",
+        category="{project}",
+        subcategory="Oligo correlation plots",
+        labels=lambda wc: {
+            "Assignment": "{assignment}",
+            "Condition": "{condition}",
+            "Configuration": "{config}",
+            "Plot": "DNA",
+            "Threshold": str(
+                config["experiments"][wc.project]["configs"][wc.config]["filter"][
+        "bc_threshold"
+                    ]
+                ),
+            },
+        ),
+        report(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_RNA_pairwise_minThreshold.png",
+        category="{project}",
+        subcategory="Oligo correlation plots",
+        labels=lambda wc: {
+            "Assignment": "{assignment}",
+            "Condition": "{condition}",
+            "Configuration": "{config}",
+            "Plot": "RNA",
+            "Threshold": str(
+                config["experiments"][wc.project]["configs"][wc.config]["filter"][
+        "bc_threshold"
+                    ]
+                ),
+            },
+        ),
+        report(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_Ratio_pairwise_minThreshold.png",
+        category="{project}",
+        subcategory="Oligo correlation plots",
+        labels=lambda wc: {
+            "Assignment": "{assignment}",
+            "Condition": "{condition}",
+            "Configuration": "{config}",
+            "Plot": "Ratio",
+            "Threshold": str(
+                config["experiments"][wc.project]["configs"][wc.config]["filter"][
+        "bc_threshold"
+                    ]
+                ),
+            },
+        ),
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box.png",
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box_minThreshold.png",
-        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_DNA_pairwise.png",
-        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_DNA_pairwise_minThreshold.png",
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png",
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png",
-        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_Ratio_pairwise.png",
-        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_Ratio_pairwise_minThreshold.png",
-        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_RNA_pairwise.png",
-        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_RNA_pairwise_minThreshold.png",
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_correlation.tsv",
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_correlation_minThreshold.tsv",
     params:

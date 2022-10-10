@@ -10,7 +10,7 @@ rule variants_generateVariantTable:
         "results/experiments/{project}/variants/{assignment}/{config}/{condition}_{replicate}_variantTable.tsv.gz",
     log:
         temp(
-            "tesults/logs/experiments/variants/generateVariantTable.{project}.{assignment}.{config}.{condition}.{replicate}.log"
+            "results/logs/experiments/variants/generateVariantTable.{project}.{assignment}.{config}.{condition}.{replicate}.log"
         ),
     shell:
         """
@@ -46,12 +46,12 @@ rule variants_MasterTable:
                 )
             ]
         ),
-        minRNACounts=lambda wc: counts_getFilterConfig(
-            wc.project, wc.config, "RNA", "min_counts"
-        ),
-        minDNACounts=lambda wc: counts_getFilterConfig(
-            wc.project, wc.config, "DNA", "min_counts"
-        ),
+        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
+            wc.config
+        ]["filter"]["RNA"]["min_counts"],
+        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
+            wc.config
+        ]["filter"]["DNA"]["min_counts"],
     log:
         temp(
             "results/logs/experiments/variants/MasterTable.{project}.{assignment}/{config}.{condition}.log"
