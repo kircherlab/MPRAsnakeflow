@@ -80,7 +80,7 @@ counts_dna_rna_merge_counts:
 
 assigned_counts_dna_rna_merge:
   time: "4-00:00"
-  mem: 2G
+  mem: 10G
   queue: "medium"
 
 assigned_counts_assignBarcodes:
