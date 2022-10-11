@@ -27,8 +27,8 @@ It is necessary to get the ordered oligo array so that each enhancer sequence ca
 
 .. code-block:: bash
 
-    mkdir -p Assoc_Basic/data
-    cd Assoc_Basic/data
+    mkdir -p assoc_basic/data
+    cd assoc_basic/data
     wget ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM4237nnn/GSM4237954/suppl/GSM4237954_9MPRA_elements.fa.gz
 
     zcat GSM4237954_9MPRA_elements.fa.gz |awk '{ count+=1; if (count == 1) { print } else { print substr($1,1,171)}; if (count == 2) { count=0 } }' > design.fa
@@ -43,7 +43,7 @@ There is one set of association sequencing for this data, which contains a forwa
 .. code-block:: bash
 
     conda install sra-tools
-    cd Assoc_Basic/data
+    cd assoc_basic/data
     fastq-dump --gzip --split-files SRR10800986
     cd ..
 
@@ -52,7 +52,7 @@ For large files and unstable internet connection we reccommend the comand `prefe
 .. code-block:: bash
 
     conda install sra-tools
-    cd Assoc_Basic/data
+    cd assoc_basic/data
     prefetch SRR10800986
     fastq-dump --gzip --split-files SRR10800986
     cd ..
@@ -72,6 +72,10 @@ the folder should look like this:
 .. code-block:: text
 
     data
+    ├── design.fa
+    ├── SRR10800986_1.fastq.gz
+    ├── SRR10800986_2.fastq.gz
+    └── SRR10800986_3.fastq.gz
 
 Here is an overview of the files:
 
@@ -90,9 +94,9 @@ Now we are ready to run MPRAsnakeflow and create CRS-barcode mappings.
 Run snakemake
 ------------------------------
 
-Now we have everything at hand to run the count MPRAsnakeflow pipeline. We will run the pipeline directly in the :code:`Assoc_Basic` folder. The MPRAsnakeflow workflow can be in a different directory. Let's assume :code:`/home/user/MPRAsnakeflow`. 
+Now we have everything at hand to run the count MPRAsnakeflow pipeline. We will run the pipeline directly in the :code:`assoc_basic` folder. The MPRAsnakeflow workflow can be in a different directory. Let's assume :code:`/home/user/MPRAsnakeflow`. 
 
-First we have to configure the config file:
+First we have to configure the config file and save it to the :code:`assoc_basic` folder. The config file is a simple text file with the following content:
 
 .. literalinclude:: ../resources/assoc_basic/config.yml
    :language: yaml
@@ -102,9 +106,9 @@ First we do a try run using snakemake :code:`-n` option. The MPRAsnakeflow comma
 
 .. code-block:: bash
 
-    cd Assoc_Basic
+    cd assoc_basic
     conda activate mprasnakeflow
-    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/assoc_basic/config.yml -n
+    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile config.yml -n
 
 You should see a list of rules that will be executed. This is the summary:
 
@@ -155,24 +159,24 @@ assignment_mapping
 assignment_idx_bam
    Index the BAM file
 assignment_flagstat
-   Run samtools flagstat. Results are in :code:`results/assignment/assoc_basic/statistic/assignment/bam_stats.txt`
+   Run samtools flagstat. Results are in :code:`results/assignment/assocBasic/statistic/assignment/bam_stats.txt`
 assignment_getBCs
-   Get the barcodes (not filtered). Results are in :code:`results/assignment/assoc_basic/barcodes_incl_other.sorted.tsv.gz`
+   Get the barcodes (not filtered). Results are in :code:`results/assignment/assocBasic/barcodes_incl_other.sorted.tsv.gz`
 assignment_statistic_totalCounts
-   Statistic of the total (unfiltered counts). Results are in :code:`results/assignment/assoc_basic/statistic/total_counts.tsv.gz`
+   Statistic of the total (unfiltered counts). Results are in :code:`results/assignment/assocBasic/statistic/total_counts.tsv.gz`
 assignment_filter
-   Filter the barcodes file based on the config given in the config-file. Results for this run are here :code:`results/assignment/assoc_basic/assignment_barcodes.example_config_true_matches.sorted.tsv.gz` (example_config_true_matches) and here :code:`results/assignment/assoc_basic/assignment_barcodes.example_config.sorted.tsv.gz` (example_config)
+   Filter the barcodes file based on the config given in the config-file. Results for this run are here :code:`results/assignment/assocBasic/assignment_barcodes.exampleConfigTrueMatches.sorted.tsv.gz` (exampleConfigTrueMatches) and here :code:`results/assignment/assocBasic/assignment_barcodes.exampleConfig.sorted.tsv.gz` (exampleConfig)
 assignment_statistic_assignedCounts
-   Statistic of filtered the assigned counts. Result is here :code:`results/assignment/assoc_basic/statistic/assigned_counts.example_config_true_matches.tsv.gz` (example_config_true_matches) or :code:`results/assignment/assoc_basic/statistic/assigned_counts.example_config.tsv.gz` (example_config)
+   Statistic of filtered the assigned counts. Result is here :code:`results/assignment/assocBasic/statistic/assigned_counts.exampleConfigTrueMatches.tsv.gz` (exampleConfigTrueMatches) or :code:`results/assignment/assocBasic/statistic/assigned_counts.exampleConfig.tsv.gz` (exampleConfig)
 assignment_statistic_assignment
-   Statistic of the filtered assignment.  Result is here :code:`results/assignment/assoc_basic/statistic/assignment.example_config_true_matches.tsv.gz` and a plot here :code:`results/assignment/assoc_basic/statistic/assignment.example_config_true_matches.png`. (also files are available for the config :code:`example_config`).
+   Statistic of the filtered assignment.  Result is here :code:`results/assignment/assocBasic/statistic/assignment.exampleConfigTrueMatches.tsv.gz` and a plot here :code:`results/assignment/assocBasic/statistic/assignment.exampleConfigTrueMatches.png`. (also files are available for the config :code:`exampleConfig`).
 
 Results
 -----------------
 
-All needed output files will be in the :code:`results/assignemnts/assoc_basic` folder. The final assignment is in :code:`results/assignment/assoc_basic/assignment_barcodes.example_config_true_matches.sorted.tsv.gz` or :code:`results/assignment/assoc_basic/assignment_barcodes.example_config.sorted.tsv.gz` depeding on the filtering in the config file. 
+All needed output files will be in the :code:`results/assignemnts/assocBasic` folder. The final assignment is in :code:`results/assignment/assocBasic/assignment_barcodes.exampleConfigTrueMatches.sorted.tsv.gz` or :code:`results/assignment/assocBasic/assignment_barcodes.exampleConfig.sorted.tsv.gz` depeding on the filtering in the config file. 
 
-.. note:: Please note that for the experiment/count workflow you have to remove ambigous BCs. Therefore the file :code:`results/assignment/assoc_basic/assignment_barcodes.example_config_true_matches.sorted.tsv.gz` is the correct wone
+.. note:: Please note that for the experiment/count workflow you have to remove ambigous BCs. Therefore the file :code:`results/assignment/assocBasic/assignment_barcodes.exampleConfigTrueMatches.sorted.tsv.gz` is the correct wone
 
 
 Total file tree of the results folder:
@@ -180,11 +184,11 @@ Total file tree of the results folder:
 .. code-block:: text
 
     ├── assignment
-    │   └── assoc_basic
+    │   └── assocBasic
     │       ├── aligned_merged_reads.bam
     │       ├── aligned_merged_reads.bam.bai
-    │       ├── assignment_barcodes.example_config.sorted.tsv.gz
-    │       ├── assignment_barcodes.example_config_true_matches.sorted.tsv.gz
+    │       ├── assignment_barcodes.exampleConfig.sorted.tsv.gz
+    │       ├── assignment_barcodes.exampleConfigTrueMatches.sorted.tsv.gz
     │       ├── barcodes_incl_other.sorted.tsv.gz
     │       ├── reference
     │       │   ├── reference.fa
@@ -196,12 +200,12 @@ Total file tree of the results folder:
     │       │   ├── reference.fa.pac
     │       │   └── reference.fa.sa
     │       └── statistic
-    │           ├── assigned_counts.example_config_true_matches.tsv.gz
-    │           ├── assigned_counts.example_config.tsv.gz
+    │           ├── assigned_counts.exampleConfigTrueMatches.tsv.gz
+    │           ├── assigned_counts.exampleConfig.tsv.gz
     │           ├── assignment
     │           │   └── bam_stats.txt
-    │           ├── assignment.example_config.png
-    │           ├── assignment.example_config_true_matches.png
-    │           ├── assignment.example_config_true_matches.tsv.gz
-    │           ├── assignment.example_config.tsv.gz
+    │           ├── assignment.exampleConfig.png
+    │           ├── assignment.exampleConfigTrueMatches.png
+    │           ├── assignment.exampleConfigTrueMatches.tsv.gz
+    │           ├── assignment.exampleConfig.tsv.gz
     │           └── total_counts.tsv.gz

@@ -33,10 +33,10 @@ experiments:
     experiment_file: resources/example_experiment.csv
     demultiplex: false
     assignments:
-      from_file:
+      fromFile:
         type: file
         assignment_file: resources/SRR10800986_filtered_coords_to_barcodes.tsv.gz
-      from_workflow:
+      fromWorkflow:
         type: config
         assignment_name: example_assignment
         assignment_config: example_config

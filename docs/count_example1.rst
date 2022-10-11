@@ -20,22 +20,22 @@ Installing MPRAsnakeflow
 
 Please install conda, the MPRAsnakeflow environment, and clone the actual ``MPRAsnakeflow`` master branch. You will find more help under :ref:`Installation`.
 
-Producing an association (.tsv) file 
+Producing an association (.tsv.gz) file 
 ------------------------------------
-This workflow requires a python dictionary of candidate regulatory sequence (CRS) mapped to their barcodes in a tab separated (.tsv) format. For this example the file can be generated using :ref:`Assignment example` or it can be found in `sample` folder in `MPRAsnakelfow <https://github.com/kircherlab/MPRAsnakeflow/>`_.
+This workflow requires a python dictionary of candidate regulatory sequence (CRS) mapped to their barcodes in a tab separated (.tsv) format. For this example the file can be generated using :ref:`Assignment example` or it can be found in :code:`resources/count_basic` folder in `MPRAsnakelfow <https://github.com/kircherlab/MPRAsnakeflow/>`_.
 
-Alternatively, if the association file is in pickle (.pickle) format, you can convert the same file to .tsv format with the in-built function in MPRsnakeflow with the following code:
+Alternatively, if the association file is in pickle (.pickle) format because you used MPRAflow, you can convert the same file to .tsv.gz format with the in-built function in MPRsnakeflow with the following code:
 
 .. code-block:: bash
     
     conda activate mprasnakeflow
-    python assignment_pickle_to_tsv.py --input <assignment_file in pickle format>
+    python assignment_pickle_to_tsv.py --input <assignment_file>.pickle | sort | uniq | gzip -c > <assignment_file>.tsv.gz
 
 
 Design (.fa) file
 -----------------
 
-    File can be generated using the :ref:`Assignment example` or downloaded from the `sample` folder in `MPRAsnakelfow <https://github.com/kircherlab/MPRAsnakeflow/>`_.
+    File can be generated using the :ref:`Assignment example` or downloaded from the :code:`resources/count_basic` folder in `MPRAsnakelfow <https://github.com/kircherlab/MPRAsnakeflow/>`_.
 
 
 
@@ -49,8 +49,8 @@ There is one condition (HEPG2) with three technical replicates. Each replicate c
 .. code-block:: bash
 
     conda install sra-tools
-    mkdir -p Count_Basic/data
-    cd Count_Basic/data
+    mkdir -p count_basic/data
+    cd count_basic/data
     fastq-dump --gzip --split-files SRR10800881 SRR10800882 SRR10800883 SRR10800884 SRR10800885 SRR10800886
     cd ..
 
@@ -59,7 +59,7 @@ For large files and unstable internet connection we reccommend the comand ``pref
 .. code-block:: bash
 
     conda install sra-tools
-    cd Count_Basic/data
+    cd count_basic/data
     prefetch SRR10800881 SRR10800882 SRR10800883 SRR10800884 SRR10800885 SRR10800886
     fastq-dump --gzip --split-files SRR10800986
     cd ..
@@ -79,6 +79,26 @@ The folder should look like this:
 .. code-block:: text
 
     data
+    ├── design.fa
+    ├── SRR10800881_1.fastq.gz
+    ├── SRR10800881_2.fastq.gz
+    ├── SRR10800881_3.fastq.gz
+    ├── SRR10800882_1.fastq.gz
+    ├── SRR10800882_2.fastq.gz
+    ├── SRR10800882_3.fastq.gz
+    ├── SRR10800883_1.fastq.gz
+    ├── SRR10800883_2.fastq.gz
+    ├── SRR10800883_3.fastq.gz
+    ├── SRR10800884_1.fastq.gz
+    ├── SRR10800884_2.fastq.gz
+    ├── SRR10800884_3.fastq.gz
+    ├── SRR10800885_1.fastq.gz
+    ├── SRR10800885_2.fastq.gz
+    ├── SRR10800885_3.fastq.gz
+    ├── SRR10800886_1.fastq.gz
+    ├── SRR10800886_2.fastq.gz
+    ├── SRR10800886_3.fastq.gz
+    └── SRR10800986_filtered_coords_to_barcodes.tsv.gz
 
 Here is an overview of the files:
 
@@ -112,23 +132,42 @@ Our experiment file looks exactly like this:
     HEPG2,2,SRR10800883_1.fastq.gz,SRR10800883_2.fastq.gz,SRR10800883_3.fastq.gz,SRR10800884_1.fastq.gz,SRR10800884_2.fastq.gz,SRR10800884_3.fastq.gz
     HEPG2,3,SRR10800885_1.fastq.gz,SRR10800885_2.fastq.gz,SRR10800885_3.fastq.gz,SRR10800886_1.fastq.gz,SRR10800886_2.fastq.gz,SRR10800886_3.fastq.gz
 
-Save it into the :code:`Count_Basic/data` folder under :code:`experiment.csv`.
+Save it into the :code:`count_basic/data` folder under :code:`experiment.csv`.
 
-Running MPRAsnakeflow
----------------------
+MPRAsnakeflow
+=================================
 
-Now we have everything at hand to run the count MPRAsnakeflow pipeline. We will run the pipeline directly in the :code:`Count_Basic` folder. The MPRAsnakeflow workflow can be in a different directory. Let's assume :code:`/home/user/MPRAsnakeflow`.  The MPRAsnakeflow count command is:
+Now we have everything at hand to run the count MPRAsnakeflow pipeline. We will run the pipeline directly in the :code:`count_basic` folder. The MPRAsnakeflow workflow can be in a different directory. Let's assume :code:`/home/user/MPRAsnakeflow`.  The MPRAsnakeflow count command is:
 
+
+First we have to configure the config file and save it to the :code:`count_basic` folder. The config file is a simple text file with the following content:
+
+.. literalinclude:: ../resources/count_basic/config.yml
+   :language: yaml
+
+
+First we do a try run using snakemake :code:`-n` option. The MPRAsnakeflow command is:
 
 .. code-block:: bash
 
-    cd <path/to/MPRAsnakeflow>/MPRAsnakeflow
+    cd count_basic
     conda activate mprasnakeflow
-    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/count_basic/config.yml
+    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile config.yml -n
+
+You should see a list of rules that will be executed. This is the summary:
+
+.. todo:: Summatry list
+
+When dry-drun does not give any errors we will run the workflow. We use a machine with 30 threads/cores to run the workflow. The MPRAsnakeflow command is:
+
+.. code-block:: bash
+
+    snakemake -c 30 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile config.yml
 
 .. note:: Please modify your code when running in a cluster environment. We have an example SLURM config file here :code:`config/sbatch.yml`.
 
-If everything works fine the following 5 rules will run: :code:`create_BAM (make idx)` :code:`raw_counts`, :code:`filter_counts`, :code:`final_counts` and :code:`add-ons`, :code:`dna_rna_merge_counts`, :code:`calc_correlations`, :code:`make_master_tables`.
+If everything works fine the 13 rules showed above will run:
+
 
 
 .. todo:: Rules not correct in example experiment workflow
