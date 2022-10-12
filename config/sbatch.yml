@@ -16,10 +16,10 @@ assignment_merge:
   time: "0-08:00"
   queue: medium
 assignment_fastq_split:
-  time: "0-01:00"
+  time: "0-02:00"
   threads: 1
   mem: 10G
-  queue: debug
+  queue: medium
 assignment_mapping:
   time: "0-20:00"
   threads: 30

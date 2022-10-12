@@ -1,4 +1,4 @@
-.. _Basic count workflow:
+.. _Count example:
 
 .. role:: bash(code)
       :language: bash
@@ -156,7 +156,36 @@ First we do a try run using snakemake :code:`-n` option. The MPRAsnakeflow comma
 
 You should see a list of rules that will be executed. This is the summary:
 
-.. todo:: Summatry list
+.. code-block:: text
+    Job stats:
+    job                                                             count    min threads    max threads
+    ------------------------------------------------------------  -------  -------------  -------------
+    all                                                                 1              1              1
+    counts_create_BAM_umi                                               6              1              1
+    counts_dna_rna_merge_counts                                         6              1              1
+    counts_filter_counts                                                6              1              1
+    counts_final_counts_umi                                             6              1              1
+    counts_raw_counts_umi                                               6              1              1
+    statistic_assigned_counts_combine_BC_assignment_stats               1              1              1
+    statistic_assigned_counts_combine_BC_assignment_stats_helper        1              1              1
+    statistic_assigned_counts_combine_stats_dna_rna_merge               1              1              1
+    statistic_assigned_counts_combine_stats_dna_rna_merge_all           1              1              1
+    statistic_bc_overlap_combine_assigned_counts                        1              1              1
+    statistic_bc_overlap_combine_counts                                 1              1              1
+    statistic_bc_overlap_run                                            4              1              1
+    statistic_correlation_bc_counts                                     2              1              1
+    statistic_correlation_calculate                                     1              1              1
+    statistic_correlation_combine_bc_assigned                           1              1              1
+    statistic_correlation_combine_bc_raw                                1              1              1
+    statistic_correlation_combine_oligo                                 1              1              1
+    statistic_counts_BC_in_RNA_DNA                                      6              1              1
+    statistic_counts_BC_in_RNA_DNA_merge                                2              1              1
+    statistic_counts_barcode_base_composition                           6              1              1
+    statistic_counts_final                                              2              1              1
+    statistic_counts_frequent_umis                                      6              1              1
+    statistic_counts_stats_merge                                        2              1              1
+    statistic_counts_table                                             12              1              1
+    total                                                             139              1             10
 
 When dry-drun does not give any errors we will run the workflow. We use a machine with 30 threads/cores to run the workflow. The MPRAsnakeflow command is:
 
@@ -166,7 +195,59 @@ When dry-drun does not give any errors we will run the workflow. We use a machin
 
 .. note:: Please modify your code when running in a cluster environment. We have an example SLURM config file here :code:`config/sbatch.yml`.
 
-If everything works fine the 13 rules showed above will run:
+If everything works fine the 25 rules showed above will run:
+
+all
+    The overall all rule. Here is defined what final output files are expected.
+counts_create_BAM_umi
+    TODO
+counts_dna_rna_merge_counts
+    TODO
+counts_filter_counts
+    TODO
+counts_final_counts_umi
+    TODO
+counts_raw_counts_umi
+    TODO
+statistic_assigned_counts_combine_BC_assignment_stats
+    TODO
+statistic_assigned_counts_combine_BC_assignment_stats_helper
+    TODO
+statistic_assigned_counts_combine_stats_dna_rna_merge
+    TODO
+statistic_assigned_counts_combine_stats_dna_rna_merge_all
+    TODO
+statistic_bc_overlap_combine_assigned_counts
+    TODO
+statistic_bc_overlap_combine_counts
+    TODO
+statistic_bc_overlap_run
+    TODO
+statistic_correlation_bc_counts
+    TODO
+statistic_correlation_calculate
+    TODO
+statistic_correlation_combine_bc_assigned
+    TODO
+statistic_correlation_combine_bc_raw
+    TODO
+statistic_correlation_combine_oligo
+    TODO
+statistic_counts_BC_in_RNA_DNA
+    TODO
+statistic_counts_BC_in_RNA_DNA_merge
+    TODO
+statistic_counts_barcode_base_composition
+    TODO
+statistic_counts_final
+    TODO
+statistic_counts_frequent_umis
+    TODO
+statistic_counts_stats_merge
+    TODO
+statistic_counts_table
+    TODO
+
 
 
 
@@ -175,17 +256,134 @@ If everything works fine the 13 rules showed above will run:
 Results
 -----------------
 
-All output files will be in the :code:`results/experiments/(name of the project)` folder.
+All needed output files will be in the :code:`results/assignment/countBasic`folder.
 
-We expect the program to output the following status when complete:
-
-.. code-block:: text
-
-    Finished job 100.
-    100 of 100 steps (100%) done
 
 To generate a final report, the following code can be used
 
 .. code-block:: bash
 
     snakemake --config config.yml --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --report report.html 
+
+This html contains als information about the snakemake run and integrates statistic tables and plots.
+
+Total file tree of the results folder:
+
+.. code-block:: text
+    results
+    └── experiments
+        └── countBasic
+            ├── assigned_counts
+            │   └── fromWorkflow
+            │       ├── exampleConfig
+            │       │   ├── HEPG2_1_merged_assigned_counts.tsv.gz
+            │       │   ├── HEPG2_2_merged_assigned_counts.tsv.gz
+            │       │   ├── HEPG2_3_merged_assigned_counts.tsv.gz
+            │       │   ├── HEPG2_allreps_merged.tsv.gz
+            │       │   └── HEPG2_allreps_minThreshold_merged.tsv.gz
+            │       ├── HEPG2_1_DNA_final_counts.config.exampleConfig.tsv.gz
+            │       ├── HEPG2_1.merged.config.exampleConfig.tsv.gz
+            │       ├── HEPG2_1_RNA_final_counts.config.exampleConfig.tsv.gz
+            │       ├── HEPG2_2_DNA_final_counts.config.exampleConfig.tsv.gz
+            │       ├── HEPG2_2.merged.config.exampleConfig.tsv.gz
+            │       ├── HEPG2_2_RNA_final_counts.config.exampleConfig.tsv.gz
+            │       ├── HEPG2_3_DNA_final_counts.config.exampleConfig.tsv.gz
+            │       ├── HEPG2_3.merged.config.exampleConfig.tsv.gz
+            │       └── HEPG2_3_RNA_final_counts.config.exampleConfig.tsv.gz
+            ├── assignment
+            │   └── fromWorkflow.tsv.gz
+            ├── counts
+            │   ├── HEPG2_1_DNA.bam
+            │   ├── HEPG2_1_DNA_filtered_counts.tsv.gz
+            │   ├── HEPG2_1_DNA_final_counts.tsv.gz
+            │   ├── HEPG2_1_DNA_raw_counts.tsv.gz
+            │   ├── HEPG2_1.merged.config.exampleConfig.tsv.gz
+            │   ├── HEPG2_1_RNA.bam
+            │   ├── HEPG2_1_RNA_filtered_counts.tsv.gz
+            │   ├── HEPG2_1_RNA_final_counts.tsv.gz
+            │   ├── HEPG2_1_RNA_raw_counts.tsv.gz
+            │   ├── HEPG2_2_DNA.bam
+            │   ├── HEPG2_2_DNA_filtered_counts.tsv.gz
+            │   ├── HEPG2_2_DNA_final_counts.tsv.gz
+            │   ├── HEPG2_2_DNA_raw_counts.tsv.gz
+            │   ├── HEPG2_2.merged.config.exampleConfig.tsv.gz
+            │   ├── HEPG2_2_RNA.bam
+            │   ├── HEPG2_2_RNA_filtered_counts.tsv.gz
+            │   ├── HEPG2_2_RNA_final_counts.tsv.gz
+            │   ├── HEPG2_2_RNA_raw_counts.tsv.gz
+            │   ├── HEPG2_3_DNA.bam
+            │   ├── HEPG2_3_DNA_filtered_counts.tsv.gz
+            │   ├── HEPG2_3_DNA_final_counts.tsv.gz
+            │   ├── HEPG2_3_DNA_raw_counts.tsv.gz
+            │   ├── HEPG2_3.merged.config.exampleConfig.tsv.gz
+            │   ├── HEPG2_3_RNA.bam
+            │   ├── HEPG2_3_RNA_filtered_counts.tsv.gz
+            │   ├── HEPG2_3_RNA_final_counts.tsv.gz
+            │   └── HEPG2_3_RNA_raw_counts.tsv.gz
+            └── statistic
+                ├── assigned_counts
+                │   └── fromWorkflow
+                │       ├── exampleConfig
+                │       │   ├── combined
+                │       │   │   └── HEPG2_merged_assigned_counts.statistic.tsv.gz
+                │       │   ├── HEPG2_1_merged_assigned_counts.statistic.tsv.gz
+                │       │   ├── HEPG2_2_merged_assigned_counts.statistic.tsv.gz
+                │       │   ├── HEPG2_3_merged_assigned_counts.statistic.tsv.gz
+                │       │   ├── HEPG2_all_barcodesPerInsert_box_minThreshold.png
+                │       │   ├── HEPG2_all_barcodesPerInsert_box.png
+                │       │   ├── HEPG2_average_allreps_merged.tsv.gz
+                │       │   ├── HEPG2_barcodesPerInsert.png
+                │       │   ├── HEPG2_correlation_minThreshold.tsv
+                │       │   ├── HEPG2_correlation.tsv
+                │       │   ├── HEPG2_DNA_pairwise_minThreshold.png
+                │       │   ├── HEPG2_DNA_pairwise.png
+                │       │   ├── HEPG2_group_barcodesPerInsert_box_minThreshold.png
+                │       │   ├── HEPG2_group_barcodesPerInsert_box.png
+                │       │   ├── HEPG2_Ratio_pairwise_minThreshold.png
+                │       │   ├── HEPG2_Ratio_pairwise.png
+                │       │   ├── HEPG2_RNA_pairwise_minThreshold.png
+                │       │   └── HEPG2_RNA_pairwise.png
+                │       ├── HEPG2_1_DNA_exampleConfig.statistic.tsv.gz
+                │       ├── HEPG2_1_RNA_exampleConfig.statistic.tsv.gz
+                │       ├── HEPG2_2_DNA_exampleConfig.statistic.tsv.gz
+                │       ├── HEPG2_2_RNA_exampleConfig.statistic.tsv.gz
+                │       ├── HEPG2_3_DNA_exampleConfig.statistic.tsv.gz
+                │       └── HEPG2_3_RNA_exampleConfig.statistic.tsv.gz
+                ├── barcode
+                │   ├── assigned_counts
+                │   │   └── fromWorkflow
+                │   │       ├── HEPG2_exampleConfig_barcode_correlation.tsv
+                │   │       ├── HEPG2_exampleConfig_barcode_DNA_pairwise.png
+                │   │       ├── HEPG2_exampleConfig_barcode_Ratio_pairwise.png
+                │   │       ├── HEPG2_exampleConfig_barcode_RNA_pairwise.png
+                │   │       ├── HEPG2_exampleConfig_DNA_perBarcode.png
+                │   │       └── HEPG2_exampleConfig_RNA_perBarcode.png
+                │   └── counts
+                │       ├── HEPG2_exampleConfig_barcode_correlation.tsv
+                │       ├── HEPG2_exampleConfig_barcode_DNA_pairwise.png
+                │       ├── HEPG2_exampleConfig_barcode_Ratio_pairwise.png
+                │       ├── HEPG2_exampleConfig_barcode_RNA_pairwise.png
+                │       ├── HEPG2_exampleConfig_DNA_perBarcode.png
+                │       └── HEPG2_exampleConfig_RNA_perBarcode.png
+                ├── bc_overlap.assigned_counts.exampleConfig.fromWorkflow.tsv
+                ├── bc_overlap.counts.exampleConfig.tsv
+                ├── counts
+                │   ├── BCNucleotideComposition.HEPG2_1_DNA.tsv.gz
+                │   ├── BCNucleotideComposition.HEPG2_1_RNA.tsv.gz
+                │   ├── BCNucleotideComposition.HEPG2_2_DNA.tsv.gz
+                │   ├── BCNucleotideComposition.HEPG2_2_RNA.tsv.gz
+                │   ├── BCNucleotideComposition.HEPG2_3_DNA.tsv.gz
+                │   └── BCNucleotideComposition.HEPG2_3_RNA.tsv.gz
+                ├── counts.filtered.tsv
+                ├── counts.freqUMIs.HEPG2_1_DNA.txt
+                ├── counts.freqUMIs.HEPG2_1_RNA.txt
+                ├── counts.freqUMIs.HEPG2_2_DNA.txt
+                ├── counts.freqUMIs.HEPG2_2_RNA.txt
+                ├── counts.freqUMIs.HEPG2_3_DNA.txt
+                ├── counts.freqUMIs.HEPG2_3_RNA.txt
+                ├── counts.raw.tsv
+                ├── statistic_assigned_bc_correlation_merged_fromWorkflow_exampleConfig.tsv
+                ├── statistic_assigned_counts_merged_fromWorkflow_exampleConfig.tsv
+                ├── statistic_assigned_counts_single_fromWorkflow_exampleConfig.tsv
+                ├── statistic_bc_correlation_merged_exampleConfig.tsv
+                └── statistic_oligo_correlation_merged_fromWorkflow_exampleConfig.tsv

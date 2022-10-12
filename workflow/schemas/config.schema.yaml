@@ -76,12 +76,15 @@ properties:
               ^([^_\.]+)$:
                 type: object
                 properties:
-                  min_support: # 3 recommended
+                  min_support:
                     type: integer
-                  fraction: # 0.7 recommended
+                    minimum: 1
+                    default: 3
+                  fraction:
                     type: number
-                    minimum: 0
+                    exclusiveMinimum: 0.5
                     maximum: 1
+                    default: 0.7
                   unknown_other:
                     type: boolean
                     default: false
@@ -117,14 +120,17 @@ properties:
         properties:
           bc_length:
             type: integer
+            minimum: 1
           umi_length:
             type: integer
+            minimum: 1
           data_folder:
             type: string
           experiment_file:
             type: string
           demultiplex:
             type: boolean
+            default: false
           design_file:
             type: string
           label_file:
@@ -151,8 +157,11 @@ properties:
                     properties:
                       prop:
                         type: number
+                        exclusiveMinimum: 0
+                        maximum: 1
                       total:
                         type: integer
+                        minimum: 1
                 required:
                   - type
                 additionalProperties: false
@@ -188,6 +197,7 @@ properties:
                     properties:
                       bc_threshold:
                         type: integer
+                        minimum: 1
                         default: 10
                     patternProperties:
                       ^((DNA)|(RNA))$:
@@ -195,6 +205,7 @@ properties:
                         properties:
                           min_counts:
                             type: integer
+                            miminum: 0
                             default: 1
                         additionalProperties: false
                         required:
@@ -212,10 +223,14 @@ properties:
                         properties:
                           threshold:
                             type: integer
+                            minimum: 1
                           prop:
                             type: number
+                            exclusiveMinimum: 0
+                            maximum: 1
                           total:
                             type: number
+                            minimum: 1
                           seed:
                             type: integer
                         additionalProperties: false
@@ -233,6 +248,7 @@ properties:
                 type: array
                 items:
                   type: integer
+                  minimum: 1
             required:
               - map
               - min_barcodes

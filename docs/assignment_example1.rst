@@ -174,7 +174,7 @@ assignment_statistic_assignment
 Results
 -----------------
 
-All needed output files will be in the :code:`results/assignemnts/assocBasic` folder. The final assignment is in :code:`results/assignment/assocBasic/assignment_barcodes.exampleConfigTrueMatches.sorted.tsv.gz` or :code:`results/assignment/assocBasic/assignment_barcodes.exampleConfig.sorted.tsv.gz` depeding on the filtering in the config file. 
+All needed output files will be in the :code:`results/assignment/assocBasic` folder. The final assignment is in :code:`results/assignment/assocBasic/assignment_barcodes.exampleConfigTrueMatches.sorted.tsv.gz` or :code:`results/assignment/assocBasic/assignment_barcodes.exampleConfig.sorted.tsv.gz` depeding on the filtering in the config file. 
 
 .. note:: Please note that for the experiment/count workflow you have to remove ambigous BCs. Therefore the file :code:`results/assignment/assocBasic/assignment_barcodes.exampleConfigTrueMatches.sorted.tsv.gz` is the correct wone
 
@@ -182,30 +182,31 @@ All needed output files will be in the :code:`results/assignemnts/assocBasic` fo
 Total file tree of the results folder:
 
 .. code-block:: text
-
-    ├── assignment
-    │   └── assocBasic
-    │       ├── aligned_merged_reads.bam
-    │       ├── aligned_merged_reads.bam.bai
-    │       ├── assignment_barcodes.exampleConfig.sorted.tsv.gz
-    │       ├── assignment_barcodes.exampleConfigTrueMatches.sorted.tsv.gz
-    │       ├── barcodes_incl_other.sorted.tsv.gz
-    │       ├── reference
-    │       │   ├── reference.fa
-    │       │   ├── reference.fa.amb
-    │       │   ├── reference.fa.ann
-    │       │   ├── reference.fa.bwt
-    │       │   ├── reference.fa.dict
-    │       │   ├── reference.fa.fai
-    │       │   ├── reference.fa.pac
-    │       │   └── reference.fa.sa
-    │       └── statistic
-    │           ├── assigned_counts.exampleConfigTrueMatches.tsv.gz
-    │           ├── assigned_counts.exampleConfig.tsv.gz
-    │           ├── assignment
-    │           │   └── bam_stats.txt
-    │           ├── assignment.exampleConfig.png
-    │           ├── assignment.exampleConfigTrueMatches.png
-    │           ├── assignment.exampleConfigTrueMatches.tsv.gz
-    │           ├── assignment.exampleConfig.tsv.gz
-    │           └── total_counts.tsv.gz
+   
+   results
+   ├── assignment
+   │   └── assocBasic
+   │       ├── aligned_merged_reads.bam
+   │       ├── aligned_merged_reads.bam.bai
+   │       ├── assignment_barcodes.exampleConfig.sorted.tsv.gz
+   │       ├── assignment_barcodes.exampleConfigTrueMatches.sorted.tsv.gz
+   │       ├── barcodes_incl_other.sorted.tsv.gz
+   │       ├── reference
+   │       │   ├── reference.fa
+   │       │   ├── reference.fa.amb
+   │       │   ├── reference.fa.ann
+   │       │   ├── reference.fa.bwt
+   │       │   ├── reference.fa.dict
+   │       │   ├── reference.fa.fai
+   │       │   ├── reference.fa.pac
+   │       │   └── reference.fa.sa
+   │       └── statistic
+   │           ├── assigned_counts.exampleConfigTrueMatches.tsv.gz
+   │           ├── assigned_counts.exampleConfig.tsv.gz
+   │           ├── assignment
+   │           │   └── bam_stats.txt
+   │           ├── assignment.exampleConfig.png
+   │           ├── assignment.exampleConfigTrueMatches.png
+   │           ├── assignment.exampleConfigTrueMatches.tsv.gz
+   │           ├── assignment.exampleConfig.tsv.gz
+   │           └── total_counts.tsv.gz
