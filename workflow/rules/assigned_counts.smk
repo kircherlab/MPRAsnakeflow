@@ -85,6 +85,9 @@ rule assigned_counts_assignBarcodes:
 
 
 rule assigned_counts_dna_rna_merge:
+    """
+    Assign merged RNA/DNA barcodes. Filter BC depending on the min_counts option.
+    """
     conda:
         "../envs/python3.yaml"
     input:
@@ -116,6 +119,9 @@ rule assigned_counts_dna_rna_merge:
 
 
 rule assigned_counts_make_master_tables:
+    """
+    Final master table with all replicates combined. With and without threshold.
+    """
     conda:
         "../envs/r.yaml"
     input:

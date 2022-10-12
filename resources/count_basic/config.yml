@@ -9,7 +9,7 @@ experiments:
     assignments:
       fromFile:
         type: file
-        assignment_file: data/SRR10800986_filtered_coords_to_barcodes.tsv.gz
+        assignment_file: data/SRR10800986_barcodes_to_coords.tsv.gz
     design_file: data/design.fa
     configs:
       exampleConfig:

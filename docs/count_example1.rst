@@ -7,7 +7,7 @@
 Basic Experiment workflow
 =========================
 
-This example runs the count workflow on 5'/5' WT MPRA data in the HEPG2 cell line from `Klein J., Agarwal, V., Keith, A., et al. 2019 <https://www.biorxiv.org/content/10.1101/576405v1.full.pdf>`_.
+This example runs the count workflow on 5'/5' WT MPRA data in the HepG2 cell line from `Klein J., Agarwal, V., Keith, A., et al. 2019 <https://www.biorxiv.org/content/10.1101/576405v1.full.pdf>`_.
 
 Prerequirements
 ======================
@@ -21,8 +21,8 @@ Installing MPRAsnakeflow
 Please install conda, the MPRAsnakeflow environment, and clone the actual ``MPRAsnakeflow`` master branch. You will find more help under :ref:`Installation`.
 
 Producing an association (.tsv.gz) file 
-------------------------------------
-This workflow requires a python dictionary of candidate regulatory sequence (CRS) mapped to their barcodes in a tab separated (.tsv) format. For this example the file can be generated using :ref:`Assignment example` or it can be found in :code:`resources/count_basic` folder in `MPRAsnakelfow <https://github.com/kircherlab/MPRAsnakeflow/>`_.
+----------------------------------------
+This workflow requires a python dictionary of candidate regulatory sequence (CRS) mapped to their barcodes in a tab separated (.tsv) format. For this example the file can be generated using :ref:`Assignment example` or it can be found in :code:`resources/count_basic` folder in `MPRAsnakelfow <https://github.com/kircherlab/MPRAsnakeflow/>`_(file :code:`SRR10800986_barcodes_to_coords.tsv.gz`).
 
 Alternatively, if the association file is in pickle (.pickle) format because you used MPRAflow, you can convert the same file to .tsv.gz format with the in-built function in MPRsnakeflow with the following code:
 
@@ -98,7 +98,7 @@ The folder should look like this:
     ├── SRR10800886_1.fastq.gz
     ├── SRR10800886_2.fastq.gz
     ├── SRR10800886_3.fastq.gz
-    └── SRR10800986_filtered_coords_to_barcodes.tsv.gz
+    └── SRR10800986_barcodes_to_coords.tsv.gz
 
 Here is an overview of the files:
 
@@ -157,10 +157,15 @@ First we do a try run using snakemake :code:`-n` option. The MPRAsnakeflow comma
 You should see a list of rules that will be executed. This is the summary:
 
 .. code-block:: text
+
     Job stats:
     job                                                             count    min threads    max threads
     ------------------------------------------------------------  -------  -------------  -------------
     all                                                                 1              1              1
+    assigned_counts_assignBarcodes                                      6              1              1
+    assigned_counts_dna_rna_merge                                       3              1              1
+    assigned_counts_filterAssignment                                    1              1              1
+    assigned_counts_make_master_tables                                  1              1              1
     counts_create_BAM_umi                                               6              1              1
     counts_dna_rna_merge_counts                                         6              1              1
     counts_filter_counts                                                6              1              1
@@ -185,7 +190,7 @@ You should see a list of rules that will be executed. This is the summary:
     statistic_counts_frequent_umis                                      6              1              1
     statistic_counts_stats_merge                                        2              1              1
     statistic_counts_table                                             12              1              1
-    total                                                             139              1             10
+    total                                                              94              1              1
 
 When dry-drun does not give any errors we will run the workflow. We use a machine with 30 threads/cores to run the workflow. The MPRAsnakeflow command is:
 
@@ -195,20 +200,30 @@ When dry-drun does not give any errors we will run the workflow. We use a machin
 
 .. note:: Please modify your code when running in a cluster environment. We have an example SLURM config file here :code:`config/sbatch.yml`.
 
-If everything works fine the 25 rules showed above will run:
+If everything works fine the 29 rules showed above will run. Everything starting with :code:`counts_` beolngs to raw count rules, with :code:`assigned_counts_` to counts assigned to the assignment and :code:`statistic_` to statistics. Here is a brief description of the rules.
 
 all
     The overall all rule. Here is defined what final output files are expected.
 counts_create_BAM_umi
-    TODO
-counts_dna_rna_merge_counts
-    TODO
-counts_filter_counts
-    TODO
-counts_final_counts_umi
-    TODO
+    Create a BAM file from FASTQ input, merge FW and REV read and save UMI in XI flag.
 counts_raw_counts_umi
-    TODO
+    Counting BCsxUMIs from the BAM files.
+counts_filter_counts
+    Filter the counts to BCs only of the correct length (defined in the config file).
+counts_final_counts_umi
+    Discarding PCR duplicates (taking BCxUMI only one time). Final result of counts can be found here: :code:`results/experiments/exampleCount/counts/HepG2_<1,2,3>_<DNA/RNA>_filtered_counts.tsv.gz`.
+counts_dna_rna_merge_counts
+    Merge DNA and RNA counts together.
+    This is done in two ways. First no not allow zeros in DNA or RNA BCs (when :code:`min_counts` is not zero for DNA and RNA).
+    Second with zeros, so a BC can be defined only in the DNA or RNA (when :code:`min_counts` is zero for DNA or RNA)
+assigned_counts_filterAssignment
+    Use only unique assignments.
+assigned_counts_assignBarcodes
+    Assign RNA and DNA barcodes seperately to make the statistic for assigned.
+assigned_counts_dna_rna_merge
+    Assign merged RNA/DNA barcodes. Filter BC depending on the min_counts option. Output for each replicate is here: :code:`results/experiments/exampleCount/assigned_counts/fromFile/exampleConfig/HepG2_<1,2,3>_merged_assigned_counts.tsv.gz`.
+assigned_counts_make_master_tables
+    Final master table with all replicates combined. Output is here: :code:`results/experiments/exampleCount/assigned_counts/fromFile/exampleConfig/HepG2_allreps_merged.tsv.gz` and using the :code:`bc-threshold` here :code:`results/experiments/exampleCount/assigned_counts/fromFile/exampleConfig/HepG2_allreps_minThreshold_merged.tsv.gz`.
 statistic_assigned_counts_combine_BC_assignment_stats
     TODO
 statistic_assigned_counts_combine_BC_assignment_stats_helper
