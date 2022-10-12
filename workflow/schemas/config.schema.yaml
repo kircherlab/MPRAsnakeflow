@@ -166,25 +166,25 @@ properties:
                   - type
                 additionalProperties: false
                 allOf:
-                - if:
-                    properties:
-                      type:
-                        const: config
-                    required:
-                      - type
-                  then:
-                    required:
-                      - assignment_name
-                      - assignment_config
-                - if:
-                    properties:
-                      type:
-                        const: file
-                    required:
-                      - type
-                  then:
-                    required:
-                      - assignment_file
+                  - if:
+                      properties:
+                        type:
+                          const: config
+                      required:
+                        - type
+                    then:
+                      required:
+                        - assignment_name
+                        - assignment_config
+                  - if:
+                      properties:
+                        type:
+                          const: file
+                      required:
+                        - type
+                    then:
+                      required:
+                        - assignment_file
             additionalProperties: false
           configs:
             type: object
@@ -237,7 +237,7 @@ properties:
                     additionalProperties: false
                 additionalProperties: false
                 required:
-                - filter
+                  - filter
               additionalProperties: false
           variants:
             type: object
@@ -254,14 +254,14 @@ properties:
               - min_barcodes
         # entries that have to be in the config file for successful validation
         required:
-        - bc_length
-        - umi_length
-        - data_folder
-        - experiment_file
-        - demultiplex
-        - design_file
-        - assignments
-        - configs
+          - bc_length
+          - umi_length
+          - data_folder
+          - experiment_file
+          - demultiplex
+          - design_file
+          - assignments
+          - configs
       additionalProperties: false
 # end_experiments
 additionalProperties: false
