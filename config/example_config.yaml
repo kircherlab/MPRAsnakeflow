@@ -1,17 +1,17 @@
 ---
-global: # generall configs effecting one or multiple parts
+global:  # generall configs effecting one or multiple parts
   threads: 1
   assignments:
-    split_number: 1 # number of files fastq should be split for parallelization
+    split_number: 1  # number of files fastq should be split for parallelization
 assignments:
-  exampleAssignment: # name of an example assignment (can be any string)
+  exampleAssignment:  # name of an example assignment (can be any string)
     bc_length: 15
-    sequence_length: # sequence length of design excluding adapters.
+    sequence_length:  # sequence length of design excluding adapters.
       min: 195
       max: 205
-    alignment_start: # start of an alignment in the reference. Here using 15 bp adapters. Can be different when using adapter free approaches
-      min: 15 # integer
-      max: 17 # integer
+    alignment_start:  # start of an alignment in the reference. Here using 15 bp adapters. Can be different when using adapter free approaches
+      min: 15  # integer
+      max: 17  # integer
     R1:
       - resources/Assignment_BasiC/R1.fastq.gz
     R2:
@@ -20,7 +20,7 @@ assignments:
       - resources/Assignment_BasiC/R3.fastq.gz
     reference: resources/design.fa
     configs:
-      exampleConfig: # name of an example filtering config
+      exampleConfig:  # name of an example filtering config
         min_support: 3
         fraction: 0.7
         unknown_other: true
@@ -33,15 +33,15 @@ experiments:
     experiment_file: resources/example_experiment.csv
     demultiplex: false
     assignments:
-      from_file:
+      fromFile:
         type: file
         assignment_file: resources/SRR10800986_filtered_coords_to_barcodes.tsv.gz
-      from_workflow:
+      fromWorkflow:
         type: config
         assignment_name: example_assignment
         assignment_config: example_config
     design_file: resources/design.fa
-    label_file: resources/labels.tsv # optional
+    label_file: resources/labels.tsv  # optional
     configs:
       exampleConfig:
         filter:
@@ -50,13 +50,13 @@ experiments:
             min_counts: 1
           RNA:
             min_counts: 1
-        sampling: # optional, just for benmarking
+        sampling:  # optional, just for benmarking
           DNA:
             total: 30000000
             threshold: 300
           RNA:
             total: 50000000
             threshold: 300
-    variants: # optional
+    variants:  # optional
       map: resources/variant_map.tsv
-      min_barcodes: [5, 10] # min BC for ref and alt sequence
+      min_barcodes: [5, 10]  # min BC for ref and alt sequence

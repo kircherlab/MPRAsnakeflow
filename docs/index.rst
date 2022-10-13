@@ -127,6 +127,7 @@ Indices and tables
 
     assignment_example1
     count_example1
+    combined_example1
 
 
 .. toctree::

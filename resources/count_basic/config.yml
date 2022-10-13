@@ -1,0 +1,21 @@
+---
+experiments:
+  exampleCount:
+    bc_length: 15
+    umi_length: 10
+    data_folder: data
+    experiment_file: data/experiment.csv
+    demultiplex: false
+    assignments:
+      fromFile:
+        type: file
+        assignment_file: data/SRR10800986_barcodes_to_coords.tsv.gz
+    design_file: data/design.fa
+    configs:
+      exampleConfig:
+        filter:
+          bc_threshold: 10
+          DNA:
+            min_counts: 1
+          RNA:
+            min_counts: 1

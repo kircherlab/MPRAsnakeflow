@@ -99,6 +99,9 @@ rule counts_mergeTrimReads_demultiplexed_BAM_umi:
 
 
 rule counts_create_BAM_umi:
+    """
+    Create a BAM file from FASTQ input, merge FW and REV read and save UMI in XI flag.
+    """
     input:
         fw_fastq=lambda wc: getFW(wc.project, wc.condition, wc.replicate, wc.type),
         rev_fastq=lambda wc: getRev(wc.project, wc.condition, wc.replicate, wc.type),
@@ -267,8 +270,8 @@ rule counts_final_counts_umi_samplerer:
 rule counts_dna_rna_merge_counts:
     """
     Merge DNA and RNA counts together.
-    Is done in two ways. First no not allow zeros in DNA or RNA BCs (withoutZeros).
-    Second with zeros, so a BC can be defined only in the DNA or RNA (withZeros)
+    Is done in two ways. First no not allow zeros in DNA or RNA BCs (RNA and DNA min_counts not zero).
+    Second with zeros, so a BC can be defined only in the DNA or RNA (RNA or DNA min_counts zero)
     """
     conda:
         "../envs/default.yaml"
