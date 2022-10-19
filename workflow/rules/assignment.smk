@@ -78,7 +78,7 @@ rule assignment_merge:
         script_FastQ2doubleIndexBAM=getScript("count/FastQ2doubleIndexBAM.py"),
         script_MergeTrimReadsBAM=getScript("count/MergeTrimReadsBAM.py"),
     output:
-        bam=temp("results/assignment/{assignment}/bam/merge_split{split}.bam"),
+        bam=temp("results/assignment/{assignment}/bam/merged/merge_split{split}.bam"),
     params:
         bc_length=lambda wc: config["assignments"][wc.assignment]["bc_length"],
     log:
@@ -141,34 +141,48 @@ rule assignment_bwa_ref:
 
 rule assignment_mapping:
     """
-    Map the reads to the reference.
+    Map the reads to the reference and sort.
     """
     input:
-        bams=expand(
-            "results/assignment/{{assignment}}/bam/merge_split{split}.bam",
-            split=range(0, getSplitNumber()),
-        ),
+        bams="results/assignment/{assignment}/bam/merged/merge_split{split}.bam",
         reference="results/assignment/{assignment}/reference/reference.fa",
         bwa_index=expand(
             "results/assignment/{{assignment}}/reference/reference.fa.{ext}",
             ext=["fai", "dict"] + assignment_bwa_dicts,
         ),
     output:
-        "results/assignment/{assignment}/aligned_merged_reads.bam",
+        bam=temp("results/assignment/{assignment}/bam/mapped/mapped_split{split}.bam"),
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
     threads: config["global"]["threads"]
     log:
-        temp("results/logs/assignment/mapping.{assignment}.log"),
+        temp("results/logs/assignment/mapping.{assignment}.{split}.log"),
     shell:
         """
         bwa mem -t {threads} -L 80 -M -C {input.reference} <(
-            samtools cat {input.bams} | \
-            samtools view -F 514 | \
+            samtools view -F 514 {input.bams} | \
             awk 'BEGIN{{ OFS="\\n"; FS="\\t" }}{{ print "@"$1" "$12","$13,$10,"+",$11 }}';
-        ) | \
-        samtools view -Su | \
-        samtools sort > {output} 2> {log}
+        )  | samtools sort -l 0 -@ {threads} > {output} 2> {log}
+        """
+
+rule assignment_collect:
+    """
+    Collect mapped reads.
+    """
+    input:
+        bams=expand(
+            "results/assignment/{{assignment}}/bam/mapped/mapped_split{split}.bam",
+            split=range(0, getSplitNumber()),
+        ),
+    output:
+        "results/assignment/{assignment}/aligned_merged_reads.bam",
+    conda:
+        "../envs/bwa_samtools_picard_htslib.yaml"
+    log:
+        temp("results/logs/assignment/collect.{assignment}.log"),
+    shell:
+        """
+        samtools merge -@ {threads} {output} {input.bams} 2> {log}
         """
 
 
