@@ -78,7 +78,7 @@ rule assignment_merge:
         script_FastQ2doubleIndexBAM=getScript("count/FastQ2doubleIndexBAM.py"),
         script_MergeTrimReadsBAM=getScript("count/MergeTrimReadsBAM.py"),
     output:
-        bam=temp("results/assignment/{assignment}/bam/merged/merge_split{split}.bam"),
+        bam=temp("results/assignment/{assignment}/bam/merge_split{split}.bam"),
     params:
         bc_length=lambda wc: config["assignments"][wc.assignment]["bc_length"],
     log:
@@ -144,14 +144,14 @@ rule assignment_mapping:
     Map the reads to the reference and sort.
     """
     input:
-        bams="results/assignment/{assignment}/bam/merged/merge_split{split}.bam",
+        bams="results/assignment/{assignment}/bam/merge_split{split}.bam",
         reference="results/assignment/{assignment}/reference/reference.fa",
         bwa_index=expand(
             "results/assignment/{{assignment}}/reference/reference.fa.{ext}",
             ext=["fai", "dict"] + assignment_bwa_dicts,
         ),
     output:
-        bam=temp("results/assignment/{assignment}/bam/mapped/mapped_split{split}.bam"),
+        bam=temp("results/assignment/{assignment}/bam/mapped_split{split}.mapped.bam"),
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
     threads: config["global"]["threads"]
@@ -171,13 +171,14 @@ rule assignment_collect:
     """
     input:
         bams=expand(
-            "results/assignment/{{assignment}}/bam/mapped/mapped_split{split}.bam",
+            "results/assignment/{{assignment}}/bam/mapped_split{split}.mapped.bam",
             split=range(0, getSplitNumber()),
         ),
     output:
         "results/assignment/{assignment}/aligned_merged_reads.bam",
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
+    threads: config["global"]["threads"]
     log:
         temp("results/logs/assignment/collect.{assignment}.log"),
     shell:
