@@ -21,9 +21,14 @@ assignment_fastq_split:
   mem: 10G
   queue: medium
 assignment_mapping:
-  time: "0-20:00"
+  time: "0-02:00"
+  threads: 10
+  mem: 10G
+  queue: medium
+assignment_collect:
+  time: "1-12:00"
   threads: 30
-  mem: 20G
+  mem: 10G
   queue: medium
 assignment_getBCs:
   time: "0-04:00"
@@ -33,17 +38,17 @@ assignment_statistic_totalCounts:
   time: "0-01:00"
   threads: 1
   queue: medium
-  mem: 40G
+  mem: 60G
 assignment_statistic_assignedCounts:
   time: "0-01:00"
   threads: 1
   queue: medium
-  mem: 40G
+  mem: 10G
 assignment_statistic_assignment:
   time: "0-01:00"
   threads: 1
   queue: medium
-  mem: 40G
+  mem: 20G
 ##############
 ### COUNTS ###
 ##############
