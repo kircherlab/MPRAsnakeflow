@@ -165,6 +165,7 @@ rule assignment_mapping:
         )  | samtools sort -l 0 -@ {threads} > {output} 2> {log}
         """
 
+
 rule assignment_collect:
     """
     Collect mapped reads.

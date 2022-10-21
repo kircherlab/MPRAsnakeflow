@@ -23,11 +23,13 @@ assignment_fastq_split:
 assignment_mapping:
   time: "0-02:00"
   threads: 10
-  mem: 2G
+  mem: 10G
   queue: medium
 assignment_collect:
   time: "1-12:00"
   threads: 30
+  mem: 10G
+  queue: medium
 assignment_getBCs:
   time: "0-04:00"
   threads: 1
