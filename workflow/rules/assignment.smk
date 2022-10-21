@@ -151,7 +151,7 @@ rule assignment_mapping:
             ext=["fai", "dict"] + assignment_bwa_dicts,
         ),
     output:
-        bam=temp("results/assignment/{assignment}/bam/merged_split{split}.mapped.bam"),
+        bam=temp("results/assignment/{assignment}/bam/merge_split{split}.mapped.bam"),
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
     threads: config["global"]["threads"]
@@ -160,7 +160,7 @@ rule assignment_mapping:
     shell:
         """
         bwa mem -t {threads} -L 80 -M -C {input.reference} <(
-            samtools view -F 514 {input.bams} | \
+            samtools view -F 513 {input.bams} | \
             awk 'BEGIN{{ OFS="\\n"; FS="\\t" }}{{ print "@"$1" "$12","$13,$10,"+",$11 }}';
         )  | samtools sort -l 0 -@ {threads} > {output} 2> {log}
         """
@@ -172,7 +172,7 @@ rule assignment_collect:
     """
     input:
         bams=expand(
-            "results/assignment/{{assignment}}/bam/merged_split{split}.mapped.bam",
+            "results/assignment/{{assignment}}/bam/merge_split{split}.mapped.bam",
             split=range(0, getSplitNumber()),
         ),
     output:
