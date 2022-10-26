@@ -66,47 +66,31 @@ rule assignment_fastq_split:
 rule assignment_merge:
     """
     Merge the FW,REV and BC fastq files into one. 
-    Extract the index sequence from the middle and end of an Illumina run. 
-    Separates reads for Paired End runs. Merge/Adapter trim reads stored in BAM.
+    Extract the index sequence and add it to the header.
     """
     conda:
-        "../envs/python27.yaml"
+        "../envs/fastq_join.yaml"
     input:
         R1="results/assignment/{assignment}/fastq/splits/R1.split{split}.fastq.gz",
         R2="results/assignment/{assignment}/fastq/splits/R2.split{split}.fastq.gz",
         R3="results/assignment/{assignment}/fastq/splits/R3.split{split}.fastq.gz",
-        script_FastQ2doubleIndexBAM=getScript("count/FastQ2doubleIndexBAM.py"),
-        script_MergeTrimReadsBAM=getScript("count/MergeTrimReadsBAM.py"),
+        script=getScript("attachBCToFastQ.py"),
     output:
-        bam=temp("results/assignment/{assignment}/bam/merge_split{split}.bam"),
+        un1=temp("results/assignment/{assignment}/fastq/merge_split{split}.un1.fastq.gz"),
+        un2=temp("results/assignment/{assignment}/fastq/merge_split{split}.un2.fastq.gz"),
+        join=temp("results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz"),
     params:
         bc_length=lambda wc: config["assignments"][wc.assignment]["bc_length"],
     log:
         temp("results/logs/assignment/merge.{assignment}.{split}.log"),
     shell:
         """
-        set +o pipefail;
-
-        fwd_length=`zcat {input.R1} | head -2 | tail -1 | wc -c`;
-        fwd_length=$(expr $(($fwd_length-1)));
-
-        rev_start=$(expr $(($fwd_length+1+{params.bc_length})));
-
-
-        paste <( zcat {input.R1} ) <( zcat {input.R2} ) <( zcat {input.R3} ) | \
-        awk '{{ 
-            count+=1; 
-            if ((count == 1) || (count == 3)) {{ 
-                print $1 
-            }} else {{
-                print $1$2$3 
-            }}; 
-            if (count == 4) {{
-                count=0 
-            }} 
-        }}' | \
-        python {input.script_FastQ2doubleIndexBAM} -p -s $rev_start -l {params.bc_length} -m 0 | \
-        python {input.script_MergeTrimReadsBAM} -c '' -f CATTGCGTGAACCGACAATTCGTCGAGGGACCTAATAAC -s AGTTGATCCGGTCCTAGGTCTAGAGCGGGCCCTGGCAGA --mergeoverlap -p > {output} 2> {log}
+        fastq-join \
+        <( python {input.script} -r {input.R1} -b {input.R2} ) \
+        <( python {input.script} -r {input.R3} -b {input.R2} ) \
+        -o >(gzip -c > {output.un1}) \
+        -o >(gzip -c > {output.un2}) \
+        -o >(gzip -c > {output.join}) &> {log}
         """
 
 
@@ -144,7 +128,7 @@ rule assignment_mapping:
     Map the reads to the reference and sort.
     """
     input:
-        bams="results/assignment/{assignment}/bam/merge_split{split}.bam",
+        reads="results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
         reference="results/assignment/{assignment}/reference/reference.fa",
         bwa_index=expand(
             "results/assignment/{{assignment}}/reference/reference.fa.{ext}",
@@ -160,8 +144,7 @@ rule assignment_mapping:
     shell:
         """
         bwa mem -t {threads} -L 80 -M -C {input.reference} <(
-            samtools view -F 514 {input.bams} | \
-            awk 'BEGIN{{ OFS="\\n"; FS="\\t" }}{{ print "@"$1" "$12","$13,$10,"+",$11 }}';
+            gzip -dc {input.reads}
         )  | samtools sort -l 0 -@ {threads} > {output} 2> {log}
         """
 
