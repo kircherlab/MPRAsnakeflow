@@ -4,36 +4,13 @@ SPLIT_FILES_NUMBER = 1
 include: "assignment/statistic.smk"
 
 
-rule assignment_getInputs:
-    """
-    Concat the input fastq files per R1,R2,R3. 
-    If only single fastq file is provided a symbolic link is created.
-    """
-    conda:
-        "../envs/default.yaml"
-    input:
-        lambda wc: config["assignments"][wc.assignment][wc.R],
-    output:
-        R1=temp("results/assignment/{assignment}/fastq/{R}.fastq.gz"),
-    log:
-        temp("results/logs/assignment/getInputs.{assignment}.{R}.log"),
-    shell:
-        """
-        if [[ "$(ls {input} | wc -l)" -eq 1 ]]; then 
-            ln -rs {input} {output}; 
-        else
-            zcat {input} | gzip -c > {output};
-        fi &> {log}
-        """
-
-
 rule assignment_fastq_split:
     """
     Split the fastq files into n files for parallelisation. 
     n is given by split_read in the configuration file.
     """
     input:
-        "results/assignment/{assignment}/fastq/{R}.fastq.gz",
+        lambda wc: config["assignments"][wc.assignment][wc.R],
     output:
         temp(
             expand(
@@ -59,7 +36,29 @@ rule assignment_fastq_split:
         ),
     shell:
         """
-        fastqsplitter -i {input} -t 1 {params.files} &> {log}
+        fastqsplitter -i <(zcat {input}) -t 1 {params.files} &> {log}
+        """
+
+
+rule assignment_attach_idx:
+    """
+    Extract the index sequence and add it to the header.
+    """
+    conda:
+        "../envs/NGmerge.yaml"
+    input:
+        read="results/assignment/{assignment}/fastq/splits/R{R}.split{split}.fastq.gz",
+        BC="results/assignment/{assignment}/fastq/splits/R2.split{split}.fastq.gz",
+        script=getScript("attachBCToFastQ.py"),
+    output:
+        read=temp(
+            "results/assignment/{assignment}/fastq/splits/R{R}.split{split}.BCattached.fastq.gz"
+        ),
+    log:
+        temp("results/logs/assignment/attach_idx.{assignment}.{split}.{R}.log"),
+    shell:
+        """
+        python {input.script} -r {input.read} -b {input.BC} | bgzip -c > {output.read}
         """
 
 
@@ -69,28 +68,31 @@ rule assignment_merge:
     Extract the index sequence and add it to the header.
     """
     conda:
-        "../envs/fastq_join.yaml"
+        "../envs/NGmerge.yaml"
     input:
-        R1="results/assignment/{assignment}/fastq/splits/R1.split{split}.fastq.gz",
-        R2="results/assignment/{assignment}/fastq/splits/R2.split{split}.fastq.gz",
-        R3="results/assignment/{assignment}/fastq/splits/R3.split{split}.fastq.gz",
-        script=getScript("attachBCToFastQ.py"),
+        R1="results/assignment/{assignment}/fastq/splits/R1.split{split}.BCattached.fastq.gz",
+        R3="results/assignment/{assignment}/fastq/splits/R3.split{split}.BCattached.fastq.gz",
     output:
-        un1=temp("results/assignment/{assignment}/fastq/merge_split{split}.un1.fastq.gz"),
-        un2=temp("results/assignment/{assignment}/fastq/merge_split{split}.un2.fastq.gz"),
-        join=temp("results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz"),
+        un=temp("results/assignment/{assignment}/fastq/merge_split{split}.un.fastq.gz"),
+        join=temp(
+            "results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz"
+        ),
     params:
-        bc_length=lambda wc: config["assignments"][wc.assignment]["bc_length"],
+        min_overlap=20,
+        frac_mismatches_allowed=0.10,
+        min_dovetailed_overlap=50,
     log:
         temp("results/logs/assignment/merge.{assignment}.{split}.log"),
     shell:
         """
-        fastq-join \
-        <( python {input.script} -r {input.R1} -b {input.R2} ) \
-        <( python {input.script} -r {input.R3} -b {input.R2} ) \
-        -o >(gzip -c > {output.un1}) \
-        -o >(gzip -c > {output.un2}) \
-        -o >(gzip -c > {output.join}) &> {log}
+        NGmerge \
+        -1 {input.R1} \
+        -2 {input.R3} \
+        -m {params.min_overlap} -p {params.frac_mismatches_allowed} -e {params.min_dovetailed_overlap} \
+        -z \
+        -o  {output.join} \
+        -i -f {output.un} \
+        -l {log}
         """
 
 
