@@ -9,9 +9,6 @@ __default__:
 ##################
 ### ASSIGNMENT ###
 ##################
-assignment_getInputs:
-  time: "0-10:00"
-  queue: medium
 assignment_merge:
   time: "0-08:00"
   queue: medium
