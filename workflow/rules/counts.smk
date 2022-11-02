@@ -112,6 +112,7 @@ rule counts_create_BAM_umi:
         "results/experiments/{project}/counts/{condition}_{replicate}_{type}.bam",
     params:
         bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
+        umi_length=lambda wc: config["experiments"][wc.project]["umi_length"],
         datasetID="{condition}_{replicate}_{type}",
     conda:
         "../envs/python27.yaml"
@@ -123,9 +124,6 @@ rule counts_create_BAM_umi:
         """
         set +o pipefail;
 
-        umi_length=`zcat {input.umi_fastq} | head -2 | tail -1 | wc -c`;
-        umi_length=$(expr $(($umi_length-1)));
-
         fwd_length=`zcat {input.fw_fastq} | head -2 | tail -1 | wc -c`;
         fwd_length=$(expr $(($fwd_length-1)));
 
@@ -134,12 +132,11 @@ rule counts_create_BAM_umi:
         minoverlap=`echo ${{fwd_length}} ${{fwd_length}} {params.bc_length} | awk '{{print ($1+$2-$3-1 < 11) ? $1+$2-$3-1 : 11}}'`;
 
         echo $rev_start
-        echo $umi_length
         echo $minoverlap
 
         paste <( zcat {input.fw_fastq} ) <( zcat {input.rev_fastq}  ) <( zcat {input.umi_fastq} ) | \
         awk '{{if (NR % 4 == 2 || NR % 4 == 0) {{print $1$2$3}} else {{print $1}}}}' | \
-        python {input.script_FastQ2doubleIndexBAM} -p -s $rev_start -l 0 -m $umi_length --RG {params.datasetID} | \
+        python {input.script_FastQ2doubleIndexBAM} -p -s $rev_start -l 0 -m {params.umi_length} --RG {params.datasetID} | \
         python {input.script_MergeTrimReadsBAM} --FirstReadChimeraFilter '' --adapterFirstRead '' --adapterSecondRead '' -p --mergeoverlap --minoverlap $minoverlap > {output} 2> {log}
         """
 
