@@ -1,6 +1,3 @@
-SPLIT_FILES_NUMBER = 1
-
-
 include: "assignment/statistic.smk"
 
 
@@ -78,9 +75,15 @@ rule assignment_merge:
             "results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz"
         ),
     params:
-        min_overlap=20,
-        frac_mismatches_allowed=0.10,
-        min_dovetailed_overlap=50,
+        min_overlap=lambda wc: config["assignments"][wc.assignment]["NGmerge"][
+            "min_overlap"
+        ],
+        frac_mismatches_allowed=lambda wc: config["assignments"][wc.assignment][
+            "NGmerge"
+        ]["frac_mismatches_allowed"],
+        min_dovetailed_overlap=lambda wc: config["assignments"][wc.assignment][
+            "NGmerge"
+        ]["min_dovetailed_overlap"],
     log:
         temp("results/logs/assignment/merge.{assignment}.{split}.log"),
     shell:

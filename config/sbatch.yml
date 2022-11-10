@@ -13,7 +13,7 @@ assignment_merge:
   time: "0-08:00"
   queue: medium
 assignment_fastq_split:
-  time: "0-02:00"
+  time: "0-04:00"
   threads: 1
   mem: 10G
   queue: medium
@@ -28,9 +28,9 @@ assignment_collect:
   mem: 10G
   queue: medium
 assignment_getBCs:
-  time: "0-04:00"
+  time: "1-08:00"
   threads: 1
-  queue: short
+  queue: medium
 assignment_statistic_totalCounts:
   time: "0-01:00"
   threads: 1
