@@ -408,7 +408,7 @@ def withoutZeros(project, conf):
 
 
 def getSplitNumber():
-    split = SPLIT_FILES_NUMBER
+    split = 1
 
     if "global" in config:
         if "assignments" in config["global"]:

@@ -123,14 +123,13 @@ You should see a list of rules that will be executed. This is the summary:
    assignment_filter                          2              1              1
    assignment_flagstat                        1              1              1
    assignment_getBCs                          1              1              1
-   assignment_getInputs                       3              1              1
    assignment_idx_bam                         1              1              1
    assignment_mapping                         1              1              1
    assignment_merge                           30             10             10
    assignment_statistic_assignedCounts        2              1              1
    assignment_statistic_assignment            2              1              1
    assignment_statistic_totalCounts           1              1              1
-   total                                     49              1              1
+   total                                     46              1              1
 
 
 When dry-drun does not give any errors we will run the workflow. We use a machine with 30 threads/cores to run the workflow. Therefore :code:`split_number` is set to 30 to parallize the workflow. Also we are using 10 threads for mapping (bwa mem). But snakemake takes care that no more than 30 threads are used.
@@ -142,7 +141,7 @@ When dry-drun does not give any errors we will run the workflow. We use a machin
 
 .. note:: Please modify your code when running in a cluster environment. We have an example SLURM config file here :code:`config/sbatch.yml`.
 
-If everything works fine the 13 rules showed above will run:
+If everything works fine the 12 rules showed above will run:
 
 all
    The overall all rule. Here is defined what final output files are expected.
@@ -150,8 +149,6 @@ assignment_bwa_ref
    Create mapping reference for BWA from design file.
 assignment_fastq_split
    Split the fastq files into n files for parallelisation. N is given by split_read in the configuration file.
-assignment_getInputs
-   Concat the input fastq files per R1,R2,R3. If only single fastq file is provided a symbolic link is created.
 assignment_merge
    Merge the FW,REV and BC fastq files into one. Extract the index sequence from the middle and end of an Illumina run. Separates reads for Paired End runs. Merge/Adapter trim reads stored in BAM.
 assignment_mapping

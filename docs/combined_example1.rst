@@ -137,7 +137,6 @@ You should see a list of rules that will be executed. This is the summary:
     assignment_filter                                                   1              1              1
     assignment_flagstat                                                 1              1              1
     assignment_getBCs                                                   1              1              1
-    assignment_getInputs                                                3              1              1
     assignment_idx_bam                                                  1              1              1
     assignment_mapping                                                  1             10             10
     assignment_merge                                                   30              1              1
@@ -168,7 +167,7 @@ You should see a list of rules that will be executed. This is the summary:
     statistic_counts_frequent_umis                                      6              1              1
     statistic_counts_stats_merge                                        2              1              1
     statistic_counts_table                                             12              1              1
-    total                                                             139              1             10
+    total                                                             136              1             10
 
 
 When dry-drun does not give any errors we will run the workflow. We use a machine with 30 threads/cores to run the workflow. Therefore :code:`split_number` is set to 30 to parallize the workflow. Also we are using 10 threads for mapping (bwa mem). But snakemake takes care that no more than 30 threads are used.
@@ -180,7 +179,7 @@ When dry-drun does not give any errors we will run the workflow. We use a machin
 
 .. note:: Please modify your code when running in a cluster environment. We have an example SLURM config file here :code:`config/sbatch.yml`.
 
-If everything works fine the 41 rules showed above will run. Please goto the :ref:`Assignment example`_ and the :ref:`Count example`_ 
+If everything works fine the 40 rules showed above will run. Please goto the :ref:`Assignment example`_ and the :ref:`Count example`_ 
 
 Results
 -----------------
