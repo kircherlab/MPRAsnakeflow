@@ -127,15 +127,15 @@ def getFW(project, condition, replicate, rnaDna_type):
     exp = getExperiments(project)
     exp = exp[exp.Condition == condition]
     exp = exp[exp.Replicate.astype(str) == replicate]
-    return "%s/%s" % (
-        config["experiments"][project]["data_folder"],
-        exp["%s_BC_F" % rnaDna_type].iloc[0],
-    )
+    return [
+        "%s/%s" % (config["experiments"][project]["data_folder"], f)
+        for f in exp["%s_BC_F" % rnaDna_type].iloc[0].split(";")
+    ]
 
 
 def getFWWithIndex(project):
     return [
-        "%s%s" % (config["experiments"][project]["data_folder"], f)
+        "%s/%s" % (config["experiments"][project]["data_folder"], f)
         for f in getExperiments(project).BC_F.iloc[0].split(";")
     ]
 
@@ -144,10 +144,10 @@ def getRev(project, condition, replicate, rnaDna_type):
     exp = getExperiments(project)
     exp = exp[exp.Condition == condition]
     exp = exp[exp.Replicate.astype(str) == replicate]
-    return "%s/%s" % (
-        config["experiments"][project]["data_folder"],
-        exp["%s_BC_R" % rnaDna_type].iloc[0],
-    )
+    return [
+        "%s/%s" % (config["experiments"][project]["data_folder"], f)
+        for f in exp["%s_BC_R" % rnaDna_type].iloc[0].split(";")
+    ]
 
 
 def getRevWithIndex(project):
@@ -161,10 +161,10 @@ def getUMI(project, condition, replicate, rnaDna_type):
     exp = getExperiments(project)
     exp = exp[exp.Condition == condition]
     exp = exp[exp.Replicate.astype(str) == replicate]
-    return "%s/%s" % (
-        config["experiments"][project]["data_folder"],
-        exp["%s_UMI" % rnaDna_type].iloc[0],
-    )
+    return [
+        "%s/%s" % (config["experiments"][project]["data_folder"], f)
+        for f in exp["%s_UMI" % rnaDna_type].iloc[0].split(";")
+    ]
 
 
 def getUMIWithIndex(project):
