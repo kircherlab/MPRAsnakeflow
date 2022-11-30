@@ -1,4 +1,85 @@
+# Assignment workflow
+
+
 include: "assignment/statistic.smk"
+include: "assignment/assignment_common.smk"
+
+
+rule assignment_get_reads_by_length:
+    """
+    Get the barcode and read from the FW read using fixed length
+    """
+    conda:
+        "../envs/default.yaml"
+    input:
+        lambda wc: config["assignments"][wc.assignment]["FW"],
+    output:
+        FW_tmp=temp("results/assignment/{assignment}/fastq/FW.byLength.fastq"),
+        BC_tmp=temp("results/assignment/{assignment}/fastq/BC.byLength.fastq"),
+        FW="results/assignment/{assignment}/fastq/FW.byLength.fastq.gz",
+        BC="results/assignment/{assignment}/fastq/BC.byLength.fastq.gz",
+    log:
+        temp("results/logs/assignment/get_BC_read_by_length.{assignment}.log"),
+    params:
+        bc_length=lambda wc: config["assignments"][wc.assignment]["bc_length"],
+        insert_start=lambda wc: config["assignments"][wc.assignment]["bc_length"]
+        + config["assignments"][wc.assignment]["linker_length"]
+        + 1,
+    shell:
+        """
+        zcat {input} | \
+        awk '{{if (NR%4==2 || NR%4==0){{
+                print substr($0,1,20) > "{output.BC_tmp}"; print substr($0,{params.insert_start}) > "{output.FW_tmp}"
+            }} else {{
+                print $0 > "{output.BC_tmp}"; print $0 > "{output.FW_tmp}"
+            }}}}';
+        cat {output.BC_tmp} | bgzip > {output.BC} & cat {output.FW_tmp} | bgzip > {output.FW};
+        """
+
+
+# rule assignmemt_get_read_by_cutadapt:
+#     """
+#     Get the barcode and read from the FW read using cutadapt
+#     """
+#     conda:
+#         "../envs/cutadapt.yaml"
+#     input:
+#         lambda wc: config["assignments"][wc.assignment]["FW"],
+#     output:
+#         FW="results/assignment/{assignment}/fastq/FW.byCutadapt.fastq.gz",
+#     log:
+#         temp("results/logs/assignment/get_FW_read_by_cutadapt.{assignment}.log"),
+#     params:
+#         linker=lambda wc: config["assignments"][wc.assignment]["linker"],
+#     shell:
+#         """
+#         zcat {input} | \
+#         cutadapt -g {params.linker} \
+#         -o {output.FW} - &> {log}
+#         """
+
+
+rule assignmemt_get_reads_by_cutadapt:
+    """
+    Get the barcode and read from the FW read using cutadapt.
+    Uses the paired end mode of cutadapt to write the FW and BC read.
+    """
+    conda:
+        "../envs/cutadapt.yaml"
+    input:
+        lambda wc: config["assignments"][wc.assignment]["FW"],
+    output:
+        BC="results/assignment/{assignment}/fastq/BC.byCutadapt.fastq.gz",
+        FW="results/assignment/{assignment}/fastq/FW.byCutadapt.fastq.gz",
+    log:
+        temp("results/logs/assignment/get_reads_by_cutadapt.{assignment}.log"),
+    params:
+        linker=lambda wc: config["assignments"][wc.assignment]["linker"],
+    shell:
+        """
+        cutadapt -a {params.linker} -G {params.linker}\
+        -o {output.BC} -p {output.FW} <(zcat {input}) <(zcat {input}) &> {log}
+        """
 
 
 rule assignment_fastq_split:
@@ -7,26 +88,26 @@ rule assignment_fastq_split:
     n is given by split_read in the configuration file.
     """
     input:
-        lambda wc: config["assignments"][wc.assignment][wc.R],
+        lambda wc: getAssignmentRead(wc.assignment, wc.read),
     output:
         temp(
             expand(
-                "results/assignment/{{assignment}}/fastq/splits/{{R}}.split{split}.fastq.gz",
+                "results/assignment/{{assignment}}/fastq/splits/{{read}}.split{split}.fastq.gz",
                 split=range(0, getSplitNumber()),
             ),
         ),
     conda:
         "../envs/fastqsplitter.yaml"
     log:
-        temp("results/logs/assignment/fastq_split.{assignment}.{R}.log"),
+        temp("results/logs/assignment/fastq_split.{assignment}.{read}.log"),
     params:
         files=lambda wc: " ".join(
             [
                 "-o %s" % i
                 for i in expand(
-                    "results/assignment/{assignment}/fastq/splits/{R}.split{split}.fastq.gz",
+                    "results/assignment/{assignment}/fastq/splits/{read}.split{split}.fastq.gz",
                     assignment=wc.assignment,
-                    R=wc.R,
+                    read=wc.read,
                     split=range(0, getSplitNumber()),
                 )
             ]
@@ -44,15 +125,15 @@ rule assignment_attach_idx:
     conda:
         "../envs/NGmerge.yaml"
     input:
-        read="results/assignment/{assignment}/fastq/splits/R{R}.split{split}.fastq.gz",
-        BC="results/assignment/{assignment}/fastq/splits/R2.split{split}.fastq.gz",
+        read="results/assignment/{assignment}/fastq/splits/{read}.split{split}.fastq.gz",
+        BC="results/assignment/{assignment}/fastq/splits/BC.split{split}.fastq.gz",
         script=getScript("attachBCToFastQ.py"),
     output:
         read=temp(
-            "results/assignment/{assignment}/fastq/splits/R{R}.split{split}.BCattached.fastq.gz"
+            "results/assignment/{assignment}/fastq/splits/{read}.split{split}.BCattached.fastq.gz"
         ),
     log:
-        temp("results/logs/assignment/attach_idx.{assignment}.{split}.{R}.log"),
+        temp("results/logs/assignment/attach_idx.{assignment}.{split}.{read}.log"),
     shell:
         """
         python {input.script} -r {input.read} -b {input.BC} | bgzip -c > {output.read}
@@ -67,8 +148,8 @@ rule assignment_merge:
     conda:
         "../envs/NGmerge.yaml"
     input:
-        R1="results/assignment/{assignment}/fastq/splits/R1.split{split}.BCattached.fastq.gz",
-        R3="results/assignment/{assignment}/fastq/splits/R3.split{split}.BCattached.fastq.gz",
+        FW="results/assignment/{assignment}/fastq/splits/FW.split{split}.BCattached.fastq.gz",
+        REV="results/assignment/{assignment}/fastq/splits/REV.split{split}.BCattached.fastq.gz",
     output:
         un=temp("results/assignment/{assignment}/fastq/merge_split{split}.un.fastq.gz"),
         join=temp(
@@ -89,8 +170,8 @@ rule assignment_merge:
     shell:
         """
         NGmerge \
-        -1 {input.R1} \
-        -2 {input.R3} \
+        -1 {input.FW} \
+        -2 {input.REV} \
         -m {params.min_overlap} -p {params.frac_mismatches_allowed} -e {params.min_dovetailed_overlap} \
         -z \
         -o  {output.join} \

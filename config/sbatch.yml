@@ -9,6 +9,16 @@ __default__:
 ##################
 ### ASSIGNMENT ###
 ##################
+assignment_get_reads_by_length:
+  time: "0-10:00"
+  threads: 1
+  mem: 2G
+  queue: "medium"
+assignmemt_get_reads_by_cutadapt:
+  time: "0-20:00"
+  threads: 1
+  mem: 4G
+  queue: "medium"
 assignment_merge:
   time: "0-08:00"
   queue: medium
@@ -19,7 +29,7 @@ assignment_fastq_split:
   queue: medium
 assignment_mapping:
   time: "0-02:00"
-  threads: 10
+  threads: 30
   mem: 10G
   queue: medium
 assignment_collect:
@@ -49,23 +59,27 @@ assignment_statistic_assignment:
 ##############
 ### COUNTS ###
 ##############
-counts_demultiplexed_BAM_umi:
+counts_demultiplex_BAM_umi:
   time: "4-00:00"
   mem: 22G
   queue: "medium"
-counts_mergeTrimReads_demultiplexed_BAM_umi:
+counts_demultiplex_mergeTrimReads_BAM_umi:
   time: "4-00:00"
   mem: 12G
   queue: "medium"
-counts_create_BAM_umi:
+counts_umi_create_BAM:
   time: "4-00:00"
   mem: 12G
   queue: "medium"
-counts_raw_counts_umi:
+counts_umi_raw_counts:
   time: "0-22:00"
   mem: 6G
   queue: "medium"
-counts_final_counts_umi_samplerer:
+counts_noUMI_create_BAM:
+  time: "4-00:00"
+  mem: 12G
+  queue: "medium"
+counts_final_counts_samplerer:
   mem: 20G
   queue: medium
 #########################

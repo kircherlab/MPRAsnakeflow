@@ -1,0 +1,77 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+
+description: an entry in the experiment file
+
+# columns that the config/samples.tsv file can have and which type they should be
+properties:
+  Condition:
+    type: string
+    description: The xperiment condition (e.g. cell-type)
+  Replicate:
+    type: [integer, string]
+    description: The replicate (e.g. 1, 2, or 3)
+  DNA_BC_F:
+    type: string
+    description: The forward DNA barcode
+  DNA_BC_R:
+    type: string
+    description: The reverse DNA barcode
+  RNA_BC_F:
+    type: string
+    description: The forward RNA barcode
+  RNA_BC_R:
+    type: string
+    description: The reverse RNA barcode
+  DNA_UMI:
+    type: string
+    description: The DNA UMI
+  RNA_UMI:
+    type: string
+    description: The RNA UMI
+  BC_DNA:
+    type: string
+    description: BC for RNA used by demultiplexing
+  BC_RNA:
+    type: string
+    description: BC for RNA used by demultiplexing
+  BC_F:
+    type: string
+    description: Read for FW BC (for demultiplexing)
+  BC_R:
+    type: string
+    description: Read for RV BC (for demultiplexing)
+  UMI:
+    type: string
+    description: Read for UMI (for demultiplexing)
+  INDEX:
+    type: string
+    description: Read for INDEX (for demultiplexing)
+
+# columns that the config/samples.tsv file must have to pass schema validation
+anyOf:
+  - required:
+      - DNA_BC_F
+      - RNA_BC_F
+      - DNA_UMI
+      - DNA_BC_R
+      - RNA_UMI
+      - RNA_BC_R
+  - required:
+      - DNA_BC_F
+      - RNA_BC_F
+      - DNA_BC_R
+      - RNA_BC_R
+  - required:
+      - DNA_BC_F
+      - RNA_BC_F
+  - required:
+      - BC_DNA
+      - BC_RNA
+      - BC_F
+      - BC_R
+      - UMI
+      - INDEX
+required:
+  - Condition
+  - Replicate
+additionalProperties: False

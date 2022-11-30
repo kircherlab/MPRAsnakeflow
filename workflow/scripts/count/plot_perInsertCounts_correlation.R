@@ -308,9 +308,13 @@ all <- data.frame()
 
 for (n in 1:(data %>% nrow())) {
     print(data[n, ]$File)
+    print(data)
     assigned_counts <- read_data(as.character(data[n, ]$File))
-    assigned_counts["replicate"] <- toString(data[n, ]$Replicate)
-    all <- all %>% bind_rows(assigned_counts)
+    if (nrow(assigned_counts) > 0) { # can be 0 when no BCs are assigned
+        assigned_counts["replicate"] <- toString(data[n, ]$Replicate)
+        all <- all %>% bind_rows(assigned_counts)
+    }
+    
 }
 
 if (use_labels) {
@@ -318,10 +322,12 @@ if (use_labels) {
         left_join(label_f, by = c("name")) %>%
         mutate(label = replace_na(label, "NA"))
 } else {
-    all$label <- "NA"
+    if (nrow(all) > 0) { # can be 0 when no BCs are assigned
+        all$label <- "NA"
+    }
 }
 
-if (data %>% nrow() > 1) {
+if (data %>% nrow() > 1 && nrow(all) > 1) {
     print("Pairwise comparisons")
     # make pairwise combinations
     selected <- combn(data$Replicate, 2)
@@ -485,65 +491,72 @@ box_plot_thresh_list <- list()
 box_plot_insert_list <- list()
 box_plot_insert_thresh_list <- list()
 
-for (n in 1:(data %>% nrow())) {
-    rep <- toString(data[n, ]$Replicate)
-    assigned_counts <- all %>% filter(replicate == rep)
+if (nrow(all) > 0) { # can be 0 when no BCs are assigned
+    for (n in 1:(data %>% nrow())) {
+        rep <- toString(data[n, ]$Replicate)
+        assigned_counts <- all %>% filter(replicate == rep)
 
-    # Histograms
-    intercept <- median(assigned_counts$n_obs_bc)
-    hist_plot_list[[n]] <-
-        ggplot(assigned_counts, aes(x = n_obs_bc)) +
-        geom_histogram(bins = 300) +
-        geom_vline(xintercept = intercept, colour = "red") +
-        xlim(0, 300) +
-        ggtitle(paste("replicate", rep, sep = " "))
+        # Histograms
+        intercept <- median(assigned_counts$n_obs_bc)
+        hist_plot_list[[n]] <-
+            ggplot(assigned_counts, aes(x = n_obs_bc)) +
+            geom_histogram(bins = 300) +
+            geom_vline(xintercept = intercept, colour = "red") +
+            xlim(0, 300) +
+            ggtitle(paste("replicate", rep, sep = " "))
 
-    # Boxplots
-    assigned_counts_subsample <- assigned_counts %>%
-        sample_n(min(10000, assigned_counts %>% nrow()))
+        # Boxplots
+        assigned_counts_subsample <- assigned_counts %>%
+            sample_n(min(10000, assigned_counts %>% nrow()))
 
-    box_plot_list[[n]] <-
-        plot_all_bc_per_insert(assigned_counts_subsample) +
-        ggtitle(paste("replicate", rep, sep = " "))
+        box_plot_list[[n]] <-
+            plot_all_bc_per_insert(assigned_counts_subsample) +
+            ggtitle(paste("replicate", rep, sep = " "))
 
-    box_plot_thresh_list[[n]] <-
-        plot_all_bc_per_insert(assigned_counts_subsample %>%
-                                   filter(n_obs_bc >= thresh)) +
-        ggtitle(paste("replicate", rep, sep =
-                          " "))
+        box_plot_thresh_list[[n]] <-
+            plot_all_bc_per_insert(assigned_counts_subsample %>%
+                                    filter(n_obs_bc >= thresh)) +
+            ggtitle(paste("replicate", rep, sep =
+                            " "))
 
-    box_plot_insert_list[[n]] <-
-        plot_group_bc_per_insert(assigned_counts) +
-        ggtitle(paste("replicate", rep, sep = " "))
+        box_plot_insert_list[[n]] <-
+            plot_group_bc_per_insert(assigned_counts) +
+            ggtitle(paste("replicate", rep, sep = " "))
 
-    box_plot_insert_thresh_list[[n]] <-
-        plot_group_bc_per_insert(assigned_counts %>%
-                                     filter(n_obs_bc >= thresh)) +
-        ggtitle(paste("replicate", rep, sep = " "))
+        box_plot_insert_thresh_list[[n]] <-
+            plot_group_bc_per_insert(assigned_counts %>%
+                                        filter(n_obs_bc >= thresh)) +
+            ggtitle(paste("replicate", rep, sep = " "))
+    }
+    hist_plot <- do.call("plot_grid", c(hist_plot_list))
+
+    ggsave(sprintf("%s_barcodesPerInsert.png", outdir), hist_plot)
+
+    box_plot <- do.call("plot_grid", c(box_plot_list))
+    ggsave(sprintf("%s_all_barcodesPerInsert_box.png", outdir),
+        box_plot)
+
+    box_plot_thresh <- do.call("plot_grid", c(box_plot_thresh_list))
+    ggsave(
+        sprintf("%s_all_barcodesPerInsert_box_minThreshold.png", outdir),
+        box_plot_thresh
+    )
+
+    box_plot_insert <- do.call("plot_grid", c(box_plot_insert_list))
+    ggsave(sprintf("%s_group_barcodesPerInsert_box.png", outdir),
+        box_plot_insert)
+
+    box_plot_insert_thresh <-
+        do.call("plot_grid", c(box_plot_insert_thresh_list))
+    ggsave(
+        sprintf("%s_group_barcodesPerInsert_box_minThreshold.png", outdir),
+        box_plot_insert_thresh
+    )
+} else {
+    print("!!!!!!!NO ASSIGNED BARCODES FOUND!!!!!!")
 }
 
-hist_plot <- do.call("plot_grid", c(hist_plot_list))
-ggsave(sprintf("%s_barcodesPerInsert.png", outdir), hist_plot)
 
-box_plot <- do.call("plot_grid", c(box_plot_list))
-ggsave(sprintf("%s_all_barcodesPerInsert_box.png", outdir),
-       box_plot)
 
-box_plot_thresh <- do.call("plot_grid", c(box_plot_thresh_list))
-ggsave(
-    sprintf("%s_all_barcodesPerInsert_box_minThreshold.png", outdir),
-    box_plot_thresh
-)
-
-box_plot_insert <- do.call("plot_grid", c(box_plot_insert_list))
-ggsave(sprintf("%s_group_barcodesPerInsert_box.png", outdir),
-       box_plot_insert)
-
-box_plot_insert_thresh <-
-    do.call("plot_grid", c(box_plot_insert_thresh_list))
-ggsave(
-    sprintf("%s_group_barcodesPerInsert_box_minThreshold.png", outdir),
-    box_plot_insert_thresh
-)
 
 print("Script done")

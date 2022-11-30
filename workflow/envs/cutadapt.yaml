@@ -1,10 +1,7 @@
 ---
 channels:
-  - bioconda
   - conda-forge
+  - bioconda
   - defaults
 dependencies:
-  - bwa
-  - samtools
-  - picard
-  - htslib
+  - cutadapt

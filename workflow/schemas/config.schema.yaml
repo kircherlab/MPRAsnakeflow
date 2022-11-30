@@ -50,19 +50,24 @@ properties:
         properties:
           bc_length:
             type: integer
-          R1:
+          linker_length:
+            type: integer
+          linker:
+            type: string
+            pattern: ^[ATCGNatcgn]+$
+          FW:
             type: array
             items:
               type: string
             minItems: 1
             uniqueItems: true
-          R2:
+          BC:
             type: array
             items:
               type: string
             minItems: 1
             uniqueItems: true
-          R3:
+          REV:
             type: array
             items:
               type: string
@@ -115,10 +120,16 @@ properties:
                 additionalProperties: false
             additionalProperties: false
             minProperties: 1
+        oneOf:
+          - required:
+            - linker_length
+          - required:
+            - linker
+          - required:
+            - BC
         required:
-          - R1
-          - R2
-          - R3
+          - FW
+          - REV
           - bc_length
           - reference
           - configs
@@ -143,6 +154,9 @@ properties:
           umi_length:
             type: integer
             minimum: 1
+          adapter:
+            type: string
+            pattern: ^[ATCGNatcgn]+$
           data_folder:
             type: string
           experiment_file:
@@ -274,7 +288,6 @@ properties:
         # entries that have to be in the config file for successful validation
         required:
           - bc_length
-          - umi_length
           - data_folder
           - experiment_file
           - demultiplex
