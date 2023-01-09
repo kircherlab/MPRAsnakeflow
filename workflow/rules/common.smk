@@ -243,6 +243,24 @@ def getOutputProjectConditionReplicateType_helper(file, skip={}):
     return output
 
 
+def getOutputProjectConditionConfigType_helper(file):
+    """
+    Inserts {project}, {condition} and {type} from config into given file.
+    """
+    output = []
+    projects = getProjects()
+    for project in projects:
+        conditions = getConditions(project)
+        for condition in conditions:
+            output += expand(
+                file,
+                project=project,
+                condition=condition,
+                config=getConfigs(project),
+                type=["DNA", "RNA"],
+            )
+    return output
+
 def getOutputProjectConditionType_helper(file):
     """
     Inserts {project}, {condition} and {type} from config into given file.
@@ -260,6 +278,27 @@ def getOutputProjectConditionType_helper(file):
             )
     return output
 
+def getOutputProjectConditionAssignmentConfigType_helper(file):
+    """
+    Inserts {project}, {condition}, {assignment} and {config} (from configs of project) from config into given file.
+    """
+    output = []
+    projects = getProjects()
+    for project in projects:
+        try:
+            conditions = getConditions(project)
+            for condition in conditions:
+                output += expand(
+                    file,
+                    project=project,
+                    condition=condition,
+                    assignment=getProjectAssignments(project),
+                    config=getConfigs(project),
+                    type=["DNA", "RNA"],
+                )
+        except MissingAssignmentInConfigException:
+            continue
+    return output
 
 def getOutputProjectConditionAssignmentConfig_helper(file):
     """
@@ -464,10 +503,11 @@ def counts_getFilterConfig(project, conf, dna_or_rna, command):
     value = config["experiments"][project]["configs"][conf]["filter"][dna_or_rna][
         command
     ]
+    filterMap={"min_counts": "minCounts"}
     if isinstance(value, int):
-        return "--%s %d" % (command, value)
+        return "--%s %d" % (filterMap.get(command, command), value)
     else:
-        return "--%s %f" % (command, value)
+        return "--%s %f" % (filterMap.get(command, command), value)
 
 
 def counts_getSamplingConfig(project, conf, dna_or_rna, command):

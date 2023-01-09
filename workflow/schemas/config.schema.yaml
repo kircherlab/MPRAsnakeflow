@@ -210,6 +210,12 @@ properties:
                         additionalProperties: false
                         required:
                           - min_counts
+                    default:
+                      bc_threshold: 10
+                      DNA:
+                        min_counts: 1
+                      RNA:
+                        min_counts: 1
                     required:
                       - bc_threshold
                       - DNA
