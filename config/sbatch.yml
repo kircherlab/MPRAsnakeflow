@@ -129,7 +129,7 @@ statistic_correlation_bc_counts_hist:
 
 statistic_correlation_bc_counts:
   time: "0-02:00"
-  mem: 10G
+  mem: 20G
   queue: "medium"
 statistic_correlation_bc_hist:
   time: "0-22:00"
