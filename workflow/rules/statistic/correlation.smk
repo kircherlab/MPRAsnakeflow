@@ -74,6 +74,7 @@ rule statistic_correlation_bc_counts:
         --files {params.input} --replicates {params.replicates} &> {log}
         """
 
+
 rule statistic_correlation_bc_counts_hist:
     conda:
         "../../envs/r.yaml"
@@ -112,6 +113,7 @@ rule statistic_correlation_bc_counts_hist:
         --mindnacounts {params.minDNACounts} --minrnacounts {params.minRNACounts} \
         --files {params.input} --replicates {params.replicates} &> {log}
         """
+
 
 rule statistic_correlation_combine_bc_raw:
     conda:
