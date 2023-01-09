@@ -132,11 +132,13 @@ rule assignment_attach_idx:
         read=temp(
             "results/assignment/{assignment}/fastq/splits/{read}.split{split}.BCattached.fastq.gz"
         ),
+    params:
+        BC_rev_comp= lambda wc: "--reverse-complement" if config["assignments"][wc.assignment]["BC_rev_comp"] else ""
     log:
         temp("results/logs/assignment/attach_idx.{assignment}.{split}.{read}.log"),
     shell:
         """
-        python {input.script} -r {input.read} -b {input.BC} | bgzip -c > {output.read}
+        python {input.script} -r {input.read} -b {input.BC} {params.BC_rev_comp} | bgzip -c > {output.read} 2> {log}
         """
 
 
@@ -366,9 +368,11 @@ rule assignment_filter:
             "ambiguous"
         ]
         else "",
+        bc_length=lambda wc: config["assignments"][wc.assignment]["bc_length"],
     shell:
         """
         zcat  {input.assignment} | \
+        awk -v "OFS=\\t" -F"\\t" '{{if (length($1)=={params.bc_length}){{print $0 }}}}' | \
         python {input.script} \
         -m {params.min_support} -f {params.fraction} {params.unknown_other} {params.ambiguous} | \
         gzip -c > {output} 2> {log}

@@ -50,6 +50,9 @@ properties:
         properties:
           bc_length:
             type: integer
+          BC_rev_comp:
+            type: boolean
+            default: false
           linker_length:
             type: integer
           linker:

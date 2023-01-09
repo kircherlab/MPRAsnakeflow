@@ -55,7 +55,7 @@ assignment_statistic_assignment:
   time: "0-01:00"
   threads: 1
   queue: medium
-  mem: 20G
+  mem: 5G
 ##############
 ### COUNTS ###
 ##############
