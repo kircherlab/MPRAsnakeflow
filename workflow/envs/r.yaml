@@ -7,8 +7,5 @@ dependencies:
   - r-base
   - r-cowplot
   - r-cairo
-  - r-dplyr
-  - r-ggplot2
   - r-optparse
-  - r-readr
   - r-tidyverse

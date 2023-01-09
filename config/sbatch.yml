@@ -55,7 +55,7 @@ assignment_statistic_assignment:
   time: "0-01:00"
   threads: 1
   queue: medium
-  mem: 5G
+  mem: 40G
 ##############
 ### COUNTS ###
 ##############
@@ -102,7 +102,7 @@ assigned_counts_dna_rna_merge:
 assigned_counts_assignBarcodes:
   time: "4-00:00"
   queue: "medium"
-  mem: 10G
+  mem: 20G
 
 assigned_counts_createAssignmentPickleFile:
   mem: 10G
@@ -133,14 +133,26 @@ statistic_counts_barcode_base_composition:
 ### Statistic/correlation ###
 #############################
 
-statistic_correlation_bc_counts:
-  time: "0-22:00"
-  mem: 80G
+statistic_correlation_bc_counts_hist:
+  time: "0-02:00"
+  mem: 10G
   queue: "medium"
 
+statistic_correlation_bc_counts:
+  time: "0-02:00"
+  mem: 20G
+  queue: "medium"
+statistic_correlation_bc_hist:
+  time: "0-22:00"
+  mem: 10G
+  queue: "medium"
 statistic_correlation_calculate:
-  time: "2-00:00"
-  mem: 120G
+  time: "0-02:00"
+  mem: 10G
+  queue: "medium"
+statistic_correlation_hist_box_plots:
+  time: "0-02:00"
+  mem: 10G
   queue: "medium"
 
 ############################
@@ -149,5 +161,5 @@ statistic_correlation_calculate:
 
 statistic_bc_overlap_run:
   time: "0-05:00"
-  mem: 10G
+  mem: 25G
   queue: "medium"

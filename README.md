@@ -23,8 +23,7 @@ If you use this workflow in a paper, don't forget to give credits to the authors
 
 ### Step 1: Obtain a copy of this workflow
 
-1. Create a new github repository using this workflow [as a template](https://help.github.com/en/articles/creating-a-repository-from-a-template).
-2. [Clone](https://help.github.com/en/articles/cloning-a-repository) the newly created repository to your local system, into the place where you want to perform the data analysis.
+[Clone](https://help.github.com/en/articles/cloning-a-repository) this repository to your local system, into the place where you want to perform the data analysis.
 
 ### Step 2: Configure workflow
 
