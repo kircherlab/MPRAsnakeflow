@@ -6,8 +6,6 @@ channels:
 dependencies:
   - r-base
   - r-cowplot
-  - r-dplyr
-  - r-ggplot2
+  - r-cairo
   - r-optparse
-  - r-readr
   - r-tidyverse

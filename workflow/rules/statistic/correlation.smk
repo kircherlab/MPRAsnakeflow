@@ -46,8 +46,6 @@ rule statistic_correlation_bc_counts:
             },
         ),
         "results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}_{config}_barcode_correlation.tsv",
-        "results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}_{config}_DNA_perBarcode.png",
-        "results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}_{config}_RNA_perBarcode.png",
     params:
         replicates=lambda wc: ",".join(
             getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[1]
@@ -76,6 +74,44 @@ rule statistic_correlation_bc_counts:
         --files {params.input} --replicates {params.replicates} &> {log}
         """
 
+rule statistic_correlation_bc_counts_hist:
+    conda:
+        "../../envs/r.yaml"
+    input:
+        files=lambda wc: getMergedCounts(
+            wc.project, wc.raw_or_assigned, wc.condition, wc.config
+        )[0],
+        script=getScript("count/plot_perBCCounts_stats.R"),
+    output:
+        "results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}_{config}_DNA_perBarcode.png",
+        "results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}_{config}_RNA_perBarcode.png",
+    params:
+        replicates=lambda wc: ",".join(
+            getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[1]
+        ),
+        cond="{condition}",
+        outdir="results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}_{config}",
+        input=lambda wc: ",".join(
+            getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[0]
+        ),
+        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
+            wc.config
+        ]["filter"]["RNA"]["min_counts"],
+        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
+            wc.config
+        ]["filter"]["DNA"]["min_counts"],
+    log:
+        temp(
+            "results/logs/statistic/correlation/correlate_bc_counts_hist.{project}.{condition}.{config}.{raw_or_assigned}.log"
+        ),
+    shell:
+        """
+        Rscript {input.script} \
+        --outdir {params.outdir} \
+        --condition {params.cond} \
+        --mindnacounts {params.minDNACounts} --minrnacounts {params.minRNACounts} \
+        --files {params.input} --replicates {params.replicates} &> {log}
+        """
 
 rule statistic_correlation_combine_bc_raw:
     conda:
@@ -247,10 +283,6 @@ rule statistic_correlation_calculate:
                 ),
             },
         ),
-        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box.png",
-        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box_minThreshold.png",
-        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png",
-        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png",
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_correlation.tsv",
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_correlation_minThreshold.tsv",
     params:
@@ -280,6 +312,65 @@ rule statistic_correlation_calculate:
     log:
         temp(
             "results/logs/statistic/correlation/calculate.{project}.{condition}.{config}.{assignment}.log"
+        ),
+    shell:
+        """
+        Rscript {input.script} \
+        --condition {params.cond} \
+        {params.label} \
+        --files {params.files} \
+        --replicates {params.replicates} \
+        --threshold {params.thresh} \
+        --outdir {params.outdir} &> {log}
+        """
+
+
+rule statistic_correlation_hist_box_plots:
+    conda:
+        "../../envs/r.yaml"
+    input:
+        counts=lambda wc: expand(
+            "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts.tsv.gz",
+            replicate=getReplicatesOfCondition(wc.project, wc.condition),
+        ),
+        label=(
+            lambda wc: config["experiments"][wc.project]["label_file"]
+            if "label_file" in config["experiments"][wc.project]
+            else []
+        ),
+        script=getScript("count/plot_perInsertCounts_stats.R"),
+    output:
+        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box.png",
+        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box_minThreshold.png",
+        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png",
+        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png",
+    params:
+        cond="{condition}",
+        files=lambda wc: ",".join(
+            expand(
+                "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
+                replicate=getReplicatesOfCondition(wc.project, wc.condition),
+                project=wc.project,
+                condition=wc.condition,
+                assignment=wc.assignment,
+                config=wc.config,
+            )
+        ),
+        replicates=lambda wc: ",".join(
+            getReplicatesOfCondition(wc.project, wc.condition)
+        ),
+        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
+            "filter"
+        ]["bc_threshold"],
+        outdir="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}",
+        label=(
+            lambda wc: "--label %s" % config["experiments"][wc.project]["label_file"]
+            if "label_file" in config["experiments"][wc.project]
+            else ""
+        ),
+    log:
+        temp(
+            "results/logs/statistic/correlation/hist_box_plots.{project}.{condition}.{config}.{assignment}.log"
         ),
     shell:
         """
