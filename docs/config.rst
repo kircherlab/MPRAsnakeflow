@@ -45,18 +45,34 @@ The assignment workflow is configured in the :code:`assignments` section. The fo
 
 Each asignment you want to process you have to giv him a name like :code:`example_assignment`. The name is used to name the output files.
 
-:bc_length:
-    Length of the barcode. Must match with the length of :code:`R2`.
 :sequence_length:
     Defines the :code:`min` and :code:`max` of a :code:`sequence_length` specify . :code:`sequence_length` is basically the length of a sequence alignment to an oligo in the reference file. Because there can be insertion and deletions we recommend to vary it a bit around the exact length (e.g. +-5). In theory this option enables designs with multiple sequence lengths.
 :alignment_start:
     Defines the :code:`min` and :code:`max` of the start of the alignment in an oligo. When using adapters you have to set basically the length of the adapter. Otherwise 1 will be the choice for most cases. We also recommend to vary this value a bit because the start might not be exact after the adapter. E.g. by +-1.
+:bc_length:
+    Length of the barcode. Must match with the length of :code:`R2`.
+:BC_rev_comp:
+    (Optional) If set to :code:`true` the barcode of is reverse complemented. Default is :code:`false`.
+:linker_length:
+    (Optional) Length of the linker. Only needed if you don't have a barcode read and the barcode is in the FW read with the structure: BC+Linker+Insert. The fixed length is used for the linker after a fixed length of BC. The recommended option is :code:`linker` by defining the exact linker sequence and using cutadapt for trimming.
+:linker:
+    (Optional) Length of the linker. Only needed if you don't have a barcode read and the barcode is in the FW read with the structure: BC+Linker+Insert. Uses cutadapt to trim the linker to get the barcode as well as the starting of the insert.
 :FW:
     List of forward read files in gzipped fastq format. The full or relative path to the files should be used. Same order in R1, R2, and R3 is important.
 :REV:
     list of reverse read files in gzipped fastq format. The full or relative path to the files should be used. Same order in R1, R2, and R3 is important.
 :BC:
     List of index read files in gzipped fastq format. The full or relative path to the files should be used. Same order in R1, R2, and R3 is important.
+:NGmerge:
+    (Optional) Options for NGmerge. NGmerge is used merge FW and REV reads. The following options are possible (we recommend to use the default values):
+
+    :min_overlap:
+        (Optional) Minimum overlap of the reads. Default is set to 20.
+    :frac_mismatches_allowed:
+        (Optional) Fraction of mismatches allowed in the overlap. Default is set to 0.1.
+    :min_dovetailed_overlap:
+        (Optional) Minimum dovetailed overlap. Default is set to 10.
+
 :reference:
     Design file (full or relative path) in fasta format. The design file should contain the oligos in fasta format. The header should contain the oligo name and should be unique. The sequence should be the sequence of the oligo and must also be unique. When having multiple oligo names with the same sequence please merge them into one fasta entry. The oligo name later used to link barcode to oligo. The sequence is used to map the reads to the oligos. Adapters can be in the seuqence and therefore :code:`alignment_start` has to be adjusted.
 :configs:
