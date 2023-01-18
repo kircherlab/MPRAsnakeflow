@@ -99,15 +99,17 @@ The experiment workflow is configured in the :code:`experiments` section. Each e
    :end-before: end_experiments
 
 :bc_length:
-    Length of the barcode. This is used to extract the barcode from the index read. The barcode is extracted from the first :code:`bc_length` bases of the index read.
+    Length of the barcode. This is used to extract the barcode from the index read. The barcode is extracted from the first :code:`bc_length` bases of the index read. When no reverse read is given and :code:`adapter` is not set teh exact length is used to extract the DNA BC from the FW read.
 :umi_length:
-    Length of the UMI. This is used to extract the UMI from the index read. The UMI is extracted from the last :code:`umi_length` bases of the index read.
+    (Optional) Length of the UMI. This is used to extract the UMI from the index read. The UMI is extracted from the last :code:`umi_length` bases of the index read. Please provide if you use UMIs.
+:adapter:
+    (Optional) Adapter sequence in the FW read when no reverse read is given. This is used to trim the sequence and retrieve the BC using cutadapt.
 :data_folder:
     Folder where the fastq files are located. Files are defined in the :code:`experiment_file`. The full or relative path to the folder should be used.
 :experiment_file:
     Path to the experiment file. The full or relative path to the file should be used. The experiment file is a comma separated file and is decribed in the `Experiment file`_ section.
 :demultiplex:
-    If set to :code:`true` the reads are demultiplexed. This means that the reads are split into different files for each barcode. This is usefull for further analysis. Default is :code:`false`.
+    (Optional) If set to :code:`true` the reads are demultiplexed. This means that the reads are split into different files for each barcode. This is usefull for further analysis. Default is :code:`false`.
 :design_file:
     Design file (full or relative path) in fasta format. The design file should contain the oligos in fasta format. The header should contain the oligo name and should be unique. The sequence should be the sequence of the oligo and must also be unique. When having multiple oligo names with the same sequence please merge them into one fasta entry. Should be the same as :code:`reference` in the `Assignment workflow`_.
 :label_file:
@@ -133,37 +135,87 @@ The experiment workflow is configured in the :code:`experiments` section. Each e
     :sampling:
         (Optional) Options Randomly removing barcodes in the assignment. Just for debug reasons.
 
-        .. todo:: Describe assignment sampling parameters.
+        :prop:
+            Sample down the BCs in the assignment file to this proporion.
+        :total:
+            Sample down the BCs in the assignment file to this number.
 
 
 :configs:
     Each experiment run can have multiple configurations including filter and sampling options.
 
     :filter:
-        Filter options. These options are available
+        (Optional) Filter options. These options are available
 
         :bc_threshold:
             Minimum number of different BCs required per oligo. A higher value normally increases the correlation betwene replicates but also reduces the number of final oligos. Default option is :code:`10`.
         :DNA:
             Settings for DNA
 
-            min_counts
+            :min_counts:
                 Mimimum number of DNA counts per barcode. When set to :code:`0` a pseudo count is added. Default option is :code:`1`.
         :RNA:
             Settings for DNA
 
-            min_counts
+            :min_counts:
                 Mimimum number of RNA counts per barcode. When set to :code:`0` a pseudo count is added. Default option is :code:`1`.
     :sampling:
         (Optional) Options for sampling counts and barcodes. Just for debug reasons.
 
-             .. todo:: Describe count sampling parameters.
+        :DNA:
+            Settings for sampling DNA counts.
 
+            :threshold:
+                Maximum threshold for DNA counts assigned to a BC.
+            :prop:
+                Sample down the DNA counts to this proporion.
+            :total:
+                Sample down the DNA counts to this number.
+            :seed:
+                Seed for the random DNA sampling.
+        
+        :RNA:
+            Settings for sampling RNA counts.
 
+            :threshold:
+                Maximum threshold for RNA counts assigned to a BC.
+            :prop:
+                Sample down the RNA counts to this proporion.
+            :total:
+                Sample down the RNA counts to this number.
+            :seed:
+                Seed for the random RNA sampling.
+
+=====================
 Experiment file
-----------------
+=====================
 
-Experiment file has a header with Condition, Replicate, DNA_BC_F, DNA_UMI, DNA_BC_R, RNA_BC_F, RNA_UMI, and RNA_BC_R. Condition together with replicate have to be a uniqe name. Both field entries are not allowed to have :code:`_` and :code:`.`. Multiple file names are allowd seperating them via :code:`;`. An example experiment file can be found here: :download:`resources/example_experiment.csv <../resources/example_experiment.csv>`.
+Here we have 4 different options:
+
+------------------------------
+Forward, reverse, and UMI read
+------------------------------
+
+Experiment file has a header with :code:`Condition`, :code:`Replicate`, :code:`DNA_BC_F`, :code:`DNA_UMI`, :code:`DNA_BC_R`, :code:`RNA_BC_F`, :code:`RNA_UMI`, and :code:`RNA_BC_R`. Condition together with replicate have to be a uniqe name. Both field entries are not allowed to have :code:`_` and :code:`.`. Multiple file names are allowd seperating them via :code:`;`. An example experiment file can be found here: :download:`resources/example_experiment.csv <../resources/example_experiment.csv>`.
 
 .. literalinclude:: ../resources/example_experiment.csv
    :language: text
+
+------------------------
+Forward and reverse read
+------------------------
+
+Experiment file has a header with :code:`Condition`, :code:`Replicate`, :code:`DNA_BC_F`, :code:`DNA_BC_R`, :code:`RNA_BC_F`, and :code:`RNA_BC_R`. Condition together with replicate have to be a uniqe name. Both field entries are not allowed to have :code:`_` and :code:`.`. Multiple file names are allowd seperating them via :code:`;`.
+
+------------------
+Only forward read
+------------------
+
+Experiment file has a header with :code:`Condition`, :code:`Replicate`, :code:`DNA_BC_F`, and :code:`RNA_BC_F`. Condition together with replicate have to be a uniqe name. Both field entries are not allowed to have :code:`_` and :code:`.`. Multiple file names are allowd seperating them via :code:`;`.
+
+
+-------------------------------------------------------
+Forward, reverse, and UMI read using demultiplex option
+-------------------------------------------------------
+
+Experiment file has a header with :code:`Condition`, :code:`Replicate`, :code:`BC_DNA`, :code:`BC_RNA`, :code:`BC_F`, :code:`BC_R`, :code:`UMI`, and :code:`INDEX`. Condition together with replicate have to be a uniqe name. Both field entries are not allowed to have :code:`_` and :code:`.`. Multiple file names are allowd seperating them via :code:`;`.
