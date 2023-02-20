@@ -219,27 +219,27 @@ for (n in 1:(data %>% nrow())) {
 }
 
 hist_plot <- do.call("plot_grid", c(hist_plot_list))
-ggsave(sprintf("%s_barcodesPerInsert.png", outdir), hist_plot)
+ggsave(sprintf("%s_barcodesPerInsert.png", outdir), hist_plot, width=30, height=30)
 
 box_plot <- do.call("plot_grid", c(box_plot_list))
 ggsave(sprintf("%s_all_barcodesPerInsert_box.png", outdir),
-       box_plot)
+       box_plot, width=30, height=30)
 
 box_plot_thresh <- do.call("plot_grid", c(box_plot_thresh_list))
 ggsave(
     sprintf("%s_all_barcodesPerInsert_box_minThreshold.png", outdir),
-    box_plot_thresh
+    box_plot_thresh, width=30, height=30
 )
 
 box_plot_insert <- do.call("plot_grid", c(box_plot_insert_list))
 ggsave(sprintf("%s_group_barcodesPerInsert_box.png", outdir),
-       box_plot_insert)
+       box_plot_insert, width=30, height=30)
 
 box_plot_insert_thresh <-
     do.call("plot_grid", c(box_plot_insert_thresh_list))
 ggsave(
     sprintf("%s_group_barcodesPerInsert_box_minThreshold.png", outdir),
-    box_plot_insert_thresh
+    box_plot_insert_thresh, width=30, height=30
 )
 
 print("Script done")
