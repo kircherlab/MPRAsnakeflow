@@ -110,6 +110,12 @@ rule all:
         getOutputProjectConditionAssignmentConfig_helper(
             "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.tsv.gz"
         ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.combined.tsv.gz"
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged.combined.tsv.gz"
+        ),
         # assignment statistic
         getOutputProjectConditionAssignmentConfig_helper(
             "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box.png"
@@ -214,6 +220,12 @@ rule all_experiments:
         getOutputProjectConditionAssignmentConfig_helper(
             "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.tsv.gz"
         ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.combined.tsv.gz"
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged.combined.tsv.gz"
+        ),
         # assignment statistic
         getOutputProjectConditionAssignmentConfig_helper(
             "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box.png"
@@ -278,6 +290,12 @@ rule all_experiments_assignments:
     input:
         getOutputProjectConditionAssignmentConfig_helper(
             "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.tsv.gz"
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.combined.tsv.gz"
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged.combined.tsv.gz"
         ),
 
 
