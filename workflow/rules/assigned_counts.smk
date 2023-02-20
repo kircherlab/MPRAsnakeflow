@@ -167,3 +167,32 @@ rule assigned_counts_make_master_tables:
         --output-all {output.all} \
         --statistic {output.statistic} &> {log}
         """
+
+
+rule assigned_counts_combine_replicates:
+    """
+    Combine replicates of master table by summing counts up and using also the average.
+    """
+    conda:
+        "../envs/python3.yaml"
+    input:
+        master_table="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{allreps_or_threshold}_merged.tsv.gz",
+        script=getScript("count/combine_replicates.py"),
+    output:
+        "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{allreps_or_threshold}_merged.combined.tsv.gz",
+    params:
+        label_file=lambda wc: "--labels %s"
+        % config["experiments"][wc.project]["label_file"]
+        if "label_file" in config["experiments"][wc.project]
+        else "",
+    log:
+        temp(
+            "results/logs/assigned_counts/combine_replicates.{project}.{condition}.{config}.{assignment}.{allreps_or_threshold}.log"
+        ),
+    shell:
+        """
+        python {input.script} \
+        --input {input.master_table} \
+        {params.label_file} \
+        --output {output}  &> {log}
+        """
