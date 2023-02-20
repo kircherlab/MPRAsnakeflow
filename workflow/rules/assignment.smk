@@ -133,7 +133,9 @@ rule assignment_attach_idx:
             "results/assignment/{assignment}/fastq/splits/{read}.split{split}.BCattached.fastq.gz"
         ),
     params:
-        BC_rev_comp= lambda wc: "--reverse-complement" if config["assignments"][wc.assignment]["BC_rev_comp"] else ""
+        BC_rev_comp=lambda wc: "--reverse-complement"
+        if config["assignments"][wc.assignment]["BC_rev_comp"]
+        else "",
     log:
         temp("results/logs/assignment/attach_idx.{assignment}.{split}.{read}.log"),
     shell:
@@ -168,17 +170,18 @@ rule assignment_merge:
             "NGmerge"
         ]["min_dovetailed_overlap"],
     log:
-        temp("results/logs/assignment/merge.{assignment}.{split}.log"),
+        temp("results/logs/assignment/merge.{assignment}.{split}.log.gz"),
     shell:
         """
         NGmerge \
         -1 {input.FW} \
         -2 {input.REV} \
-        -m {params.min_overlap} -p {params.frac_mismatches_allowed} -e {params.min_dovetailed_overlap} \
+        -m {params.min_overlap} -p {params.frac_mismatches_allowed} \
+        -d \
         -z \
         -o  {output.join} \
         -i -f {output.un} \
-        -l {log}
+        -l >(gzip -c - > {log})
         """
 
 
@@ -234,6 +237,48 @@ rule assignment_mapping:
         bwa mem -t {threads} -L 80 -M -C {input.reference} <(
             gzip -dc {input.reads}
         )  | samtools sort -l 0 -@ {threads} > {output} 2> {log}
+        """
+
+
+rule assignment_getBCs:
+    """
+    Get the barcodes.
+    """
+    input:
+        "results/assignment/{assignment}/bam/merge_split{split}.mapped.bam",
+    output:
+        temp("results/assignment/{assignment}/BCs/barcodes_incl_other.{split}.tsv.gz"),
+    conda:
+        "../envs/bwa_samtools_picard_htslib.yaml"
+    params:
+        alignment_start_min=lambda wc: config["assignments"][wc.assignment][
+            "alignment_start"
+        ]["min"],
+        alignment_start_max=lambda wc: config["assignments"][wc.assignment][
+            "alignment_start"
+        ]["max"],
+        sequence_length_min=lambda wc: config["assignments"][wc.assignment][
+            "sequence_length"
+        ]["min"],
+        sequence_length_max=lambda wc: config["assignments"][wc.assignment][
+            "sequence_length"
+        ]["max"],
+    log:
+        temp("results/logs/assignment/getBCs.{assignment}.{split}.log"),
+    shell:
+        """
+        samtools view -F 1792 {input} | \
+        awk -v "OFS=\\t" '{{
+            split($(NF),a,":");
+            split(a[3],a,",");
+            if (a[1] !~ /N/) {{
+                if (($5 > 0) && ($4 >= {params.alignment_start_min}) && ($4 <= {params.alignment_start_max}) && (length($10) >= {params.sequence_length_min}) && (length($10) <= {params.sequence_length_max})) {{
+                    print a[1],$3,$4";"$6";"$12";"$13";"$5 
+                }} else {{
+                    print a[1],"other","NA" 
+                }}
+            }}
+        }}' | gzip -c > {output} 2> {log}
         """
 
 
@@ -296,45 +341,24 @@ rule assignment_flagstat:
         """
 
 
-rule assignment_getBCs:
+rule assignment_collectBCs:
     """
     Get the barcodes.
     """
     input:
-        "results/assignment/{assignment}/aligned_merged_reads.bam",
+        expand(
+            "results/assignment/{{assignment}}/BCs/barcodes_incl_other.{split}.tsv.gz",
+            split=range(0, getSplitNumber()),
+        ),
     output:
         "results/assignment/{assignment}/barcodes_incl_other.sorted.tsv.gz",
     conda:
-        "../envs/bwa_samtools_picard_htslib.yaml"
-    params:
-        alignment_start_min=lambda wc: config["assignments"][wc.assignment][
-            "alignment_start"
-        ]["min"],
-        alignment_start_max=lambda wc: config["assignments"][wc.assignment][
-            "alignment_start"
-        ]["max"],
-        sequence_length_min=lambda wc: config["assignments"][wc.assignment][
-            "sequence_length"
-        ]["min"],
-        sequence_length_max=lambda wc: config["assignments"][wc.assignment][
-            "sequence_length"
-        ]["max"],
+        "../envs/default.yaml"
     log:
-        temp("results/logs/assignment/getBCs.{assignment}.log"),
+        temp("results/logs/assignment/collectBCs.{assignment}.log"),
     shell:
         """
-        samtools view -F 1792 {input} | \
-        awk -v "OFS=\\t" '{{
-            split($(NF),a,":");
-            split(a[3],a,",");
-            if (a[1] !~ /N/) {{
-                if (($5 > 0) && ($4 >= {params.alignment_start_min}) && ($4 <= {params.alignment_start_max}) && (length($10) >= {params.sequence_length_min}) && (length($10) <= {params.sequence_length_max})) {{
-                    print a[1],$3,$4";"$6";"$12";"$13";"$5 
-                }} else {{
-                    print a[1],"other","NA" 
-                }}
-            }}
-        }}' | sort -k1,1 -k2,2 -k3,3 | gzip -c > {output} 2> {log}
+        zcat {input} | sort -k1,1 -k2,2 -k3,3 | gzip -c > {output} 2> {log}
         """
 
 
