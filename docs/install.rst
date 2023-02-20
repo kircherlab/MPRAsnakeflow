@@ -22,7 +22,7 @@ Download here: https://docs.conda.io/en/latest/miniconda.html
 
 .. code-block:: bash
 
-    snakemake 7.4,1 or above
+    snakemake 7.15.1 or above
 
 Download here: https://snakemake.readthedocs.io/
 
