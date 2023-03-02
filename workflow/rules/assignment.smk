@@ -178,6 +178,7 @@ rule assignment_merge:
         -2 {input.REV} \
         -m {params.min_overlap} -p {params.frac_mismatches_allowed} \
         -d \
+        -e {params.min_dovetailed_overlap} \
         -z \
         -o  {output.join} \
         -i -f {output.un} \
@@ -247,7 +248,7 @@ rule assignment_getBCs:
     input:
         "results/assignment/{assignment}/bam/merge_split{split}.mapped.bam",
     output:
-        temp("results/assignment/{assignment}/BCs/barcodes_incl_other.{split}.tsv.gz"),
+        temp("results/assignment/{assignment}/BCs/barcodes_incl_other.{split}.tsv"),
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
     params:
@@ -263,6 +264,9 @@ rule assignment_getBCs:
         sequence_length_max=lambda wc: config["assignments"][wc.assignment][
             "sequence_length"
         ]["max"],
+        mapping_quality_min=lambda wc: config["assignments"][wc.assignment][
+            "min_mapping_quality"
+        ],
     log:
         temp("results/logs/assignment/getBCs.{assignment}.{split}.log"),
     shell:
@@ -272,13 +276,13 @@ rule assignment_getBCs:
             split($(NF),a,":");
             split(a[3],a,",");
             if (a[1] !~ /N/) {{
-                if (($5 > 0) && ($4 >= {params.alignment_start_min}) && ($4 <= {params.alignment_start_max}) && (length($10) >= {params.sequence_length_min}) && (length($10) <= {params.sequence_length_max})) {{
+                if (($5 >= {params.mapping_quality_min}) && ($4 >= {params.alignment_start_min}) && ($4 <= {params.alignment_start_max}) && (length($10) >= {params.sequence_length_min}) && (length($10) <= {params.sequence_length_max})) {{
                     print a[1],$3,$4";"$6";"$12";"$13";"$5 
                 }} else {{
                     print a[1],"other","NA" 
                 }}
             }}
-        }}' | gzip -c > {output} 2> {log}
+        }}' | sort -k1,1 -k2,2 -k3,3 > {output} 2> {log}
         """
 
 
@@ -347,18 +351,21 @@ rule assignment_collectBCs:
     """
     input:
         expand(
-            "results/assignment/{{assignment}}/BCs/barcodes_incl_other.{split}.tsv.gz",
+            "results/assignment/{{assignment}}/BCs/barcodes_incl_other.{split}.tsv",
             split=range(0, getSplitNumber()),
         ),
     output:
         "results/assignment/{assignment}/barcodes_incl_other.sorted.tsv.gz",
+    params:
+        batch_size=getSplitNumber(),
+    threads: 20
     conda:
         "../envs/default.yaml"
     log:
         temp("results/logs/assignment/collectBCs.{assignment}.log"),
     shell:
         """
-        zcat {input} | sort -k1,1 -k2,2 -k3,3 | gzip -c > {output} 2> {log}
+        sort --batch-size={params.batch_size} --parallel={threads} -k1,1 -k2,2 -k3,3 -m {input} | gzip -c > {output} 2> {log}
         """
 
 

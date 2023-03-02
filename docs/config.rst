@@ -49,6 +49,8 @@ Each asignment you want to process you have to giv him a name like :code:`exampl
     Defines the :code:`min` and :code:`max` of a :code:`sequence_length` specify . :code:`sequence_length` is basically the length of a sequence alignment to an oligo in the reference file. Because there can be insertion and deletions we recommend to vary it a bit around the exact length (e.g. +-5). In theory this option enables designs with multiple sequence lengths.
 :alignment_start:
     Defines the :code:`min` and :code:`max` of the start of the alignment in an oligo. When using adapters you have to set basically the length of the adapter. Otherwise 1 will be the choice for most cases. We also recommend to vary this value a bit because the start might not be exact after the adapter. E.g. by +-1.
+:min_mapping_quality:
+    (Optinal) Defines the minimum mapping quality (MAPQ) of the alinment to an oligo. When using oligos with only 1bp difference it is recommended to set it to 0. Otherwise the default value of 1 is recommended. 
 :bc_length:
     Length of the barcode. Must match with the length of :code:`R2`.
 :BC_rev_comp:

@@ -76,6 +76,10 @@ properties:
               type: string
             minItems: 1
             uniqueItems: true
+          min_mapping_quality:
+            type: integer
+            default: 1
+            minimum: 0
           NGmerge:
             type: object
             properties:
@@ -87,7 +91,7 @@ properties:
                 default: 0.1
               min_dovetailed_overlap:
                 type: integer
-                default: 20
+                default: 50
             required:
               - min_overlap
               - frac_mismatches_allowed
@@ -138,6 +142,7 @@ properties:
           - configs
           - alignment_start
           - sequence_length
+          - min_mapping_quality
           - NGmerge
         additionalProperties: false
     additionalProperties: false

@@ -43,7 +43,8 @@ assignment_getBCs:
   queue: medium
 assignment_collectBCs:
   time: "2-04:00"
-  threads: 1
+  threads: 20
+  mem: 10G
   queue: medium
 assignment_statistic_totalCounts:
   time: "0-01:00"
