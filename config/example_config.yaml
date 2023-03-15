@@ -12,7 +12,7 @@ assignments:
     alignment_start:  # start of an alignment in the reference. Here using 15 bp adapters. Can be different when using adapter free approaches
       min: 15  # integer
       max: 17  # integer
-    min_mapping_quality: 1  # integer >=0 Please use 0 when you have oligos that differ by 1 base in your reference/design file
+    min_mapping_quality: 1  # integer >=0 Please use 1 when you have oligos that differ by 1 base in your reference/design file
     FW:
       - resources/Assignment_BasiC/R1.fastq.gz
     BC:
