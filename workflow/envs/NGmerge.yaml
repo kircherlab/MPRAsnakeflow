@@ -1,10 +1,10 @@
 ---
 channels:
-  - bioconda
   - conda-forge
+  - bioconda
   - defaults
 dependencies:
-  - bwa
-  - samtools
-  - picard
+  - ngmerge=0.3
+  - python
+  - click  
   - htslib

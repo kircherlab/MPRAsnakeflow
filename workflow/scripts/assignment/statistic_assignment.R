@@ -43,7 +43,7 @@ median_support <- median(bcs$support / bcs$all)
 
 bcs <- bcs %>%
     group_by(X2) %>%
-    count()
+    count() %>% ungroup()
 
 oligos_support <- bcs %>%
     filter(n >= 15) %>%
@@ -57,16 +57,16 @@ write.table(output, file = opt$statistic, quote = FALSE, sep = "\t", row.names =
 
 p <- ggplot(bcs, aes(n)) +
     geom_histogram(binwidth = 1) +
-    geom_vline(aes(xintercept = mean(n)), col = "red", size = 2) +
+    geom_vline(aes(xintercept = mean(bcs$n)), col = "red", linewidth = 2) +
     geom_text(aes(
-        y = 500, label = sprintf("\nmean = %f", mean(n)),
+        y = 500, label = sprintf("\nmean = %f", mean(bcs$n)),
         x = max(n) / 2
     ), colour = "red") +
-    geom_vline(aes(xintercept = median(n)), col = "blue", size = 2) +
+    geom_vline(aes(xintercept = median(bcs$n)), col = "blue", linewidth = 2) +
     geom_text(aes(
-        y = 500, label = sprintf("median = %f\n", median(n)),
+        y = 500, label = sprintf("median = %f\n", median(bcs$n)),
         x = max(n) / 2
     ), colour = "blue") +
     theme_bw()
 
-ggsave(opt$plot, p, width = 15, height = 12)
+ggsave(opt$plot, p, type="cairo", dpi=300)

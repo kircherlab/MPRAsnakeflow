@@ -2,7 +2,6 @@
 # print out barcodes and correspoding assignment (tsv format to standard out) from a picke file
 
 import click
-import csv
 import pandas as pd
 
 

@@ -50,24 +50,54 @@ properties:
         properties:
           bc_length:
             type: integer
-          R1:
+          BC_rev_comp:
+            type: boolean
+            default: false
+          linker_length:
+            type: integer
+          linker:
+            type: string
+            pattern: ^[ATCGNatcgn]+$
+          FW:
             type: array
             items:
               type: string
             minItems: 1
             uniqueItems: true
-          R2:
+          BC:
             type: array
             items:
               type: string
             minItems: 1
             uniqueItems: true
-          R3:
+          REV:
             type: array
             items:
               type: string
             minItems: 1
             uniqueItems: true
+          min_mapping_quality:
+            type: integer
+            default: 1
+            minimum: 0
+          NGmerge:
+            type: object
+            properties:
+              min_overlap:
+                type: integer
+                default: 20
+              frac_mismatches_allowed:
+                type: number
+                default: 0.1
+              min_dovetailed_overlap:
+                type: integer
+                default: 50
+            required:
+              - min_overlap
+              - frac_mismatches_allowed
+              - min_dovetailed_overlap
+            default: {}
+            additionalProperties: false
           reference:
             type: string
           configs:
@@ -97,15 +127,23 @@ properties:
                 additionalProperties: false
             additionalProperties: false
             minProperties: 1
+        oneOf:
+          - required:
+            - linker_length
+          - required:
+            - linker
+          - required:
+            - BC
         required:
-          - R1
-          - R2
-          - R3
+          - FW
+          - REV
           - bc_length
           - reference
           - configs
           - alignment_start
           - sequence_length
+          - min_mapping_quality
+          - NGmerge
         additionalProperties: false
     additionalProperties: false
     minProperties: 1
@@ -124,6 +162,9 @@ properties:
           umi_length:
             type: integer
             minimum: 1
+          adapter:
+            type: string
+            pattern: ^[ATCGNatcgn]+$
           data_folder:
             type: string
           experiment_file:
@@ -261,7 +302,6 @@ properties:
         # entries that have to be in the config file for successful validation
         required:
           - bc_length
-          - umi_length
           - data_folder
           - experiment_file
           - demultiplex

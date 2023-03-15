@@ -10,6 +10,26 @@ def getScript(name):
     return "%s/%s" % (SCRIPTS_DIR, name)
 
 
+# this container defines the underlying OS for each job when using the workflow
+# with --use-conda --use-singularity
+container: "docker://continuumio/miniconda3"
+
+
+##### load config and sample sheets #####
+from snakemake.utils import validate
+import pandas as pd
+
+validate(config, schema="../schemas/config.schema.yaml")
+
+# load sample sheets
+experiments = {}
+if "experiments" in config:
+    for project in config["experiments"]:
+        experiment = pd.read_csv(config["experiments"][project]["experiment_file"])
+        validate(experiment, schema="../schemas/experiment_file.schema.yaml")
+        experiments[project] = experiment
+
+
 ################################
 #### HELPERS AND EXCEPTIONS ####
 ################################
@@ -87,8 +107,7 @@ def getProjects():
 
 
 def getExperiments(project):
-    experiments = pd.read_csv(config["experiments"][project]["experiment_file"])
-    return experiments
+    return experiments[project]
 
 
 def getConditions(project):
@@ -447,7 +466,7 @@ def withoutZeros(project, conf):
 
 
 def getSplitNumber():
-    split = SPLIT_FILES_NUMBER
+    split = 1
 
     if "global" in config:
         if "assignments" in config["global"]:
@@ -460,23 +479,94 @@ def getSplitNumber():
 # count.smk specific functions
 
 
-def getBamFile(project, condition, replicate, type):
+def getUMIBamFile(project, condition, replicate, type):
     """
     gelper to get the correct BAM file (demultiplexed or not)
     """
     if config["experiments"][project]["demultiplex"]:
-        return "results/%s/counts/merged_demultiplex_%s_%s_%s.bam" % (
+        return "results/%s/counts/merged_demultiplex.%s_%s_%s.bam" % (
             project,
             condition,
             replicate,
             type,
         )
     else:
-        return "results/experiments/%s/counts/%s_%s_%s.bam" % (
+        return "results/experiments/%s/counts/useUMI.%s_%s_%s.bam" % (
             project,
             condition,
             replicate,
             type,
+        )
+
+
+def useUMI(project):
+    """
+    helper to check if UMI should be used
+    """
+    return "UMI" in experiments[project] or "DNA_UMI" in experiments[project]
+
+
+def noUMI(project):
+    """
+    helper to check if UMI should not be used
+    """
+    return (
+        "UMI" not in experiments[project]
+        and "DNA_UMI" not in experiments[project]
+        and "DNA_BC_R" in experiments[project]
+    )
+
+
+def onlyFWByLength(project):
+    """
+    helper to check if only forward reads should be used (length option)
+    """
+    return (
+        "UMI" not in experiments[project]
+        and "DNA_BC_R" not in experiments[project]
+        and "adapter" not in config["experiments"][project]
+    )
+
+
+def onlyFWbyCutadapt(project):
+    """
+    helper to check if only forward reads should be used (cutadapt option)
+    """
+    return (
+        "UMI" not in experiments[project]
+        and "DNA_BC_R" not in experiments[project]
+        and "adapter" in config["experiments"][project]
+    )
+
+
+def getRawCounts(project, type):
+    """
+    Helper to get the correct raw counts file (umi/noUMI or just FW read)
+    """
+    if useUMI(project):
+        return (
+            "results/experiments/{project}/counts/useUMI.{condition}_{replicate}_%s_raw_counts.tsv.gz"
+            % type
+        )
+    elif noUMI(project):
+        return (
+            "results/experiments/{project}/counts/noUMI.{condition}_{replicate}_%s_raw_counts.tsv.gz"
+            % type
+        )
+    elif onlyFWByLength(project):
+        return (
+            "results/experiments/{project}/counts/onlyFWByLength.{condition}_{replicate}_%s_raw_counts.tsv.gz"
+            % type
+        )
+    elif onlyFWbyCutadapt(project):
+        return (
+            "results/experiments/{project}/counts/onlyFWByCutadapt.{condition}_{replicate}_%s_raw_counts.tsv.gz"
+            % type
+        )
+    else:
+        raise RuntimeError(
+            "Error in getRawCounts: no valid option for %s and %s found"
+            % (project, type)
         )
 
 
@@ -492,7 +582,7 @@ def counts_aggregate_demultiplex_input(project):
             type=["DNA", "RNA"],
         )
         for name in names:
-            with checkpoints.counts_demultiplexed_BAM_umi.get(
+            with checkpoints.counts_demultiplex_BAM_umi.get(
                 project=project, name=name
             ).output[0].open() as f:
                 output += [f.name]
@@ -638,5 +728,5 @@ def getMergedCounts(project, raw_or_assigned, condition, conf):
             replicate=row["Replicate"],
             config=conf,
         )
-        replicates += str(row["Replicate"])
+        replicates += [str(row["Replicate"])]
     return [files, replicates]

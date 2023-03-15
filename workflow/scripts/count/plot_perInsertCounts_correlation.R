@@ -306,9 +306,13 @@ all <- data.frame()
 
 for (n in 1:(data %>% nrow())) {
     print(data[n, ]$File)
+    print(data)
     assigned_counts <- read_data(as.character(data[n, ]$File))
-    assigned_counts["replicate"] <- toString(data[n, ]$Replicate)
-    all <- all %>% bind_rows(assigned_counts)
+    if (nrow(assigned_counts) > 0) { # can be 0 when no BCs are assigned
+        assigned_counts["replicate"] <- toString(data[n, ]$Replicate)
+        all <- all %>% bind_rows(assigned_counts)
+    }
+    
 }
 
 if (use_labels) {
@@ -316,10 +320,12 @@ if (use_labels) {
         left_join(label_f, by = c("name")) %>%
         mutate(label = replace_na(label, "NA"))
 } else {
-    all$label <- "NA"
+    if (nrow(all) > 0) { # can be 0 when no BCs are assigned
+        all$label <- "NA"
+    }
 }
 
-if (data %>% nrow() > 1) {
+if (data %>% nrow() > 1 && nrow(all) > 1) {
     print("Pairwise comparisons")
     # make pairwise combinations
     selected <- combn(data$Replicate, 2)

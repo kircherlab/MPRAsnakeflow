@@ -10,16 +10,7 @@ import pandas as pd
 ##### check snakemake min version #####
 from snakemake.utils import min_version
 
-min_version("7.2.1")
-
-##### load config and sample sheets #####
-from snakemake.utils import validate
-
-
-# configfile: "config/config.yaml"
-
-
-validate(config, schema="schemas/config.schema.yaml")
+min_version("7.15.1")
 
 
 ##### report workflow #####
@@ -39,7 +30,7 @@ wildcard_constraints:
 ##### localrules #####
 localrules:
     all,
-    counts_aggregate_demultiplex,
+    counts_demultiplex_aggregate,
 
 
 # common workflow
