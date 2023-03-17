@@ -1,3 +1,6 @@
+"""
+Rules to create statistics for the assignment workflow.
+"""
 
 
 rule assignment_statistic_totalCounts:

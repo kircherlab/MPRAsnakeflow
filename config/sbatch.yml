@@ -9,12 +9,12 @@ __default__:
 ##################
 ### ASSIGNMENT ###
 ##################
-assignment_get_reads_by_length:
+assignment_hybridFWRead_get_reads_by_length:
   time: "0-10:00"
   threads: 1
   mem: 2G
   queue: "medium"
-assignmemt_get_reads_by_cutadapt:
+assignmemt_hybridFWRead_get_reads_by_cutadapt:
   time: "0-20:00"
   threads: 1
   mem: 4G
