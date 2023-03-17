@@ -4,7 +4,7 @@ This sankefile will extract the BC and FW read from the hybrid read.
 """
 
 
-rule assignment_get_reads_by_length:
+rule assignment_hybridFWRead_get_reads_by_length:
     """
     Get the barcode and read from the FW read using fixed length
     """
@@ -36,7 +36,7 @@ rule assignment_get_reads_by_length:
         """
 
 
-rule assignmemt_get_reads_by_cutadapt:
+rule assignmemt_hybridFWRead_get_reads_by_cutadapt:
     """
     Get the barcode and read from the FW read using cutadapt.
     Uses the paired end mode of cutadapt to write the FW and BC read.

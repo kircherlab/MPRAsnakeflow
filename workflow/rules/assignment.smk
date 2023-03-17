@@ -125,7 +125,7 @@ rule assignment_bwa_ref:
         ref="results/assignment/{assignment}/reference/reference.fa",
         bwa=expand(
             "results/assignment/{{assignment}}/reference/reference.fa.{ext}",
-            ext=["fai"] + ["bwt", "sa", "pac", "ann", "amb"],
+            ext=["fai"] + assignment_bwa_dicts,
         ),
         d="results/assignment/{assignment}/reference/reference.fa.dict",
     conda:

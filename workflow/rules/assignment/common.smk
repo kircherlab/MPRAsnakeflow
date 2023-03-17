@@ -2,6 +2,7 @@
 Common functions used by the assignment workflow.
 """
 
+assignment_bwa_dicts = ["bwt", "sa", "pac", "ann", "amb"]
 
 def hasBCRead(assignment):
     """
