@@ -1,3 +1,8 @@
+"""
+Common functions used by the assignment workflow.
+"""
+
+
 def hasBCRead(assignment):
     """
     Return True if the assignment has a BC read.
