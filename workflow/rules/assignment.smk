@@ -115,9 +115,6 @@ rule assignment_merge:
         """
 
 
-assignment_bwa_dicts = ["bwt", "sa", "pac", "ann", "amb"]
-
-
 rule assignment_bwa_ref:
     """
     Create mapping reference for BWA from design file.
@@ -128,7 +125,7 @@ rule assignment_bwa_ref:
         ref="results/assignment/{assignment}/reference/reference.fa",
         bwa=expand(
             "results/assignment/{{assignment}}/reference/reference.fa.{ext}",
-            ext=["fai"] + assignment_bwa_dicts,
+            ext=["fai"] + ["bwt", "sa", "pac", "ann", "amb"],
         ),
         d="results/assignment/{assignment}/reference/reference.fa.dict",
     conda:
