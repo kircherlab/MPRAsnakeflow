@@ -4,6 +4,7 @@ Common functions used by the assignment workflow.
 
 assignment_bwa_dicts = ["bwt", "sa", "pac", "ann", "amb"]
 
+
 def hasBCRead(assignment):
     """
     Return True if the assignment has a BC read.
