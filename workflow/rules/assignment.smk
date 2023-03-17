@@ -1,7 +1,7 @@
 """
 Assignment workflow
 
-This workflow wiill asssign barcodes to the designed reference/insert/oligos.
+This workflow will asssign barcodes to the designed reference/insert/oligos.
 The output is a tabular file that matched barcodes with oligos.
 """
 
