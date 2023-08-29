@@ -6,13 +6,18 @@ global:  # generall configs effecting one or multiple parts
 assignments:
   exampleAssignment:  # name of an example assignment (can be any string)
     bc_length: 15
-    sequence_length:  # sequence length of design excluding adapters.
-      min: 195
-      max: 205
-    alignment_start:  # start of an alignment in the reference. Here using 15 bp adapters. Can be different when using adapter free approaches
-      min: 15  # integer
-      max: 17  # integer
-    min_mapping_quality: 1  # integer >=0 Please use 1 when you have oligos that differ by 1 base in your reference/design file
+    alignment_tool:
+      tool: exact  # bbmerge, bwa or exact
+      configs:
+        sequence_length: 200 # sequence length of design excluding adapters.
+        adapter_length: 15  # length of adapters
+        # min_mapping_quality: 1  # integer >=0 Please use 1 when you have oligos that differ by 1 base in your reference/design file
+        # sequence_length:  # sequence length of design excluding adapters.
+        #   min: 195
+        #   max: 205
+        # alignment_start:  # start of an alignment in the reference. Here using 15 bp adapters. Can be different when using adapter free approaches
+        #   min: 15  # integer
+        #   max: 17  # integer
     FW:
       - resources/Assignment_BasiC/R1.fastq.gz
     BC:

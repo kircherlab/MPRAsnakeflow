@@ -141,9 +141,9 @@ rule assignment_bwa_ref:
         """
 
 
-rule assignment_mapping:
+rule assignment_mapping_bwa:
     """
-    Map the reads to the reference and sort.
+    Map the reads to the reference and sort unsing bwa mem
     """
     input:
         reads="results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
@@ -197,6 +197,7 @@ rule assignment_getBCs:
         temp("results/logs/assignment/getBCs.{assignment}.{split}.log"),
     shell:
         """
+        export LC_ALL=C # speed up sorting
         samtools view -F 1792 {input} | \
         awk -v "OFS=\\t" '{{
             split($(NF),a,":");
@@ -208,7 +209,7 @@ rule assignment_getBCs:
                     print a[1],"other","NA" 
                 }}
             }}
-        }}' | sort -k1,1 -k2,2 -k3,3 > {output} 2> {log}
+        }}' | sort -k1,1 -k2,2 -k3,3 -S 7G > {output} 2> {log}
         """
 
 
@@ -276,7 +277,12 @@ rule assignment_collectBCs:
     Get the barcodes.
     """
     input:
-        expand(
+        lambda wc: expand(
+            "results/assignment/{{assignment}}/BCs/barcodes_exact.{split}.tsv",
+                split=range(0, getSplitNumber()),
+            )
+            if config["assignments"][wc.assignment]["alignment_tool"]["tool"] == "exact"
+        else expand(
             "results/assignment/{{assignment}}/BCs/barcodes_incl_other.{split}.tsv",
             split=range(0, getSplitNumber()),
         ),
@@ -291,7 +297,9 @@ rule assignment_collectBCs:
         temp("results/logs/assignment/collectBCs.{assignment}.log"),
     shell:
         """
-        sort --batch-size={params.batch_size} --parallel={threads} -k1,1 -k2,2 -k3,3 -m {input} | gzip -c > {output} 2> {log}
+        export LC_ALL=C # speed up sort
+        sort -S 7G --batch-size={params.batch_size} --parallel={threads} -k1,1 -k2,2 -k3,3 -m {input} | \
+        gzip -c > {output} 2> {log}
         """
 
 
@@ -333,4 +341,53 @@ rule assignment_filter:
         python {input.script} \
         -m {params.min_support} -f {params.fraction} {params.unknown_other} {params.ambiguous} | \
         gzip -c > {output} 2> {log}
+        """
+
+rule assignment_mapping_exact_reference:
+    """
+    Create reference to map the exact design
+    """
+    input:
+        lambda wc: config["assignments"][wc.assignment]["reference"],
+    output:
+        "results/assignment/{assignment}/reference/reference_exact.fa",
+    shell:
+        """
+        paste <(
+            cat {input} | awk '{{if ($1 ~ /^>/) {{ gsub(/[\\]\\[]/,"_"); print substr($1,2)}}}}';
+            cat {input} | awk '{{if ($1 ~ /^>/) {{ gsub(/[\\]\\[]/,"_"); print substr($1,2)}}}}';
+        ) <(
+            cat {input} | awk '{{if ($1 ~ /^[^>]/) {{ seq=seq$1}}; if ($1 ~ /^>/ && NR!=1) {{print seq; seq=""}}}} END {{print seq}}';
+            cat {input} | awk '{{if ($1 ~ /^[^>]/) {{ seq=seq$1}}; if ($1 ~ /^>/ && NR!=1) {{print seq; seq=""}}}} END {{print seq}}' | tr ACGTacgt TGCAtgca | rev;
+        ) > {output}
+        """
+
+# TODO: Set correct length using config
+rule assignment_mapping_exact:
+    """
+    Map the reads to the reference and sort using exact match.
+    """
+    input:
+        reads="results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
+        reference="results/assignment/{assignment}/reference/reference_exact.fa",
+    output:
+        temp("results/assignment/{assignment}/BCs/barcodes_exact.{split}.tsv"),
+    conda:
+        "../envs/default.yaml"
+    log:
+        temp("results/logs/assignment/mapping_exact.{assignment}.{split}.log"),
+    shell:
+        """
+        # Look up exact matches in design file
+        export LC_ALL=C # speed up sort
+
+        awk -v "OFS=\\t" 'NR==FNR {{a[$2] = $1; next}} {{if ($3 in a) print $2,a[$3],"200M"; else print $2,"other","NA"}}' \
+        <(
+            cat {input.reference} | awk -v "OFS=\\t" '{{print $1,substr($2, 16,200)}}'
+        ) \
+        <(
+            zcat {input.reads} | awk 'NR%4==2 || NR%4==1' | paste - -
+        ) | \
+        sed 's/,YI:Z[^\\t]*//g' | sed 's/XI:Z://g' | \
+        sort -k1,1 -k2,2 -k3,3 -S 7G > {output} 2> {log}
         """

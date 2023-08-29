@@ -58,7 +58,7 @@ rule all:
             "results/assignment/{assignment}/statistic/total_counts.tsv.gz"
         ),
         getAssignment_helper(
-            "results/assignment/{assignment}/statistic/assignment/bam_stats.txt",
+            "results/assignment/{assignment}/statistic/assignment/bam_stats.txt", match_method="bwa"
         ),
         ## experiments
         # statistic BC nucleotide composition
@@ -157,7 +157,7 @@ rule all_assignments:
             "results/assignment/{assignment}/statistic/total_counts.tsv.gz"
         ),
         getAssignment_helper(
-            "results/assignment/{assignment}/statistic/assignment/bam_stats.txt",
+            "results/assignment/{assignment}/statistic/assignment/bam_stats.txt", match_method="bwa"
         ),
 
 

@@ -73,9 +73,16 @@ class MissingVariantInConfigException(Exception):
 
 
 ##### get helpers for different things (like Conditions etc) #####
-def getAssignments():
+def getAssignments(match_method=None):
     if "assignments" in config:
-        return list(config["assignments"].keys())
+        if match_method:
+            output = []
+            for assignment in config["assignments"]:
+                if config["assignments"][assignment]["alignment_tool"]["tool"] == match_method:
+                    output.append(assignment)
+            return output
+        else:
+            return list(config["assignments"].keys())
     else:
         return []
 
@@ -423,10 +430,10 @@ def getOutputVariants_helper(file, betweenReplicates=False):
     return output
 
 
-def getAssignment_helper(file):
+def getAssignment_helper(file,match_method=None):
     return expand(
         file,
-        assignment=getAssignments(),
+        assignment=getAssignments(match_method),
     )
 
 
