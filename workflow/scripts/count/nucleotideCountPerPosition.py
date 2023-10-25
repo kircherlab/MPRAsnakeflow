@@ -58,7 +58,7 @@ def cli(input_file, column, use_header, output_file, chunksize):
 
             nucleotides = df["DNA"].apply(lambda x: pd.Series(list(x)))
 
-            for i, columns in nucleotides.iteritems():
+            for i, columns in nucleotides.items():
                 counts_column = "Position_%d_counts" % (i+1)
                 ratio_column = "Position_%d_ratio" % (i+1)
                 if counts_column not in output.columns:

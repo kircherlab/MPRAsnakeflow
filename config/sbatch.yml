@@ -96,7 +96,7 @@ assigned_counts_createAssignmentPickleFile:
 assigned_counts_filterAssignment:
   time: "0-01:00"
   queue: "medium"
-  mem: 10G
+  mem: 15G
 
 #################
 ### Statistic ###
