@@ -10,16 +10,7 @@ import pandas as pd
 ##### check snakemake min version #####
 from snakemake.utils import min_version
 
-min_version("7.2.1")
-
-##### load config and sample sheets #####
-from snakemake.utils import validate
-
-
-# configfile: "config/config.yaml"
-
-
-validate(config, schema="schemas/config.schema.yaml")
+min_version("7.15.1")
 
 
 ##### report workflow #####
@@ -39,7 +30,7 @@ wildcard_constraints:
 ##### localrules #####
 localrules:
     all,
-    counts_aggregate_demultiplex,
+    counts_demultiplex_aggregate,
 
 
 # common workflow
@@ -87,6 +78,12 @@ rule all:
             "results/experiments/{project}/statistic/statistic_bc_correlation_merged_{config}.tsv",
             True,
         ),
+        getOutputProjectConditionConfigType_helper(
+            "results/experiments/{project}/statistic/barcode/counts/{condition}_{config}_{type}_perBarcode.png"
+        ),
+        getOutputProjectConditionAssignmentConfigType_helper(
+            "results/experiments/{project}/statistic/barcode/assigned_counts/{assignment}/{condition}_{config}_{type}_perBarcode.png"
+        ),
         getOutputProjectAssignmentConfig_helper(
             "results/experiments/{project}/statistic/statistic_assigned_bc_correlation_merged_{assignment}_{config}.tsv",
             True,
@@ -104,7 +101,25 @@ rule all:
         getOutputProjectConditionAssignmentConfig_helper(
             "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.tsv.gz"
         ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.combined.tsv.gz"
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged.combined.tsv.gz"
+        ),
         # assignment statistic
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box.png"
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box_minThreshold.png"
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png"
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png"
+        ),
         getOutputProjectAssignmentConfig_helper(
             "results/experiments/{project}/statistic/statistic_assigned_counts_merged_{assignment}_{config}.tsv"
         ),
@@ -173,6 +188,12 @@ rule all_experiments:
             "results/experiments/{project}/statistic/statistic_bc_correlation_merged_{config}.tsv",
             True,
         ),
+        getOutputProjectConditionConfigType_helper(
+            "results/experiments/{project}/statistic/barcode/counts/{condition}_{config}_{type}_perBarcode.png"
+        ),
+        getOutputProjectConditionAssignmentConfigType_helper(
+            "results/experiments/{project}/statistic/barcode/assigned_counts/{assignment}/{condition}_{config}_{type}_perBarcode.png"
+        ),
         getOutputProjectAssignmentConfig_helper(
             "results/experiments/{project}/statistic/statistic_assigned_bc_correlation_merged_{assignment}_{config}.tsv",
             True,
@@ -190,7 +211,25 @@ rule all_experiments:
         getOutputProjectConditionAssignmentConfig_helper(
             "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.tsv.gz"
         ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.combined.tsv.gz"
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged.combined.tsv.gz"
+        ),
         # assignment statistic
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box.png"
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box_minThreshold.png"
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png"
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png"
+        ),
         getOutputProjectAssignmentConfig_helper(
             "results/experiments/{project}/statistic/statistic_assigned_counts_merged_{assignment}_{config}.tsv"
         ),
@@ -218,6 +257,12 @@ rule all_experiments_counts_stats:
             "results/experiments/{project}/statistic/statistic_bc_correlation_merged_{config}.tsv",
             True,
         ),
+        getOutputProjectConditionConfigType_helper(
+            "results/experiments/{project}/statistic/barcode/counts/{condition}_{config}_{type}_perBarcode.png"
+        ),
+        getOutputProjectConditionAssignmentConfigType_helper(
+            "results/experiments/{project}/statistic/barcode/assigned_counts/{assignment}/{condition}_{config}_{type}_perBarcode.png"
+        ),
 
 
 rule all_bc_overlap_statistic:
@@ -237,10 +282,28 @@ rule all_experiments_assignments:
         getOutputProjectConditionAssignmentConfig_helper(
             "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.tsv.gz"
         ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.combined.tsv.gz"
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged.combined.tsv.gz"
+        ),
 
 
 rule all_experiments_assignments_statistic:
     input:
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box.png"
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box_minThreshold.png"
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png"
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png"
+        ),
         getOutputProjectAssignmentConfig_helper(
             "results/experiments/{project}/statistic/statistic_assigned_counts_merged_{assignment}_{config}.tsv"
         ),

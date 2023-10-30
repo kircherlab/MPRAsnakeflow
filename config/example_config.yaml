@@ -12,19 +12,18 @@ assignments:
     alignment_start:  # start of an alignment in the reference. Here using 15 bp adapters. Can be different when using adapter free approaches
       min: 15  # integer
       max: 17  # integer
-    R1:
+    min_mapping_quality: 1  # integer >=0 Please use 1 when you have oligos that differ by 1 base in your reference/design file
+    FW:
       - resources/Assignment_BasiC/R1.fastq.gz
-    R2:
+    BC:
       - resources/Assignment_BasiC/R2.fastq.gz
-    R3:
+    REV:
       - resources/Assignment_BasiC/R3.fastq.gz
     reference: resources/design.fa
     configs:
-      exampleConfig:  # name of an example filtering config
+      exampleAssignmentConfig:  # name of an example filtering config
         min_support: 3
         fraction: 0.7
-        unknown_other: true
-        ambiguous: true
 experiments:
   exampleCount:
     bc_length: 15
@@ -38,8 +37,8 @@ experiments:
         assignment_file: resources/SRR10800986_filtered_coords_to_barcodes.tsv.gz
       fromWorkflow:
         type: config
-        assignment_name: example_assignment
-        assignment_config: example_config
+        assignment_name: exampleAssignment
+        assignment_config: exampleAssignmentConfig
     design_file: resources/design.fa
     label_file: resources/labels.tsv  # optional
     configs:

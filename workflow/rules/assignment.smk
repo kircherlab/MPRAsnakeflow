@@ -1,3 +1,13 @@
+"""
+Assignment workflow
+
+This workflow will asssign barcodes to the designed reference/insert/oligos.
+The output is a tabular file that matched barcodes with oligos.
+"""
+
+
+include: "assignment/common.smk"
+include: "assignment/hybridFWRead.smk"
 include: "assignment/statistic.smk"
 
 
@@ -7,26 +17,26 @@ rule assignment_fastq_split:
     n is given by split_read in the configuration file.
     """
     input:
-        lambda wc: config["assignments"][wc.assignment][wc.R],
+        lambda wc: getAssignmentRead(wc.assignment, wc.read),
     output:
         temp(
             expand(
-                "results/assignment/{{assignment}}/fastq/splits/{{R}}.split{split}.fastq.gz",
+                "results/assignment/{{assignment}}/fastq/splits/{{read}}.split{split}.fastq.gz",
                 split=range(0, getSplitNumber()),
             ),
         ),
     conda:
         "../envs/fastqsplitter.yaml"
     log:
-        temp("results/logs/assignment/fastq_split.{assignment}.{R}.log"),
+        temp("results/logs/assignment/fastq_split.{assignment}.{read}.log"),
     params:
         files=lambda wc: " ".join(
             [
                 "-o %s" % i
                 for i in expand(
-                    "results/assignment/{assignment}/fastq/splits/{R}.split{split}.fastq.gz",
+                    "results/assignment/{assignment}/fastq/splits/{read}.split{split}.fastq.gz",
                     assignment=wc.assignment,
-                    R=wc.R,
+                    read=wc.read,
                     split=range(0, getSplitNumber()),
                 )
             ]
@@ -44,18 +54,22 @@ rule assignment_attach_idx:
     conda:
         "../envs/NGmerge.yaml"
     input:
-        read="results/assignment/{assignment}/fastq/splits/R{R}.split{split}.fastq.gz",
-        BC="results/assignment/{assignment}/fastq/splits/R2.split{split}.fastq.gz",
+        read="results/assignment/{assignment}/fastq/splits/{read}.split{split}.fastq.gz",
+        BC="results/assignment/{assignment}/fastq/splits/BC.split{split}.fastq.gz",
         script=getScript("attachBCToFastQ.py"),
     output:
         read=temp(
-            "results/assignment/{assignment}/fastq/splits/R{R}.split{split}.BCattached.fastq.gz"
+            "results/assignment/{assignment}/fastq/splits/{read}.split{split}.BCattached.fastq.gz"
         ),
+    params:
+        BC_rev_comp=lambda wc: "--reverse-complement"
+        if config["assignments"][wc.assignment]["BC_rev_comp"]
+        else "",
     log:
-        temp("results/logs/assignment/attach_idx.{assignment}.{split}.{R}.log"),
+        temp("results/logs/assignment/attach_idx.{assignment}.{split}.{read}.log"),
     shell:
         """
-        python {input.script} -r {input.read} -b {input.BC} | bgzip -c > {output.read}
+        python {input.script} -r {input.read} -b {input.BC} {params.BC_rev_comp} | bgzip -c > {output.read} 2> {log}
         """
 
 
@@ -67,8 +81,8 @@ rule assignment_merge:
     conda:
         "../envs/NGmerge.yaml"
     input:
-        R1="results/assignment/{assignment}/fastq/splits/R1.split{split}.BCattached.fastq.gz",
-        R3="results/assignment/{assignment}/fastq/splits/R3.split{split}.BCattached.fastq.gz",
+        FW="results/assignment/{assignment}/fastq/splits/FW.split{split}.BCattached.fastq.gz",
+        REV="results/assignment/{assignment}/fastq/splits/REV.split{split}.BCattached.fastq.gz",
     output:
         un=temp("results/assignment/{assignment}/fastq/merge_split{split}.un.fastq.gz"),
         join=temp(
@@ -85,21 +99,20 @@ rule assignment_merge:
             "NGmerge"
         ]["min_dovetailed_overlap"],
     log:
-        temp("results/logs/assignment/merge.{assignment}.{split}.log"),
+        temp("results/logs/assignment/merge.{assignment}.{split}.log.gz"),
     shell:
         """
         NGmerge \
-        -1 {input.R1} \
-        -2 {input.R3} \
-        -m {params.min_overlap} -p {params.frac_mismatches_allowed} -e {params.min_dovetailed_overlap} \
+        -1 {input.FW} \
+        -2 {input.REV} \
+        -m {params.min_overlap} -p {params.frac_mismatches_allowed} \
+        -d \
+        -e {params.min_dovetailed_overlap} \
         -z \
         -o  {output.join} \
         -i -f {output.un} \
-        -l {log}
+        -l >(gzip -c - > {log})
         """
-
-
-assignment_bwa_dicts = ["bwt", "sa", "pac", "ann", "amb"]
 
 
 rule assignment_bwa_ref:
@@ -151,6 +164,51 @@ rule assignment_mapping:
         bwa mem -t {threads} -L 80 -M -C {input.reference} <(
             gzip -dc {input.reads}
         )  | samtools sort -l 0 -@ {threads} > {output} 2> {log}
+        """
+
+
+rule assignment_getBCs:
+    """
+    Get the barcodes.
+    """
+    input:
+        "results/assignment/{assignment}/bam/merge_split{split}.mapped.bam",
+    output:
+        temp("results/assignment/{assignment}/BCs/barcodes_incl_other.{split}.tsv"),
+    conda:
+        "../envs/bwa_samtools_picard_htslib.yaml"
+    params:
+        alignment_start_min=lambda wc: config["assignments"][wc.assignment][
+            "alignment_start"
+        ]["min"],
+        alignment_start_max=lambda wc: config["assignments"][wc.assignment][
+            "alignment_start"
+        ]["max"],
+        sequence_length_min=lambda wc: config["assignments"][wc.assignment][
+            "sequence_length"
+        ]["min"],
+        sequence_length_max=lambda wc: config["assignments"][wc.assignment][
+            "sequence_length"
+        ]["max"],
+        mapping_quality_min=lambda wc: config["assignments"][wc.assignment][
+            "min_mapping_quality"
+        ],
+    log:
+        temp("results/logs/assignment/getBCs.{assignment}.{split}.log"),
+    shell:
+        """
+        samtools view -F 1792 {input} | \
+        awk -v "OFS=\\t" '{{
+            split($(NF),a,":");
+            split(a[3],a,",");
+            if (a[1] !~ /N/) {{
+                if (($5 >= {params.mapping_quality_min}) && ($4 >= {params.alignment_start_min}) && ($4 <= {params.alignment_start_max}) && (length($10) >= {params.sequence_length_min}) && (length($10) <= {params.sequence_length_max})) {{
+                    print a[1],$3,$4";"$6";"$12";"$13";"$5 
+                }} else {{
+                    print a[1],"other","NA" 
+                }}
+            }}
+        }}' | sort -k1,1 -k2,2 -k3,3 > {output} 2> {log}
         """
 
 
@@ -213,45 +271,27 @@ rule assignment_flagstat:
         """
 
 
-rule assignment_getBCs:
+rule assignment_collectBCs:
     """
     Get the barcodes.
     """
     input:
-        "results/assignment/{assignment}/aligned_merged_reads.bam",
+        expand(
+            "results/assignment/{{assignment}}/BCs/barcodes_incl_other.{split}.tsv",
+            split=range(0, getSplitNumber()),
+        ),
     output:
         "results/assignment/{assignment}/barcodes_incl_other.sorted.tsv.gz",
-    conda:
-        "../envs/bwa_samtools_picard_htslib.yaml"
     params:
-        alignment_start_min=lambda wc: config["assignments"][wc.assignment][
-            "alignment_start"
-        ]["min"],
-        alignment_start_max=lambda wc: config["assignments"][wc.assignment][
-            "alignment_start"
-        ]["max"],
-        sequence_length_min=lambda wc: config["assignments"][wc.assignment][
-            "sequence_length"
-        ]["min"],
-        sequence_length_max=lambda wc: config["assignments"][wc.assignment][
-            "sequence_length"
-        ]["max"],
+        batch_size=getSplitNumber(),
+    threads: 20
+    conda:
+        "../envs/default.yaml"
     log:
-        temp("results/logs/assignment/getBCs.{assignment}.log"),
+        temp("results/logs/assignment/collectBCs.{assignment}.log"),
     shell:
         """
-        samtools view -F 1792 {input} | \
-        awk -v "OFS=\\t" '{{
-            split($(NF),a,":");
-            split(a[3],a,",");
-            if (a[1] !~ /N/) {{
-                if (($5 > 0) && ($4 >= {params.alignment_start_min}) && ($4 <= {params.alignment_start_max}) && (length($10) >= {params.sequence_length_min}) && (length($10) <= {params.sequence_length_max})) {{
-                    print a[1],$3,$4";"$6";"$12";"$13";"$5 
-                }} else {{
-                    print a[1],"other","NA" 
-                }}
-            }}
-        }}' | sort -k1,1 -k2,2 -k3,3 | gzip -c > {output} 2> {log}
+        sort --batch-size={params.batch_size} --parallel={threads} -k1,1 -k2,2 -k3,3 -m {input} | gzip -c > {output} 2> {log}
         """
 
 
@@ -285,9 +325,11 @@ rule assignment_filter:
             "ambiguous"
         ]
         else "",
+        bc_length=lambda wc: config["assignments"][wc.assignment]["bc_length"],
     shell:
         """
         zcat  {input.assignment} | \
+        awk -v "OFS=\\t" -F"\\t" '{{if (length($1)=={params.bc_length}){{print $0 }}}}' | \
         python {input.script} \
         -m {params.min_support} -f {params.fraction} {params.unknown_other} {params.ambiguous} | \
         gzip -c > {output} 2> {log}

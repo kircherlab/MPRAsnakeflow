@@ -18,30 +18,38 @@ import click
               help='Output file.')
 def cli(input_file, output_file):
 
-    df = pd.read_csv(input_file, usecols=[0, 1], names=["BC", "Oligo"], sep="\t")
+    bcs=set()
+    oligos=set()
+    other_bcs=set()
+    ambiguous_bc=set()
 
-    bcs = df.BC.unique().size
+    chunksize = 10 ** 6
+    chunk = pd.read_csv(input_file, usecols=[0, 1], names=["BC", "Oligo"], sep="\t", chunksize=chunksize)
+    for df in chunk:
+        bcs.update(df.BC)
+        oligos.update(df.Oligo)
+        if 'other' in df.Oligo:
+            other_bcs.update(df[df.Oligo == "other"].BC)
+        if 'ambiguous' in df.Oligo:
+            ambiguous_bc.update(df[df.Oligo == "ambiguous"].BC)
 
-    oligos = df.Oligo.unique()
+    n_bcs = len(bcs)
 
-    if 'other' in oligos:
-        other_bcs = df[df.Oligo == "other"].BC.unique().size
-    else:
-        other_bcs = 0
+    n_other_bcs = len(other_bcs)
+    
+    n_ambiguous_bc = len(ambiguous_bc)
 
-    if 'ambiguous' in oligos:
-        ambiguous_bc = df[df.Oligo == "ambiguous"].BC.unique().size
-    else:
-        ambiguous_bc = 0
+    n_assigned_bcs = n_bcs - n_other_bcs - n_ambiguous_bc
 
-    df = df[df.Oligo != "other"]
-    df = df[df.Oligo != "ambiguous"]
 
-    assigned_bcs = df.BC.unique().size
+    n_matched_oligos = len(oligos)
 
-    matched_oligos = df.Oligo.unique().size
+    if "ambiguous" in oligos:
+        n_matched_oligos -= 1
+    if "other" in oligos:
+        n_matched_oligos -= 1
 
-    output = pd.DataFrame({"Counts": [bcs, assigned_bcs, matched_oligos, other_bcs, ambiguous_bc]}, index=[
+    output = pd.DataFrame({"Counts": [n_bcs, n_assigned_bcs, n_matched_oligos, n_other_bcs, n_ambiguous_bc]}, index=[
                           "Total BCs", "Total assigned BCs", "Total assigned oligos", "Total other BCs", "Total ambiguous BCs"])
 
     output.to_csv(output_file, sep='\t', header=True, index=True)

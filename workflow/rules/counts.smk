@@ -2,175 +2,11 @@
 ### Everything before assigning BC ###
 ######################################
 
-### Create_BAM_umi with demultiplexing ###
 
-
-rule counts_create_demultiplexed_index:
-    conda:
-        "../envs/python3.yaml"
-    input:
-        experiment_file=lambda wc: config["experiments"][wc.project]["experiment_file"],
-        script=getScript("count/create_demultiplexed_index.py"),
-    output:
-        "results/experiments/{project}/counts/demultiplex_index.tsv",
-    log:
-        temp("results/logs/counts/create_demultiplexed_index.{project}.log"),
-    shell:
-        """
-        python {input.script} \
-        --experiment {input.experiment_file} \
-        --output {output} &> {log}
-        """
-
-
-checkpoint counts_demultiplexed_BAM_umi:
-    input:
-        fw_fastq=lambda wc: getFWWithIndex(wc.project),
-        rev_fastq=lambda wc: getRevWithIndex(wc.project),
-        umi_fastq=lambda wc: getUMIWithIndex(wc.project),
-        index_fastq=lambda wc: getIndexWithIndex(wc.project),
-        index_list="results/experiments/{project}/counts/demultiplex_index.tsv",
-        script=getScript("count/SplitFastQdoubleIndexBAM.py"),
-    output:
-        "results/experiments/{project}/counts/demultiplex_{name}.bam",
-    params:
-        outdir=lambda w, output: os.path.split(output[0])[0],
-    conda:
-        "../envs/python27.yaml"
-    log:
-        temp("results/logs/counts/demultiplexed_BAM_umi.{project}.{name}.log"),
-    shell:
-        """
-            set +o pipefail;
-
-            umi_length=`zcat {input.umi_fastq} | head -2 | tail -1 | wc -c`;
-            umi_length=$(expr $(($umi_length-1)));
-
-            idx_length=`zcat {input.index_fastq} | head -2 | tail -1 | wc -c`;
-            idx_length=$(expr $(($idx_length-1)));
-
-            fwd_length=`zcat {input.fw_fastq} | head -2 | tail -1 | wc -c`;
-            fwd_length=$(expr $(($fwd_length-1)));
-
-            rev_start=$(expr $(($fwd_length+$idx_length+1)));
-
-            echo $rev_start
-            echo $idx_length
-            echo $umi_length
-
-            python {input.script} -s $rev_start -l $idx_length -m $umi_length -i {input.index_list} --outdir {params.outdir} --remove --summary --separate_files \
-            <(\
-        paste <( zcat {input.fw_fastq} ) <( zcat {input.index_fastq} ) <( zcat {input.rev_fastq} ) <( zcat {input.umi_fastq} ) | \
-            awk '{{ count+=1; if ((count == 1) || (count == 3)) {{ print $1 }} else {{ print $1$2$3$4 }}; if (count == 4) {{ count=0 }} }}'\
-            ) &> {log}
-        """
-
-
-rule counts_aggregate_demultiplex:
-    input:
-        lambda wc: counts_aggregate_demultiplex_input(wc.project),
-    output:
-        touch("results/experiments/{project}/counts/demultiplex.done"),
-
-
-rule counts_mergeTrimReads_demultiplexed_BAM_umi:
-    input:
-        demultiplex="results/experiments/{project}/counts/demultiplex.done",
-        script=getScript("count/MergeTrimReadsBAM.py"),
-    output:
-        "results/experiments/{project}/counts/merged_demultiplex_{condition}_{replicate}_{type}.bam",
-    conda:
-        "../envs/python27.yaml"
-    params:
-        bam="results/experiments/{project}/counts/demultiplex_{condition}_{replicate}_{type}.bam",
-    log:
-        temp(
-            "results/logs/counts/mergeTrimReads_demultiplexed_BAM_umi.{project}.{condition}.{replicate}.{type}.log"
-        ),
-    shell:
-        """
-        samtools view -h {params.bam} | \
-        python {input.script} -p --mergeoverlap -f ACCGGTCGCCACCATGGTGAGCAAGGGCGAGGA -s CTTAGCTTTCGCTTAGCGATGTGTTCACTTTGC \
-        > {output} 2> {log}
-        """
-
-
-### Create_BAM_umi without demultiplexing ###
-
-
-rule counts_create_BAM_umi:
-    """
-    Create a BAM file from FASTQ input, merge FW and REV read and save UMI in XI flag.
-    """
-    input:
-        fw_fastq=lambda wc: getFW(wc.project, wc.condition, wc.replicate, wc.type),
-        rev_fastq=lambda wc: getRev(wc.project, wc.condition, wc.replicate, wc.type),
-        umi_fastq=lambda wc: getUMI(wc.project, wc.condition, wc.replicate, wc.type),
-        script_FastQ2doubleIndexBAM=getScript("count/FastQ2doubleIndexBAM.py"),
-        script_MergeTrimReadsBAM=getScript("count/MergeTrimReadsBAM.py"),
-    output:
-        "results/experiments/{project}/counts/{condition}_{replicate}_{type}.bam",
-    params:
-        bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
-        umi_length=lambda wc: config["experiments"][wc.project]["umi_length"],
-        datasetID="{condition}_{replicate}_{type}",
-    conda:
-        "../envs/python27.yaml"
-    log:
-        temp(
-            "results/logs/counts/create_BAM_umi.{project}.{condition}.{replicate}.{type}.log"
-        ),
-    shell:
-        """
-        set +o pipefail;
-
-        fwd_length=`zcat {input.fw_fastq} | head -2 | tail -1 | wc -c`;
-        fwd_length=$(expr $(($fwd_length-1)));
-
-        rev_start=$(expr $(($fwd_length+1)));
-
-        minoverlap=`echo ${{fwd_length}} ${{fwd_length}} {params.bc_length} | awk '{{print ($1+$2-$3-1 < 11) ? $1+$2-$3-1 : 11}}'`;
-
-        echo $rev_start
-        echo $minoverlap
-
-        paste <( zcat {input.fw_fastq} ) <( zcat {input.rev_fastq}  ) <( zcat {input.umi_fastq} ) | \
-        awk '{{if (NR % 4 == 2 || NR % 4 == 0) {{print $1$2$3}} else {{print $1}}}}' | \
-        python {input.script_FastQ2doubleIndexBAM} -p -s $rev_start -l 0 -m {params.umi_length} --RG {params.datasetID} | \
-        python {input.script_MergeTrimReadsBAM} --FirstReadChimeraFilter '' --adapterFirstRead '' --adapterSecondRead '' -p --mergeoverlap --minoverlap $minoverlap > {output} 2> {log}
-        """
-
-
-### START COUNTING ####
-
-
-rule counts_raw_counts_umi:
-    """
-    Counting BCsxUMIs from the BAM files.
-    """
-    conda:
-        "../envs/bwa_samtools_picard_htslib.yaml"
-    input:
-        lambda wc: getBamFile(wc.project, wc.condition, wc.replicate, wc.type),
-    output:
-        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_raw_counts.tsv.gz",
-    params:
-        umi_length=lambda wc: config["experiments"][wc.project]["umi_length"],
-        datasetID="{condition}_{replicate}_{type}",
-    log:
-        temp(
-            "results/logs/counts/raw_counts_umi.{project}.{condition}.{replicate}.{type}.log"
-        ),
-    shell:
-        """
-        samtools view -F 1 -r {params.datasetID} {input} | \
-        awk -v 'OFS=\\t' '{{ for (i=12; i<=NF; i++) {{
-          if ($i ~ /^XJ:Z:/) print $10,substr($i,6,{params.umi_length})
-        }}}}' | \
-        sort | uniq -c | \
-        awk -v 'OFS=\\t' '{{ print $2,$3,$1 }}' | \
-        gzip -c > {output} 2> {log}
-        """
+include: "counts/counts_demultiplex.smk"
+include: "counts/counts_umi.smk"
+include: "counts/counts_noUMI.smk"
+include: "counts/counts_onlyFW.smk"
 
 
 rule counts_filter_counts:
@@ -180,14 +16,14 @@ rule counts_filter_counts:
     conda:
         "../envs/default.yaml"
     input:
-        "results/experiments/{project}/counts/{condition}_{replicate}_{type}_raw_counts.tsv.gz",
+        lambda wc: getRawCounts(wc.project, wc.type),
     output:
         "results/experiments/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
     params:
         bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
     log:
         temp(
-            "results/logs/counts/filter_counts.{project}.{condition}.{replicate}.{type}"
+            "results/logs/counts/filter_counts.{project}.{condition}.{replicate}.{type}.log"
         ),
     shell:
         """
@@ -200,8 +36,9 @@ rule counts_filter_counts:
         """
 
 
-rule counts_final_counts_umi:
+rule counts_final_counts:
     """
+    Counting BCs.
     Discarding PCR duplicates (taking BCxUMI only one time)
     """
     conda:
@@ -223,7 +60,7 @@ rule counts_final_counts_umi:
         """
 
 
-rule counts_final_counts_umi_samplerer:
+rule counts_final_counts_samplerer:
     """
     Creates full + new distribution DNA files
     """

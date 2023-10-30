@@ -4,7 +4,7 @@
 Assignment
 =====================
 
-.. image:: Association_util.png
+.. image:: MPRAsnakeflow_assignment.png
 
 Input files
 ===============
@@ -12,8 +12,8 @@ Input files
 Fastq Files
 -----------
 - 2-3 Fastq files from library association sequencing
-- Candidate regulatory sequence (CRS) sequencing, 1 forawrd read and an optional reverse read if paired end sequencing was used
-- Barcode sequence, 1 read covering the barcode
+- Candidate regulatory sequence (CRS) sequencing, forward and reverse read (paired end)
+- (optional) Index read with barcode. BC can also be present at the beginning of the in the forward read followed by a linker.
 
 Design File
 -----------
@@ -64,12 +64,22 @@ Rules run by snakemake in the assignment utility.
 
 all
    The overall all rule. Here is defined what final output files are expected.
+assignment_attach_idx
+    Extract the index sequence and add it to the header.
 assignment_bwa_ref
    Create mapping reference for BWA from design file.
+assignment_collect
+    Collect mapped reads into one BAM.
+assignment_collectBCs
+    Get the barcodes.
 assignment_fastq_split
    Split the fastq files into n files for parallelisation. N is given by split_read in the configuration file.
 assignment_getInputs
    Concat the input fastq files per R1,R2,R3. If only single fastq file is provided a symbolic link is created.
+assignment_hybridFWRead_get_reads_by_length
+   Get the barcode and read from the FW read using fixed length (when no index BC read is present).
+assignmemt_hybridFWRead_get_reads_by_cutadapt
+    Get the barcode and read from the FW read using cutadapt (when no index BC read is present). Uses the paired end mode of cutadapt to write the FW and BC read.
 assignment_merge
    Merge the FW,REV and BC fastq files into one. Extract the index sequence from the middle and end of an Illumina run. Separates reads for Paired End runs. Merge/Adapter trim reads stored in BAM.
 assignment_mapping
