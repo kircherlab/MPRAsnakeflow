@@ -2,6 +2,7 @@
 #### Global functions       ####
 ################################
 from snakemake.workflow import srcdir
+import pdb
 
 SCRIPTS_DIR = srcdir("../scripts")
 
@@ -115,6 +116,10 @@ def getConditions(project):
     return list(exp.Condition.unique())
 
 
+def getBCoutput(project, conf):
+    return config["experiments"][project]["configs"][conf]["BC_output"]
+
+
 def getProjectAssignments(project):
     if (
         "assignments" in config["experiments"][project]
@@ -145,7 +150,7 @@ def getVariantsBCThreshold(project):
 def getFW(project, condition, replicate, rnaDna_type):
     exp = getExperiments(project)
     exp = exp[exp.Condition == condition]
-    exp = exp[exp.Replicate.astype(str) == replicate]
+    exp = exp[exp.Replicate.astype(str) == replicate]  
     return [
         "%s/%s" % (config["experiments"][project]["data_folder"], f)
         for f in exp["%s_BC_F" % rnaDna_type].iloc[0].split(";")
@@ -336,6 +341,30 @@ def getOutputProjectConditionAssignmentConfig_helper(file):
                     assignment=getProjectAssignments(project),
                     config=getConfigs(project),
                 )
+        except MissingAssignmentInConfigException:
+            continue
+    return output
+
+
+def getOutputProjectConditionAssignmentConfigBCoutput_helper(file):
+    """
+    Inserts {project}, {condition}, {assignment}, {config} and {BC output} (from configs of project) from config into given file.
+    """
+    output = []
+    projects = getProjects()
+    for project in projects:
+        try:
+            conditions = getConditions(project)
+            for condition in conditions:
+                for c in getConfigs(project):
+                    if getBCoutput(project, c):
+                        output += expand(
+                            file,
+                            project=project, 
+                            condition=condition,
+                            assignment=getProjectAssignments(project),
+                            config=c
+                        )
         except MissingAssignmentInConfigException:
             continue
     return output

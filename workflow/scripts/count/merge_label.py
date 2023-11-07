@@ -41,10 +41,24 @@ import click
               required=True,
               type=click.Path(writable=True),
               help='Statistic output file.')
-def cli(counts_file, assignment_file, minRNACounts, minDNACounts, output_file, statistic_file):
+@click.option('--toggleBC',
+              'bc_output',
+              default=False,
+              show_default=True,
+              type=click.Path(writable=True),
+              help='Output individual barcode counts')
+@click.option('--bcOutput',
+              'bc_output_file',
+              default="",
+              type=click.Path(writable=True),
+              help='Output file for individual barcode counts')
+def cli(counts_file, assignment_file, minRNACounts, minDNACounts, output_file, statistic_file, bc_output, bc_output_file):
     # pseudocount = 1 if minRNACounts == 0 or minDNACounts == 0 else 0
     pseudocountDNA = 1 if minDNACounts == 0 else 0
     pseudocountRNA = 1 if minRNACounts == 0 else 0
+
+    if bc_output and not bc_output_file:
+        raise click.BadArgumentUsage("Barcode output file has to be provided if toggleBC is on.")
 
     # statistic
     statistic = pd.DataFrame(data={'oligos design': [0], 'barcodes design': [0],
@@ -83,6 +97,9 @@ def cli(counts_file, assignment_file, minRNACounts, minDNACounts, output_file, s
 
     statistic['matched barcodes'] = statistic['barcodes dna/rna'] - statistic['unknown barcodes dna/rna']
     statistic['% matched barcodes'] = (statistic['matched barcodes']/statistic['barcodes dna/rna'])*100.0
+
+    if bc_output:
+        counts.to_csv(bc_output_file, index=False, sep='\t', compression='gzip')
 
     # remove Barcorde. Not needed anymore
     counts.drop(['Barcode'], axis=1, inplace=True)

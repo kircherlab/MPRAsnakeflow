@@ -233,6 +233,9 @@ properties:
               ^([^_\.]+)$:
                 type: object
                 properties:
+                  BC_output:
+                    type: boolean
+                    default: false
                   filter:
                     type: object
                     properties:
