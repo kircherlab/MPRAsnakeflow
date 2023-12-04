@@ -47,31 +47,72 @@ properties:
                   - exact
                   - bwa
                 default: bwa
-              configs:
-                type: object
-                properties:
-                  min_mapping_quality:
-                    type: integer
-                    minimum: 0
-                    default: 1
-                patternProperties:
-                  ^((sequence_length)|(alignment_start))$:
-                    type: object
-                    properties:
-                      min:
-                        type: integer
-                      max:
-                        type: integer
-                    additionalProperties: false
-                    required:
-                      - min
-                      - max
+            allOf:
+              - if:
+                  properties:
+                    tool:
+                      const: bwa
+                then:
+                  properties:
+                    configs:
+                      type: object
+                      properties:
+                        min_mapping_quality:
+                          type: integer
+                          minimum: 0
+                          default: 1
+                        sequence_length:
+                          type: object
+                          properties:
+                            min:
+                              type: integer
+                            max:
+                              type: integer
+                          additionalProperties: false
+                          required:
+                            - min
+                            - max
+                        alignment_start:
+                          type: object
+                          properties:
+                            min:
+                              type: integer
+                            max:
+                              type: integer
+                          additionalProperties: false
+                          required:
+                            - min
+                            - max
+                      additionalProperties: false
+                      required:
+                        - sequence_length
+                        - alignment_start
+                        - min_mapping_quality
                   required:
-                    - sequence_length
-                    - alignment_start
+                    - configs
+              - if:
+                  properties:
+                    tool:
+                      const: exact
+                then:
+                  properties:
+                    configs:
+                      type: object
+                      properties:
+                        sequence_length:
+                          type: integer
+                          minimum: 1
+                        alignment_start:
+                          type: integer
+                          minimum: 1
+                      additionalProperties: false
+                      required:
+                        - sequence_length
+                        - alignment_start
+                  required:
+                    - configs
             required:
               - tool
-              - configs
           bc_length:
             type: integer
           BC_rev_comp:
@@ -134,7 +175,7 @@ properties:
                     type: number
                     exclusiveMinimum: 0.5
                     maximum: 1
-                    default: 0.7
+                    default: 0.75
                   unknown_other:
                     type: boolean
                     default: false
