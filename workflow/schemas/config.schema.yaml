@@ -190,11 +190,11 @@ properties:
             minProperties: 1
         oneOf:
           - required:
-            - linker_length
+              - linker_length
           - required:
-            - linker
+              - linker
           - required:
-            - BC
+              - BC
         required:
           - FW
           - REV
@@ -371,6 +371,3 @@ properties:
 # end_experiments
 additionalProperties: false
 minProperties: 1
-
-
-

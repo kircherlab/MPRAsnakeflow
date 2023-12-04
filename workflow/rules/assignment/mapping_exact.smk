@@ -8,6 +8,8 @@ rule assignment_mapping_exact_reference:
         lambda wc: config["assignments"][wc.assignment]["reference"],
     output:
         "results/assignment/{assignment}/reference/reference_exact.fa",
+    log:
+        temp("results/logs/assignment/mapping_exact_reference.{assignment}.log"),
     shell:
         """
         paste <(
