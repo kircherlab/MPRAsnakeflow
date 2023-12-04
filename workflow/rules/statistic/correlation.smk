@@ -239,48 +239,48 @@ rule statistic_correlation_calculate:
         ),
         report(
             "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_DNA_pairwise_minThreshold.png",
-        category="{project}",
-        subcategory="Oligo correlation plots",
-        labels=lambda wc: {
-            "Assignment": "{assignment}",
-            "Condition": "{condition}",
-            "Configuration": "{config}",
-            "Plot": "DNA",
-            "Threshold": str(
-                config["experiments"][wc.project]["configs"][wc.config]["filter"][
-        "bc_threshold"
+            category="{project}",
+            subcategory="Oligo correlation plots",
+            labels=lambda wc: {
+                "Assignment": "{assignment}",
+                "Condition": "{condition}",
+                "Configuration": "{config}",
+                "Plot": "DNA",
+                "Threshold": str(
+                    config["experiments"][wc.project]["configs"][wc.config]["filter"][
+            "bc_threshold"
                     ]
                 ),
             },
         ),
         report(
             "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_RNA_pairwise_minThreshold.png",
-        category="{project}",
-        subcategory="Oligo correlation plots",
-        labels=lambda wc: {
-            "Assignment": "{assignment}",
-            "Condition": "{condition}",
-            "Configuration": "{config}",
-            "Plot": "RNA",
-            "Threshold": str(
-                config["experiments"][wc.project]["configs"][wc.config]["filter"][
-        "bc_threshold"
+            category="{project}",
+            subcategory="Oligo correlation plots",
+            labels=lambda wc: {
+                "Assignment": "{assignment}",
+                "Condition": "{condition}",
+                "Configuration": "{config}",
+                "Plot": "RNA",
+                "Threshold": str(
+                    config["experiments"][wc.project]["configs"][wc.config]["filter"][
+            "bc_threshold"
                     ]
                 ),
             },
         ),
         report(
             "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_Ratio_pairwise_minThreshold.png",
-        category="{project}",
-        subcategory="Oligo correlation plots",
-        labels=lambda wc: {
-            "Assignment": "{assignment}",
-            "Condition": "{condition}",
-            "Configuration": "{config}",
-            "Plot": "Ratio",
-            "Threshold": str(
-                config["experiments"][wc.project]["configs"][wc.config]["filter"][
-        "bc_threshold"
+            category="{project}",
+            subcategory="Oligo correlation plots",
+            labels=lambda wc: {
+                "Assignment": "{assignment}",
+                "Condition": "{condition}",
+                "Configuration": "{config}",
+                "Plot": "Ratio",
+                "Threshold": str(
+                    config["experiments"][wc.project]["configs"][wc.config]["filter"][
+            "bc_threshold"
                     ]
                 ),
             },
