@@ -5,7 +5,6 @@ channels:
   - conda-forge
 dependencies:
   - htslib
-  #- pysam>0.16.0
   - pysam
   - python=2.7
   - samtools
