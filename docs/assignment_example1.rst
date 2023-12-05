@@ -190,26 +190,27 @@ Total file tree of the results folder:
 
 .. code-block:: text
    
-   results
-   ├── assignment
-   │   └── assocBasic
-   │       ├── aligned_merged_reads.bam
-   │       ├── aligned_merged_reads.bam.bai
-   │       ├── assignment_barcodes.default.sorted.tsv.gz
-   │       ├── barcodes_incl_other.sorted.tsv.gz
-   │       ├── reference
-   │       │   ├── reference.fa
-   │       │   ├── reference.fa.amb
-   │       │   ├── reference.fa.ann
-   │       │   ├── reference.fa.bwt
-   │       │   ├── reference.fa.dict
-   │       │   ├── reference.fa.fai
-   │       │   ├── reference.fa.pac
-   │       │   └── reference.fa.sa
-   │       └── statistic
-   │           ├── assigned_counts.default.tsv.gz
-   │           ├── assignment
-   │           │   └── bam_stats.txt
-   │           ├── assignment.default.png
-   │           ├── assignment.default.tsv.gz
-   │           └── total_counts.tsv.gz
+    results/
+    ├── assignment
+    │   └── assocBasic
+    │       ├── aligned_merged_reads.bam
+    │       ├── aligned_merged_reads.bam.bai
+    │       ├── assignment_barcodes.default.sorted.tsv.gz
+    │       ├── barcodes_incl_other.sorted.tsv.gz
+    │       ├── reference
+    │       │   ├── reference.fa
+    │       │   ├── reference.fa.amb
+    │       │   ├── reference.fa.ann
+    │       │   ├── reference.fa.bwt
+    │       │   ├── reference.fa.dict
+    │       │   ├── reference.fa.fai
+    │       │   ├── reference.fa.pac
+    │       │   └── reference.fa.sa
+    │       └── statistic
+    │           ├── assigned_counts.default.tsv.gz
+    │           ├── assignment
+    │           │   └── bam_stats.txt
+    │           ├── assignment.default.png
+    │           ├── assignment.default.tsv.gz
+    │           └── total_counts.tsv.gz
+    └── logs
