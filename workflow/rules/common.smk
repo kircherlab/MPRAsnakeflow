@@ -2,7 +2,6 @@
 #### Global functions       ####
 ################################
 from snakemake.workflow import srcdir
-import pdb
 
 SCRIPTS_DIR = srcdir("../scripts")
 
@@ -150,7 +149,7 @@ def getVariantsBCThreshold(project):
 def getFW(project, condition, replicate, rnaDna_type):
     exp = getExperiments(project)
     exp = exp[exp.Condition == condition]
-    exp = exp[exp.Replicate.astype(str) == replicate]  
+    exp = exp[exp.Replicate.astype(str) == replicate]
     return [
         "%s/%s" % (config["experiments"][project]["data_folder"], f)
         for f in exp["%s_BC_F" % rnaDna_type].iloc[0].split(";")
@@ -285,6 +284,7 @@ def getOutputProjectConditionConfigType_helper(file):
             )
     return output
 
+
 def getOutputProjectConditionType_helper(file):
     """
     Inserts {project}, {condition} and {type} from config into given file.
@@ -301,6 +301,7 @@ def getOutputProjectConditionType_helper(file):
                 type=["DNA", "RNA"],
             )
     return output
+
 
 def getOutputProjectConditionAssignmentConfigType_helper(file):
     """
@@ -323,6 +324,7 @@ def getOutputProjectConditionAssignmentConfigType_helper(file):
         except MissingAssignmentInConfigException:
             continue
     return output
+
 
 def getOutputProjectConditionAssignmentConfig_helper(file):
     """
@@ -360,10 +362,10 @@ def getOutputProjectConditionAssignmentConfigBCoutput_helper(file):
                     if getBCoutput(project, c):
                         output += expand(
                             file,
-                            project=project, 
+                            project=project,
                             condition=condition,
                             assignment=getProjectAssignments(project),
-                            config=c
+                            config=c,
                         )
         except MissingAssignmentInConfigException:
             continue
@@ -622,7 +624,7 @@ def counts_getFilterConfig(project, conf, dna_or_rna, command):
     value = config["experiments"][project]["configs"][conf]["filter"][dna_or_rna][
         command
     ]
-    filterMap={"min_counts": "minCounts"}
+    filterMap = {"min_counts": "minCounts"}
     if isinstance(value, int):
         return "--%s %d" % (filterMap.get(command, command), value)
     else:

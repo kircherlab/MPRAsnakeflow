@@ -2,7 +2,6 @@
 #### imports ####
 #################
 import pandas as pd
-import pdb
 
 ##################
 #### SETTINGS ####
@@ -107,6 +106,10 @@ rule all:
         ),
         getOutputProjectConditionAssignmentConfig_helper(
             "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged.combined.tsv.gz"
+        ),
+        # assignment individual barcode counts
+        getOutputProjectConditionAssignmentConfigBCoutput_helper(
+            "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged_barcode_assigned_counts.tsv.gz"
         ),
         # assignment statistic
         getOutputProjectConditionAssignmentConfig_helper(
