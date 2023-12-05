@@ -146,6 +146,8 @@ The experiment workflow is configured in the :code:`experiments` section. Each e
 :configs:
     Each experiment run can have multiple configurations including filter and sampling options.
 
+    :BC_output:
+        (Optional) If set to :code:`true` tere will be an additional file :code:`results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged_barcode_assigned_counts.tsv.gz` which gives shows each individual barcode per oligo. Default is :code:`false`.
     :filter:
         (Optional) Filter options. These options are available
 
