@@ -96,9 +96,7 @@ rule assigned_counts_dna_rna_merge:
         script=getScript("count/merge_label.py"),
     output:
         counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
-        bc_counts=lambda wc: "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_barcode_assigned_counts.tsv.gz"
-        if config["experiments"][wc.project]["configs"][wc.config]["BC_output"]
-        else [],
+        bc_counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_barcode_assigned_counts.tsv.gz",
         stats="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.statistic.tsv.gz",
     params:
         minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
@@ -107,9 +105,6 @@ rule assigned_counts_dna_rna_merge:
         minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
         ]["filter"]["DNA"]["min_counts"],
-        bc_output=lambda wc: "--bcOutput "
-        if config["experiments"][wc.project]["configs"][wc.config]["bc_output"]
-        else "",
     log:
         temp(
             "results/logs/assigned_counts/{assignment}/dna_rna_merge.{project}.{condition}.{replicate}.{config}.log"
@@ -120,7 +115,7 @@ rule assigned_counts_dna_rna_merge:
         --minRNACounts {params.minRNACounts} --minDNACounts {params.minDNACounts} \
         --assignment {input.association} \
         --output {output.counts} \
-        {params.bc_output} {output.bc_counts} \
+        --bcOutput {output.bc_counts} \
         --statistic {output.stats} &> {log}
         """
 
