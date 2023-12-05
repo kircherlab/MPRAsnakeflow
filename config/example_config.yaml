@@ -43,7 +43,6 @@ experiments:
     label_file: resources/labels.tsv  # optional
     configs:
       exampleConfig:
-        BC_output: true
         filter:
           bc_threshold: 10
           DNA:
