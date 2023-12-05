@@ -171,7 +171,7 @@ rule assigned_counts_make_master_tables:
         """
 
 
-rule combine_replicates_barcode_output:
+rule assigned_counts_combine_replicates_barcode_output:
     conda:
         "../envs/python3.yaml"
     input:
@@ -211,7 +211,7 @@ rule combine_replicates_barcode_output:
         ),
     log:
         temp(
-            "results/logs/assigned_counts/combine_replicates.{project}.{condition}.{config}.{assignment}.barcodes.log"
+            "results/logs/assigned_counts/combine_replicates_barcode_output.{project}.{condition}.{config}.{assignment}.log"
         ),
     shell:
         """
