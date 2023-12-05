@@ -158,39 +158,44 @@ You should see a list of rules that will be executed. This is the summary:
 
 .. code-block:: text
 
+    Building DAG of jobs...
     Job stats:
-    job                                                             count    min threads    max threads
-    ------------------------------------------------------------  -------  -------------  -------------
-    all                                                                 1              1              1
-    assigned_counts_assignBarcodes                                      6              1              1
-    assigned_counts_dna_rna_merge                                       3              1              1
-    assigned_counts_filterAssignment                                    1              1              1
-    assigned_counts_make_master_tables                                  1              1              1
-    counts_create_BAM_umi                                               6              1              1
-    counts_dna_rna_merge_counts                                         6              1              1
-    counts_filter_counts                                                6              1              1
-    counts_final_counts_umi                                             6              1              1
-    counts_raw_counts_umi                                               6              1              1
-    statistic_assigned_counts_combine_BC_assignment_stats               1              1              1
-    statistic_assigned_counts_combine_BC_assignment_stats_helper        1              1              1
-    statistic_assigned_counts_combine_stats_dna_rna_merge               1              1              1
-    statistic_assigned_counts_combine_stats_dna_rna_merge_all           1              1              1
-    statistic_bc_overlap_combine_assigned_counts                        1              1              1
-    statistic_bc_overlap_combine_counts                                 1              1              1
-    statistic_bc_overlap_run                                            4              1              1
-    statistic_correlation_bc_counts                                     2              1              1
-    statistic_correlation_calculate                                     1              1              1
-    statistic_correlation_combine_bc_assigned                           1              1              1
-    statistic_correlation_combine_bc_raw                                1              1              1
-    statistic_correlation_combine_oligo                                 1              1              1
-    statistic_counts_BC_in_RNA_DNA                                      6              1              1
-    statistic_counts_BC_in_RNA_DNA_merge                                2              1              1
-    statistic_counts_barcode_base_composition                           6              1              1
-    statistic_counts_final                                              2              1              1
-    statistic_counts_frequent_umis                                      6              1              1
-    statistic_counts_stats_merge                                        2              1              1
-    statistic_counts_table                                             12              1              1
-    total                                                              94              1              1
+    job                                                             count
+    ------------------------------------------------------------  -------
+    all                                                                 1
+    assigned_counts_assignBarcodes                                      6
+    assigned_counts_combine_replicates                                  2
+    assigned_counts_combine_replicates_barcode_output                   1
+    assigned_counts_dna_rna_merge                                       3
+    assigned_counts_filterAssignment                                    1
+    assigned_counts_make_master_tables                                  1
+    counts_dna_rna_merge_counts                                         6
+    counts_filter_counts                                                6
+    counts_final_counts                                                 6
+    counts_umi_create_BAM                                               6
+    counts_umi_raw_counts                                               6
+    statistic_assigned_counts_combine_BC_assignment_stats               1
+    statistic_assigned_counts_combine_BC_assignment_stats_helper        1
+    statistic_assigned_counts_combine_stats_dna_rna_merge               1
+    statistic_assigned_counts_combine_stats_dna_rna_merge_all           1
+    statistic_bc_overlap_combine_assigned_counts                        1
+    statistic_bc_overlap_combine_counts                                 1
+    statistic_bc_overlap_run                                            4
+    statistic_correlation_bc_counts                                     2
+    statistic_correlation_bc_counts_hist                                2
+    statistic_correlation_calculate                                     1
+    statistic_correlation_combine_bc_assigned                           1
+    statistic_correlation_combine_bc_raw                                1
+    statistic_correlation_combine_oligo                                 1
+    statistic_correlation_hist_box_plots                                1
+    statistic_counts_BC_in_RNA_DNA                                      6
+    statistic_counts_BC_in_RNA_DNA_merge                                2
+    statistic_counts_barcode_base_composition                           6
+    statistic_counts_final                                              2
+    statistic_counts_frequent_umis                                      6
+    statistic_counts_stats_merge                                        2
+    statistic_counts_table                                             12
+    total                                                             100
 
 When dry-drun does not give any errors we will run the workflow. We use a machine with 30 threads/cores to run the workflow. The MPRAsnakeflow command is:
 
@@ -218,6 +223,10 @@ counts_dna_rna_merge_counts
     Second with zeros, so a BC can be defined only in the DNA or RNA (when :code:`min_counts` is zero for DNA or RNA)
 assigned_counts_filterAssignment
     Use only unique assignments.
+assigned_counts_combine_replicates
+    TODO
+assigned_counts_combine_replicates_barcode_output
+    TODO
 assigned_counts_assignBarcodes
     Assign RNA and DNA barcodes seperately to make the statistic for assigned.
 assigned_counts_dna_rna_merge
