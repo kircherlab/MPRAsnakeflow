@@ -297,8 +297,6 @@ def getOutputProjectConditionConfigType_helper(files):
     return output
 
 
-def getOutputProjectConditionType_helper(files):
-
 def getOutputProjectConditionType_helper(file):
     """
     Inserts {project}, {condition} and {type} from config into given file.
