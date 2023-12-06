@@ -96,6 +96,7 @@ rule assigned_counts_dna_rna_merge:
         script=getScript("count/merge_label.py"),
     output:
         counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
+        bc_counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_barcode_assigned_counts.tsv.gz",
         stats="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.statistic.tsv.gz",
     params:
         minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
@@ -114,6 +115,7 @@ rule assigned_counts_dna_rna_merge:
         --minRNACounts {params.minRNACounts} --minDNACounts {params.minDNACounts} \
         --assignment {input.association} \
         --output {output.counts} \
+        --bcOutput {output.bc_counts} \
         --statistic {output.stats} &> {log}
         """
 
@@ -166,6 +168,57 @@ rule assigned_counts_make_master_tables:
         --output {output.thresh} \
         --output-all {output.all} \
         --statistic {output.statistic} &> {log}
+        """
+
+
+rule assigned_counts_combine_replicates_barcode_output:
+    conda:
+        "../envs/python3.yaml"
+    input:
+        bc_counts=lambda wc: expand(
+            "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_barcode_assigned_counts.tsv.gz",
+            replicate=getReplicatesOfCondition(wc.project, wc.condition),
+            project=wc.project,
+            condition=wc.condition,
+            assignment=wc.assignment,
+            config=wc.config,
+        ),
+        script=getScript("count/merge_replicates_barcode_counts.py"),
+    output:
+        bc_merged="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged_barcode_assigned_counts.tsv.gz",
+    params:
+        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
+            "filter"
+        ]["bc_threshold"],
+        replicates=lambda wc: " ".join(
+            [
+                "--replicate %s" % r
+                for r in getReplicatesOfCondition(wc.project, wc.condition)
+            ]
+        ),
+        bc_counts=lambda wc: " ".join(
+            [
+                "--counts %s" % c
+                for c in expand(
+                    "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_barcode_assigned_counts.tsv.gz",
+                    replicate=getReplicatesOfCondition(wc.project, wc.condition),
+                    project=wc.project,
+                    condition=wc.condition,
+                    assignment=wc.assignment,
+                    config=wc.config,
+                )
+            ]
+        ),
+    log:
+        temp(
+            "results/logs/assigned_counts/combine_replicates_barcode_output.{project}.{condition}.{config}.{assignment}.log"
+        ),
+    shell:
+        """
+        python {input.script} {params.bc_counts} \
+        --threshold {params.thresh} \
+        {params.replicates}  \
+        --output {output.bc_merged} &> {log}
         """
 
 
