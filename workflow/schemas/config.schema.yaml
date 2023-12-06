@@ -1,6 +1,8 @@
 ---
 $schema: "https://json-schema.org/draft/2020-12/schema"
 
+$id: /schemas/config.schema.yaml
+
 description: snakemake configuration file
 
 type: object
@@ -35,19 +37,82 @@ properties:
       description: name of the assignment
       ^([^_\.]+)$:
         type: object
-        patternProperties:
-          ^((sequence_length)|(alignment_start))$:
+        properties:
+          alignment_tool:
             type: object
             properties:
-              min:
-                type: integer
-              max:
-                type: integer
-            additionalProperties: false
+              tool:
+                type: string
+                enum:
+                  - exact
+                  - bwa
+                default: bwa
+            allOf:
+              - if:
+                  properties:
+                    tool:
+                      const: bwa
+                then:
+                  properties:
+                    configs:
+                      type: object
+                      properties:
+                        min_mapping_quality:
+                          type: integer
+                          minimum: 0
+                          default: 1
+                        sequence_length:
+                          type: object
+                          properties:
+                            min:
+                              type: integer
+                            max:
+                              type: integer
+                          additionalProperties: false
+                          required:
+                            - min
+                            - max
+                        alignment_start:
+                          type: object
+                          properties:
+                            min:
+                              type: integer
+                            max:
+                              type: integer
+                          additionalProperties: false
+                          required:
+                            - min
+                            - max
+                      additionalProperties: false
+                      required:
+                        - sequence_length
+                        - alignment_start
+                        - min_mapping_quality
+                  required:
+                    - configs
+              - if:
+                  properties:
+                    tool:
+                      const: exact
+                then:
+                  properties:
+                    configs:
+                      type: object
+                      properties:
+                        sequence_length:
+                          type: integer
+                          minimum: 1
+                        alignment_start:
+                          type: integer
+                          minimum: 1
+                      additionalProperties: false
+                      required:
+                        - sequence_length
+                        - alignment_start
+                  required:
+                    - configs
             required:
-              - min
-              - max
-        properties:
+              - tool
           bc_length:
             type: integer
           BC_rev_comp:
@@ -76,10 +141,6 @@ properties:
               type: string
             minItems: 1
             uniqueItems: true
-          min_mapping_quality:
-            type: integer
-            default: 1
-            minimum: 0
           NGmerge:
             type: object
             properties:
@@ -114,7 +175,7 @@ properties:
                     type: number
                     exclusiveMinimum: 0.5
                     maximum: 1
-                    default: 0.7
+                    default: 0.75
                   unknown_other:
                     type: boolean
                     default: false
@@ -129,20 +190,18 @@ properties:
             minProperties: 1
         oneOf:
           - required:
-            - linker_length
+              - linker_length
           - required:
-            - linker
+              - linker
           - required:
-            - BC
+              - BC
         required:
           - FW
           - REV
           - bc_length
           - reference
           - configs
-          - alignment_start
-          - sequence_length
-          - min_mapping_quality
+          - alignment_tool
           - NGmerge
         additionalProperties: false
     additionalProperties: false

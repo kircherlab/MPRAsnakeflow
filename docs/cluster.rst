@@ -10,7 +10,7 @@ The configuration (SLURM) of resources for rules can be found in ``config/sbatch
 
 .. code-block:: bash
 
-    snakemake --use-conda --configfile conf/config.yaml --cluster "sbatch --nodes=1 --ntasks={cluster.threads} --mem={cluster.mem} -t {cluster.time} -p {cluster.queue} -o {cluster.output}" --jobs 100 --cluster-config config/sbatch.yaml
+    snakemake --use-conda --configfile config/config.yaml --cluster "sbatch --nodes=1 --ntasks={cluster.threads} --mem={cluster.mem} -t {cluster.time} -p {cluster.queue} -o {cluster.output}" --jobs 100 --cluster-config config/sbatch.yaml
 
 Please note that the log folder of the cluster environment has to be generated first, e.g:
 
