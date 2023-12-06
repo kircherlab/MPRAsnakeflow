@@ -226,7 +226,7 @@ def getConfigs(project):
 
 
 ##### Helper to create output files #####
-def getOutputConditionReplicateType_helper(file, project, skip={}):
+def getOutputConditionReplicateType_helper(files, project, skip={}):
     """
     Inserts {condition}, {replicate} and {type} from config into given file.
     Can skip projects with the given config set by skip.
@@ -239,17 +239,18 @@ def getOutputConditionReplicateType_helper(file, project, skip={}):
     conditions = getConditions(project)
     for condition in conditions:
         replicates = getReplicatesOfCondition(project, condition)
-        output += expand(
-            file,
-            project=project,
-            condition=condition,
-            replicate=replicates,
-            type=["RNA", "DNA"],
-        )
+        for file in files:
+            output += expand(
+                file,
+                project=project,
+                condition=condition,
+                replicate=replicates,
+                type=["RNA", "DNA"],
+            )
     return output
 
 
-def getOutputProjectConditionReplicateType_helper(file, skip={}):
+def getOutputProjectConditionReplicateType_helper(files, skip={}):
     """
     Inserts {project}, {condition}, {replicate} and {type} from config into given file.
     Can skip projects with the given config set by skip.
@@ -258,21 +259,25 @@ def getOutputProjectConditionReplicateType_helper(file, skip={}):
     projects = getProjects()
     for project in projects:
         # skip projects with the following config
-        output += getOutputConditionReplicateType_helper(
-            expand(
-                file,
-                project=project,
-                condition="{condition}",
-                replicate="{replicate}",
-                type="{type}",
-            ),
-            project,
-            skip,
-        )
+        for file in files:
+            fs = (
+                expand(
+                    file,
+                    project=project,
+                    condition="{condition}",
+                    replicate="{replicate}",
+                    type="{type}",
+                ),
+            )
+            output += getOutputConditionReplicateType_helper(
+                fs,
+                project,
+                skip,
+            )
     return output
 
 
-def getOutputProjectConditionConfigType_helper(file):
+def getOutputProjectConditionConfigType_helper(files):
     """
     Inserts {project}, {condition} and {type} from config into given file.
     """
@@ -281,15 +286,18 @@ def getOutputProjectConditionConfigType_helper(file):
     for project in projects:
         conditions = getConditions(project)
         for condition in conditions:
-            output += expand(
-                file,
-                project=project,
-                condition=condition,
-                config=getConfigs(project),
-                type=["DNA", "RNA"],
-            )
+            for file in files:
+                output += expand(
+                    file,
+                    project=project,
+                    condition=condition,
+                    config=getConfigs(project),
+                    type=["DNA", "RNA"],
+                )
     return output
 
+
+def getOutputProjectConditionType_helper(files):
 
 def getOutputProjectConditionType_helper(file):
     """
@@ -300,39 +308,17 @@ def getOutputProjectConditionType_helper(file):
     for project in projects:
         conditions = getConditions(project)
         for condition in conditions:
-            output += expand(
-                file,
-                project=project,
-                condition=condition,
-                type=["DNA", "RNA"],
-            )
-    return output
-
-
-def getOutputProjectConditionAssignmentConfigType_helper(file):
-    """
-    Inserts {project}, {condition}, {assignment} and {config} (from configs of project) from config into given file.
-    """
-    output = []
-    projects = getProjects()
-    for project in projects:
-        try:
-            conditions = getConditions(project)
-            for condition in conditions:
+            for file in files:
                 output += expand(
                     file,
                     project=project,
                     condition=condition,
-                    assignment=getProjectAssignments(project),
-                    config=getConfigs(project),
                     type=["DNA", "RNA"],
                 )
-        except MissingAssignmentInConfigException:
-            continue
     return output
 
 
-def getOutputProjectConditionAssignmentConfig_helper(file):
+def getOutputProjectConditionAssignmentConfigType_helper(files):
     """
     Inserts {project}, {condition}, {assignment} and {config} (from configs of project) from config into given file.
     """
@@ -342,19 +328,44 @@ def getOutputProjectConditionAssignmentConfig_helper(file):
         try:
             conditions = getConditions(project)
             for condition in conditions:
-                output += expand(
-                    file,
-                    project=project,
-                    condition=condition,
-                    assignment=getProjectAssignments(project),
-                    config=getConfigs(project),
-                )
+                for file in files:
+                    output += expand(
+                        file,
+                        project=project,
+                        condition=condition,
+                        assignment=getProjectAssignments(project),
+                        config=getConfigs(project),
+                        type=["DNA", "RNA"],
+                    )
         except MissingAssignmentInConfigException:
             continue
     return output
 
 
-def getOutputProjectAssignmentConfig_helper(file, betweenReplicates=False):
+def getOutputProjectConditionAssignmentConfig_helper(files):
+    """
+    Inserts {project}, {condition}, {assignment} and {config} (from configs of project) from config into given file.
+    """
+    output = []
+    projects = getProjects()
+    for project in projects:
+        try:
+            conditions = getConditions(project)
+            for condition in conditions:
+                for file in files:
+                    output += expand(
+                        file,
+                        project=project,
+                        condition=condition,
+                        assignment=getProjectAssignments(project),
+                        config=getConfigs(project),
+                    )
+        except MissingAssignmentInConfigException:
+            continue
+    return output
+
+
+def getOutputProjectAssignmentConfig_helper(files, betweenReplicates=False):
     """
     Inserts {project}, {assignment} and {config} (from configs of project) from config into given file.
     When betweenReplicates is True skips projects without replicates in one condition.
@@ -363,19 +374,20 @@ def getOutputProjectAssignmentConfig_helper(file, betweenReplicates=False):
     projects = getProjects()
     for project in projects:
         if not betweenReplicates or hasReplicates(project):
-            try:
-                output += expand(
-                    file,
-                    project=project,
-                    assignment=getProjectAssignments(project),
-                    config=getConfigs(project),
-                )
-            except MissingAssignmentInConfigException:
-                continue
+            for file in files:
+                try:
+                    output += expand(
+                        file,
+                        project=project,
+                        assignment=getProjectAssignments(project),
+                        config=getConfigs(project),
+                    )
+                except MissingAssignmentInConfigException:
+                    continue
     return output
 
 
-def getOutputProjectConfig_helper(file, betweenReplicates=False):
+def getOutputProjectConfig_helper(files, betweenReplicates=False):
     """
     Inserts {project}, {config} from config into given file.
     When betweenReplicates is True skips projects without replicates in one condition.
@@ -384,36 +396,16 @@ def getOutputProjectConfig_helper(file, betweenReplicates=False):
     projects = getProjects()
     for project in projects:
         if not betweenReplicates or hasReplicates(project):
-            output += expand(
-                file,
-                project=project,
-                config=getConfigs(project),
-            )
-    return output
-
-
-def getOutputProjectAssignmentConfig_helper(file, betweenReplicates=False):
-    """
-    Inserts {project}, {assignment}, {config} from config into given file.
-    When betweenReplicates is True skips projects without replicates in one condition.
-    """
-    output = []
-    projects = getProjects()
-    for project in projects:
-        if not betweenReplicates or hasReplicates(project):
-            try:
+            for file in files:
                 output += expand(
                     file,
                     project=project,
-                    assignment=getProjectAssignments(project),
                     config=getConfigs(project),
                 )
-            except MissingAssignmentInConfigException:
-                continue
     return output
 
 
-def getOutputVariants_helper(file, betweenReplicates=False):
+def getOutputVariants_helper(files, betweenReplicates=False):
     """
     Only when variants are set in config file
     Inserts {project}, {condition}, {assignment} and {config} (from configs of project) from config into given file.
@@ -426,31 +418,35 @@ def getOutputVariants_helper(file, betweenReplicates=False):
         for condition in conditions:
             if "variants" in config["experiments"][project]:
                 if hasReplicates(project, condition):
-                    output += expand(
-                        file,
-                        project=project,
-                        condition=condition,
-                        assignment=getProjectAssignments(project),
-                        config=list(config["experiments"][project]["configs"].keys()),
-                    )
+                    for file in files:
+                        output += expand(
+                            file,
+                            project=project,
+                            condition=condition,
+                            assignment=getProjectAssignments(project),
+                            config=list(
+                                config["experiments"][project]["configs"].keys()
+                            ),
+                        )
     return output
 
 
-def getAssignment_helper(file, match_method=None):
-    return expand(
-        file,
-        assignment=getAssignments(match_method),
-    )
+def getAssignment_helper(files, match_method=None):
+    output = []
+    for file in files:
+        output += expand(file, assignment=getAssignments(match_method))
+    return output
 
 
-def getAssignmentConfig_helper(file):
+def getAssignmentConfig_helper(files):
     output = []
     for assignment in getAssignments():
-        output += expand(
-            file,
-            assignment=assignment,
-            config=config["assignments"][assignment]["configs"].keys(),
-        )
+        for file in files:
+            output += expand(
+                file,
+                assignment=assignment,
+                config=config["assignments"][assignment]["configs"].keys(),
+            )
     return output
 
 
