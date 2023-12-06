@@ -192,7 +192,7 @@ rule assigned_counts_combine_replicates_barcode_output:
         ]["bc_threshold"],
         replicates=lambda wc: " ".join(
             [
-                "--replicates %s" % r
+                "--replicate %s" % r
                 for r in getReplicatesOfCondition(wc.project, wc.condition)
             ]
         ),
@@ -215,7 +215,7 @@ rule assigned_counts_combine_replicates_barcode_output:
         ),
     shell:
         """
-        python {input.script} unts {params.bc_counts} \
+        python {input.script} {params.bc_counts} \
         --threshold {params.thresh} \
         {params.replicates}  \
         --output {output.bc_merged} &> {log}
