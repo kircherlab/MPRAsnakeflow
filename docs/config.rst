@@ -4,7 +4,7 @@
 Config File
 =====================
 
-The config file is a yaml file that contains the configuration. Different runs can be configured. We recommend to use one config file per MPRA experiment or MPRA roject. But in theory many different experiments can be configured in only one file. It is divided into :code:`global` (generell settings), :code:`assignments` (assigment workflow), and :code:`experiments` (count workflow including variants). This is a full example file with all possible configurations. :download:`config/example_config.yaml <../config/example_config.yaml>`.
+The config file is a yaml file that contains the configuration. Different runs can be configured. We recommend to use one config file per MPRA experiment or MPRA project. But in theory many different experiments can be configured in only one file. It is divided into :code:`global` (generell settings), :code:`assignments` (assigment workflow), and :code:`experiments` (count workflow including variants). This is a full example file with all possible configurations. :download:`config/example_config.yaml <../config/example_config.yaml>`.
 
 .. literalinclude:: ../config/example_config.yaml
    :language: yaml
