@@ -11,7 +11,7 @@ The config file is a yaml file that contains the configuration. Different runs c
    :linenos:
 
 
-Note that teh config file is conrolled by jscon schema. This means that the config file is validated against the schema. If the config file is not valid, the program will exit with an error message. The schema is located in :download:`workflow/schemas/config.schema.yaml <../workflow/schemas/config.schema.yaml>`.
+Note that the config file is conrolled by jscon schema. This means that the config file is validated against the schema. If the config file is not valid, the program will exit with an error message. The schema is located in :download:`workflow/schemas/config.schema.yaml <../workflow/schemas/config.schema.yaml>`.
 
 ----------------
 General settings
