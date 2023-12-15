@@ -43,16 +43,16 @@ Install the the conda environment. The general conda environment is called ``mpr
 .. code-block:: bash
 
     cd MPRAsnakeflow
-    conda create -c bioconda -c conda-forge -n mprasnakeflow snakemake
+    mamba create -c conda-forge -c bioconda -n mprasnakeflow snakemake
     
     # activate MPRAsnakeflow
-    conda activate mprasnakeflow
+    mamba activate mprasnakeflow
 
 To deactivate the environment, use:
 
 .. code-block:: bash
 
-    conda deactivate
+    mamba deactivate
 
 
 
@@ -61,6 +61,6 @@ Quick test
 
 .. code-block:: bash
 
-    conda activate mprasnakeflow
+    mamba activate mprasnakeflow
     snakemake --help
     
