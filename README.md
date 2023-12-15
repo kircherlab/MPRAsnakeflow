@@ -45,19 +45,19 @@ Activate the conda environment:
 
 Test your configuration by performing a dry-run via
 
-    snakemake --use-conda --configfile conf/config.yaml -n
+    snakemake --use-conda --configfile config/config.yaml -n
 
 Execute the workflow locally via
 
-    snakemake --use-conda --cores $N --configfile conf/config.yaml
+    snakemake --use-conda --cores $N --configfile config/config.yaml
 
 using `$N` cores or run it in a cluster environment (SLURM using sbatch) via
 
-    snakemake --use-conda --configfile conf/config.yaml --cluster "sbatch --nodes=1 --ntasks={cluster.threads} --mem={cluster.mem} -t {cluster.time} -p {cluster.queue} -o {cluster.output}" --jobs 100 --cluster-config config/sbatch.yaml
+    snakemake --use-conda --configfile config/config.yaml --cluster "sbatch --nodes=1 --ntasks={cluster.threads} --mem={cluster.mem} -t {cluster.time} -p {cluster.queue} -o {cluster.output}" --jobs 100 --cluster-config config/sbatch.yaml
 
 or
 
-    snakemake --use-conda --configfile conf/config.yaml --drmaa "-n {cluster.threads} --mem={cluster.mem} -t {cluster.time} -p {cluster.queue} -o {cluster.output}" --jobs 100
+    snakemake --use-conda --configfile config/config.yaml --drmaa "-n {cluster.threads} --mem={cluster.mem} -t {cluster.time} -p {cluster.queue} -o {cluster.output}" --jobs 100
 
 using DRMAA.
 
@@ -69,7 +69,7 @@ For other cluster environments please check the [Snakemake](https://snakemake.re
 
 If you not only want to fix the software stack but also the underlying OS, use
 
-    snakemake --use-conda --use-singularity --configfile conf/config.yaml
+    snakemake --use-conda --use-singularity --configfile config/config.yaml
 
 in combination with any of the modes above.
 
@@ -83,7 +83,7 @@ See the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/exe
 
 After successful execution, you can create a self-contained interactive HTML report with all results via:
 
-    snakemake --report report.html --configfile conf/config.yaml
+    snakemake --report report.html --configfile config/config.yaml
 
 This report can, e.g., be forwarded to your collaborators.
 
