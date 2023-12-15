@@ -38,15 +38,15 @@ Set up conda with snakemake environment
 
 This pipeline uses python2.7 and python3.6 with additional R scripts in a Snakemake pipeline. The ``.yml`` files provided will create the appropriate environments and is completely handled by MPRAsnakeflow. The whole pipeline is set up to run on a Linux system.
 
-Install the the conda environment. The general conda environment is called ``mprasnakeflow``.
+Install the the conda environment. The general conda environment is called ``snakemake``.
 
 .. code-block:: bash
 
     cd MPRAsnakeflow
-    conda create -c bioconda -c conda-forge -n mprasnakeflow snakemake
+    mamba create -c conda-forge -c bioconda -n snakemake snakemake
     
-    # activate MPRAsnakeflow
-    conda activate mprasnakeflow
+    # activate snakemake
+    conda activate snakemake
 
 To deactivate the environment, use:
 
@@ -61,6 +61,6 @@ Quick test
 
 .. code-block:: bash
 
-    conda activate mprasnakeflow
+    conda activate snakemake
     snakemake --help
     
