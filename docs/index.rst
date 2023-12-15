@@ -16,7 +16,7 @@ MPRAsnakeflow's documentation
 MPRAsnakeflow pipeline processes sequencing data from Massively Parallel Reporter Assays (MPRAs)
 to create count tables for candidate sequences tested in the experiment.
 
-MPRAsnakeflow is built on top of `Snakemake <https://snakemake.readthedocs.io/>`_. Insert your code into the respective folders, i.e. ``scripts``, ``rules``, and ``envs``. Define the entry point of the workflow in the ``Snakefile`` and the main configuration in a ``config.yaml`` file.
+MPRAsnakeflow is built on top of `Snakemake <https://snakemake.readthedocs.io/>`_. Insert your code into the respective folders, i.e. ``scripts``, ``rules``, and ``envs``. Define the entry point of the workflow in the ``Snakefile`` and the main configuration in a ``.yaml`` file.
 
 Authors
     Max Schubach (`@visze <https://github.com/visze>`_)
@@ -56,7 +56,7 @@ And then run the main workflow with:
 
 .. code-block:: bash
 
-    snakemake --use-conda --cores $N --configfile config/config.yaml
+    snakemake --use-conda --cores $N --configfile config/example_config.yaml
     
 
 --------
@@ -68,7 +68,7 @@ Features
 :--cores:
   This utility sets the number of cores ($N) to be used by MPRAsnakeflow.
 :--configfile:
-  This file (e.g., ``config/config.yaml``) contains the project, its objects and properties, and sub-properties and its objects that **must** be set before running MPRAsnakeflow.
+  This file (e.g., ``config/example_config.yaml``) contains the project, its objects and properties, and sub-properties and its objects that **must** be set before running MPRAsnakeflow.
 
 -------------------
 Investigate results
