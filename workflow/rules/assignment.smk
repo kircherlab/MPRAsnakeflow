@@ -114,6 +114,27 @@ rule assignment_merge:
         -l >(gzip -c - > {log})
         """
 
+rule assignment_bowtie_ref:
+    """
+    Create mapping reference for bowtie from design file.
+    """
+    input:
+        lambda wc: config["assignments"][wc.assignment]["reference"],
+    output:
+        ref="results/assignment/{assignment}/reference/reference.fa",
+        index="results/assignment/{assignment}/reference/bowtie.1.ebwt"
+    conda:
+        "../envs/bwa_samtools_picard_htslib.yaml"
+    params:
+        out="results/assignment/{assignment}/reference/bowtie"
+    log:
+        temp("results/logs/assignment/bwa_ref.{assignment}.log"),
+    shell:
+        """
+        cat {input} | awk '{{gsub(/[\\]\\[]/,"_")}}$0' > {output.ref};
+        bowtie-build {output.ref} {params.out}
+        """
+
 
 rule assignment_bwa_ref:
     """
@@ -141,13 +162,38 @@ rule assignment_bwa_ref:
         """
 
 
-rule assignment_mapping:
+# rule assignment_mapping:
+#     """
+#     Map the reads to the reference and sort.
+#     """
+#     input:
+#         reads="results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
+#         reference="results/assignment/{assignment}/reference/reference.fa",
+#         bwa_index=expand(
+#             "results/assignment/{{assignment}}/reference/reference.fa.{ext}",
+#             ext=["fai", "dict"] + assignment_bwa_dicts,
+#         ),
+#     output:
+#         bam=temp("results/assignment/{assignment}/bam/merge_split{split}.mapped.bam"),
+#     conda:
+#         "../envs/bwa_samtools_picard_htslib.yaml"
+#     threads: config["global"]["threads"]
+#     log:
+#         temp("results/logs/assignment/mapping.{assignment}.{split}.log"),
+#     shell:
+#         """
+#         bwa mem -t {threads} -L 80 -M -C {input.reference} <(
+#             gzip -dc {input.reads}
+#         )  | samtools sort -l 0 -@ {threads} > {output} 2> {log}
+#         """
+
+rule assignment_mapping_bowtie:
     """
     Map the reads to the reference and sort.
     """
     input:
         reads="results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
-        reference="results/assignment/{assignment}/reference/reference.fa",
+        reference="results/assignment/{assignment}/reference/bowtie.1.ebwt",
         bwa_index=expand(
             "results/assignment/{{assignment}}/reference/reference.fa.{ext}",
             ext=["fai", "dict"] + assignment_bwa_dicts,
@@ -157,13 +203,13 @@ rule assignment_mapping:
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
     threads: config["global"]["threads"]
+    params:
+        out="results/assignment/{assignment}/reference/bowtie"
     log:
-        temp("results/logs/assignment/mapping.{assignment}.{split}.log"),
+        temp("results/logs/assignment/mapping.bowtie.{assignment}.{split}.log"),
     shell:
         """
-        bwa mem -t {threads} -L 80 -M -C {input.reference} <(
-            gzip -dc {input.reads}
-        )  | samtools sort -l 0 -@ {threads} > {output} 2> {log}
+        bowtie -q {params.out} {input.reads} -S -k 4 -v 0 -p {threads} > {output.bam} | samtools sort -l 0 -@ {threads} > {output} 2> {log}
         """
 
 
