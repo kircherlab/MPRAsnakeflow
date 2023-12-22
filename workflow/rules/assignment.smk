@@ -136,30 +136,30 @@ rule assignment_bowtie_ref:
         """
 
 
-rule assignment_bwa_ref:
-    """
-    Create mapping reference for BWA from design file.
-    """
-    input:
-        lambda wc: config["assignments"][wc.assignment]["reference"],
-    output:
-        ref="results/assignment/{assignment}/reference/reference.fa",
-        bwa=expand(
-            "results/assignment/{{assignment}}/reference/reference.fa.{ext}",
-            ext=["fai"] + assignment_bwa_dicts,
-        ),
-        d="results/assignment/{assignment}/reference/reference.fa.dict",
-    conda:
-        "../envs/bwa_samtools_picard_htslib.yaml"
-    log:
-        temp("results/logs/assignment/bwa_ref.{assignment}.log"),
-    shell:
-        """
-        cat {input} | awk '{{gsub(/[\\]\\[]/,"_")}}$0' > {output.ref};
-        bwa index -a bwtsw {output.ref} &> {log};
-        samtools faidx {output.ref} &>> {log};
-        picard CreateSequenceDictionary REFERENCE={output.ref} OUTPUT={output.d} &>> {log}
-        """
+# rule assignment_bwa_ref:
+#     """
+#     Create mapping reference for BWA from design file.
+#     """
+#     input:
+#         lambda wc: config["assignments"][wc.assignment]["reference"],
+#     output:
+#         ref="results/assignment/{assignment}/reference/reference.fa",
+#         bwa=expand(
+#             "results/assignment/{{assignment}}/reference/reference.fa.{ext}",
+#             ext=["fai"] + assignment_bwa_dicts,
+#         ),
+#         d="results/assignment/{assignment}/reference/reference.fa.dict",
+#     conda:
+#         "../envs/bwa_samtools_picard_htslib.yaml"
+#     log:
+#         temp("results/logs/assignment/bwa_ref.{assignment}.log"),
+#     shell:
+#         """
+#         cat {input} | awk '{{gsub(/[\\]\\[]/,"_")}}$0' > {output.ref};
+#         bwa index -a bwtsw {output.ref} &> {log};
+#         samtools faidx {output.ref} &>> {log};
+#         picard CreateSequenceDictionary REFERENCE={output.ref} OUTPUT={output.d} &>> {log}
+#         """
 
 
 # rule assignment_mapping:
@@ -199,7 +199,7 @@ rule assignment_mapping_bowtie:
             ext=["fai", "dict"] + assignment_bwa_dicts,
         ),
     output:
-        bam=temp("results/assignment/{assignment}/bam/merge_split{split}.mapped.bam"),
+        bam="results/assignment/{assignment}/bam/merge_split{split}.mapped.bam",
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
     threads: config["global"]["threads"]
