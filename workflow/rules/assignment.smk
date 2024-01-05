@@ -84,10 +84,9 @@ rule assignment_merge:
         FW="results/assignment/{assignment}/fastq/splits/FW.split{split}.BCattached.fastq.gz",
         REV="results/assignment/{assignment}/fastq/splits/REV.split{split}.BCattached.fastq.gz",
     output:
-        un=temp("results/assignment/{assignment}/fastq/merge_split{split}.un.fastq.gz"),
-        join=temp(
-            "results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz"
-        ),
+        un="results/assignment/{assignment}/fastq/merge_split{split}.un.fastq.gz",
+        join=
+            "results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
     params:
         min_overlap=lambda wc: config["assignments"][wc.assignment]["NGmerge"][
             "min_overlap"
@@ -153,7 +152,7 @@ rule assignment_mapping:
             ext=["fai", "dict"] + assignment_bwa_dicts,
         ),
     output:
-        bam=temp("results/assignment/{assignment}/bam/merge_split{split}.mapped.bam"),
+        bam="results/assignment/{assignment}/bam/merge_split{split}.mapped.bam",
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
     threads: config["global"]["threads"]

@@ -22,6 +22,7 @@ rule counts_umi_create_BAM:
         bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
         umi_length=lambda wc: config["experiments"][wc.project]["umi_length"],
         datasetID="{condition}_{replicate}_{type}",
+        project=lambda wc: wc.project,
     conda:
         "../../envs/python27.yaml"
     log:
@@ -41,6 +42,7 @@ rule counts_umi_create_BAM:
 
         echo $rev_start >> {log}
         echo $minoverlap >> {log}
+        mkdir -p results/experiments/{params.project}/counts/
 
         paste <( zcat {input.fw_fastq} ) <( zcat {input.rev_fastq}  ) <( zcat {input.umi_fastq} ) | \
         awk '{{if (NR % 4 == 2 || NR % 4 == 0) {{print $1$2$3}} else {{print $1}}}}' | \

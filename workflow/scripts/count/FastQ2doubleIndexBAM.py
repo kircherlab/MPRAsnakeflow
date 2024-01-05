@@ -15,8 +15,13 @@ Extract the index sequence from the middle and end of an Illumina run. Separates
 
 import sys
 import os
-import string
-table = string.maketrans('.','N')
+## added because of python (3 and 2) compatibility
+try:
+    maketrans = ''.maketrans
+except AttributeError:
+    # fallback for Python 2
+    from string import maketrans
+table = maketrans('.','N')
 
 import pysam
 from collections import defaultdict
