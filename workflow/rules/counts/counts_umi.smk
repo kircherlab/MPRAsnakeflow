@@ -14,7 +14,7 @@ rule counts_umi_create_BAM:
         fw_fastq=lambda wc: getFW(wc.project, wc.condition, wc.replicate, wc.type),
         rev_fastq=lambda wc: getRev(wc.project, wc.condition, wc.replicate, wc.type),
         umi_fastq=lambda wc: getUMI(wc.project, wc.condition, wc.replicate, wc.type),
-        script_FastQ2doubleIndexBAM=getScript("count/FastQ2doubleIndexBAM.py"),
+        script_FastQ2doubleIndexBAM=getScript("count/FastQ2doubleIndexBAM_python3.py"),
         script_MergeTrimReadsBAM=getScript("count/MergeTrimReadsBAM.py"),
     output:
         "results/experiments/{project}/counts/useUMI.{condition}_{replicate}_{type}.bam",
