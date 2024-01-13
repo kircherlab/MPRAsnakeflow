@@ -32,7 +32,7 @@ def get_filter_IDS(options):
   return None
 
 def move_partially(sourcef,targetf, is_mock=False):
-  print "Starting step-by-step moving because "+targetf+" already exists."
+  print("Starting step-by-step moving because "+targetf+" already exists.")
   folders_to_iterate = [(sourcef,targetf)]
   while len(folders_to_iterate) > 0:
     csource,ctarget = folders_to_iterate.pop()
@@ -46,16 +46,16 @@ def move_partially(sourcef,targetf, is_mock=False):
       elif os.path.isdir(csource+elem) and os.path.isdir(ctarget+elem):
         folders_to_iterate.append((csource+elem+"/",ctarget+elem+"/"))
     if len(files_to_move)>1:
-      print "Moving",len(files_to_move),"files to",ctarget
+      print("Moving",len(files_to_move),"files to",ctarget)
       if is_mock:
-        print "mv "+" ".join(files_to_move)+" "+ctarget
+        print("mv "+" ".join(files_to_move)+" "+ctarget)
       else:
         move = subprocess.Popen("mv "+" ".join(files_to_move)+" "+ctarget,shell=True)
         move.wait()
     if len(folders_to_move)>1:
-      print "Moving",len(folders_to_move),"folders to",ctarget
+      print("Moving",len(folders_to_move),"folders to",ctarget)
       if is_mock:
-        print "mv "+" ".join(folders_to_move)+" "+"/".join(ctarget.split("/")[:-1])+"/"
+        print("mv "+" ".join(folders_to_move)+" "+"/".join(ctarget.split("/")[:-1])+"/")
       else:
         move = subprocess.Popen("mv "+" ".join(folders_to_move)+" "+"/".join(ctarget.split("/")[:-1])+"/",shell=True)
         move.wait()
@@ -181,7 +181,7 @@ def parse_range_string(options, silent=False, write_to=sys.stdout):
         if end < start: end = None
       if (not silent):
           write_to.write("Set range parameter to:\n")
-          if end <> None:
+          if end != None:
             write_to.write("Start: " + str(start+1) + " End: " + str(end) + "\n")
           else:
             write_to.write("Start: " + str(start+1) + " End: MAX\n")
@@ -203,7 +203,7 @@ def parse_rangestr(rangestr):
         try:
           start = int(se[0])
           end = int(se[1])
-          res.extend(range(start,end+1))
+          res.extend(list(range(start,end+1)))
         except: return None
       else: return None
     else:
@@ -235,6 +235,6 @@ def entropy(seq):
   total = float(sum(counts))
   entropy = 0
   for elem in counts:
-    if (total > 0) and (elem/total <> 0):
+    if (total > 0) and (elem/total != 0):
       entropy -= elem/total*math.log(elem/total,2)
   return entropy
