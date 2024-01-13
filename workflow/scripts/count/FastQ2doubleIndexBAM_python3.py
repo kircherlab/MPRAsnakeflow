@@ -39,7 +39,7 @@ def read_sequence_file(infile,sec_read_start=None):
   if options.nextera and ireadl2 != None:
     for seqid, seq, qual in read_fastq(infile):
       seq = seq.translate(table)
-      if qual != None and options.qualityoffset != 33: qual = "".join(map(lambda x:chr(ord(x)-options.qualityoffset+33),qual))
+      if qual != None and options.qualityoffset != 33: qual = "".join([chr(ord(x)-options.qualityoffset+33) for x in qual])
       if sec_read_start == None: 
         if qual != None:
           yield seqid,seq[-(ireadlength1+ireadlength2):-ireadlength2],qual[-(ireadlength1+ireadlength2):-ireadlength2],seq[-ireadlength2:],qual[-ireadlength2:],seq[:-(ireadlength1+ireadlength2)],qual[:-(ireadlength1+ireadlength2)],None,None
@@ -54,7 +54,7 @@ def read_sequence_file(infile,sec_read_start=None):
   else:
     for seqid, seq, qual in read_fastq(infile):
       seq = seq.translate(table)
-      if qual != None and options.qualityoffset != 33: qual = "".join(map(lambda x:chr(ord(x)-options.qualityoffset+33),qual))
+      if qual != None and options.qualityoffset != 33: qual = "".join([chr(ord(x)-options.qualityoffset+33) for x in qual])
       if sec_read_start == None:
         if qual != None:
           yield seqid,seq[-ireadlength1:],qual[-ireadlength1:],"",None,seq[:-ireadlength1],qual[:-ireadlength1],None,None
@@ -222,7 +222,7 @@ for filename in files:
   # REMOVE EMPTY FILES AND PRINT SUMMARY
   summary = []
   closed = False
-  for tag,value in outfiles.iteritems():
+  for tag,value in outfiles.items():
     if value[2] != None and not closed: 
       value[0].close()
       close = True

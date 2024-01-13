@@ -87,7 +87,7 @@ def create_new_read(new_seq,new_qual,read1,read2):
         new_tags.append((tag,value))
       else: # NEW TAG
         new_tags.append((tag,value))
-  for tag,value in htags.iteritems():
+  for tag,value in htags.items():
     if tag not in stags: new_tags.append((tag,value))
   new.tags = new_tags
   return new
@@ -109,7 +109,7 @@ group.add_option("--mergeoverlap",dest="mergeoverlap",help="Merge PE reads of mo
 group.add_option("--onlyoverlap",dest="onlyoverlap",help="Only sequence overlapping between two reads (default False)",default=False,action="store_true")
 group.add_option("-f", "--adapterFirstRead", dest="adapter_F", help="Adapter that is observed after the forward read (def. Multiplex: %s)"%options_adapter_F[:maxadapter_comp],default=options_adapter_F)
 group.add_option("-s", "--adapterSecondRead", dest="adapter_S", help="Adapter that is observed after the reverse read (def. Multiplex: %s)"%options_adapter_S[:maxadapter_comp],default=options_adapter_S)
-group.add_option("-c", "--FirstReadChimeraFilter", dest="adapter_chimera", help="If the forward read looks like this sequence, the cluster is filtered out. Provide several sequences separated by comma.(def. Multiplex: %s)"%(",".join(map(lambda x:x[:maxadapter_comp],options_adapter_chimera.split(',')))),default=options_adapter_chimera)
+group.add_option("-c", "--FirstReadChimeraFilter", dest="adapter_chimera", help="If the forward read looks like this sequence, the cluster is filtered out. Provide several sequences separated by comma.(def. Multiplex: %s)"%(",".join([x[:maxadapter_comp] for x in options_adapter_chimera.split(',')])),default=options_adapter_chimera)
 group.add_option("-k","--key",dest="key",help="Key sequence with which each sequence starts. Comma separate for forward and reverse reads. (def. '')",default="")
 group.add_option("-i","--allowMissing",dest="allowMissing",help="Allow one base in one key to be missing or wrong. (def. False)",default=False,action="store_true")
 group.add_option("-t","--trimCutoff",dest="trimCutoff",help="Lowest number of adapter bases to be observed for Single Read trimming (default 1)",default=1,type="int")
