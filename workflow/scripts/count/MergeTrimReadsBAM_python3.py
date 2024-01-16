@@ -22,7 +22,7 @@ import pysam
 from optparse import OptionParser,OptionGroup
 import string
 
-from MergeTrimReads import set_adapter_sequences, set_options, set_keys, process_SR, process_PE
+from MergeTrimReads_python3 import set_adapter_sequences, set_options, set_keys, process_SR, process_PE
 table = string.maketrans('TGCA','ACGT') # COMPLEMENT DNA
 
 maxadapter_comp = 30
