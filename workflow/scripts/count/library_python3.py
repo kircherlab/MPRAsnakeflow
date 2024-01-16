@@ -134,7 +134,7 @@ def read_fastq(filehandle):
     if id and seq:
         yield id, seq, qual
 
-    raise StopIteration
+    # raise StopIteration
 
 def write_fastq(filehandle, id, seq, qual, compress=False):
     if (not id.startswith("@")):

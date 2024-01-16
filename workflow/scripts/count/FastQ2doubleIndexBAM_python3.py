@@ -120,7 +120,7 @@ def read_sequence_file(infile, sec_read_start=None):
                                                                                                 ireadl2:], None, seq[:(
                                 sec_read_start - ireadlength1)], None, seq[sec_read_start:ireadl2], None
 
-    raise StopIteration
+    # raise StopIteration
 
 
 parser = OptionParser("%prog [options] seq_files")
