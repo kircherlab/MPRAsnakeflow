@@ -12,6 +12,12 @@ Merge/Adapter trim reads stored in BAM
 :Input: BAM
 :Output: BAM
 
+
+Python3 Updated version
+:Updated By: Ali Hassan
+:Contact: alihassan1697@gmail.com
+:Date: 16.01.2024
+
 """
 
 import sys, os

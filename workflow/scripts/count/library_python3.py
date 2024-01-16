@@ -11,6 +11,11 @@ Just some frequently used functions stripped from the scripts
 :Date: 02.07.2010
 :Type: library
 
+Python3 Updated version
+:Updated By: Ali Hassan
+:Contact: alihassan1697@gmail.com
+:Date: 16.01.2024
+
 """
 
 def is_fastq(filehandle):
