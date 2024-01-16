@@ -23,7 +23,7 @@ rule counts_umi_create_BAM:
         umi_length=lambda wc: config["experiments"][wc.project]["umi_length"],
         datasetID="{condition}_{replicate}_{type}",
     conda:
-        "../../envs/python27.yaml"
+        "../../envs/python3.yaml"
     log:
         temp(
             "results/logs/counts/umi/create_BAM.{project}.{condition}.{replicate}.{type}.log"
