@@ -296,7 +296,7 @@ for filename in files:
                 if options.verbose: sys.stderr.write("Removing: %s\n" % (value[2]))
                 os.remove(value[2])
             except:
-                sys.stderr.write("Error: Removing output files %s %s\n"(value[2]))
+                sys.stderr.write(f"Error: Removing output files {value[2]}\n")
         elif options.summary:
             sys.stderr.write("Summary: Wrote %10d sequences\n" % value[1])
 
