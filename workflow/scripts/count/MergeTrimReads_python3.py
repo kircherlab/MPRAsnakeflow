@@ -17,7 +17,7 @@ import math
 import random
 import string
 
-table = string.maketrans('TGCA','ACGT') # COMPLEMENT DNA
+table = str.maketrans('TGCA','ACGT') # COMPLEMENT DNA
 
 
 #######################################

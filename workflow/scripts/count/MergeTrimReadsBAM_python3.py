@@ -23,7 +23,7 @@ from optparse import OptionParser,OptionGroup
 import string
 
 from MergeTrimReads_python3 import set_adapter_sequences, set_options, set_keys, process_SR, process_PE
-table = string.maketrans('TGCA','ACGT') # COMPLEMENT DNA
+table = str.maketrans('TGCA','ACGT') # COMPLEMENT DNA
 
 maxadapter_comp = 30
 min_length = 5
