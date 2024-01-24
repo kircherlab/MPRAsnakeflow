@@ -37,9 +37,6 @@ rule counts_noUMI_create_BAM:
 
         minoverlap=`echo ${{fwd_length}} ${{fwd_length}} {params.bc_length} | awk '{{print ($1+$2-$3-1 < 11) ? $1+$2-$3-1 : 11}}'`;
 
-        echo $rev_start
-        echo $minoverlap
-
         paste <( zcat {input.fw_fastq} ) <( zcat {input.rev_fastq}  ) | \
         awk '{{if (NR % 4 == 2 || NR % 4 == 0) {{
                 print $1$2
