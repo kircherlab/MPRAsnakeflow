@@ -12,3 +12,4 @@ dependencies:
   - pandas
   - polars
   - python
+  - pysam
