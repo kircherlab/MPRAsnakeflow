@@ -85,21 +85,21 @@ plot_correlations_dna <- function(data, plot_data, condition, r1, r2, name) {
     geom_point() +
     xlab(sprintf(paste("log2 Normalized DNA count per barcode,\n replicate", r1))) +
     ylab(sprintf(paste("log2 Normalized DNA count per barcode,\n replicate", r2))) +
-    geom_text(x = min + 0.5, y = max - 0.5, label = sprintf("   r = %.2f", cor(data$DNA_normalized_log2.x, data$DNA_normalized_log2.y, method = "pearson")), size = 10) +
-    geom_text(x = min + 0.5, y = max - 1.0, label = sprintf("rho = %.2f", cor(data$DNA_normalized.x, data$DNA_normalized.y, method = "spearman")), size = 10) +
+    geom_text(x = -Inf, y = Inf, hjust=0, vjust=1, label = sprintf("   r = %.2f", cor(data$DNA_normalized_log2.x, data$DNA_normalized_log2.y, method = "pearson")), size = 10) +
+    geom_text(x = -Inf, y = Inf, hjust=0, vjust=2.1, label = sprintf("rho = %.2f", cor(data$DNA_normalized.x, data$DNA_normalized.y, method = "spearman")), size = 10) +
     geom_abline(intercept = 0, slope = 1) +
     theme_classic(base_size = 30)
   return(dna_p)
 }
 plot_correlations_rna <- function(data, plot_data, condition, r1, r2, name) {
-  max <- max(data$`RNA_normalized.y_log2`)
-  min <- min(data$`RNA_normalized.x_log2`)
+  max <- max(data$`RNA_normalized_log2.y`)
+  min <- min(data$`RNA_normalized_log2.x`)
   rna_p <- ggplot(plot_data, aes(RNA_normalized_log2.x, RNA_normalized_log2.y)) +
     geom_point() +
     xlab(sprintf(paste("log2 Normalized RNA count per barcode,\n replicate", r1))) +
     ylab(sprintf(paste("log2 Normalized RNA count per barcode,\n replicate", r2))) +
-    geom_text(x = min + 0.5, y = max - 0.5, label = sprintf("   r = %.2f", cor(data$RNA_normalized_log2.x, data$RNA_normalized_log2.y, method = "pearson")), size = 10) +
-    geom_text(x = min + 0.5, y = max - 1.0, label = sprintf("rho = %.2f", cor(data$RNA_normalized.x, data$RNA_normalized.y, method = "spearman")), size = 10) +
+    geom_text(x = -Inf, y = Inf, hjust=0, vjust=1, label = sprintf("   r = %.2f", cor(data$RNA_normalized_log2.x, data$RNA_normalized_log2.y, method = "pearson")), size = 10) +
+    geom_text(x = -Inf, y = Inf, hjust=0, vjust=2.1, label = sprintf("rho = %.2f", cor(data$RNA_normalized.x, data$RNA_normalized.y, method = "spearman")), size = 10) +
     geom_abline(intercept = 0, slope = 1) +
     theme_classic(base_size = 30)
   return(rna_p)
@@ -111,8 +111,8 @@ plot_correlations_ratio <- function(data, plot_data, condition, r1, r2, name) {
     geom_point() +
     xlab(sprintf(paste("log2 RNA/DNA per barcode,\n replicate", r1))) +
     ylab(sprintf(paste("log2 RNA/DNA per barcode,\n replicate", r2))) +
-    geom_text(x = min + 0.5, y = max - 0.5, label = sprintf("   r = %.2f", cor(data$Ratio_log2.x, res$Ratio_log2.y, method = "pearson")), size = 10) +
-    geom_text(x = min + 0.5, y = max - 1.0, label = sprintf("rho = %.2f", cor(data$Ratio.x, data$Ratio.y, method = "spearman")), size = 10) +
+    geom_text(x = -Inf, y = Inf, hjust=0, vjust=1, label = sprintf("   r = %.2f", cor(data$Ratio_log2.x, res$Ratio_log2.y, method = "pearson")), size = 10) +
+    geom_text(x = -Inf, y = Inf, hjust=0, vjust=2.1, label = sprintf("rho = %.2f", cor(data$Ratio.x, data$Ratio.y, method = "spearman")), size = 10) +
     geom_abline(intercept = 0, slope = 1) +
     theme_classic(base_size = 30)
   return(ratio_p)
@@ -226,3 +226,4 @@ if (data %>% nrow() > 1) {
   writeCorrelationPlots(plots_correlations_ratio, sprintf("%s_barcode_Ratio_pairwise.png", outdir))
 
 }
+
