@@ -311,6 +311,9 @@ rule statistic_correlation_calculate:
             if "label_file" in config["experiments"][wc.project]
             else ""
         ),
+        plot_width=29,
+        plot_height=17,
+        legend_nrow=6,
     log:
         temp(
             "results/logs/statistic/correlation/calculate.{project}.{condition}.{config}.{assignment}.log"
@@ -323,6 +326,9 @@ rule statistic_correlation_calculate:
         --files {params.files} \
         --replicates {params.replicates} \
         --threshold {params.thresh} \
+        --plot_width {params.plot_width} \
+        --plot_height {params.plot_height} \
+        --legend_nrow {params.legend_nrow} \
         --outdir {params.outdir} &> {log}
         """
 
