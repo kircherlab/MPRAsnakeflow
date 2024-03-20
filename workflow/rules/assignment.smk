@@ -165,51 +165,32 @@ rule assignment_mapping:
         )  | samtools sort -l 0 -@ {threads} > {output} 2> {log}
         """
 
-
-rule assignment_getBCs:
+rule assignment_getBCs_additional_filter:
     """
-    Get the barcodes.
+    Get the barcodes with a python script to rescue alignments with 0 mapping quality according to bwa.
     """
     input:
-        "results/assignment/{assignment}/bam/merge_split{split}.mapped.bam",
+        bam="results/assignment/{assignment}/bam/merge_split{split}.mapped.bam",
+        script=getScript("assignment/filter_bc_from_bam.py"),
     output:
-        temp("results/assignment/{assignment}/BCs/barcodes_incl_other.{split}.tsv"),
-    conda:
-        "../envs/bwa_samtools_picard_htslib.yaml"
+        "results/assignment/{assignment}/BCs/barcodes_incl_other.{split}.tsv",
     params:
-        alignment_start_min=lambda wc: config["assignments"][wc.assignment][
-            "alignment_start"
-        ]["min"],
-        alignment_start_max=lambda wc: config["assignments"][wc.assignment][
-            "alignment_start"
-        ]["max"],
-        sequence_length_min=lambda wc: config["assignments"][wc.assignment][
-            "sequence_length"
-        ]["min"],
-        sequence_length_max=lambda wc: config["assignments"][wc.assignment][
-            "sequence_length"
-        ]["max"],
-        mapping_quality_min=lambda wc: config["assignments"][wc.assignment][
-            "min_mapping_quality"
-        ],
+        identity_threshold=0.98,
+        mismatches_threshold=3,
+        use_expected_alignment_length=True,
+        expected_alignment_length=265,
+        verbose=True,
+    conda:
+        "../envs/getBC.yaml"
     log:
-        temp("results/logs/assignment/getBCs.{assignment}.{split}.log"),
+        "results/logs/assignment/getBCs.{assignment}.{split}.log",
     shell:
         """
-        samtools view -F 1792 {input} | \
-        awk -v "OFS=\\t" '{{
-            split($(NF),a,":");
-            split(a[3],a,",");
-            if (a[1] !~ /N/) {{
-                if (($5 >= {params.mapping_quality_min}) && ($4 >= {params.alignment_start_min}) && ($4 <= {params.alignment_start_max}) && (length($10) >= {params.sequence_length_min}) && (length($10) <= {params.sequence_length_max})) {{
-                    print a[1],$3,$4";"$6";"$12";"$13";"$5 
-                }} else {{
-                    print a[1],"other","NA" 
-                }}
-            }}
-        }}' | sort -k1,1 -k2,2 -k3,3 > {output} 2> {log}
+        python {input.script} \
+        --identity_threshold {params.identity_threshold} --mismatches_threshold {params.mismatches_threshold} \
+        --use_expected_alignment_length {params.use_expected_alignment_length} --expected_alignment_length {params.expected_alignment_length} \
+        --bamfile {input.bam} --verbose {params.verbose} --output {output} > {log} && sort -k1,1 -k2,2 -k3,3 -o {output} {output}
         """
-
 
 rule assignment_collect:
     """
