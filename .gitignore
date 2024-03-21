@@ -21,4 +21,8 @@ results
 *.pyc
 docs/_build/
 config/sbatch_omics_cluster.yaml
+data
+docs_data
+mix_data
+*report.html
 
