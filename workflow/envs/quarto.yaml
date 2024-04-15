@@ -1,0 +1,14 @@
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.8
+  - pip
+  - pandoc
+  - quarto
+  - jupyter
+  - pandas
+  - matplotlib
+  - plotly
+  - papermill
