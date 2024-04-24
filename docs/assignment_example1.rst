@@ -108,28 +108,32 @@ First we do a try run using snakemake :code:`-n` option. The MPRAsnakeflow comma
 
     cd assoc_basic
     conda activate mprasnakeflow
-    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile config.yml -n
+    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/assoc_basic/config.yml -n -q
 
 You should see a list of rules that will be executed. This is the summary:
 
 .. code-block:: text
    
-   Job stats:
-   job                                    count    min threads    max threads
-   -----------------------------------  -------  -------------  -------------
-   all                                        1              1              1
-   assignment_bwa_ref                         1              1              1
-   assignment_fastq_split                     3              1              1
-   assignment_filter                          2              1              1
-   assignment_flagstat                        1              1              1
-   assignment_getBCs                          1              1              1
-   assignment_idx_bam                         1              1              1
-   assignment_mapping                         1              1              1
-   assignment_merge                           30             10             10
-   assignment_statistic_assignedCounts        2              1              1
-   assignment_statistic_assignment            2              1              1
-   assignment_statistic_totalCounts           1              1              1
-   total                                     46              1              1
+    Building DAG of jobs...
+    Job stats:
+    job                                    count
+    -----------------------------------  -------
+    all                                        1
+    assignment_attach_idx                     60
+    assignment_bwa_ref                         1
+    assignment_collect                         1
+    assignment_collectBCs                      1
+    assignment_fastq_split                     3
+    assignment_filter                          1
+    assignment_flagstat                        1
+    assignment_getBCs                         30
+    assignment_idx_bam                         1
+    assignment_mapping_bwa                    30
+    assignment_merge                          30
+    assignment_statistic_assignedCounts        1
+    assignment_statistic_assignment            1
+    assignment_statistic_totalCounts           1
+    total                                    163
 
 
 When dry-drun does not give any errors we will run the workflow. We use a machine with 30 threads/cores to run the workflow. Therefore :code:`split_number` is set to 30 to parallize the workflow. Also we are using 10 threads for mapping (bwa mem). But snakemake takes care that no more than 30 threads are used.
@@ -141,20 +145,26 @@ When dry-drun does not give any errors we will run the workflow. We use a machin
 
 .. note:: Please modify your code when running in a cluster environment. We have an example SLURM config file here :code:`config/sbatch.yml`.
 
-If everything works fine the 12 rules showed above will run:
+If everything works fine the 15 rules showed above will run:
 
 all
    The overall all rule. Here is defined what final output files are expected.
+assignment_attach_idx
+    Extract the index sequence and add it to the header.
 assignment_bwa_ref
    Create mapping reference for BWA from design file.
 assignment_fastq_split
    Split the fastq files into n files for parallelisation. N is given by split_read in the configuration file.
 assignment_merge
    Merge the FW,REV and BC fastq files into one. Extract the index sequence from the middle and end of an Illumina run. Separates reads for Paired End runs. Merge/Adapter trim reads stored in BAM.
-assignment_mapping
+assignment_mapping_bwa
    Map the reads to the reference.
 assignment_idx_bam
    Index the BAM file
+assignment_collect
+    Collect mapped reads into one BAM.
+assignment_collectBCs
+    Get the barcodes.
 assignment_flagstat
    Run samtools flagstat. Results are in :code:`results/assignment/assocBasic/statistic/assignment/bam_stats.txt`
 assignment_getBCs
@@ -162,48 +172,45 @@ assignment_getBCs
 assignment_statistic_totalCounts
    Statistic of the total (unfiltered counts). Results are in :code:`results/assignment/assocBasic/statistic/total_counts.tsv.gz`
 assignment_filter
-   Filter the barcodes file based on the config given in the config-file. Results for this run are here :code:`results/assignment/assocBasic/assignment_barcodes.exampleConfigTrueMatches.sorted.tsv.gz` (exampleConfigTrueMatches) and here :code:`results/assignment/assocBasic/assignment_barcodes.exampleConfig.sorted.tsv.gz` (exampleConfig)
+   Filter the barcodes file based on the config given in the config-file. Results for this run are here :code:`results/assignment/assocBasic/assignment_barcodes.default.sorted.tsv.gz` (default config).
 assignment_statistic_assignedCounts
-   Statistic of filtered the assigned counts. Result is here :code:`results/assignment/assocBasic/statistic/assigned_counts.exampleConfigTrueMatches.tsv.gz` (exampleConfigTrueMatches) or :code:`results/assignment/assocBasic/statistic/assigned_counts.exampleConfig.tsv.gz` (exampleConfig)
+   Statistic of filtered the assigned counts. Result is here :code:`results/assignment/assocBasic/statistic/assigned_counts.default.tsv.gz` (default)
 assignment_statistic_assignment
-   Statistic of the filtered assignment.  Result is here :code:`results/assignment/assocBasic/statistic/assignment.exampleConfigTrueMatches.tsv.gz` and a plot here :code:`results/assignment/assocBasic/statistic/assignment.exampleConfigTrueMatches.png`. (also files are available for the config :code:`exampleConfig`).
+   Statistic of the filtered assignment.  Result is here :code:`results/assignment/assocBasic/statistic/assignment.default.tsv.gz` and a plot here :code:`results/assignment/assocBasic/statistic/assignment.default.png`.
 
 Results
 -----------------
 
-All needed output files will be in the :code:`results/assignment/assocBasic` folder. The final assignment is in :code:`results/assignment/assocBasic/assignment_barcodes.exampleConfigTrueMatches.sorted.tsv.gz` or :code:`results/assignment/assocBasic/assignment_barcodes.exampleConfig.sorted.tsv.gz` depeding on the filtering in the config file. 
+All needed output files will be in the :code:`results/assignment/assocBasic` folder. The final assignment is in :code:`results/assignment/assocBasic/assignment_barcodes.default.sorted.tsv.gz`. 
 
-.. note:: Please note that for the experiment/count workflow you have to remove ambigous BCs. Therefore the file :code:`results/assignment/assocBasic/assignment_barcodes.exampleConfigTrueMatches.sorted.tsv.gz` is the correct wone
+.. note:: Please note that for the experiment/count workflow you have to remove ambigous BCs. It is possible to retain ambigous BCs in the final file by configuring in the config file. But the default option will remove them from the final file.
 
 
 Total file tree of the results folder:
 
 .. code-block:: text
    
-   results
-   ├── assignment
-   │   └── assocBasic
-   │       ├── aligned_merged_reads.bam
-   │       ├── aligned_merged_reads.bam.bai
-   │       ├── assignment_barcodes.exampleConfig.sorted.tsv.gz
-   │       ├── assignment_barcodes.exampleConfigTrueMatches.sorted.tsv.gz
-   │       ├── barcodes_incl_other.sorted.tsv.gz
-   │       ├── reference
-   │       │   ├── reference.fa
-   │       │   ├── reference.fa.amb
-   │       │   ├── reference.fa.ann
-   │       │   ├── reference.fa.bwt
-   │       │   ├── reference.fa.dict
-   │       │   ├── reference.fa.fai
-   │       │   ├── reference.fa.pac
-   │       │   └── reference.fa.sa
-   │       └── statistic
-   │           ├── assigned_counts.exampleConfigTrueMatches.tsv.gz
-   │           ├── assigned_counts.exampleConfig.tsv.gz
-   │           ├── assignment
-   │           │   └── bam_stats.txt
-   │           ├── assignment.exampleConfig.png
-   │           ├── assignment.exampleConfigTrueMatches.png
-   │           ├── assignment.exampleConfigTrueMatches.tsv.gz
-   │           ├── assignment.exampleConfig.tsv.gz
-   │           └── total_counts.tsv.gz
+    results/
+    ├── assignment
+    │   └── assocBasic
+    │       ├── aligned_merged_reads.bam
+    │       ├── aligned_merged_reads.bam.bai
+    │       ├── assignment_barcodes.default.sorted.tsv.gz
+    │       ├── barcodes_incl_other.sorted.tsv.gz
+    │       ├── reference
+    │       │   ├── reference.fa
+    │       │   ├── reference.fa.amb
+    │       │   ├── reference.fa.ann
+    │       │   ├── reference.fa.bwt
+    │       │   ├── reference.fa.dict
+    │       │   ├── reference.fa.fai
+    │       │   ├── reference.fa.pac
+    │       │   └── reference.fa.sa
+    │       └── statistic
+    │           ├── assigned_counts.default.tsv.gz
+    │           ├── assignment
+    │           │   └── bam_stats.txt
+    │           ├── assignment.default.png
+    │           ├── assignment.default.tsv.gz
+    │           └── total_counts.tsv.gz
+    └── logs

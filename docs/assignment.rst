@@ -32,6 +32,24 @@ Example file:
     >CRS4
     TTAGACCGCCCTTTACCCCGAGAAAACTCAGCTACACACTC
 
+Config File
+-----------
+Multiple mapping strategies are implemented to find the corresponding CRS sequence for each read. The mapping strategy can be chosen in the config file (bwa mem or exact matches). The config file also defines the filtering of the mapping results. The config file is a yaml file.
+
+Example of an assignment file using bwa and the standard filtering:
+
+.. literalinclude:: ../configs/example_assignment_bwa.yml
+   :language: yaml
+
+Example of an assignment file using exact matches and the with and non-default filtering of barcodes:
+
+.. literalinclude:: ../configs/example_assignment_exact_lazy.yml
+   :language: yaml
+
+Example of an assignment file using exact matches and read 1 with BC, linker and oligo (no seperate BC index read):
+
+.. literalinclude:: ../configs/example_assignment_exact_linker.yml
+   :language: yaml
 
 snakemake
 ============================
@@ -67,7 +85,7 @@ all
 assignment_attach_idx
     Extract the index sequence and add it to the header.
 assignment_bwa_ref
-   Create mapping reference for BWA from design file.
+   Create mapping reference for BWA from design file (code:`bwa` mapping approach).
 assignment_collect
     Collect mapped reads into one BAM.
 assignment_collectBCs
@@ -82,12 +100,16 @@ assignmemt_hybridFWRead_get_reads_by_cutadapt
     Get the barcode and read from the FW read using cutadapt (when no index BC read is present). Uses the paired end mode of cutadapt to write the FW and BC read.
 assignment_merge
    Merge the FW,REV and BC fastq files into one. Extract the index sequence from the middle and end of an Illumina run. Separates reads for Paired End runs. Merge/Adapter trim reads stored in BAM.
-assignment_mapping
-   Map the reads to the reference.
+assignment_mapping_bwa
+   Map the reads to the reference (code:`bwa` mapping approach).
 assignment_idx_bam
-   Index the BAM file
+   Index the BAM file (code:`bwa` mapping approach).
 assignment_flagstat
-   Run samtools flagstat. Results are in :code:`results/assignment/<assignment_name>/statistic/assignment/bam_stats.txt`
+   Run samtools flagstat. Results are in :code:`results/assignment/<assignment_name>/statistic/assignment/bam_stats.txt`  (code:`bwa` mapping approach).
+assignment_mapping_exact_reference
+    Create reference to map the exact design  (code:`exact` mapping approach).
+rule assignment_mapping_exact
+    Map the reads to the reference and sort using exact match (code:`exact` mapping approach).
 assignment_getBCs
    Get the barcodes (not filtered). Results are in :code:`results/assignment/<assignment_name>/barcodes_incl_other.sorted.tsv.gz`
 assignment_statistic_totalCounts
