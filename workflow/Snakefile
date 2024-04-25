@@ -44,7 +44,6 @@ include: "rules/common.smk"
 
 rule all:
     input:
-        "results/qc_report/output_from_smk_file.html",
         ## assignments
         getAssignmentConfig_helper(
             [
