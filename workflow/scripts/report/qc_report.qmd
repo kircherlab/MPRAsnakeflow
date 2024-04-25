@@ -30,7 +30,6 @@ import numpy as np
 image_path = Path(os.getcwd()).parent
 ```
 
-
 ```{python}
 #| echo: false
 ## Function Imports
@@ -123,3 +122,5 @@ tsv_files = list(image_path.glob('**/*fromFile_exampleConfig.tsv'))[0]
 df = pd.read_csv(tsv_files, sep='\t')
 df
 ```
+
+
