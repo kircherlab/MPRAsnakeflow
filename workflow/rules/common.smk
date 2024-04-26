@@ -216,6 +216,23 @@ def getConfigs(project):
 
 
 ##### Helper to create output files #####
+def getOutputProject_helper(files, betweenReplicates=False):
+    """
+    Inserts {project} from config into given file.
+    When betweenReplicates is True skips projects without replicates in one condition.
+    """
+    output = []
+    projects = getProjects()
+    for project in projects:
+        if not betweenReplicates or hasReplicates(project):
+            for file in files:
+                output += expand(
+                    file,
+                    project=project,
+                )
+    return output
+
+
 def getOutputConditionReplicateType_helper(files, project, skip={}):
     """
     Inserts {condition}, {replicate} and {type} from config into given file.
