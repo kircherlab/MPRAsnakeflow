@@ -15,7 +15,7 @@ jupyter: python3
 ```{python}
 #| echo: false
 # Imports
-from IPython.display import display
+from IPython.display import display, Image
 from pathlib import Path
 import importlib
 import pandas as pd 
@@ -39,7 +39,29 @@ sys.path.insert(0, str(cwd))
 from workflow.scripts.report.report_functions import get_unique_files, display_unique_images
 ```
 
-# Barcode Corelation
+```{python}
+#| tags: [parameters]
+#| echo: false
+condition = "image.d"
+typee = "typeee"
+
+```
+
+
+## Testing the parameters on QMD file
+```{python}
+#| echo: false
+full_path = str(image_path)  + image_url
+display(Image(full_path))
+```
+
+```{python}
+print(condition)
+print(config)
+print(typee)
+```
+
+<!-- # Barcode Corelation
 ## RNA
 ```{python}
 #| echo: false
@@ -117,10 +139,12 @@ display_unique_images('**/*barcodesPerInsert.png', image_path)
 # Oligo Correlation
 ```{python}
 #| echo: false
-tsv_files = list(image_path.glob('**/*fromFile_exampleConfig.tsv'))[0]
+tsv_files = list(image_path.glob('**/*fromFile_exampleConfig.tsv'))
 # print(tsv_files)
-df = pd.read_csv(tsv_files, sep='\t')
-df
+if len(tsv_files) > 0:
+
+  df = pd.read_csv(tsv_files[0], sep='\t')
+  df
 ```
 
-
+ -->
