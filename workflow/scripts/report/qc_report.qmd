@@ -52,14 +52,10 @@ typee = "typeee"
 ```{python}
 #| echo: false
 full_path = str(image_path)  + image_url
+print(full_path)
 display(Image(full_path))
 ```
 
-```{python}
-print(condition)
-print(config)
-print(typee)
-```
 
 <!-- # Barcode Corelation
 ## RNA
