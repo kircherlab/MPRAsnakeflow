@@ -26,7 +26,7 @@ rule report_generator:
             if "DNA" in s],
         condition = getOutputProjectConditionConfigType_helper(["{condition}"]),
         config = getOutputProjectConditionConfigType_helper(["{config}"]),
-        type = getOutputProjectConditionConfigType_helper(["{type}"]),
+        # type = getOutputProjectConditionConfigType_helper(["{type}"]),
         
     shell:
         """ 
@@ -35,13 +35,9 @@ rule report_generator:
         echo {params.condition}
         echo "testing config: "
         echo {params.config}
-        echo "testing type: "
-        echo {params.type}
         cd results/experiments/{wildcards.project}/qc_report
         cp {input.quarto_script} qc_report.qmd
         quarto render qc_report.qmd --output qc_report.html \
-        -P image_url:{params.perbarcode_dna} \
-        -P condition:{params.condition} \
-        -P config:{params.config}
+        -P image_url:{params.perbarcode_dna}
         rm qc_report.qmd
         """
