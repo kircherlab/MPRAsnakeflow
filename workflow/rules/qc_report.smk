@@ -24,20 +24,25 @@ rule report_generator:
                 ]
             )
             if "DNA" in s],
+        perbarcode = getOutputProjectConditionConfigType_helper(["/statistic/barcode/counts/{condition}_{config}_{type}_perBarcode.png"]),
         condition = getOutputProjectConditionConfigType_helper(["{condition}"]),
         config = getOutputProjectConditionConfigType_helper(["{config}"]),
-        # type = getOutputProjectConditionConfigType_helper(["{type}"]),
+        types = getOutputProjectConditionConfigType_helper(["{type}"]),
         
     shell:
         """ 
         echo "Available wildcards: {wildcards}"
-        echo "testing condition: "
-        echo {params.condition}
-        echo "testing config: "
-        echo {params.config}
+        echo "testing condition: {params.condition}"
+        echo "testing config: {params.config}"
+        echo "checking types: {params.types}"
+        types_str=$(python -c 'import sys; print(",".join(sys.argv[1:]))' {params.types}); 
         cd results/experiments/{wildcards.project}/qc_report
         cp {input.quarto_script} qc_report.qmd
         quarto render qc_report.qmd --output qc_report.html \
-        -P image_url:{params.perbarcode_dna}
+        -P image_url:{params.perbarcode_dna} \
+        -P condition:{params.condition} \
+        --execute-params config.yml 
         rm qc_report.qmd
         """
+
+ 
