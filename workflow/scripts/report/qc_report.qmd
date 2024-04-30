@@ -47,11 +47,32 @@ typee = "typeee"
 
 ```
 
+```{python}
+import yaml
+import pprint
+
+# Assuming `params` is your dictionary
+
+with open('config.yml') as f:
+    params = yaml.safe_load(f)
+
+pprint.pprint(params)
+```
+
+
+
 
 ## Testing the parameters on QMD file
+
+
 ```{python}
 #| echo: false
 full_path = str(image_path)  + image_url
+print()
+print("image path: ", image_path)
+print("abstr url: ", "/statistic/barcode/counts/{condition}_{config}_{type}_perBarcode.png")
+print("fstrr url: ", "/statistic/barcode/counts/{condition}_{config}_{type}_perBarcode.png")
+print("image url: ", image_url)
 print(full_path)
 display(Image(full_path))
 ```
