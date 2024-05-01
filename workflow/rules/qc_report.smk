@@ -35,7 +35,8 @@ rule report_generator:
         echo "testing condition: {params.condition}"
         echo "testing config: {params.config}"
         echo "checking types: {params.types}"
-        types_str=$(python -c 'import sys; print(",".join(sys.argv[1:]))' {params.types}); 
+        ls
+        cp config.yml results/experiments/{wildcards.project}/qc_report/config.yml
         cd results/experiments/{wildcards.project}/qc_report
         cp {input.quarto_script} qc_report.qmd
         quarto render qc_report.qmd --output qc_report.html \
@@ -44,5 +45,6 @@ rule report_generator:
         --execute-params config.yml 
         rm qc_report.qmd
         """
+
 
  

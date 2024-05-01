@@ -48,6 +48,7 @@ typee = "typeee"
 ```
 
 ```{python}
+#| echo: false
 import yaml
 import pprint
 
@@ -68,13 +69,14 @@ pprint.pprint(params)
 ```{python}
 #| echo: false
 full_path = str(image_path)  + image_url
-print()
-print("image path: ", image_path)
-print("abstr url: ", "/statistic/barcode/counts/{condition}_{config}_{type}_perBarcode.png")
-print("fstrr url: ", "/statistic/barcode/counts/{condition}_{config}_{type}_perBarcode.png")
-print("image url: ", image_url)
-print(full_path)
 display(Image(full_path))
+# print()
+# print("image path: ", image_path)
+# print("abstr url: ", "/statistic/barcode/counts/{condition}_{config}_{type}_perBarcode.png")
+# print("fstrr url: ", "/statistic/barcode/counts/{condition}_{config}_{type}_perBarcode.png")
+# print("image url: ", image_url)
+# print(full_path)
+
 ```
 
 
