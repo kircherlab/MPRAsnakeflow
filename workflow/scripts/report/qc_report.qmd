@@ -57,27 +57,43 @@ import pprint
 with open('config.yml') as f:
     params = yaml.safe_load(f)
 
-pprint.pprint(params)
+def get_config(params):
+    return list(params["experiments"][project]["configs"].keys())[0]
+
+def get_assignment(params):
+    return list(params["experiments"][project]["assignments"].keys())[0]
+
+# pprint.pprint(params)
 ```
-
-
-
-
-## Testing the parameters on QMD file
-
 
 ```{python}
 #| echo: false
-full_path = str(image_path)  + image_url
-display(Image(full_path))
-# print()
-# print("image path: ", image_path)
-# print("abstr url: ", "/statistic/barcode/counts/{condition}_{config}_{type}_perBarcode.png")
-# print("fstrr url: ", "/statistic/barcode/counts/{condition}_{config}_{type}_perBarcode.png")
-# print("image url: ", image_url)
-# print(full_path)
-
+## Generating the f strig elements.
+config = get_config(params)
+assignment = get_assignment(params)
 ```
+
+
+# Pairwise
+```{python}
+#| echo: false
+# assignment = "assignment"
+full_path = str(image_path)  + f"/statistic/assigned_counts/{assignment}/{config}/{condition}_RNA_pairwise.png"
+# print(f"statistic/assigned_counts/{assignment}/{config}/{condition}_RNA_pairwise.png")
+display(Image(full_path))
+```
+
+
+
+# Per Barcode
+```{python}
+#| echo: false
+full_path = str(image_path)  + f"/statistic/barcode/counts/{condition}_{config}_{'DNA'}_perBarcode.png"
+display(Image(full_path))
+```
+
+
+
 
 
 <!-- # Barcode Corelation

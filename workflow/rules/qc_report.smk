@@ -40,11 +40,11 @@ rule report_generator:
         cd results/experiments/{wildcards.project}/qc_report
         cp {input.quarto_script} qc_report.qmd
         quarto render qc_report.qmd --output qc_report.html \
-        -P image_url:{params.perbarcode_dna} \
         -P condition:{params.condition} \
+        -P project:{wildcards.project} \
         --execute-params config.yml 
         rm qc_report.qmd
         """
 
 
- 
+        #  -P image_url:{params.perbarcode_dna} \
