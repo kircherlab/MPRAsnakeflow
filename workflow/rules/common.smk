@@ -340,7 +340,7 @@ def getOutputProjectConditionAssignmentConfigType_helper(files):
                         condition=condition,
                         assignment=getProjectAssignments(project),
                         config=getConfigs(project),
-                        getAssignmentConfig_helper"DNA", "RNA"],
+                        type=["DNA", "RNA"],
                     )
         except MissingAssignmentInConfigException:
             continue
