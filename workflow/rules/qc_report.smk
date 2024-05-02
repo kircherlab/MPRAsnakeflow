@@ -25,7 +25,10 @@ rule report_generator:
             )
             if "DNA" in s],
         perbarcode = getOutputProjectConditionConfigType_helper(["/statistic/barcode/counts/{condition}_{config}_{type}_perBarcode.png"]),
-        condition = getOutputProjectConditionConfigType_helper(["{condition}"]),
+        # condition = getOutputProjectConditionConfigType_helper(["{condition}"]),
+        # condition = getConditions("{wildcards.project}"),
+        condition = lambda wildcards: getConditions(wildcards.project),
+
         config = getOutputProjectConditionConfigType_helper(["{config}"]),
         types = getOutputProjectConditionConfigType_helper(["{type}"]),
         
