@@ -28,6 +28,7 @@ import numpy as np
 
 ## Constants
 image_path = Path(os.getcwd()).parent
+ROOT_PATH = Path(os.getcwd()).parent
 ```
 
 ```{python}
@@ -42,9 +43,6 @@ from workflow.scripts.report.report_functions import get_unique_files, display_u
 ```{python}
 #| tags: [parameters]
 #| echo: false
-condition = "image.d"
-typee = "typeee"
-
 ```
 
 ```{python}
@@ -53,9 +51,10 @@ import yaml
 import pprint
 
 # Assuming `params` is your dictionary
-
-with open('config.yml') as f:
-    params = yaml.safe_load(f)
+def get_prams():
+  with open('config.yml') as f:
+      params = yaml.safe_load(f)
+  return params
 
 def get_config(params):
     return list(params["experiments"][project]["configs"].keys())[0]
@@ -63,51 +62,48 @@ def get_config(params):
 def get_assignment(params):
     return list(params["experiments"][project]["assignments"].keys())[0]
 
+def display_image(file_path, root_path=ROOT_PATH):
+    full_path = str(root_path) + file_path
+    display(Image(full_path))
+
 # pprint.pprint(params)
 ```
 
 ```{python}
 #| echo: false
 ## Generating the f strig elements.
+params = get_prams()
 config = get_config(params)
 assignment = get_assignment(params)
 ```
 
-
-# Pairwise
-```{python}
-#| echo: false
-# assignment = "assignment"
-full_path = str(image_path)  + f"/statistic/assigned_counts/{assignment}/{config}/{condition}_RNA_pairwise.png"
-# print(f"statistic/assigned_counts/{assignment}/{config}/{condition}_RNA_pairwise.png")
-display(Image(full_path))
-```
-
-
-
 # Per Barcode
+## DNA
 ```{python}
 #| echo: false
-full_path = str(image_path)  + f"/statistic/barcode/counts/{condition}_{config}_{'DNA'}_perBarcode.png"
-display(Image(full_path))
+display_image(f"/statistic/barcode/counts/{condition}_{config}_{'DNA'}_perBarcode.png")
+```
+
+## RNA
+```{python}
+#| echo: false
+display_image(f"/statistic/barcode/counts/{condition}_{config}_{'RNA'}_perBarcode.png")
 ```
 
 
+# BC Corelation          
+## DNA
+```{python}
+#| echo: false
+display_unique_images('**/*barcode_DNA_pairwise*.png', image_path)
+```
 
-
-
-<!-- # Barcode Corelation
 ## RNA
 ```{python}
 #| echo: false
 display_unique_images('**/*barcode_RNA_pairwise*.png', image_path)
 ```
 
-## DNA
-```{python}
-#| echo: false
-display_unique_images('**/*barcode_DNA_pairwise*.png', image_path)
-```
 
 ## Ratio
 ```{python}
@@ -115,18 +111,8 @@ display_unique_images('**/*barcode_DNA_pairwise*.png', image_path)
 display_unique_images('**/*barcode_Ratio_pairwise*.png', image_path)
 ```
 
-# Per Bar Code
-## DNA
-```{python}
-#| echo: false
-display_unique_images('**/*DNA_perBarcode*.png', image_path)
-```
 
-## RNA
-```{python}
-#| echo: false
-display_unique_images('**/*RNA_perBarcode*.png', image_path)
-```
+
 
 # Oligo Corelation
 ## DNA
@@ -165,6 +151,8 @@ display_unique_images('**/*Ratio_pairwise.png', image_path, exclude='barcode')
 display_unique_images('**/*Ratio_pairwise_minThreshold.png', image_path, exclude='barcode')
 ```
 
+
+
 # Barcodes Per Insert
 ```{python}
 #| echo: false
@@ -174,12 +162,9 @@ display_unique_images('**/*barcodesPerInsert.png', image_path)
 # Oligo Correlation
 ```{python}
 #| echo: false
-tsv_files = list(image_path.glob('**/*fromFile_exampleConfig.tsv'))
-# print(tsv_files)
+tsv_files = list(ROOT_PATH.glob('**/*assigned_counts_merged*.tsv'))
 if len(tsv_files) > 0:
-
+  print(tsv_files)
   df = pd.read_csv(tsv_files[0], sep='\t')
-  df
+df
 ```
-
- -->
