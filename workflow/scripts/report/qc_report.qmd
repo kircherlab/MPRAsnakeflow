@@ -164,7 +164,6 @@ display_unique_images('**/*barcodesPerInsert.png', image_path)
 #| echo: false
 tsv_files = list(ROOT_PATH.glob('**/*assigned_counts_merged*.tsv'))
 if len(tsv_files) > 0:
-  print(tsv_files)
   df = pd.read_csv(tsv_files[0], sep='\t')
 df
 ```
