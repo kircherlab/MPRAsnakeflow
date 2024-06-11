@@ -1,18 +1,11 @@
 ################################
 #### Global functions       ####
 ################################
-from snakemake.workflow import srcdir
 
-SCRIPTS_DIR = srcdir("../scripts")
-
+SCRIPTS_DIR = "../scripts"
 
 def getScript(name):
-    return "%s/%s" % (SCRIPTS_DIR, name)
-
-
-# this container defines the underlying OS for each job when using the workflow
-# with --use-conda --use-singularity
-container: "docker://continuumio/miniconda3"
+    return workflow.source_path("%s/%s" % (SCRIPTS_DIR, name))
 
 
 ##### load config and sample sheets #####
