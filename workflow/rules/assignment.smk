@@ -57,6 +57,7 @@ rule assignment_attach_idx:
         read="results/assignment/{assignment}/fastq/splits/{read}.split{split}.fastq.gz",
         BC="results/assignment/{assignment}/fastq/splits/BC.split{split}.fastq.gz",
         script=getScript("attachBCToFastQ.py"),
+        libs=getScript("common.py"),
     output:
         read=temp(
             "results/assignment/{assignment}/fastq/splits/{read}.split{split}.BCattached.fastq.gz"
