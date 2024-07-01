@@ -26,8 +26,6 @@ rule qc_report_assoc:
         
     shell:
         """
-        echo testing if this file is being used. 
-        pwd
         cd results/assignment/{wildcards.assignment}/
         cp {input.quarto_script} qc_report_assoc.qmd
         quarto render qc_report_assoc.qmd --output qc_report.html \
@@ -53,7 +51,6 @@ rule qc_report_count:
 
     shell:
         """
-        echo testing if this file is being used. 
         cp config.yml results/experiments/{wildcards.project}/qc_report/config.yml
         cd results/experiments/{wildcards.project}/qc_report
         cp {input.quarto_script} qc_report.qmd
