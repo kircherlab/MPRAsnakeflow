@@ -37,6 +37,22 @@ Bar Code: `{python} bc`
 Design File: `{python} reference`
 
 
+```{python}
+#| echo: false
+import os
+current_path = os.getcwd()
+
+parent_path = os.path.dirname(os.path.dirname(os.path.dirname(current_path)))
+new_path = os.path.join(parent_path, reference)
+
+with open(new_path) as f:
+    lines = f.readlines()
+    seq_num_in_design = len(lines)/2
+
+
+```
+
+
 # BC distribution over oligos
 ```{python}
 #| echo: false
@@ -48,8 +64,16 @@ display(Image(f"statistic/assignment.{configs}.png"))
 ```{python}
 #| echo: false
 import pandas as pd
+from IPython.display import HTML, display
 file_path = f"statistic/assigned_counts.{configs}.tsv.gz"
+
 df = pd.read_csv(file_path, sep='\t', compression='gzip')
+
+new_row = pd.DataFrame({'Unnamed: 0': ['Total Sequences in design file'], 'Counts': int(seq_num_in_design)})
+
+# Concatenate the new row DataFrame with the original DataFrame
+df = pd.concat([new_row, df]).reset_index(drop=True)
+
 df
 ```
 
