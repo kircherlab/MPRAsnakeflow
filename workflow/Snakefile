@@ -47,16 +47,17 @@ rule all:
         ## assignments
         getAssignmentConfig_helper(
             [
-                "results/assignment/{assignment}/assignment_barcodes.{config}.sorted.tsv.gz",
+                "results/assignment/{assignment}/assignment_barcodes.{config}.tsv.gz",
                 "results/assignment/{assignment}/statistic/assigned_counts.{config}.tsv.gz",
                 "results/assignment/{assignment}/statistic/assignment.{config}.png",
             ]
         ),
         getAssignment_helper(
-            [
-                "results/assignment/{assignment}/statistic/total_counts.tsv.gz",
-                "results/assignment/{assignment}/statistic/assignment/bam_stats.txt",
-            ]
+            ["results/assignment/{assignment}/statistic/total_counts.tsv.gz"]
+        ),
+        getAssignment_helper(
+            ["results/assignment/{assignment}/statistic/assignment/bam_stats.txt"],
+            match_method="bwa",
         ),
         ## experiments
         # statistic BC nucleotide composition
@@ -149,16 +150,17 @@ rule all_assignments:
     input:
         getAssignmentConfig_helper(
             [
-                "results/assignment/{assignment}/assignment_barcodes.{config}.sorted.tsv.gz",
+                "results/assignment/{assignment}/assignment_barcodes.{config}.tsv.gz",
                 "results/assignment/{assignment}/statistic/assigned_counts.{config}.tsv.gz",
                 "results/assignment/{assignment}/statistic/assignment.{config}.png",
             ]
         ),
         getAssignment_helper(
-            [
-                "results/assignment/{assignment}/statistic/total_counts.tsv.gz",
-                "results/assignment/{assignment}/statistic/assignment/bam_stats.txt",
-            ]
+            ["results/assignment/{assignment}/statistic/total_counts.tsv.gz"]
+        ),
+        getAssignment_helper(
+            ["results/assignment/{assignment}/statistic/assignment/bam_stats.txt"],
+            match_method="bwa",
         ),
 
 

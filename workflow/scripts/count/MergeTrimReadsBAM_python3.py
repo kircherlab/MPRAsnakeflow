@@ -21,12 +21,9 @@ Python3 Updated version
 """
 
 import sys, os
-import math
-import random
 
 import pysam
 from optparse import OptionParser,OptionGroup
-import string
 
 from MergeTrimReads_python3 import set_adapter_sequences, set_options, set_keys, process_SR, process_PE
 table = str.maketrans('TGCA','ACGT') # COMPLEMENT DNA

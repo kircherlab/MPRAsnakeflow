@@ -1,18 +1,11 @@
 ################################
 #### Global functions       ####
 ################################
-from snakemake.workflow import srcdir
 
-SCRIPTS_DIR = srcdir("../scripts")
-
+SCRIPTS_DIR = "../scripts"
 
 def getScript(name):
-    return "%s/%s" % (SCRIPTS_DIR, name)
-
-
-# this container defines the underlying OS for each job when using the workflow
-# with --use-conda --use-singularity
-container: "docker://continuumio/miniconda3"
+    return workflow.source_path("%s/%s" % (SCRIPTS_DIR, name))
 
 
 ##### load config and sample sheets #####
@@ -73,9 +66,19 @@ class MissingVariantInConfigException(Exception):
 
 
 ##### get helpers for different things (like Conditions etc) #####
-def getAssignments():
+def getAssignments(match_method=None):
     if "assignments" in config:
-        return list(config["assignments"].keys())
+        if match_method:
+            output = []
+            for assignment in config["assignments"]:
+                if (
+                    config["assignments"][assignment]["alignment_tool"]["tool"]
+                    == match_method
+                ):
+                    output.append(assignment)
+            return output
+        else:
+            return list(config["assignments"].keys())
     else:
         return []
 
@@ -304,7 +307,7 @@ def getOutputProjectConditionConfigType_helper(files):
     return output
 
 
-def getOutputProjectConditionType_helper(files):
+def getOutputProjectConditionType_helper(file):
     """
     Inserts {project}, {condition} and {type} from config into given file.
     """
@@ -436,10 +439,10 @@ def getOutputVariants_helper(files, betweenReplicates=False):
     return output
 
 
-def getAssignment_helper(files):
+def getAssignment_helper(files, match_method=None):
     output = []
     for file in files:
-        output += expand(file, assignment=getAssignments())
+        output += expand(file, assignment=getAssignments(match_method))
     return output
 
 

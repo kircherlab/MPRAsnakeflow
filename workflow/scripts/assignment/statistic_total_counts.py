@@ -50,7 +50,7 @@ def cli(input_file, output_file):
         n_matched_oligos -= 1
 
     output = pd.DataFrame({"Counts": [n_bcs, n_assigned_bcs, n_matched_oligos, n_other_bcs, n_ambiguous_bc]}, index=[
-                          "Total BCs", "Total assigned BCs", "Total assigned oligos", "Total other BCs", "Total ambiguous BCs"])
+                          "BCs", "Assigned BCs", "Assigned oligos", "Other BCs", "Ambiguous BCs"])
 
     output.to_csv(output_file, sep='\t', header=True, index=True)
 
