@@ -18,10 +18,9 @@ Python3 Updated version
 
 """
 
-import sys, os
+import sys
 import math
 import random
-import string
 
 table = str.maketrans('TGCA','ACGT') # COMPLEMENT DNA
 

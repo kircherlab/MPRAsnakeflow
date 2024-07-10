@@ -4,14 +4,14 @@
 Config File
 =====================
 
-The config file is a yaml file that contains the configuration. Different runs can be configured. We recommend to use one config file per MPRA experiment or MPRA project. But in theory many different experiments can be configured in only one file. It is divided into :code:`global` (generell settings), :code:`assignments` (assigment workflow), and :code:`experiments` (count workflow including variants). This is a full example file with all possible configurations. :download:`config/example_config.yaml <../config/example_config.yaml>`.
+The config file is a yaml file that contains the configuration. Different runs can be configured. We recommend to use one config file per MPRA experiment or MPRA project. But in theory many different experiments can be configured in only one file. It is divided into :code:`global` (generell settings), :code:`assignments` (assigment workflow), and :code:`experiments` (count workflow including variants). This is a full example file with default configurations. :download:`config/example_config.yaml <../config/example_config.yaml>`.
 
 .. literalinclude:: ../config/example_config.yaml
    :language: yaml
    :linenos:
 
 
-Note that the config file is conrolled by jscon schema. This means that the config file is validated against the schema. If the config file is not valid, the program will exit with an error message. The schema is located in :download:`workflow/schemas/config.schema.yaml <../workflow/schemas/config.schema.yaml>`.
+Note that the config file is conrolled by json schema. This means that the config file is validated against the schema. If the config file is not valid, the program will exit with an error message. The schema is located in :download:`workflow/schemas/config.schema.yaml <../workflow/schemas/config.schema.yaml>`.
 
 ----------------
 General settings
@@ -43,16 +43,29 @@ The assignment workflow is configured in the :code:`assignments` section. The fo
    :start-after: start_assignments
    :end-before: start_experiments
 
-Each asignment you want to process you have to giv him a name like :code:`example_assignment`. The name is used to name the output files.
+Each assignment you want to process you have to giv him a name like :code:`example_assignment`. The name is used to name the output files.
 
-:sequence_length:
-    Defines the :code:`min` and :code:`max` of a :code:`sequence_length` specify . :code:`sequence_length` is basically the length of a sequence alignment to an oligo in the reference file. Because there can be insertion and deletions we recommend to vary it a bit around the exact length (e.g. +-5). In theory this option enables designs with multiple sequence lengths.
-:alignment_start:
-    Defines the :code:`min` and :code:`max` of the start of the alignment in an oligo. When using adapters you have to set basically the length of the adapter. Otherwise 1 will be the choice for most cases. We also recommend to vary this value a bit because the start might not be exact after the adapter. E.g. by +-1.
-:min_mapping_quality:
-    (Optinal) Defines the minimum mapping quality (MAPQ) of the alinment to an oligo. When using oligos with only 1bp difference it is recommended to set it to 0. Otherwise the default value of 1 is recommended. 
+:alignment_tool:
+    Alignment tool configuration that is used to map the reads to the oligos.
+    
+    :tool:
+        Alignment tool that is used. Currently :code:`bwa` and :code:`exact` is supported.
+    :configs:
+        Configurations of the alignment tool selected.
+
+        :sequence_length (bwa):
+            Defines the :code:`min` and :code:`max` of a :code:`sequence_length` specify . :code:`sequence_length` is basically the length of a sequence alignment to an oligo in the reference file. Because there can be insertion and deletions we recommend to vary it a bit around the exact length (e.g. +-5). In theory this option enables designs with multiple sequence lengths.
+        :alignment_start (bwa):
+            Defines the :code:`min` and :code:`max` of the start of the alignment in an oligo. When using adapters you have to set basically the length of the adapter. Otherwise 1 will be the choice for most cases. We also recommend to vary this value a bit because the start might not be exact after the adapter. E.g. by +-1.
+        :min_mapping_quality (bwa):
+            (Optinal) Defines the minimum mapping quality (MAPQ) of the alinment to an oligo. When using oligos with only 1bp difference it is recommended to set it to 0. Otherwise the default value of 1 is recommended. 
+        :sequence_length (exact):
+            Defines the :code:`sequence_length` which is the length of a sequence alignment to an oligo in the reference file. Only one length design is supported.
+        :alignment_start (exact):
+            Defines the start of the alignment in an oligo. When using adapters you have to set basically the length of the adapter. Otherwise 1 will be the choice for most cases.
+
 :bc_length:
-    Length of the barcode. Must match with the length of :code:`R2`.
+    Length of the barcode. Must match with the length of :code:`BC`.
 :BC_rev_comp:
     (Optional) If set to :code:`true` the barcode of is reverse complemented. Default is :code:`false`.
 :linker_length:
@@ -60,11 +73,11 @@ Each asignment you want to process you have to giv him a name like :code:`exampl
 :linker:
     (Optional) Length of the linker. Only needed if you don't have a barcode read and the barcode is in the FW read with the structure: BC+Linker+Insert. Uses cutadapt to trim the linker to get the barcode as well as the starting of the insert.
 :FW:
-    List of forward read files in gzipped fastq format. The full or relative path to the files should be used. Same order in R1, R2, and R3 is important.
+    List of forward read files in gzipped fastq format. The full or relative path to the files should be used. Same order in FW, BC, and REV is important.
 :REV:
-    list of reverse read files in gzipped fastq format. The full or relative path to the files should be used. Same order in R1, R2, and R3 is important.
+    list of reverse read files in gzipped fastq format. The full or relative path to the files should be used. Same order in FW, BC, and REV is important.
 :BC:
-    List of index read files in gzipped fastq format. The full or relative path to the files should be used. Same order in R1, R2, and R3 is important.
+    List of index read files in gzipped fastq format. The full or relative path to the files should be used. Same order in FW, BC, and REV is important.
 :NGmerge:
     (Optional) Options for NGmerge. NGmerge is used merge FW and REV reads. The following options are possible (we recommend to use the default values):
 
