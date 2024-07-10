@@ -135,7 +135,7 @@ rule assignment_collectBCs:
             split=range(0, getSplitNumber()),
         ),
     output:
-        "results/assignment/{assignment}/barcodes_incl_other.sorted.tsv.gz",
+        "results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
     params:
         batch_size=getSplitNumber(),
     threads: 20
@@ -156,10 +156,10 @@ rule assignment_filter:
     Filter the barcodes file based on the config given in the config-file.
     """
     input:
-        assignment="results/assignment/{assignment}/barcodes_incl_other.sorted.tsv.gz",
+        assignment="results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
         script=getScript("assignment/filterAssignmentTsv.py"),
     output:
-        "results/assignment/{assignment}/assignment_barcodes.{assignment_config}.sorted.tsv.gz",
+        "results/assignment/{assignment}/assignment_barcodes.{assignment_config}.tsv.gz",
     conda:
         "../envs/python3.yaml"
     log:
