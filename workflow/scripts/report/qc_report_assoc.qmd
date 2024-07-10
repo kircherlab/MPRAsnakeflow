@@ -29,23 +29,18 @@ from IPython.display import display, Image
 # Assignment QC Report
 The Assignment QC (Quality Control) Report is a comprehensive document designed to evaluate and 
 ensure the quality of data or processes involved in a specific assignment. This report is generated 
-for the `{python} assignment` assignment. The barcode length for this experiment is `{python} bc_length` base pairs.
+for the `{python} assignment` assignment with settings defined in the config `{python} configs`. The barcode length for this experiment is `{python} bc_length` base pairs.
 
-Forword: `{python} fw`  
+Forward: `{python} fw`  
 Reverse: `{python} rev`  
-Bar Code: `{python} bc`  
-Design File: `{python} reference`
+Barcode: `{python} bc`  
+Design File: `{python} design_file`
 
 
 ```{python}
 #| echo: false
-import os
-current_path = os.getcwd()
 
-parent_path = os.path.dirname(os.path.dirname(os.path.dirname(current_path)))
-new_path = os.path.join(parent_path, reference)
-
-with open(new_path) as f:
+with open(f"{workdir}/{design_file}") as f:
     lines = f.readlines()
     seq_num_in_design = len(lines)/2
 
@@ -56,7 +51,7 @@ with open(new_path) as f:
 # BC distribution over oligos
 ```{python}
 #| echo: false
-display(Image(f"statistic/assignment.{configs}.png"))
+display(Image(f"{workdir}/{plot_file}"))
 ```
 
 
@@ -65,14 +60,16 @@ display(Image(f"statistic/assignment.{configs}.png"))
 #| echo: false
 import pandas as pd
 from IPython.display import HTML, display
-file_path = f"statistic/assigned_counts.{configs}.tsv.gz"
 
-df = pd.read_csv(file_path, sep='\t', compression='gzip')
+df_all = pd.read_csv(f"{workdir}/{statistic_all_file}", sep='\t', compression='gzip')
+df_filter = pd.read_csv(f"{workdir}/{statistic_filter_file}", sep='\t', compression='gzip')
 
-new_row = pd.DataFrame({'Unnamed: 0': ['Total Sequences in design file'], 'Counts': int(seq_num_in_design)})
+new_row = pd.DataFrame({'Unnamed: 0': ['Sequences in design file'], 'Counts': int(seq_num_in_design)})
 
 # Concatenate the new row DataFrame with the original DataFrame
-df = pd.concat([new_row, df]).reset_index(drop=True)
+df_all = pd.concat([new_row, df_all]).reset_index(drop=True).rename(columns={'Counts': 'Before filter', 'Unnamed: 0': ' '})
+df_filter = pd.concat([new_row, df_filter]).reset_index(drop=True).rename(columns={'Counts': 'Before filter', 'Unnamed: 0': ' '})
+df = df_all.merge(df_filter, on=' ')
 
 df
 ```

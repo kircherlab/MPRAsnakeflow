@@ -1,3 +1,6 @@
+import os
+
+
 rule qc_report:
     input:
         getOutputProject_helper(
@@ -10,10 +13,13 @@ rule qc_report:
 rule qc_report_assoc:
     input: 
         quarto_script = getScript("report/qc_report_assoc.qmd"),
-
+        design_file = lambda wc: config["assignments"][wc.assignment]["reference"], 
+        statistic_filter="results/assignment/{assignment}/statistic/assigned_counts.{assignment_config}.tsv.gz",
+        statistic_all="results/assignment/{assignment}/statistic/total_counts.tsv.gz",
+        plot="results/assignment/{assignment}/statistic/assignment.{assignment_config}.png",
     output: 
-        assi_file = "results/assignment/{assignment}/qc_report.html"
-         
+        assi_file = "results/assignment/{assignment}/qc_report.{assignment_config}.html",
+        quarto_file = temp("results/assignment/{assignment}/qc_report.{assignment_config}.qmd"),
     conda:
         "../envs/quarto.yaml",  
     params:
@@ -21,22 +27,23 @@ rule qc_report_assoc:
         fw = lambda wc: config["assignments"][wc.assignment]["FW"],
         rev = lambda wc: config["assignments"][wc.assignment]["REV"],
         bc = lambda wc: config["assignments"][wc.assignment]["BC"],
-        reference = lambda wc: config["assignments"][wc.assignment]["reference"],
-        configs = lambda wc: list(config["assignments"][wc.assignment]["configs"].keys())[0],
-        
+        workdir = os.getcwd(),
     shell:
         """
-        cd results/assignment/{wildcards.assignment}/
-        cp {input.quarto_script} qc_report_assoc.qmd
-        quarto render qc_report_assoc.qmd --output qc_report.html \
+        cp {input.quarto_script} {output.quarto_file};
+        cd `dirname {output.quarto_file}`;
+        quarto render `basename {output.quarto_file}` --output `basename {output.assi_file}` \
         -P assignment:{wildcards.assignment} \
         -P bc_length:{params.bc_length} \
         -P fw:{params.fw} \
         -P rev:{params.rev} \
         -P bc:{params.bc} \
-        -P reference:{params.reference} \
-        -P configs:{params.configs}
-        rm qc_report_assoc.qmd
+        -P workdir:{params.workdir} \
+        -P design_file:{input.design_file} \
+        -P configs:{wildcards.assignment_config} \
+        -P plot_file:{input.plot} \
+        -P statistic_filter_file:{input.statistic_filter} \
+        -P statistic_all_file:{input.statistic_all}
         """
 
 rule qc_report_count:
