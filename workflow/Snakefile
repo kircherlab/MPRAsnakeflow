@@ -48,12 +48,12 @@ rule all:
         getAssignmentConfig_helper(
             [
                 "results/assignment/{assignment}/assignment_barcodes.{config}.tsv.gz",
-                "results/assignment/{assignment}/statistic/assigned_counts.{config}.tsv.gz",
+                "results/assignment/{assignment}/statistic/assigned_counts.{config}.tsv",
                 "results/assignment/{assignment}/statistic/assignment.{config}.png",
             ]
         ),
         getAssignment_helper(
-            ["results/assignment/{assignment}/statistic/total_counts.tsv.gz"]
+            ["results/assignment/{assignment}/statistic/total_bcs.tsv"]
         ),
         getAssignment_helper(
             ["results/assignment/{assignment}/statistic/assignment/bam_stats.txt"],
@@ -151,12 +151,12 @@ rule all_assignments:
         getAssignmentConfig_helper(
             [
                 "results/assignment/{assignment}/assignment_barcodes.{config}.tsv.gz",
-                "results/assignment/{assignment}/statistic/assigned_counts.{config}.tsv.gz",
+                "results/assignment/{assignment}/statistic/assigned_counts.{config}.tsv",
                 "results/assignment/{assignment}/statistic/assignment.{config}.png",
             ]
         ),
         getAssignment_helper(
-            ["results/assignment/{assignment}/statistic/total_counts.tsv.gz"]
+            ["results/assignment/{assignment}/statistic/total_bcs.tsv"]
         ),
         getAssignment_helper(
             ["results/assignment/{assignment}/statistic/assignment/bam_stats.txt"],

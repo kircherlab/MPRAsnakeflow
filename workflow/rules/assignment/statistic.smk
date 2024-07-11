@@ -3,22 +3,21 @@ Rules to create statistics for the assignment workflow.
 """
 
 
-rule assignment_statistic_totalCounts:
+rule assignment_statistic_totalBCs:
     """
     Statistic of the total (unfiltered counts).
     """
     conda:
-        "../../envs/python3.yaml"
+        "../../envs/default.yaml"
     input:
-        bc="results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
-        script=getScript("assignment/statistic_total_counts.py"),
+        bcs="results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
     output:
-        "results/assignment/{assignment}/statistic/total_counts.tsv.gz",
+        "results/assignment/{assignment}/statistic/total_bcs.tsv",
     log:
-        "results/logs/assignment/statistic_totalCounts.{assignment}.log",
+        "results/logs/assignment/statistic_totalBCs.{assignment}.log",
     shell:
         """
-        python {input.script} --input {input.bc} --output {output} &> {log}
+        zcat {input.bcs} | cut -f 1 | uniq | wc -l > {output} 2> {log}
         """
 
 
@@ -29,10 +28,10 @@ rule assignment_statistic_assignedCounts:
     conda:
         "../../envs/python3.yaml"
     input:
-        bc="results/assignment/{assignment}/assignment_barcodes.{assignment_config}.tsv.gz",
+        bc="results/assignment/{assignment}/assignment_barcodes_with_ambigous.{assignment_config}.tsv.gz",
         script=getScript("assignment/statistic_total_counts.py"),
     output:
-        "results/assignment/{assignment}/statistic/assigned_counts.{assignment_config}.tsv.gz",
+        "results/assignment/{assignment}/statistic/assigned_counts.{assignment_config}.tsv",
     log:
         "results/logs/assignment/statistic_assignedCounts.{assignment}.{assignment_config}.log",
     shell:
