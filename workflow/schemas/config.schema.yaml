@@ -176,12 +176,6 @@ properties:
                     exclusiveMinimum: 0.5
                     maximum: 1
                     default: 0.75
-                  unknown_other:
-                    type: boolean
-                    default: false
-                  ambiguous:
-                    type: boolean
-                    default: false
                 required:
                   - min_support
                   - fraction

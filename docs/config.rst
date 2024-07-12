@@ -89,18 +89,14 @@ Each assignment you want to process you have to giv him a name like :code:`examp
         (Optional) Minimum dovetailed overlap. Default is set to 10.
 
 :reference:
-    Design file (full or relative path) in fasta format. The design file should contain the oligos in fasta format. The header should contain the oligo name and should be unique. The sequence should be the sequence of the oligo and must also be unique. When having multiple oligo names with the same sequence please merge them into one fasta entry. The oligo name later used to link barcode to oligo. The sequence is used to map the reads to the oligos. Adapters can be in the seuqence and therefore :code:`alignment_start` has to be adjusted.
+    Design file (full or relative path) in fasta format. The design file should contain the oligos in fasta format. The header should contain the oligo name and should be unique. The sequence should be the sequence of the oligo and must also be unique. When having multiple oligo names with the same sequence please merge them into one fasta entry. The oligo name later used to link barcode to oligo. The sequence is used to map the reads to the oligos. Adapters can be in the seuqence and therefore :code:`alignment_start` has to be adjusted. The fasta headers `other` and `ambiguous` are not allowed!
 :configs:
-    After mapping the reads to the design file and extracting the barcodes per oligo the configuration (using different names) can be used to generate multiple filtering and configuration settings of the final maq oligo to barcode. Each configuration is a dictionary with the following keys:
+    After mapping the reads to the design file and extracting the barcodes per oligo the configuration (using different names) can be used to generate multiple filtering and configuration settings of the final maq oligo to barcode. Use `<your_config_name>: {}` to use the default values for the keys. Each configuration is a dictionary with the following keys:
     
     :min_support:
-        Minimum number of same BC that map to teh same oligo. Larger value gives more evidence to be correct. But can remove lot's of BCs (depedning on the complexity, sequencing depth and quality of sequencing). Recommended option is :code:`3`.
+        (Optional) Minimum number of same BC that map to teh same oligo. Larger value gives more evidence to be correct. But can remove lot's of BCs (depedning on the complexity, sequencing depth and quality of sequencing). Default is :code:`3`. 
     :fraction:
-        Minumum fraction of same BC that map to teh same oligo. E.g. :code:`0.7` means that at least 70% of the BC map to the same oligo. Larger value gives more evidence to be correct. But can remove lot's of BCs (depedning on the complexity, sequencing depth and quality of sequencing). Recommended option is :code:`0.7`.
-    :unknown_other:
-            (Optional) Shows not mapped BCs in the final output map. Not recommended to use as mapping file fore the experiment workflow. But can be usefull for debugging. Default is :code:`false`. 
-    :ambigous:
-            (Optional) Shows ambigous BCs in the final output map. Not recommended to use as mapping file fore the experiment workflow. But can be usefull for debugging. Default is :code:`false`.
+        (Optional) Minumum fraction of same BC that map to teh same oligo. E.g. :code:`0.7` means that at least 70% of the BC map to the same oligo. Larger value gives more evidence to be correct. But can remove lot's of BCs (depedning on the complexity, sequencing depth and quality of sequencing). Default is :code:`0.75`. 
 
 --------------------------------------
 Experiment workflow (including counts)
