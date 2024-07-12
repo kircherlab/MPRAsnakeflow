@@ -15,7 +15,7 @@ rule qc_report_assoc:
         quarto_script = getScript("report/qc_report_assoc.qmd"),
         design_file = lambda wc: config["assignments"][wc.assignment]["reference"], 
         statistic_filter="results/assignment/{assignment}/statistic/assigned_counts.{assignment_config}.tsv",
-        statistic_all="results/assignment/{assignment}/statistic/total_bcs.tsv",
+        statistic_all="results/assignment/{assignment}/statistic/total_counts.tsv",
         plot="results/assignment/{assignment}/statistic/assignment.{assignment_config}.png",
     output: 
         assi_file = "results/assignment/{assignment}/qc_report.{assignment_config}.html",

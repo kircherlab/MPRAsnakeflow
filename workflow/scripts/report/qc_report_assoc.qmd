@@ -57,19 +57,18 @@ display(Image(f"{workdir}/{plot_file}"))
 
 # Counts of barcodes and oligos 
 
-Total number of seen barcodes: `{python}: with open(f"{workdir}/{statistic_all_file}") as f: int(f.readline())`
-
 ```{python}
 #| echo: false
 import pandas as pd
 from IPython.display import HTML, display
 
-df = pd.read_csv(f"{workdir}/{statistic_filter_file}", sep='\t')
-
-new_row = pd.DataFrame({'Unnamed: 0': ['Sequences in design file'], 'Counts': int(seq_num_in_design)})
+df_design = pd.DataFrame({' ': ['Oligos'], 'Design': int(seq_num_in_design)})
+df_total = pd.read_csv(f"{workdir}/{statistic_all_file}", sep='\t').rename(columns={'Unnamed: 0': ' ', 'Counts': 'Raw data'})
+df_filter = pd.read_csv(f"{workdir}/{statistic_filter_file}", sep='\t').rename(columns={'Unnamed: 0': ' ', 'Counts': 'Filtered data'})
 
 # Concatenate the new row DataFrame with the original DataFrame
-df = pd.concat([new_row, df]).reset_index(drop=True).rename(columns={'Unnamed: 0': ' '})
+df = df_design.merge(df_total, on=' ', how="right")
+df = df.merge(df_filter, on=' ', how="right").reset_index(drop=True).fillna(0).astype({"Design": int, "Raw data": int, "Filtered data": int})
 
 df
 ```

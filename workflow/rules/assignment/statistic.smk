@@ -3,21 +3,22 @@ Rules to create statistics for the assignment workflow.
 """
 
 
-rule assignment_statistic_totalBCs:
+rule assignment_statistic_totalCounts:
     """
     Statistic of the total (unfiltered counts).
     """
     conda:
-        "../../envs/default.yaml"
+        "../../envs/python3.yaml"
     input:
-        bcs="results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
+        bc="results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
+        script=getScript("assignment/statistic_total_counts.py"),
     output:
-        "results/assignment/{assignment}/statistic/total_bcs.tsv",
+        "results/assignment/{assignment}/statistic/total_counts.tsv",
     log:
-        "results/logs/assignment/statistic_totalBCs.{assignment}.log",
+        "results/logs/assignment/statistic_totalCounts.{assignment}.log",
     shell:
         """
-        zcat {input.bcs} | cut -f 1 | uniq | wc -l > {output} 2> {log}
+        python {input.script} --input {input.bc} --output >(sed -n '1,3p;'  > {output}) 2> {log}
         """
 
 

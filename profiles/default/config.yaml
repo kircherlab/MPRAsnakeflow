@@ -54,7 +54,7 @@ set-resources:
     threads: 1
     mem: 10G
     slurm_partition: debug
-  assignment_statistic_totalBCs:
+  assignment_statistic_totalCounts:
     runtime: 60
     threads: 1
     slurm_partition: medium

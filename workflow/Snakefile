@@ -53,7 +53,7 @@ rule all:
             ]
         ),
         getAssignment_helper(
-            ["results/assignment/{assignment}/statistic/total_bcs.tsv"]
+            ["results/assignment/{assignment}/statistic/total_counts.tsv"]
         ),
         getAssignment_helper(
             ["results/assignment/{assignment}/statistic/assignment/bam_stats.txt"],
@@ -156,7 +156,7 @@ rule all_assignments:
             ]
         ),
         getAssignment_helper(
-            ["results/assignment/{assignment}/statistic/total_bcs.tsv"]
+            ["results/assignment/{assignment}/statistic/total_counts.tsv"]
         ),
         getAssignment_helper(
             ["results/assignment/{assignment}/statistic/assignment/bam_stats.txt"],
