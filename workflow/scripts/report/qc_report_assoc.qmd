@@ -41,9 +41,11 @@ Design File: `{python} design_file`
 #| echo: false
 
 with open(f"{workdir}/{design_file}") as f:
+    seq_num_in_design = 0
     lines = f.readlines()
-    seq_num_in_design = len(lines)/2
-
+    for line in lines:
+      if line.startswith(">"):
+        seq_num_in_design += 1
 
 ```
 
@@ -66,11 +68,11 @@ df_design = pd.DataFrame({' ': ['Oligos'], 'Design': int(seq_num_in_design)})
 df_total = pd.read_csv(f"{workdir}/{statistic_all_file}", sep='\t').rename(columns={'Unnamed: 0': ' ', 'Counts': 'Raw data'})
 df_filter = pd.read_csv(f"{workdir}/{statistic_filter_file}", sep='\t').rename(columns={'Unnamed: 0': ' ', 'Counts': 'Filtered data'})
 
+
+
 # Concatenate the new row DataFrame with the original DataFrame
 df = df_design.merge(df_total, on=' ', how="right")
 df = df.merge(df_filter, on=' ', how="right").reset_index(drop=True).fillna(0).astype({"Design": int, "Raw data": int, "Filtered data": int})
-
 df
+
 ```
-
-
