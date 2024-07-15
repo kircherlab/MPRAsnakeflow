@@ -8,7 +8,7 @@ rule qc_report:
                 "results/experiments/{project}/qc_report/qc_report.html",
             ]
         ),
-        expand("results/assignment/{assignment}/qc_report.html", assignment=config['assignments'])  
+#        expand("results/assignment/{assignment}/qc_report.html", assignment=config['assignments'])  
 
 rule qc_report_assoc:
     input: 
