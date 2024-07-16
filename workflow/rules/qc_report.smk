@@ -51,7 +51,7 @@ rule qc_report_assoc:
 
 rule qc_report_count:
     input: 
-        quarto_script = getScript("report/qc_report.qmd"),
+        quarto_script = getScript("report/qc_report_count.qmd"),
     output:  
         count_file = "results/experiments/{project}/qc_report/qc_report.{assignment}.{config}.html",
         quarto_file = temp("results/experiments/{project}/qc_report/qc_report.{assignment}.{config}.qmd"),
