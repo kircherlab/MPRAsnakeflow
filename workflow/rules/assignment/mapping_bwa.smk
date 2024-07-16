@@ -39,7 +39,6 @@ rule assignment_mapping_bwa:
         ),
     output:
         bam=temp("results/assignment/{assignment}/bam/merge_split{split}.mapped.bam"),
-    threads: 1
     log:
         temp("results/logs/assignment/mapping.{assignment}.{split}.log"),
     shell:
@@ -109,7 +108,6 @@ rule assignment_collect:
         ),
     output:
         "results/assignment/{assignment}/aligned_merged_reads.bam",
-    threads: 1
     log:
         temp("results/logs/assignment/collect.{assignment}.log"),
     shell:

@@ -138,7 +138,6 @@ rule assignment_collectBCs:
         "results/assignment/{assignment}/barcodes_incl_other.sorted.tsv.gz",
     params:
         batch_size=getSplitNumber(),
-    threads: 20
     conda:
         "../envs/default.yaml"
     log:
