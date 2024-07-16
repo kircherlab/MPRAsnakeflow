@@ -1,13 +1,13 @@
 import os
 
 
-rule qc_report:
-    input:
-        getOutputProject_helper(
-            [
-                "results/experiments/{project}/qc_report/qc_report.html",
-            ]
-        ),
+# rule qc_report:
+#     input:
+#         getOutputProject_helper(
+#             [
+#                 "results/experiments/{project}/qc_report/qc_report.html",
+#             ]
+#         ),
 #        expand("results/assignment/{assignment}/qc_report.html", assignment=config['assignments'])  
 
 rule qc_report_assoc:
@@ -52,8 +52,9 @@ rule qc_report_assoc:
 rule qc_report_count:
     input: 
         quarto_script = getScript("report/qc_report.qmd"),
-    output:
-        "results/experiments/{project}/qc_report/qc_report.html",
+    output:  
+        count_file = "results/experiments/{project}/qc_report/qc_report.{assignment}.{config}.html",
+        quarto_file = temp("results/experiments/{project}/qc_report/qc_report.{assignment}.{config}.qmd"),
     conda:
         "../envs/quarto.yaml",   
     params:
@@ -61,12 +62,11 @@ rule qc_report_count:
 
     shell:
         """
-        cp config.yml results/experiments/{wildcards.project}/qc_report/config.yml
-        cd results/experiments/{wildcards.project}/qc_report
-        cp {input.quarto_script} qc_report.qmd
-        quarto render qc_report.qmd --output qc_report.html \
+        cp config.yml results/experiments/{wildcards.project}/qc_report/config.yml;
+        cp {input.quarto_script} {output.quarto_file};
+        cd `dirname {output.quarto_file}`;
+        quarto render `basename {output.quarto_file}` --output `basename {output.count_file}` \
         -P condition:{params.condition} \
         -P project:{wildcards.project}
-        rm qc_report.qmd
         rm config.yml
         """
