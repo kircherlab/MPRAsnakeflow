@@ -24,8 +24,6 @@ The general settings are located in the :code:`global` section. The following se
    :start-after: start_global
    :end-before: start_assignments
 
-:threads:
-    Number of threads that are available to run a rule. Right now this is used for bwa mem in the assignment workflow. Be sure to set up the snakemake option :code:`-c` correctly when using larger number of possible threads. Default is set to 1.
 :assignments:
     Global parameters that hold for the assignment workflow.
 

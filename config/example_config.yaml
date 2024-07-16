@@ -1,6 +1,5 @@
 ---
 global: # generall configs effecting one or multiple parts
-  threads: 1
   assignments:
     split_number: 1 # number of files fastq should be split for parallelization
 assignments:
@@ -31,7 +30,7 @@ experiments:
   exampleCount:
     bc_length: 15
     umi_length: 10
-    data_folder: resources/Count_Basic/data
+    data_folder: resources/count_basic/data
     experiment_file: resources/example_experiment.csv
     demultiplex: false
     assignments:

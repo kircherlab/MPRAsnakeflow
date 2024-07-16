@@ -1,6 +1,5 @@
 ---
 global: # generall configs effecting one or multiple parts
-  threads: 1
   assignments:
     split_number: 1 # number of files fastq should be split for parallelization
 assignments:

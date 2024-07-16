@@ -108,7 +108,7 @@ First we do a try run using snakemake :code:`-n` option. The MPRAsnakeflow comma
 
     cd assoc_basic
     conda activate mprasnakeflow
-    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/assoc_basic/config.yml -n -q
+    snakemake -c 1 --sdm conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/assoc_basic/config.yml -n -q --set-threads assignment_mapping_bwa=10
 
 You should see a list of rules that will be executed. This is the summary:
 

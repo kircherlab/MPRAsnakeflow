@@ -1,6 +1,5 @@
 ---
 global:
-  threads: 10
   assignments:
     split_number: 30
 assignments:
