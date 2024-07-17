@@ -1,6 +1,5 @@
 import os
 
-
 # rule qc_report:
 #     input:
 #         getOutputProject_helper(
@@ -52,6 +51,17 @@ rule qc_report_assoc:
 rule qc_report_count:
     input: 
         quarto_script = getScript("report/qc_report_count.qmd"),
+        dna_oligo_coor_min_thre_plot = getOutputProjectConditionAssignmentConfig_helper(["results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_DNA_pairwise_minThreshold.png"]),
+        rna_oligo_coor_min_thre_plot = getOutputProjectConditionAssignmentConfig_helper(["results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_RNA_pairwise_minThreshold.png"]),
+        rna_oligo_coor_plot = getOutputProjectConditionAssignmentConfig_helper(["results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_RNA_pairwise.png"]),
+        dna_oligo_coor_plot = getOutputProjectConditionAssignmentConfig_helper(["results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_DNA_pairwise.png"]),
+        ratio_oligo_coor_plot = getOutputProjectConditionAssignmentConfig_helper(["results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_Ratio_pairwise.png"]),
+        ratio_oligo_min_thre_plot = getOutputProjectConditionAssignmentConfig_helper(["results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_Ratio_pairwise_minThreshold.png"]),
+        statistics_all = getOutputProjectConditionAssignmentConfig_helper(["results/experiments/{project}/statistic/statistic_assigned_counts_merged_{assignment}_{config}.tsv"]),
+        # bc_coor_dna = getOutputProjectConditionAssignmentConfig_helper(["results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}_{config}_barcode_DNA_pairwise.png"]),
+        per_bar_code_dna = getOutputProjectConditionConfigType_helper(["results/experiments/{project}/statistic/barcode/counts/{condition}_{config}_{type}_perBarcode.png"]),
+
+
     output:  
         count_file = "results/experiments/{project}/qc_report/qc_report.{assignment}.{config}.html",
         quarto_file = temp("results/experiments/{project}/qc_report/qc_report.{assignment}.{config}.qmd"),
@@ -59,6 +69,7 @@ rule qc_report_count:
         "../envs/quarto.yaml",   
     params:
         condition = lambda wildcards: getConditions(wildcards.project),
+        workdir = os.getcwd(),
 
     shell:
         """
@@ -66,7 +77,18 @@ rule qc_report_count:
         cp {input.quarto_script} {output.quarto_file};
         cd `dirname {output.quarto_file}`;
         quarto render `basename {output.quarto_file}` --output `basename {output.count_file}` \
+        -P assignment:{wildcards.assignment} \
         -P condition:{params.condition} \
-        -P project:{wildcards.project}
+        -P project:{wildcards.project} \
+        -P dna_oligo_coor_min_thre_plot:{input.dna_oligo_coor_min_thre_plot} \
+        -P rna_oligo_coor_min_thre_plot:{input.rna_oligo_coor_min_thre_plot} \
+        -P dna_oligo_coor_plot:{input.dna_oligo_coor_plot} \
+        -P rna_oligo_coor_plot:{input.rna_oligo_coor_plot} \
+        -P ratio_oligo_coor_plot:{input.ratio_oligo_coor_plot} \
+        -P ratio_oligo_min_thre_plot:{input.ratio_oligo_min_thre_plot} \
+        -P statistics_all:{input.statistics_all} \
+        -P per_bar_code_dna:{input.per_bar_code_dna} \
+        -P workdir:{params.workdir}
         rm config.yml
         """
+
