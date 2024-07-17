@@ -27,5 +27,6 @@ def display_unique_images(pattern, image_path, exclude=None):
 
     # Display the images and print their paths
     for png_file in unique_files:
+        print(png_file)
         display(Image(png_file))
         # print(png_file)
