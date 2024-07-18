@@ -36,7 +36,7 @@ ROOT_PATH = Path(os.getcwd()).parent
 cwd = Path.cwd()
 while cwd.name != 'MPRAsnakeflow': cwd = cwd.parent
 sys.path.insert(0, str(cwd))
-from workflow.scripts.report.report_functions import display_unique_images
+from workflow.scripts.report.report_functions import display_unique_images, get_unique_files
 ```
 
 ```{python}
