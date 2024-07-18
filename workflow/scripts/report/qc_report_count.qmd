@@ -17,7 +17,6 @@ jupyter: python3
 # Imports
 from IPython.display import display, Image
 from pathlib import Path
-import importlib
 import pandas as pd 
 import os
 import sys
@@ -49,32 +48,11 @@ from workflow.scripts.report.report_functions import get_unique_files, display_u
 ```{python}
 #| echo: false
 import yaml
-import pprint
-
-# Assuming `params` is your dictionary
-def get_prams():
-  with open('config.yml') as f:
-      params = yaml.safe_load(f)
-  return params
-
-def get_config(params):
-    return list(params["experiments"][project]["configs"].keys())[0]
-
-def get_assignment(params):
-    return list(params["experiments"][project]["assignments"].keys())[0]
 
 def display_image(file_path, root_path=ROOT_PATH):
     full_path = str(root_path) + file_path
     print(full_path)
     display(Image(full_path))
-```
-
-```{python}
-#| echo: false
-## Generating the f strig elements.
-params = get_prams()
-config = get_config(params)
-assignment = get_assignment(params)
 ```
 
 # Per Barcode
