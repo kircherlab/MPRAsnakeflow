@@ -53,7 +53,7 @@ rule assignment_check_design:
         """
         trap "cat {log.err}" ERR
         cp {input.design} {output.ref}
-        python {input.script} --input {input.design} --start {params.start} --length {params.length} > {log.log} 2> {log.err};
+        python {input.script} --input {output.ref} --start {params.start} --length {params.length} > {log.log} 2> {log.err};
         """
 
 

@@ -14,6 +14,7 @@ set-threads:
   assignment_mapping_bwa: 30
   assignment_collect: 30
   assignment_collectBCs: 20
+  assignment_merge: 10
 set-resources:
   assignment_check_design:
     runtime: 240
