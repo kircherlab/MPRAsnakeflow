@@ -11,11 +11,11 @@ assignments:
       tool: exact # bwa or exact
       configs:
         sequence_length: 170 # sequence length of design excluding adapters.
-        alignment_start: 1 # start of the alignment in the reference
+        alignment_start: 1 # start of the alignment in the reference/design_file
     FW:
       - resources/Assignment_BasiC/R1.fastq.gz
     REV:
       - resources/Assignment_BasiC/R3.fastq.gz
-    reference: resources/design.fa
+    design_file: resources/design.fa
     configs:
       default: {} # name of an example filtering config

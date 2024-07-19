@@ -5,9 +5,9 @@ rule assignment_bwa_ref:
     conda:
         "../../envs/bwa_samtools_picard_htslib.yaml"
     input:
-        lambda wc: config["assignments"][wc.assignment]["reference"],
-    output:
         ref="results/assignment/{assignment}/reference/reference.fa",
+        check="results/assignment/{assignment}/design_check.done",
+    output:
         bwa=expand(
             "results/assignment/{{assignment}}/reference/reference.fa.{ext}",
             ext=["fai"] + assignment_bwa_dicts,
@@ -17,10 +17,9 @@ rule assignment_bwa_ref:
         temp("results/logs/assignment/bwa_ref.{assignment}.log"),
     shell:
         """
-        cat {input} | awk '{{gsub(/[\\]\\[]/,"_")}}$0' > {output.ref};
-        bwa index -a bwtsw {output.ref} &> {log};
-        samtools faidx {output.ref} &>> {log};
-        picard CreateSequenceDictionary REFERENCE={output.ref} OUTPUT={output.d} &>> {log}
+        bwa index -a bwtsw {input.ref} &> {log};
+        samtools faidx {input.ref} &>> {log};
+        picard CreateSequenceDictionary REFERENCE={input.ref} OUTPUT={output.d} &>> {log}
         """
 
 

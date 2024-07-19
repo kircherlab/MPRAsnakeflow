@@ -52,13 +52,13 @@ Each assignment you want to process you have to giv him a name like :code:`examp
         Configurations of the alignment tool selected.
 
         :sequence_length (bwa):
-            Defines the :code:`min` and :code:`max` of a :code:`sequence_length` specify . :code:`sequence_length` is basically the length of a sequence alignment to an oligo in the reference file. Because there can be insertion and deletions we recommend to vary it a bit around the exact length (e.g. +-5). In theory this option enables designs with multiple sequence lengths.
+            Defines the :code:`min` and :code:`max` of a :code:`sequence_length` specify . :code:`sequence_length` is basically the length of a sequence alignment to an oligo in the design file. Because there can be insertion and deletions we recommend to vary it a bit around the exact length (e.g. +-5). In theory this option enables designs with multiple sequence lengths.
         :alignment_start (bwa):
             Defines the :code:`min` and :code:`max` of the start of the alignment in an oligo. When using adapters you have to set basically the length of the adapter. Otherwise 1 will be the choice for most cases. We also recommend to vary this value a bit because the start might not be exact after the adapter. E.g. by +-1.
         :min_mapping_quality (bwa):
             (Optinal) Defines the minimum mapping quality (MAPQ) of the alinment to an oligo. When using oligos with only 1bp difference it is recommended to set it to 0. Otherwise the default value of 1 is recommended. 
         :sequence_length (exact):
-            Defines the :code:`sequence_length` which is the length of a sequence alignment to an oligo in the reference file. Only one length design is supported.
+            Defines the :code:`sequence_length` which is the length of a sequence alignment to an oligo in the design file. Only one length design is supported.
         :alignment_start (exact):
             Defines the start of the alignment in an oligo. When using adapters you have to set basically the length of the adapter. Otherwise 1 will be the choice for most cases.
 
@@ -86,15 +86,15 @@ Each assignment you want to process you have to giv him a name like :code:`examp
     :min_dovetailed_overlap:
         (Optional) Minimum dovetailed overlap. Default is set to 10.
 
-:reference:
+:design_file:
     Design file (full or relative path) in fasta format. The design file should contain the oligos in fasta format. The header should contain the oligo name and should be unique. The sequence should be the sequence of the oligo and must also be unique. When having multiple oligo names with the same sequence please merge them into one fasta entry. The oligo name later used to link barcode to oligo. The sequence is used to map the reads to the oligos. Adapters can be in the seuqence and therefore :code:`alignment_start` has to be adjusted.
 :configs:
     After mapping the reads to the design file and extracting the barcodes per oligo the configuration (using different names) can be used to generate multiple filtering and configuration settings of the final maq oligo to barcode. Each configuration is a dictionary with the following keys:
     
     :min_support:
-        Minimum number of same BC that map to teh same oligo. Larger value gives more evidence to be correct. But can remove lot's of BCs (depedning on the complexity, sequencing depth and quality of sequencing). Recommended option is :code:`3`.
+        Minimum number of same BC that map to the same oligo. Larger value gives more evidence to be correct. But can remove lot's of BCs (depedning on the complexity, sequencing depth and quality of sequencing). Recommended option is :code:`3`.
     :fraction:
-        Minumum fraction of same BC that map to teh same oligo. E.g. :code:`0.7` means that at least 70% of the BC map to the same oligo. Larger value gives more evidence to be correct. But can remove lot's of BCs (depedning on the complexity, sequencing depth and quality of sequencing). Recommended option is :code:`0.7`.
+        Minumum fraction of same BC that map to the same oligo. E.g. :code:`0.7` means that at least 70% of the BC map to the same oligo. Larger value gives more evidence to be correct. But can remove lot's of BCs (depedning on the complexity, sequencing depth and quality of sequencing). Recommended option is :code:`0.7`.
     :unknown_other:
             (Optional) Shows not mapped BCs in the final output map. Not recommended to use as mapping file fore the experiment workflow. But can be usefull for debugging. Default is :code:`false`. 
     :ambigous:
@@ -123,8 +123,6 @@ The experiment workflow is configured in the :code:`experiments` section. Each e
     Path to the experiment file. The full or relative path to the file should be used. The experiment file is a comma separated file and is decribed in the `Experiment file`_ section.
 :demultiplex:
     (Optional) If set to :code:`true` the reads are demultiplexed. This means that the reads are split into different files for each barcode. This is usefull for further analysis. Default is :code:`false`.
-:design_file:
-    Design file (full or relative path) in fasta format. The design file should contain the oligos in fasta format. The header should contain the oligo name and should be unique. The sequence should be the sequence of the oligo and must also be unique. When having multiple oligo names with the same sequence please merge them into one fasta entry. Should be the same as :code:`reference` in the `Assignment workflow`_.
 :label_file:
     (Optional) Path to the label file. The full or relative path to the file should be used. The label file is a tab separated file and contais the oligo name and the label of it. The oligo name should be the same as in the design file. The label is used to group the oligos in the final output, e.g. for plotting. 
     

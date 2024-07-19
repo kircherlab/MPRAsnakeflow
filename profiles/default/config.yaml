@@ -15,6 +15,9 @@ set-threads:
   assignment_collect: 30
   assignment_collectBCs: 20
 set-resources:
+  assignment_check_design:
+    runtime: 240
+    slurm_partition: medium
   assignment_hybridFWRead_get_reads_by_length:
     runtime: 1140
     mem: 2G

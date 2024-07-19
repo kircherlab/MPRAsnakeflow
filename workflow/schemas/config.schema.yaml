@@ -155,7 +155,7 @@ properties:
               - min_dovetailed_overlap
             default: {}
             additionalProperties: false
-          reference:
+          design_file:
             type: string
           configs:
             type: object
@@ -195,7 +195,7 @@ properties:
           - FW
           - REV
           - bc_length
-          - reference
+          - design_file
           - configs
           - alignment_tool
           - NGmerge
@@ -227,8 +227,6 @@ properties:
           demultiplex:
             type: boolean
             default: false
-          design_file:
-            type: string
           label_file:
             type: string
           assignments:
@@ -360,7 +358,6 @@ properties:
           - data_folder
           - experiment_file
           - demultiplex
-          - design_file
           - assignments
           - configs
       additionalProperties: false

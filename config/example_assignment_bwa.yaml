@@ -8,11 +8,11 @@ assignments:
     alignment_tool:
       tool: bwa # bwa or exact
       configs:
-        min_mapping_quality: 1 # integer >=0 Please use 1 when you have oligos that differ by 1 base in your reference/design file
+        min_mapping_quality: 1 # integer >=0 Please use 1 when you have oligos that differ by 1 base in your reference/design_file
         sequence_length: # sequence length of design excluding adapters.
           min: 166
           max: 175
-        alignment_start: # start of an alignment in the reference. Here using 15 bp adapters. Can be different when using adapter free approaches
+        alignment_start: # start of an alignment in the reference/design_file. Here using 15 bp adapters. Can be different when using adapter free approaches
           min: 1 # integer
           max: 3 # integer
     FW:
@@ -21,6 +21,6 @@ assignments:
       - resources/Assignment_BasiC/R2.fastq.gz
     REV:
       - resources/Assignment_BasiC/R3.fastq.gz
-    reference: resources/design.fa
+    design_file: resources/design.fa
     configs:
       default: {} # name of an example filtering config
