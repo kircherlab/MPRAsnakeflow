@@ -55,8 +55,7 @@ def display_image(file_path, root_path=ROOT_PATH):
     display(Image(full_path))
 ```
 
-# Per Barcode
-## DNA
+# Per Barcode 
 ```{python}
 #| echo: false
 display(Image(f"{workdir}/{per_bar_code_dna}")) 
@@ -133,7 +132,7 @@ display(Image(f"{workdir}/{ratio_oligo_min_thre_plot}"))
 display_unique_images('**/*barcodesPerInsert.png', image_path)
 ```
 
-# Oligo Correlation
+# Oligo Correlation Table
 ```{python}
 #| echo: false
 pd.read_csv(f"{workdir}/{statistics_all}", sep='\t')
