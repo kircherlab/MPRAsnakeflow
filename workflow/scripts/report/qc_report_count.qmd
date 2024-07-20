@@ -67,20 +67,21 @@ display(Image(f"{workdir}/{per_bar_code_dna}"))
 ## DNA
 ```{python}
 #| echo: false
-display_unique_images('**/*barcode_DNA_pairwise*.png', image_path)
+display(Image(f"{workdir}/{bc_coor_dna}")) 
 ```
 
 
 ## RNA
 ```{python}
 #| echo: false
-display_unique_images('**/*barcode_RNA_pairwise*.png', image_path)
+display(Image(f"{workdir}/{bc_coor_rna}")) 
 ```
+
 
 ## Ratio
 ```{python}
 #| echo: false
-display_unique_images('**/*barcode_Ratio_pairwise*.png', image_path)
+display(Image(f"{workdir}/{bc_coor_ratio}")) 
 ```
 
 # Oligo Corelation
@@ -123,13 +124,6 @@ display(Image(f"{workdir}/{ratio_oligo_coor_plot}"))
 ```{python}
 #| echo: false
 display(Image(f"{workdir}/{ratio_oligo_min_thre_plot}"))
-```
-
-
-# Barcodes Per Insert
-```{python}
-#| echo: false
-display_unique_images('**/*barcodesPerInsert.png', image_path)
 ```
 
 # Oligo Correlation Table
