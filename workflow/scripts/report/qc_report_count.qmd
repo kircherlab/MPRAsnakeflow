@@ -59,14 +59,10 @@ def display_image(file_path, root_path=ROOT_PATH):
 ## DNA
 ```{python}
 #| echo: false
-display(Image(f"{workdir}/{per_bar_code_dna.split(';')[0]}"))
+display(Image(f"{workdir}/{per_bar_code_dna}")) 
 ```
 
-## RNA
-```{python}
-#| echo: false
-display(Image(f"{workdir}/{per_bar_code_dna.split(';')[1]}"))
-```
+
 
 # BC Corelation   
 ## DNA
