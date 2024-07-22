@@ -23,23 +23,20 @@ rule qc_report_assoc:
         "../envs/quarto.yaml",  
     params:
         bc_length=lambda wc: config["assignments"][wc.assignment]["bc_length"],
-        fw = lambda wc: config["assignments"][wc.assignment]["FW"],
-        rev = lambda wc: config["assignments"][wc.assignment]["REV"],
-        bc = lambda wc: [config["assignments"][wc.assignment][key] for key in ["BC", "linker", "linker_length"] if key in config["assignments"][wc.assignment]],
+        fw = lambda wc: ";".join(list(config["assignments"][wc.assignment]["FW"])),
+        rev = lambda wc: ";".join(list(config["assignments"][wc.assignment]["REV"])),
+        bc = lambda wc: [";".join(list(config["assignments"][wc.assignment][key])) for key in ["BC", "linker", "linker_length"] if key in config["assignments"][wc.assignment]],
         workdir = os.getcwd(),
     shell:
         """
-        fw=$(echo {params.fw} | sed 's/ /;/g');
-        rev=$(echo {params.rev} | sed 's/ /;/g');
-        bc=$(echo {params.bc} | sed 's/ /;/g');
         cp {input.quarto_script} {output.quarto_file};
         cd `dirname {output.quarto_file}`;
         quarto render `basename {output.quarto_file}` --output `basename {output.assi_file}` \
         -P assignment:{wildcards.assignment} \
         -P bc_length:{params.bc_length} \
-        -P fw:$fw \
-        -P rev:$rev \
-        -P bc:$bc \
+        -P fw:{params.fw} \
+        -P rev:{params.rev} \
+        -P bc:{params.bc} \
         -P workdir:{params.workdir} \
         -P design_file:{input.design_file} \
         -P configs:{wildcards.assignment_config} \
