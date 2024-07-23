@@ -59,7 +59,19 @@ rule qc_report_count:
         bc_coor_dna = "results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}_{config}_barcode_DNA_pairwise.png",
         bc_coor_rna = "results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}_{config}_barcode_RNA_pairwise.png",
         bc_coor_ratio = "results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}_{config}_barcode_Ratio_pairwise.png",
-
+        # TODO remove bc_coor
+        # TODO we need coorelations after assignment. Hide the following files.
+        #  rna_oligo_coor_plot = "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_RNA_pairwise.png",
+        # dna_oligo_coor_plot = "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_DNA_pairwise.png",
+        # ratio_oligo_coor_plot = "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_Ratio_pairwise.png",
+        # TODO also add the minimum threashold value.
+        # TODO add some explanation from the documentation about the headers in the table.
+        # TODO Total oligos seprately just one 
+        # TODO remove extra decimal points.
+        # TODO add single table as well.
+        # DNA_pearson	RNA_pearson	Ratio_pearson Remove the columns from this table and add this table statistic_oligo_correlation_merged_fromFile_default.
+        # TODO add a lightening system. Warning pearson coorelation between replcate 1 and 2 is log.
+        # TODO Later, after discussion with Max you can get multiple files for the pngs expanding {condition}.
 
 
     output:  
@@ -93,6 +105,3 @@ rule qc_report_count:
         -P workdir:{params.workdir}
         rm config.yml
         """
-
-# The problem is to add per_bar_code_dna as a -P parameter.
-
