@@ -61,29 +61,6 @@ def display_image(file_path, root_path=ROOT_PATH):
 display(Image(f"{workdir}/{per_bar_code_dna}")) 
 ```
 
-
-
-# BC Corelation   
-## DNA
-```{python}
-#| echo: false
-display(Image(f"{workdir}/{bc_coor_dna}")) 
-```
-
-
-## RNA
-```{python}
-#| echo: false
-display(Image(f"{workdir}/{bc_coor_rna}")) 
-```
-
-
-## Ratio
-```{python}
-#| echo: false
-display(Image(f"{workdir}/{bc_coor_ratio}")) 
-```
-
 # Oligo Corelation
 ## DNA
 ```{python}
