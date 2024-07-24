@@ -61,6 +61,33 @@ def display_image(file_path, root_path=ROOT_PATH):
 display(Image(f"{workdir}/{per_bar_code_dna}")) 
 ```
 
+# Oligo Corelation with Minimum Threashold
+## DNA
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{dna_oligo_coor_min_thre_plot}"))
+```
+
+## RNA
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{rna_oligo_coor_min_thre_plot}"))
+```
+
+## Ratio
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{ratio_oligo_min_thre_plot}"))
+```
+
+
+# Oligo Correlation Table
+```{python}
+#| echo: false
+pd.read_csv(f"{workdir}/{statistics_all}", sep='\t')
+```
+
+
 # Oligo Corelation
 ## DNA
 ```{python}
@@ -68,27 +95,11 @@ display(Image(f"{workdir}/{per_bar_code_dna}"))
 display(Image(f"{workdir}/{dna_oligo_coor_plot}"))
 ```
 
-
-### Minimum Threashold
-```{python}
-#| echo: false
-display(Image(f"{workdir}/{dna_oligo_coor_min_thre_plot}"))
-```
-
-
 ## RNA
 ```{python}
 #| echo: false
 display(Image(f"{workdir}/{rna_oligo_coor_plot}"))
 ```
-
-
-### Minimum Threashold
-```{python}
-#| echo: false
-display(Image(f"{workdir}/{rna_oligo_coor_min_thre_plot}"))
-```
-
 
 ## Ratio
 ```{python}
@@ -96,15 +107,3 @@ display(Image(f"{workdir}/{rna_oligo_coor_min_thre_plot}"))
 display(Image(f"{workdir}/{ratio_oligo_coor_plot}"))
 ```
 
-
-### Minimum Threashold
-```{python}
-#| echo: false
-display(Image(f"{workdir}/{ratio_oligo_min_thre_plot}"))
-```
-
-# Oligo Correlation Table
-```{python}
-#| echo: false
-pd.read_csv(f"{workdir}/{statistics_all}", sep='\t')
-```

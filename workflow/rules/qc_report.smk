@@ -56,10 +56,6 @@ rule qc_report_count:
         ratio_oligo_min_thre_plot = "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_Ratio_pairwise_minThreshold.png",
         statistics_all = "results/experiments/{project}/statistic/statistic_assigned_counts_merged_{assignment}_{config}.tsv",
         per_bar_code_dna = "results/experiments/{project}/statistic/barcode/counts/{condition}_{config}_{type}_perBarcode.png",
-        # TODO we need coorelations after assignment. Hide the following files.
-        #  rna_oligo_coor_plot = "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_RNA_pairwise.png",
-        # dna_oligo_coor_plot = "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_DNA_pairwise.png",
-        # ratio_oligo_coor_plot = "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_Ratio_pairwise.png",
         # TODO also add the minimum threashold value.
         # TODO add some explanation from the documentation about the headers in the table.
         # TODO Total oligos seprately just one 
