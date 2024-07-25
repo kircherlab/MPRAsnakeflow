@@ -6,9 +6,9 @@ Getting started
 =====================
 
 1. Create an :code:`experiment.csv` in the format below, including the header. 
-   `DNA_F` or `RNA_F` is name of the gzipped fastq of the forward read of the DNA or RNA from the defined condition and replicate. 
+   `DNA_BC_F` or `RNA_BC_F` is name of the gzipped fastq of the forward read of the DNA or RNA from the defined condition and replicate. 
    `DNA_UMI` or `RNA_UMI` is the corresponding index read with UMIs (excluding sample barcodes), and 
-   `DNA_R` or `RNA_R` of the reverse read.
+   `DNA_BC_R` or `RNA_BC_R` of the reverse read.
    
    Multiple fastq files can be used for each column by seperating them with :code:`;`.
 
