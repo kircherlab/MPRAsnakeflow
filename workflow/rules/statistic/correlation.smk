@@ -195,9 +195,11 @@ rule statistic_correlation_calculate:
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
         label=(
-            lambda wc: config["experiments"][wc.project]["label_file"]
-            if "label_file" in config["experiments"][wc.project]
-            else []
+            lambda wc: (
+                config["experiments"][wc.project]["label_file"]
+                if "label_file" in config["experiments"][wc.project]
+                else []
+            )
         ),
         script=getScript("count/plot_perInsertCounts_correlation.R"),
     output:
@@ -248,7 +250,7 @@ rule statistic_correlation_calculate:
                 "Plot": "DNA",
                 "Threshold": str(
                     config["experiments"][wc.project]["configs"][wc.config]["filter"][
-            "bc_threshold"
+                        "bc_threshold"
                     ]
                 ),
             },
@@ -264,7 +266,7 @@ rule statistic_correlation_calculate:
                 "Plot": "RNA",
                 "Threshold": str(
                     config["experiments"][wc.project]["configs"][wc.config]["filter"][
-            "bc_threshold"
+                        "bc_threshold"
                     ]
                 ),
             },
@@ -280,7 +282,7 @@ rule statistic_correlation_calculate:
                 "Plot": "Ratio",
                 "Threshold": str(
                     config["experiments"][wc.project]["configs"][wc.config]["filter"][
-            "bc_threshold"
+                        "bc_threshold"
                     ]
                 ),
             },
@@ -307,9 +309,11 @@ rule statistic_correlation_calculate:
         ]["bc_threshold"],
         outdir="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}",
         label=(
-            lambda wc: "--label %s" % config["experiments"][wc.project]["label_file"]
-            if "label_file" in config["experiments"][wc.project]
-            else ""
+            lambda wc: (
+                "--label %s" % config["experiments"][wc.project]["label_file"]
+                if "label_file" in config["experiments"][wc.project]
+                else ""
+            )
         ),
     log:
         temp(
@@ -336,9 +340,11 @@ rule statistic_correlation_hist_box_plots:
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
         label=(
-            lambda wc: config["experiments"][wc.project]["label_file"]
-            if "label_file" in config["experiments"][wc.project]
-            else []
+            lambda wc: (
+                config["experiments"][wc.project]["label_file"]
+                if "label_file" in config["experiments"][wc.project]
+                else []
+            )
         ),
         script=getScript("count/plot_perInsertCounts_stats.R"),
     output:
@@ -366,9 +372,11 @@ rule statistic_correlation_hist_box_plots:
         ]["bc_threshold"],
         outdir="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}",
         label=(
-            lambda wc: "--label %s" % config["experiments"][wc.project]["label_file"]
-            if "label_file" in config["experiments"][wc.project]
-            else ""
+            lambda wc: (
+                "--label %s" % config["experiments"][wc.project]["label_file"]
+                if "label_file" in config["experiments"][wc.project]
+                else ""
+            )
         ),
     log:
         temp(
