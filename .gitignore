@@ -1,13 +1,13 @@
 .vscode/
 report.html
-resources
 logs
 results
+.cache
 !analysis/README.md
 !config
 !config/*
 !resources
-!resources/*
+!resources/**
 !workflow
 !workflow/**
 !.gitattributes
@@ -25,4 +25,5 @@ data
 docs_data
 mix_data
 *report.html
+*.simg
 
