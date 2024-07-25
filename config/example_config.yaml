@@ -43,7 +43,7 @@ experiments:
         assignment_config: default
     # label_file: resources/labels.tsv # optional
     configs:
-      default: 
+      default:
         filter:
           bc_threshold: 1
           DNA: {}
