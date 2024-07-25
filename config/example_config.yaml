@@ -1,6 +1,5 @@
 ---
 global: # generall configs effecting one or multiple parts
-  threads: 1
   assignments:
     split_number: 1 # number of files fastq should be split for parallelization
 assignments:
@@ -10,39 +9,38 @@ assignments:
       tool: exact # bwa or exact
       configs:
         sequence_length: 170 # sequence length of design excluding adapters.
-        alignment_start: 1 # start of the alignment in the reference
-        # min_mapping_quality: 1  # integer >=0 Please use 1 when you have oligos that differ by 1 base in your reference/design file
+        alignment_start: 1 # start of the alignment in the reference/design_file
+        # min_mapping_quality: 1  # integer >=0 Please use 1 when you have oligos that differ by 1 base in your reference/design_file
         # sequence_length:  # sequence length of design excluding adapters.
         #   min: 195
         #   max: 205
-        # alignment_start:  # start of an alignment in the reference. Here using 15 bp adapters. Can be different when using adapter free approaches
+        # alignment_start:  # start of an alignment in the reference/design_file. Here using 15 bp adapters. Can be different when using adapter free approaches
         #   min: 15  # integer
         #   max: 17  # integer
     FW:
-      - resources/Assignment_BasiC/R1.fastq.gz
+      - resources/example/SRR10800986_1.200K.fastq.gz
     BC:
-      - resources/Assignment_BasiC/R2.fastq.gz
+      - resources/example/SRR10800986_2.200K.fastq.gz
     REV:
-      - resources/Assignment_BasiC/R3.fastq.gz
-    reference: resources/design.fa
+      - resources/example/SRR10800986_3.200K.fastq.gz
+    design_file: resources/count_basic/design.fa
     configs:
       default: {} # name of an example filtering config
 experiments:
   exampleCount:
     bc_length: 15
     umi_length: 10
-    data_folder: resources/Count_Basic/data
-    experiment_file: resources/example_experiment.csv
+    data_folder: resources/example
+    experiment_file: resources/example/experiment.csv
     demultiplex: false
     assignments:
       fromFile:
         type: file
-        assignment_file: resources/SRR10800986_filtered_coords_to_barcodes.tsv.gz
+        assignment_file: resources/count_basic/SRR10800986_filtered_coords_to_barcodes.tsv.gz
       fromWorkflow:
         type: config
         assignment_name: exampleAssignment
         assignment_config: default
-    design_file: resources/design.fa
-    label_file: resources/labels.tsv # optional
+    # label_file: resources/labels.tsv # optional
     configs:
       default: {} # name of an example filtering config

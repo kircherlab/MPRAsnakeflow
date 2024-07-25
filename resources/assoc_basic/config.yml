@@ -1,6 +1,5 @@
 ---
 global:
-  threads: 10
   assignments:
     split_number: 30
 assignments:
@@ -21,6 +20,6 @@ assignments:
       - data/SRR10800986_2.fastq.gz
     REV:
       - data/SRR10800986_3.fastq.gz
-    reference: data/design.fa
+    design_file: data/design.fa
     configs:
       default: {}
