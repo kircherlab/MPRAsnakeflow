@@ -4,6 +4,7 @@
 
 SCRIPTS_DIR = "../scripts"
 
+
 def getScript(name):
     return workflow.source_path("%s/%s" % (SCRIPTS_DIR, name))
 

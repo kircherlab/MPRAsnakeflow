@@ -86,9 +86,11 @@ rule statistic_counts_table:
     conda:
         "../../envs/default.yaml"
     input:
-        lambda wc: "results/experiments/{project}/counts/{condition}_{replicate}_{type}_{countType}_counts.tsv.gz"
-        if wc.countType != "raw"
-        else getRawCounts(wc.project, wc.type),
+        lambda wc: (
+            "results/experiments/{project}/counts/{condition}_{replicate}_{type}_{countType}_counts.tsv.gz"
+            if wc.countType != "raw"
+            else getRawCounts(wc.project, wc.type)
+        ),
     output:
         temp(
             "results/experiments/{project}/statistic/counts/{condition}_{replicate}_{type}_{countType}_counts.tsv.gz"
@@ -146,12 +148,16 @@ rule statistic_counts_BC_in_RNA_DNA:
     conda:
         "../../envs/default.yaml"
     input:
-        dna=lambda wc: "results/experiments/{project}/counts/{condition}_{replicate}_DNA_{countType}_counts.tsv.gz"
-        if wc.countType != "raw"
-        else getRawCounts(wc.project, "DNA"),
-        rna=lambda wc: "results/experiments/{project}/counts/{condition}_{replicate}_RNA_{countType}_counts.tsv.gz"
-        if wc.countType != "raw"
-        else getRawCounts(wc.project, "RNA"),
+        dna=lambda wc: (
+            "results/experiments/{project}/counts/{condition}_{replicate}_DNA_{countType}_counts.tsv.gz"
+            if wc.countType != "raw"
+            else getRawCounts(wc.project, "DNA")
+        ),
+        rna=lambda wc: (
+            "results/experiments/{project}/counts/{condition}_{replicate}_RNA_{countType}_counts.tsv.gz"
+            if wc.countType != "raw"
+            else getRawCounts(wc.project, "RNA")
+        ),
     output:
         temp(
             "results/experiments/{project}/statistic/counts/{condition}_{replicate}_{countType}_BC_in_RNA_DNA.tsv.gz"

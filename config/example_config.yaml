@@ -18,29 +18,33 @@ assignments:
         #   min: 15  # integer
         #   max: 17  # integer
     FW:
-      - resources/example/SRR10800986_1.200K.fastq.gz
+      - resources/assoc_basic/data/SRR10800986_1.fastq.gz
     BC:
-      - resources/example/SRR10800986_2.200K.fastq.gz
+      - resources/assoc_basic/data/SRR10800986_2.fastq.gz
     REV:
-      - resources/example/SRR10800986_3.200K.fastq.gz
-    design_file: resources/count_basic/design.fa
+      - resources/assoc_basic/data/SRR10800986_3.fastq.gz
+    design_file: resources/assoc_basic/design.fa
     configs:
       default: {} # name of an example filtering config
 experiments:
   exampleCount:
     bc_length: 15
     umi_length: 10
-    data_folder: resources/example
-    experiment_file: resources/example/experiment.csv
+    data_folder: resources/count_basic/data
+    experiment_file: resources/count_basic/experiment.csv
     demultiplex: false
     assignments:
       fromFile:
         type: file
-        assignment_file: resources/count_basic/SRR10800986_filtered_coords_to_barcodes.tsv.gz
+        assignment_file: resources/count_basic/SRR10800986_barcodes_to_coords.tsv.gz
       fromWorkflow:
         type: config
         assignment_name: exampleAssignment
         assignment_config: default
     # label_file: resources/labels.tsv # optional
     configs:
-      default: {} # name of an example filtering config
+      default:
+        filter:
+          bc_threshold: 1
+          DNA: {}
+          RNA: {}
