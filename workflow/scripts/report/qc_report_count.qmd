@@ -84,7 +84,7 @@ display(Image(f"{workdir}/{ratio_oligo_min_thre_plot}"))
 # Oligo Correlation Table
 ```{python}
 #| echo: false
-pd.read_csv(f"{workdir}/{statistics_all}", sep='\t')
+pd.read_csv(f"{workdir}/{statistics_all}", sep='\t').round(1)
 ```
 
 
