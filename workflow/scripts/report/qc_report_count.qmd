@@ -82,10 +82,22 @@ display(Image(f"{workdir}/{ratio_oligo_min_thre_plot}"))
 
 
 # Oligo Correlation Table
+```{python}
+#| echo: false
+first_value = pd.read_csv(f"{workdir}/{statistics_all_merged}", sep='\t')['oligos design'].iloc[0]
+```
+The total number of oligos in this experiment is `{python} first_value`.
+
+
+
+
+
+
 ## Merged
 ```{python}
 #| echo: false
-pd.read_csv(f"{workdir}/{statistics_all_merged}", sep='\t').round(1)
+a = pd.read_csv(f"{workdir}/{statistics_all_merged}", sep='\t').round(1)
+a
 ```
 
 ## Single

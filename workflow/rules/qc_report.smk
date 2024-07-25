@@ -58,7 +58,6 @@ rule qc_report_count:
         statistics_all_single = "results/experiments/{project}/statistic/statistic_assigned_counts_single_{assignment}_{config}.tsv",
         per_bar_code_dna = "results/experiments/{project}/statistic/barcode/counts/{condition}_{config}_{type}_perBarcode.png",
         # TODO add some explanation from the documentation about the headers in the table.
-        # TODO Total oligos seprately just one 
         # DNA_pearson	RNA_pearson	Ratio_pearson Remove the columns from this table and add this table statistic_oligo_correlation_merged_fromFile_default.
         # TODO add a lightening system. Warning pearson coorelation between replcate 1 and 2 is log.
         # TODO Later, after discussion with Max you can get multiple files for the pngs expanding {condition}.
