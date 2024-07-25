@@ -56,9 +56,9 @@ rule qc_report_count:
         ratio_oligo_min_thre_plot = "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_Ratio_pairwise_minThreshold.png",
         statistics_all_merged = "results/experiments/{project}/statistic/statistic_assigned_counts_merged_{assignment}_{config}.tsv",
         statistics_all_single = "results/experiments/{project}/statistic/statistic_assigned_counts_single_{assignment}_{config}.tsv",
+        statistics_all_oligo_cor_merged = "results/experiments/{project}/statistic/statistic_oligo_correlation_merged_{assignment}_{config}.tsv",
         per_bar_code_dna = "results/experiments/{project}/statistic/barcode/counts/{condition}_{config}_{type}_perBarcode.png",
         # TODO add some explanation from the documentation about the headers in the table.
-        # DNA_pearson	RNA_pearson	Ratio_pearson Remove the columns from this table and add this table statistic_oligo_correlation_merged_fromFile_default.
         # TODO add a lightening system. Warning pearson coorelation between replcate 1 and 2 is log.
         # TODO Later, after discussion with Max you can get multiple files for the pngs expanding {condition}.
         # resources/count_basic/results/experiments/exampleCount/statistic/statistic_assigned_counts_single_fromFile_default.tsv
@@ -90,6 +90,7 @@ rule qc_report_count:
         -P statistics_all_merged:{input.statistics_all_merged} \
         -P per_bar_code_dna:{input.per_bar_code_dna} \
         -P statistics_all_single:{input.statistics_all_single} \
+        -P statistics_all_oligo_cor_merged:{input.statistics_all_oligo_cor_merged} \
         -P tresh:{params.tresh} \
         -P workdir:{params.workdir}
         rm config.yml
