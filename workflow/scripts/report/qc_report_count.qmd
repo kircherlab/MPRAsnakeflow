@@ -61,7 +61,7 @@ def display_image(file_path, root_path=ROOT_PATH):
 display(Image(f"{workdir}/{per_bar_code_dna}")) 
 ```
 
-# Oligo Corelation with Minimum Threashold
+# Oligo Corelation with Minimum Threashold `{python} tresh`
 ## DNA
 ```{python}
 #| echo: false

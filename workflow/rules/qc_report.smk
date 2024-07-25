@@ -56,7 +56,6 @@ rule qc_report_count:
         ratio_oligo_min_thre_plot = "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_Ratio_pairwise_minThreshold.png",
         statistics_all = "results/experiments/{project}/statistic/statistic_assigned_counts_merged_{assignment}_{config}.tsv",
         per_bar_code_dna = "results/experiments/{project}/statistic/barcode/counts/{condition}_{config}_{type}_perBarcode.png",
-        # TODO also add the minimum threashold value.
         # TODO add some explanation from the documentation about the headers in the table.
         # TODO Total oligos seprately just one 
         # TODO remove extra decimal points.
@@ -74,6 +73,7 @@ rule qc_report_count:
     params:
         condition = lambda wildcards: getConditions(wildcards.project),
         workdir = os.getcwd(),
+        tresh=lambda wildcards: str(config["experiments"][wildcards.project]["configs"][wildcards.config]["filter"]["bc_threshold"])
 
     shell:
         """
@@ -91,6 +91,7 @@ rule qc_report_count:
         -P ratio_oligo_min_thre_plot:{input.ratio_oligo_min_thre_plot} \
         -P statistics_all:{input.statistics_all} \
         -P per_bar_code_dna:{input.per_bar_code_dna} \
+        -P tresh:{params.tresh} \
         -P workdir:{params.workdir}
         rm config.yml
         """
