@@ -89,14 +89,11 @@ first_value = pd.read_csv(f"{workdir}/{statistics_all_merged}", sep='\t')['oligo
 The total number of oligos in this experiment is `{python} first_value`.
 
 
-
-
-
-
 ## Merged
 ```{python}
 #| echo: false
 a = pd.read_csv(f"{workdir}/{statistics_all_merged}", sep='\t').round(1)
+a.drop(columns=['oligos design'], inplace=True)
 a
 ```
 
