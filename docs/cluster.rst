@@ -20,7 +20,7 @@ having 30 cores and 10GB of memory.
 
 .. code-block:: bash
 
-    snakemake --sdm conda --configfile config/config.yaml -c 30 --resources mem_mb=10000  --workflow-profile profiles/default --executor slurm
+    snakemake --sdm conda --configfile config/config.yaml -c 30 --resources mem_mb=10000  --workflow-profile profiles/default
 
 Running on an HPC using SLURM
 -----------------------------
