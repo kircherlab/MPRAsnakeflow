@@ -37,14 +37,6 @@ experiments:
       fromFile:
         type: file
         assignment_file: resources/count_basic/SRR10800986_barcodes_to_coords.tsv.gz
-      fromWorkflow:
-        type: config
-        assignment_name: exampleAssignment
-        assignment_config: default
     # label_file: resources/labels.tsv # optional
     configs:
-      default:
-        filter:
-          bc_threshold: 1
-          DNA: {}
-          RNA: {}
+      default: {}

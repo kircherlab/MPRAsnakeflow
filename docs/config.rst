@@ -56,7 +56,7 @@ Each assignment you want to process you have to giv him a name like :code:`examp
         :alignment_start (bwa):
             Defines the :code:`min` and :code:`max` of the start of the alignment in an oligo. When using adapters you have to set basically the length of the adapter. Otherwise 1 will be the choice for most cases. We also recommend to vary this value a bit because the start might not be exact after the adapter. E.g. by +-1.
         :min_mapping_quality (bwa):
-            (Optinal) Defines the minimum mapping quality (MAPQ) of the alinment to an oligo. When using oligos with only 1bp difference it is recommended to set it to 0. Otherwise the default value of 1 is recommended. 
+            (Optinal) Defines the minimum mapping quality (MAPQ) of the alinment to an oligo. When using oligos with only 1bp difference it is recommended to set it to 1. For regions only with larger edit distances 30 or 40 might be a good choice. Default is 1. 
         :sequence_length (exact):
             Defines the :code:`sequence_length` which is the length of a sequence alignment to an oligo in the design file. Only one length design is supported.
         :alignment_start (exact):
