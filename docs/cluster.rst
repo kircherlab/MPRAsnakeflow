@@ -6,7 +6,7 @@ Running MPRAsnakeflow on HPC Cluster
 
 Snakemake gives us the opportunity to run MPRAsnakeflow in a cluster environment. Please check the Snakemake documentation for more information on how to set up a cluster environment. We use `snakemake resources <https://snakemake.readthedocs.io/en/stable/snakefiles/rules.html#resources>`_ to set the main resources per rule. Most resources are generic and can be used on multipe clusters, environments or even local. We have a preddefined workflow profile with resources: :download:`config.yaml <../profiles/default/config.yaml>`:
 
-.. literalinclude:: ../workflow/schemas/config.schema.yaml
+.. literalinclude:: ../profiles/default/config.yaml
     :language: yaml
     :lines: 1-30
 
