@@ -10,12 +10,16 @@ format:
     smooth-scroll: true
     toc: true
 jupyter: python3
+
 ---
+
+
 
 ```{python}
 #| echo: false
 # Imports
-from IPython.display import display, Image
+from IPython.display import display, Image, Markdown
+
 from pathlib import Path
 import pandas as pd 
 import os
@@ -43,6 +47,25 @@ from workflow.scripts.report.report_functions import display_unique_images, get_
 #| tags: [parameters]
 #| echo: false
 ```
+
+
+```{python}
+#| echo: false
+
+
+if tresh == 10:
+    display(Markdown('''
+::: {.callout-warning}
+
+## Pay Attention
+
+Using callouts is an effective way to highlight content that your reader should give special consideration or attention.
+
+:::
+'''))
+
+```
+
 
 
 ```{python}
