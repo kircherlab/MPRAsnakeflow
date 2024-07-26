@@ -33,7 +33,7 @@ Using the slurm excecutor plugin running 300 jobs in parallel.
 
 
 Snakemake 7
-===========
+-----------
 
 Here we used the :code:`cluster` option which is not anymore avialable in snakemake 8. You can also use the predefined `config/sbatch.yaml` but this might be outdated and we highly recommend to use resources with the workfloe profile. 
 
