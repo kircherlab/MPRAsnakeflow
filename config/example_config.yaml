@@ -18,12 +18,12 @@ assignments:
         #   min: 15  # integer
         #   max: 17  # integer
     FW:
-      - resources/Assignment_BasiC/R1.fastq.gz
+      - resources/assoc_basic/data/SRR10800986_1.fastq.gz
     BC:
-      - resources/Assignment_BasiC/R2.fastq.gz
+      - resources/assoc_basic/data/SRR10800986_2.fastq.gz
     REV:
-      - resources/Assignment_BasiC/R3.fastq.gz
-    design_file: resources/design.fa
+      - resources/assoc_basic/data/SRR10800986_3.fastq.gz
+    design_file: resources/assoc_basic/design.fa
     configs:
       default: {} # name of an example filtering config
 experiments:
@@ -31,17 +31,12 @@ experiments:
     bc_length: 15
     umi_length: 10
     data_folder: resources/count_basic/data
-    experiment_file: resources/example_experiment.csv
+    experiment_file: resources/count_basic/experiment.csv
     demultiplex: false
     assignments:
       fromFile:
         type: file
-        assignment_file: resources/SRR10800986_filtered_coords_to_barcodes.tsv.gz
-      fromWorkflow:
-        type: config
-        assignment_name: exampleAssignment
-        assignment_config: default
-    design_file: resources/design.fa
-    label_file: resources/labels.tsv # optional
+        assignment_file: resources/count_basic/SRR10800986_barcodes_to_coords.tsv.gz
+    # label_file: resources/labels.tsv # optional
     configs:
-      default: {} # name of an example filtering config
+      default: {}

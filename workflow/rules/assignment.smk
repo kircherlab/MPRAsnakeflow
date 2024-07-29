@@ -191,7 +191,7 @@ rule assignment_collectBCs:
     output:
         "results/assignment/{assignment}/barcodes_incl_other.sorted.tsv.gz",
     params:
-        batch_size=getSplitNumber(),
+        batch_size="--batch-size=%d" % getSplitNumber() if getSplitNumber() > 1 else "",
     conda:
         "../envs/default.yaml"
     log:
@@ -199,7 +199,7 @@ rule assignment_collectBCs:
     shell:
         """
         export LC_ALL=C # speed up sort
-        sort -S 7G --batch-size={params.batch_size} --parallel={threads} -k1,1 -k2,2 -k3,3 -m {input} | \
+        sort -S 7G {params.batch_size} --parallel={threads} -k1,1 -k2,2 -k3,3 -m {input} | \
         gzip -c > {output} 2> {log}
         """
 

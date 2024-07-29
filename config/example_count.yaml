@@ -10,6 +10,5 @@ experiments:
       fromFile:
         type: file
         assignment_file: resources/count_basic/SRR10800986_barcodes_to_coords.tsv.gz
-    design_file: resources/count_basic/design.fa
     configs:
       default: {} # name of an example filtering config

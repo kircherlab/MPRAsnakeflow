@@ -1,7 +1,6 @@
 ---
 software-deployment-method: conda
 default-resources:
-  slurm_account: hpc-ag-kircher
   slurm_partition: debug
   mem: 2G
   runtime: 60
