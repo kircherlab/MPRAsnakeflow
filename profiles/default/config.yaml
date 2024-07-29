@@ -16,6 +16,8 @@ set-threads:
   assignment_collectBCs: 20
   assignment_merge: 10
 set-resources:
+  assigned_counts_combined_replicates_barcode_output:
+    runtime: 60
   assignment_check_design:
     runtime: 240
     slurm_partition: medium
