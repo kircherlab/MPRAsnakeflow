@@ -157,9 +157,20 @@ properties:
             additionalProperties: false
           design_file:
             type: string
-          fast_design_check:
-            type: boolean
-            default: true
+          design_check:
+            type: object
+            properties:
+              fast:
+                type: boolean
+                default: true
+              sequence_collitions:
+                type: boolean
+                default: true
+            default: {}
+            required:
+              - fast
+              - sequence_collitions
+            additionalProperties: false
           configs:
             type: object
             patternProperties:

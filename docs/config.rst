@@ -88,8 +88,14 @@ Each assignment you want to process you have to giv him a name like :code:`examp
 
 :design_file:
     Design file (full or relative path) in fasta format. The design file should contain the oligos in fasta format. The header should contain the oligo name and should be unique. The sequence should be the sequence of the oligo and must also be unique. When having multiple oligo names with the same sequence please merge them into one fasta entry. The oligo name later used to link barcode to oligo. The sequence is used to map the reads to the oligos. Adapters can be in the seuqence and therefore :code:`alignment_start` has to be adjusted.
-:fast_design_check:
-    (Optional) Using a simple dictionary to find identical sequences. This is faster but uses only the whole (or center part depending on start/length) of the design file. Cannot find substrings as part of any sequence. Set to false for more correct, but slower, search. Default :code:`true`.
+:design_check:
+    (Optional) Options for checking your design fasta file. Design  file cannot have :code:`[` or :code:`]`, duplicated headers and for best performance sequences should not be identical.
+
+    :fast:
+        (Optional) Using a simple dictionary to find identical sequences. This is faster but uses only the whole (or center part depending on start/length) of the design file. Cannot find substrings as part of any sequence. Set to false for more correct, but slower, search. Default :code:`true`.
+    :sequence_collitions:
+        (Optional) Check if there are identical sequences in the design file. Default :code:`true`.
+
 :configs:
     After mapping the reads to the design file and extracting the barcodes per oligo the configuration (using different names) can be used to generate multiple filtering and configuration settings of the final maq oligo to barcode. Each configuration is a dictionary with the following keys:
     
