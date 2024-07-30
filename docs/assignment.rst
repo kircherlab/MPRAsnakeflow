@@ -17,7 +17,7 @@ Fastq Files
 
 Design File
 -----------
-Fasta file of of CRS sequences with unique headers describing each tested sequence
+Multi-Fasta file of of CRS sequences with unique headers describing each tested sequence
 
 Example file:
 
@@ -32,23 +32,25 @@ Example file:
     >CRS4
     TTAGACCGCCCTTTACCCCGAGAAAACTCAGCTACACACTC
 
+.. note:: Headers of the design file must be unique (before any space), cannot contain :code:`[` or :code:`]` and should not contain duplicated sequences (forward and antisense).
+
 Config File
 -----------
-Multiple mapping strategies are implemented to find the corresponding CRS sequence for each read. The mapping strategy can be chosen in the config file (bwa mem or exact matches). The config file also defines the filtering of the mapping results. The config file is a yaml file.
+Multiple mapping strategies are implemented to find the corresponding CRS sequence for each read. The mapping strategy can be chosen in the config file (bwa mem or exact matches). The config file also defines the filtering of the mapping results and is is a yaml file.
 
 Example of an assignment file using bwa and the standard filtering:
 
-.. literalinclude:: ../configs/example_assignment_bwa.yml
+.. literalinclude:: ../configs/example_assignment_bwa.yaml
    :language: yaml
 
 Example of an assignment file using exact matches and the with and non-default filtering of barcodes:
 
-.. literalinclude:: ../configs/example_assignment_exact_lazy.yml
+.. literalinclude:: ../configs/example_assignment_exact_lazy.yaml
    :language: yaml
 
 Example of an assignment file using exact matches and read 1 with BC, linker and oligo (no seperate BC index read):
 
-.. literalinclude:: ../configs/example_assignment_exact_linker.yml
+.. literalinclude:: ../configs/example_assignment_exact_linker.yaml
    :language: yaml
 
 snakemake
@@ -64,8 +66,8 @@ Mandatory arguments:
     Use at most N CPU cores/jobs in parallel. If N is omitted or 'all', the limit is set to the number of available CPU cores. In case of cluster/cloud execution, this argument sets the number of total cores used over all jobs (made available to rules via workflow.cores).(default: None)
   :\-\-configfile:
     Specify or overwrite the config file of the workflow (see the docs). Values specified in JSON or YAML format are available in the global config dictionary inside the workflow. Multiple files overwrite each other in the given order. Thereby missing keys in previous config files are extended by following configfiles. Note that this order also includes a config file defined in the workflow definition itself (which will come first). (default: None)
-  :\-\-use-conda:             
-    **Required to run MPRAsnakeflow.** If defined in the rule, run job in a conda environment. If this flag is not set, the conda directive is ignored. (default: False)
+  :\-\-sdm:             
+    **Required to run MPRAsnakeflow.** : :code:`--sdm conda` or :code:`--sdm apptainer` Uses the defined conda environment per rule. We highly recommend to use apptainer where we build a predefined docker container with all software installewd within it. :code:`--sdm conda` teh conda envs will be installed by the first excecution of the workflow. If this flag is not set, the conda/apptainer directive is ignored. (default: False)
 Recommended arguments:
   :\-\-snakefile:             
     You should not need to specify this. By default, Snakemake will search for 'Snakefile', 'snakefile', 'workflow/Snakefile','workflow/snakefile' beneath the current working directory, in this order. Only if you definitely want a different layout, you need to use this parameter. This is very usefull when you want to have the results in a different folder than MPRAsnakeflow is in. (default: None)

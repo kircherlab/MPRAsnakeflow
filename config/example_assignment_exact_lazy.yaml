@@ -8,7 +8,7 @@ assignments:
     alignment_tool:
       tool: exact # bwa or exact
       configs:
-        sequence_length: 170 # sequence length of design excluding adapters.
+        sequence_length: 171 # sequence length of design excluding adapters.
         alignment_start: 1 # start of the alignment in the reference/design_file
     FW:
       - resources/Assignment_BasiC/R1.fastq.gz
