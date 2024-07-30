@@ -12,7 +12,6 @@ import click
 import numpy as np
 
 
-
 # options
 @click.command()
 @click.option(
@@ -36,7 +35,13 @@ import numpy as np
     type=int,
     help="length of the sequence to lok at,",
 )
-def cli(input_file, start, length):
+@click.option(
+    "--fast-dict/--slow-string-search",
+    "fast_search",
+    default=True,
+    help="Using a simple dictionary to find identical sequences. This is faster but uses only the whole (or center part depending on start/length) of the design file. But in theory a substring can only be present and for more correct, but slower, search use the --slow-string-search.",
+)
+def cli(input_file, start, length, fast_search):
 
     seq_dict = dict()
 
@@ -55,17 +60,27 @@ def cli(input_file, start, length):
 
     # check for illegal characters
     click.echo("Searching for illegal characters in header...")
-    illegal_characters =  np.array([True if "[" in i or "]" in i else False for i in set(ids)], dtype=bool).sum()
+    illegal_characters = np.array(
+        [True if "[" in i or "]" in i else False for i in set(ids)], dtype=bool
+    ).sum()
     if illegal_characters > 0:
-        click.echo(f"{illegal_characters} headers contain illegal characters ('[',']').", err=True)
+        click.echo(
+            f"{illegal_characters} headers contain illegal characters ('[',']').",
+            err=True,
+        )
         exit(1)
 
     # build seq dict
     click.echo("Building sequence dictionary...")
     for i in range(len(fa)):
-        names = seq_dict.get(fa[i].seq, set())
+        if fast_search:
+            seq = fa[i][start - 1 : start + length - 1].seq
+        else:
+            seq = fa[i].seq
+
+        names = seq_dict.get(seq, set())
         names.add(fa[i].name)
-        seq_dict[fa[i].seq] = names
+        seq_dict[seq] = names
 
     # search for collisions
     click.echo("Searching for collisions...")
@@ -76,11 +91,15 @@ def cli(input_file, start, length):
 
         forward_collition = set()
         antisense_collition = set()
-        for seq, names in seq_dict.items():
-            if sub_seq_forward in seq:
-                forward_collition.update(names)
-            if sub_seq_antisense in seq:
-                antisense_collition.update(names)
+        if fast_search:
+            forward_collition.update(seq_dict.get(sub_seq_forward, set()))
+            antisense_collition.update(seq_dict.get(sub_seq_antisense, set()))
+        else:
+            for seq, names in seq_dict.items():
+                if sub_seq_forward in seq:
+                    forward_collition.update(names)
+                if sub_seq_antisense in seq:
+                    antisense_collition.update(names)
 
         if len(forward_collition) > 1:
             forward_collitions.append(forward_collition)
@@ -92,14 +111,27 @@ def cli(input_file, start, length):
     antisense_collition = [list(i) for i in set(tuple(i) for i in antisense_collition)]
 
     if (len(forward_collitions) > 0) or (len(antisense_collitions) > 0):
-        click.echo("Collisions found:", err=True)
+        click.echo(
+            f"Found {len(forward_collitions)} forward and {len(antisense_collitions)} antisense collisions",
+            err=True,
+        )
+        click.echo(
+            "-----------------FORWARD COLLISIONS-----------------",
+            err=True,
+        )
         for i in range(len(forward_collitions)):
             click.echo(
-                f"Forward collision {i+1} for sequences:\t{"\t".join(forward_collitions[i])}", err=True
+                "\t".join(forward_collitions[i]),
+                err=True,
             )
+
+        click.echo(
+            "-----------------ANTISENSE COLLISIONS-----------------",
+            err=True,
+        )
         for i in range(len(antisense_collitions)):
             click.echo(
-                f"Antisense collision {i+1} for sequences:\t{"\t".join(antisense_collitions[i])}",
+                "\t".join(antisense_collitions[i]),
                 err=True,
             )
         exit(1)

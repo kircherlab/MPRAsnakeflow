@@ -46,6 +46,11 @@ rule assignment_check_design:
                 "sequence_length"
             ]["min"]
         ),
+        fast_check=lambda wc: (
+            "--fast-dict"
+            if config["assignments"][wc.assignment]["fast_design_check"]
+            else "--slow-string-search"
+        ),
     log:
         log=temp("results/logs/assignment/check_design.{assignment}.log"),
         err="results/assignment/{assignment}/design_check.err",
@@ -53,7 +58,7 @@ rule assignment_check_design:
         """
         trap "cat {log.err}" ERR
         cp {input.design} {output.ref}
-        python {input.script} --input {output.ref} --start {params.start} --length {params.length} > {log.log} 2> {log.err};
+        python {input.script} --input {output.ref} --start {params.start} --length {params.length} {fast_check} > {log.log} 2> {log.err};
         """
 
 

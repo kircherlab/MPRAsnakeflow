@@ -56,7 +56,7 @@ Each assignment you want to process you have to giv him a name like :code:`examp
         :alignment_start (bwa):
             Defines the :code:`min` and :code:`max` of the start of the alignment in an oligo. When using adapters you have to set basically the length of the adapter. Otherwise 1 will be the choice for most cases. We also recommend to vary this value a bit because the start might not be exact after the adapter. E.g. by +-1.
         :min_mapping_quality (bwa):
-            (Optinal) Defines the minimum mapping quality (MAPQ) of the alinment to an oligo. When using oligos with only 1bp difference it is recommended to set it to 1. For regions only with larger edit distances 30 or 40 might be a good choice. Default is 1. 
+            (Optinal) Defines the minimum mapping quality (MAPQ) of the alinment to an oligo. When using oligos with only 1bp difference it is recommended to set it to 1. For regions only with larger edit distances 30 or 40 might be a good choice. Default :code:`1`. 
         :sequence_length (exact):
             Defines the :code:`sequence_length` which is the length of a sequence alignment to an oligo in the design file. Only one length design is supported.
         :alignment_start (exact):
@@ -80,14 +80,16 @@ Each assignment you want to process you have to giv him a name like :code:`examp
     (Optional) Options for NGmerge. NGmerge is used merge FW and REV reads. The following options are possible (we recommend to use the default values):
 
     :min_overlap:
-        (Optional) Minimum overlap of the reads. Default is set to 20.
+        (Optional) Minimum overlap of the reads. Default :code:`20`.
     :frac_mismatches_allowed:
-        (Optional) Fraction of mismatches allowed in the overlap. Default is set to 0.1.
+        (Optional) Fraction of mismatches allowed in the overlap. Default :code:`0.1`.
     :min_dovetailed_overlap:
-        (Optional) Minimum dovetailed overlap. Default is set to 10.
+        (Optional) Minimum dovetailed overlap. Default :code:`10`.
 
 :design_file:
     Design file (full or relative path) in fasta format. The design file should contain the oligos in fasta format. The header should contain the oligo name and should be unique. The sequence should be the sequence of the oligo and must also be unique. When having multiple oligo names with the same sequence please merge them into one fasta entry. The oligo name later used to link barcode to oligo. The sequence is used to map the reads to the oligos. Adapters can be in the seuqence and therefore :code:`alignment_start` has to be adjusted.
+:fast_design_check:
+    (Optional) Using a simple dictionary to find identical sequences. This is faster but uses only the whole (or center part depending on start/length) of the design file. Cannot find substrings as part of any sequence. Set to false for more correct, but slower, search. Default :code:`true`.
 :configs:
     After mapping the reads to the design file and extracting the barcodes per oligo the configuration (using different names) can be used to generate multiple filtering and configuration settings of the final maq oligo to barcode. Each configuration is a dictionary with the following keys:
     

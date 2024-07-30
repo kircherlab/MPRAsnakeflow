@@ -157,6 +157,9 @@ properties:
             additionalProperties: false
           design_file:
             type: string
+          fast_design_check:
+            type: boolean
+            default: true
           configs:
             type: object
             patternProperties:
