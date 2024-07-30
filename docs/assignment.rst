@@ -40,17 +40,17 @@ Multiple mapping strategies are implemented to find the corresponding CRS sequen
 
 Example of an assignment file using bwa and the standard filtering:
 
-.. literalinclude:: ../configs/example_assignment_bwa.yaml
+.. literalinclude:: ../config/example_assignment_bwa.yaml
    :language: yaml
 
 Example of an assignment file using exact matches and the with and non-default filtering of barcodes:
 
-.. literalinclude:: ../configs/example_assignment_exact_lazy.yaml
+.. literalinclude:: ../config/example_assignment_exact_lazy.yaml
    :language: yaml
 
 Example of an assignment file using exact matches and read 1 with BC, linker and oligo (no seperate BC index read):
 
-.. literalinclude:: ../configs/example_assignment_exact_linker.yaml
+.. literalinclude:: ../config/example_assignment_exact_linker.yaml
    :language: yaml
 
 snakemake
