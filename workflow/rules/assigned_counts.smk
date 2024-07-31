@@ -234,10 +234,11 @@ rule assigned_counts_combine_replicates:
     output:
         "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{allreps_or_threshold}_merged.combined.tsv.gz",
     params:
-        label_file=lambda wc: "--labels %s"
-        % config["experiments"][wc.project]["label_file"]
-        if "label_file" in config["experiments"][wc.project]
-        else "",
+        label_file=lambda wc: (
+            "--labels %s" % config["experiments"][wc.project]["label_file"]
+            if "label_file" in config["experiments"][wc.project]
+            else ""
+        ),
     log:
         temp(
             "results/logs/assigned_counts/combine_replicates.{project}.{condition}.{config}.{assignment}.{allreps_or_threshold}.log"

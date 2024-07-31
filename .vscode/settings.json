@@ -1,0 +1,4 @@
+{
+    "editor.wordWrap": "on",
+    "python.analysis.typeCheckingMode": "basic"
+}

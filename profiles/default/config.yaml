@@ -1,25 +1,31 @@
 ---
 software-deployment-method: conda
 default-resources:
-  slurm_account: hpc-ag-kircher
   slurm_partition: debug
   mem: 2G
-  threads: 1
   runtime: 60
 # error: "logs/%x_%j_%N.err"
 # output: "logs/%x_%j_%N.log"
 ##################
 ### ASSIGNMENT ###
 ##################
+set-threads:
+  assignment_mapping_bwa: 30
+  assignment_collect: 30
+  assignment_collectBCs: 20
+  assignment_merge: 10
 set-resources:
+  assigned_counts_combined_replicates_barcode_output:
+    runtime: 60
+  assignment_check_design:
+    runtime: 240
+    slurm_partition: medium
   assignment_hybridFWRead_get_reads_by_length:
     runtime: 1140
-    threads: 1
     mem: 2G
     slurm_partition: medium
   assignmemt_hybridFWRead_get_reads_by_cutadapt:
     runtime: 1200
-    threads: 1
     mem: 4G
     slurm_partition: medium
   assignment_merge:
@@ -27,46 +33,37 @@ set-resources:
     slurm_partition: medium
   assignment_fastq_split:
     runtime: 1440
-    threads: 1
     mem: 10G
     slurm_partition: medium
   assignment_mapping_bwa:
     runtime: 120
-    threads: 30
     mem: 10G
     slurm_partition: medium
   assignment_collect:
     runtime: 2160
-    threads: 30
     mem: 10G
     slurm_partition: medium
   assignment_getBCs:
     runtime: 240
-    threads: 1
     slurm_partition: medium
   assignment_collectBCs:
     runtime: 3120
-    threads: 20
     mem: 10G
     slurm_partition: medium
   assignment_mapping_exact:
     runtime: 60
-    threads: 1
     mem: 10G
     slurm_partition: debug
   assignment_statistic_totalCounts:
     runtime: 60
-    threads: 1
     slurm_partition: medium
     mem: 60G
   assignment_statistic_assignedCounts:
     runtime: 60
-    threads: 1
     slurm_partition: medium
     mem: 10G
   assignment_statistic_assignment:
     runtime: 60
-    threads: 1
     slurm_partition: medium
     mem: 40G
   ##############

@@ -6,7 +6,7 @@ Overview
 
 This pipeline processes sequencing data from Massively Parallel Reporter Assays (MPRAs) to create count tables for candidate sequences tested in the experiment.
 
-This package contains three utilities:
+This package contains two utilities:
 
 ASSIGNMENT (previous associations)
 ----------------------------------

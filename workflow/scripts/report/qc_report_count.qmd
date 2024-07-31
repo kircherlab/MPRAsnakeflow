@@ -19,28 +19,7 @@ jupyter: python3
 #| echo: false
 # Imports
 from IPython.display import display, Image, Markdown
-
-from pathlib import Path
-import pandas as pd 
-import os
-import sys
- 
-## Testing Imports
-import matplotlib.pyplot as plt
-import numpy as np
-
-## Constants
-image_path = Path(os.getcwd()).parent
-ROOT_PATH = Path(os.getcwd()).parent
-```
-
-```{python}
-#| echo: false
-## Function Imports
-cwd = Path.cwd()
-while cwd.name != 'MPRAsnakeflow': cwd = cwd.parent
-sys.path.insert(0, str(cwd))
-from workflow.scripts.report.report_functions import display_unique_images, get_unique_files
+import pandas as pd
 ```
 
 ```{python}
@@ -67,21 +46,17 @@ Using callouts is an effective way to highlight content that your reader should 
 ```
 
 
-
-```{python}
-#| echo: false
-import yaml
-
-def display_image(file_path, root_path=ROOT_PATH):
-    full_path = str(root_path) + file_path
-    print(full_path)
-    display(Image(full_path))
-```
-
 # Per Barcode 
+## DNA
 ```{python}
 #| echo: false
 display(Image(f"{workdir}/{per_bar_code_dna}")) 
+```
+
+## RNA
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{per_bar_code_rna}")) 
 ```
 
 # Oligo Corelation with Minimum Threashold `{python} tresh`

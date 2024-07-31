@@ -5,7 +5,8 @@ rule assignment_mapping_exact_reference:
     conda:
         "../../envs/default.yaml"
     input:
-        lambda wc: config["assignments"][wc.assignment]["reference"],
+        check="results/assignment/{assignment}/design_check.done",
+        ref="results/assignment/{assignment}/reference/reference.fa",
     output:
         "results/assignment/{assignment}/reference/reference_exact.fa",
     log:
@@ -13,11 +14,11 @@ rule assignment_mapping_exact_reference:
     shell:
         """
         paste <(
-            cat {input} | awk '{{if ($1 ~ /^>/) {{ gsub(/[\\]\\[]/,"_"); print substr($1,2)}}}}';
-            cat {input} | awk '{{if ($1 ~ /^>/) {{ gsub(/[\\]\\[]/,"_"); print substr($1,2)}}}}';
+            cat {input.ref} | awk '{{if ($1 ~ /^>/) {{ print substr($1,2)}}}}';
+            cat {input.ref} | awk '{{if ($1 ~ /^>/) {{ print substr($1,2)}}}}';
         ) <(
-            cat {input} | awk '{{if ($1 ~ /^[^>]/) {{ seq=seq$1}}; if ($1 ~ /^>/ && NR!=1) {{print seq; seq=""}}}} END {{print seq}}';
-            cat {input} | awk '{{if ($1 ~ /^[^>]/) {{ seq=seq$1}}; if ($1 ~ /^>/ && NR!=1) {{print seq; seq=""}}}} END {{print seq}}' | tr ACGTacgt TGCAtgca | rev;
+            cat {input.ref} | awk '{{if ($1 ~ /^[^>]/) {{ seq=seq$1}}; if ($1 ~ /^>/ && NR!=1) {{print seq; seq=""}}}} END {{print seq}}';
+            cat {input.ref} | awk '{{if ($1 ~ /^[^>]/) {{ seq=seq$1}}; if ($1 ~ /^>/ && NR!=1) {{print seq; seq=""}}}} END {{print seq}}' | tr ACGTacgt TGCAtgca | rev;
         ) > {output}
         """
 

@@ -3,12 +3,9 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - python=3.8
-  - pip
-  - pandoc
+  - python
   - quarto
   - jupyter
   - pandas
   - matplotlib
-  - plotly
   - papermill
