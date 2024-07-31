@@ -1,7 +1,6 @@
 .vscode/
 report.html
 logs
-results
 .cache
 !analysis/README.md
 !config
@@ -27,3 +26,4 @@ mix_data
 *data
 *report.html
 *.simg
+*results
