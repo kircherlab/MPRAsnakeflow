@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: install micromamba
-        uses: mamba-org/provision-with-micromamba@v12
+        uses: mamba-org/provision-with-micromamba@v16
         with:
           environment-file: docs/environment.yml
           environment-name: sphinx
@@ -28,7 +28,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Formatting
-        uses: super-linter/super-linter@v5
+        uses: super-linter/super-linter@v6
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: master

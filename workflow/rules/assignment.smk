@@ -11,13 +11,76 @@ include: "assignment/hybridFWRead.smk"
 include: "assignment/statistic.smk"
 
 
+rule assignment_check_design:
+    """
+    Check if the design file is correct and no duplicated sequences are present (FW and reverse).
+    Also check if no duplicated headers and no illegal characters in header.
+    """
+    conda:
+        "../envs/python3.yaml"
+    input:
+        design=lambda wc: config["assignments"][wc.assignment]["design_file"],
+        script=getScript("assignment/check_design_file.py"),
+    output:
+        temp("results/assignment/{assignment}/reference/reference.fa.fxi"),
+        touch("results/assignment/{assignment}/design_check.done"),
+        ref="results/assignment/{assignment}/reference/reference.fa",
+    params:
+        start=lambda wc: (
+            config["assignments"][wc.assignment]["alignment_tool"]["configs"][
+                "alignment_start"
+            ]
+            if config["assignments"][wc.assignment]["alignment_tool"]["tool"]
+            == "exact"
+            else config["assignments"][wc.assignment]["alignment_tool"]["configs"][
+                "alignment_start"
+            ]["max"]
+        ),
+        length=lambda wc: (
+            config["assignments"][wc.assignment]["alignment_tool"]["configs"][
+                "sequence_length"
+            ]
+            if config["assignments"][wc.assignment]["alignment_tool"]["tool"]
+            == "exact"
+            else config["assignments"][wc.assignment]["alignment_tool"]["configs"][
+                "sequence_length"
+            ]["min"]
+        ),
+        fast_check=lambda wc: (
+            "--fast-dict"
+            if config["assignments"][wc.assignment]["design_check"]["fast"]
+            else "--slow-string-search"
+        ),
+        check_sequence_collitions=lambda wc: (
+            "--perform-sequence-check"
+            if config["assignments"][wc.assignment]["design_check"][
+                "sequence_collitions"
+            ]
+            else "--skip-sequence-check"
+        ),
+    log:
+        log=temp("results/logs/assignment/check_design.{assignment}.log"),
+        err="results/assignment/{assignment}/design_check.err",
+    shell:
+        """
+        trap "cat {log.err}" ERR
+        cp {input.design} {output.ref}
+        python {input.script} --input {output.ref} \
+        --start {params.start} --length {params.length} \
+        {params.fast_check} {params.check_sequence_collitions} > {log.log} 2> {log.err};
+        """
+
+
 rule assignment_fastq_split:
     """
     Split the fastq files into n files for parallelisation. 
     n is given by split_read in the configuration file.
+
+    Runs only if the design file is correct.
     """
     input:
-        lambda wc: getAssignmentRead(wc.assignment, wc.read),
+        fastq=lambda wc: getAssignmentRead(wc.assignment, wc.read),
+        check="results/assignment/{assignment}/design_check.done",
     output:
         temp(
             expand(
@@ -43,7 +106,7 @@ rule assignment_fastq_split:
         ),
     shell:
         """
-        fastqsplitter -i <(zcat {input}) -t 1 {params.files} &> {log}
+        fastqsplitter -i <(zcat {input.fastq}) -t 1 {params.files} &> {log}
         """
 
 
@@ -63,9 +126,11 @@ rule assignment_attach_idx:
             "results/assignment/{assignment}/fastq/splits/{read}.split{split}.BCattached.fastq.gz"
         ),
     params:
-        BC_rev_comp=lambda wc: "--reverse-complement"
-        if config["assignments"][wc.assignment]["BC_rev_comp"]
-        else "",
+        BC_rev_comp=lambda wc: (
+            "--reverse-complement"
+            if config["assignments"][wc.assignment]["BC_rev_comp"]
+            else ""
+        ),
     log:
         temp("results/logs/assignment/attach_idx.{assignment}.{split}.{read}.log"),
     shell:
@@ -125,20 +190,22 @@ rule assignment_collectBCs:
     Get the barcodes.
     """
     input:
-        lambda wc: expand(
-            "results/assignment/{{assignment}}/BCs/barcodes_exact.{split}.tsv",
+        lambda wc: (
+            expand(
+                "results/assignment/{{assignment}}/BCs/barcodes_exact.{split}.tsv",
+                    split=range(0, getSplitNumber()),
+                )
+                if config["assignments"][wc.assignment]["alignment_tool"]["tool"]
+            == "exact"
+            else expand(
+                "results/assignment/{{assignment}}/BCs/barcodes_incl_other.{split}.tsv",
                 split=range(0, getSplitNumber()),
             )
-            if config["assignments"][wc.assignment]["alignment_tool"]["tool"] == "exact"
-        else expand(
-            "results/assignment/{{assignment}}/BCs/barcodes_incl_other.{split}.tsv",
-            split=range(0, getSplitNumber()),
         ),
     output:
         "results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
     params:
-        batch_size=getSplitNumber(),
-    threads: 20
+        batch_size="--batch-size=%d" % getSplitNumber() if getSplitNumber() > 1 else "",
     conda:
         "../envs/default.yaml"
     log:
@@ -146,7 +213,7 @@ rule assignment_collectBCs:
     shell:
         """
         export LC_ALL=C # speed up sort
-        sort -S 7G --batch-size={params.batch_size} --parallel={threads} -k1,1 -k2,2 -k3,3 -m {input} | \
+        sort -S 7G {params.batch_size} --parallel={threads} -k1,1 -k2,2 -k3,3 -m {input} | \
         gzip -c > {output} 2> {log}
         """
 

@@ -84,14 +84,14 @@ def cli(counts_files, bc_thresh, replicates, output_file):
     df_filtered = df_filtered.pivot(
         values=["dna_count", "rna_count"],
         index=["Barcode", "name"],
-        columns="replicate",
+        on="replicate",
     )
     df_filtered = df_filtered.sort("name")
 
     # order columns to have dna then rna count of each replicate
     col_order = sum(
         [
-            ["dna_count_replicate_" + rep, "rna_count_replicate_" + rep]
+            ["dna_count_" + rep, "rna_count_" + rep]
             for rep in replicates
         ],
         [],

@@ -27,11 +27,11 @@ It is necessary to get the ordered oligo array so that each enhancer sequence ca
 
 .. code-block:: bash
 
-    mkdir -p assoc_basic/data
-    cd assoc_basic/data
-    wget ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM4237nnn/GSM4237954/suppl/GSM4237954_9MPRA_elements.fa.gz
+   mkdir -p assoc_basic/data
+   cd assoc_basic/data
+   wget ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM4237nnn/GSM4237954/suppl/GSM4237954_9MPRA_elements.fa.gz
 
-    zcat GSM4237954_9MPRA_elements.fa.gz |awk '{ count+=1; if (count == 1) { print } else { print substr($1,1,171)}; if (count == 2) { count=0 } }' > design.fa
+   zcat GSM4237954_9MPRA_elements.fa.gz |awk '{ count+=1; if (count == 1) { print } else { print substr($1,1,171)}; if (count == 2) { count=0 } }' | awk '{gsub(/[\]\[]/,"_")} $0' > design.fa
 
 Reads
 ----------
@@ -108,19 +108,19 @@ First we do a try run using snakemake :code:`-n` option. The MPRAsnakeflow comma
 
     cd assoc_basic
     conda activate mprasnakeflow
-    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/assoc_basic/config.yml -n -q
+    snakemake -c 1 --sdm conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/assoc_basic/config.yml -n -q --set-threads assignment_mapping_bwa=10
 
 You should see a list of rules that will be executed. This is the summary:
 
 .. code-block:: text
    
-    Building DAG of jobs...
     Job stats:
     job                                    count
     -----------------------------------  -------
     all                                        1
     assignment_attach_idx                     60
     assignment_bwa_ref                         1
+    assignment_check_design                    1
     assignment_collect                         1
     assignment_collectBCs                      1
     assignment_fastq_split                     3
@@ -133,14 +133,14 @@ You should see a list of rules that will be executed. This is the summary:
     assignment_statistic_assignedCounts        1
     assignment_statistic_assignment            1
     assignment_statistic_totalCounts           1
-    total                                    163
+    total                                    164
 
 
 When dry-drun does not give any errors we will run the workflow. We use a machine with 30 threads/cores to run the workflow. Therefore :code:`split_number` is set to 30 to parallize the workflow. Also we are using 10 threads for mapping (bwa mem). But snakemake takes care that no more than 30 threads are used.
 
 .. code-block:: bash
 
-    snakemake -c 30 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/assoc_basic/config.yml
+    snakemake -c 30 --sdm conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/assoc_basic/config.yml -n -q --set-threads assignment_mapping_bwa=10
 
 
 .. note:: Please modify your code when running in a cluster environment. We have an example SLURM config file here :code:`config/sbatch.yml`.

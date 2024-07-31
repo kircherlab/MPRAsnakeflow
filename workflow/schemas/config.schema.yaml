@@ -14,7 +14,6 @@ properties:
   global:
     type: object
     default:
-      threads: 1
       assignments:
         split_number: 1
     properties:
@@ -25,9 +24,6 @@ properties:
             type: integer
             default: 1
         additionalProperties: false
-      threads:
-        type: integer
-        default: 1
     additionalProperties: false
   # start_assignments
   assignments:
@@ -159,8 +155,22 @@ properties:
               - min_dovetailed_overlap
             default: {}
             additionalProperties: false
-          reference:
+          design_file:
             type: string
+          design_check:
+            type: object
+            properties:
+              fast:
+                type: boolean
+                default: true
+              sequence_collitions:
+                type: boolean
+                default: true
+            default: {}
+            required:
+              - fast
+              - sequence_collitions
+            additionalProperties: false
           configs:
             type: object
             patternProperties:
@@ -193,7 +203,7 @@ properties:
           - FW
           - REV
           - bc_length
-          - reference
+          - design_file
           - configs
           - alignment_tool
           - NGmerge
@@ -225,8 +235,6 @@ properties:
           demultiplex:
             type: boolean
             default: false
-          design_file:
-            type: string
           label_file:
             type: string
           assignments:
@@ -358,7 +366,6 @@ properties:
           - data_folder
           - experiment_file
           - demultiplex
-          - design_file
           - assignments
           - configs
       additionalProperties: false
