@@ -9,10 +9,12 @@ format:
     anchor-sections: true
     smooth-scroll: true
     toc: true
+theme:
+  light: flatly
+  dark: darkly
 jupyter: python3
 
 ---
-
 
 
 ```{python}
@@ -30,15 +32,21 @@ import pandas as pd
 
 ```{python}
 #| echo: false
+dna_spear = float(pd.read_csv(f"{workdir}/{statistics_all_oligo_cor_merged}", sep='\t')['DNA_spearman'].iloc[0])
+rna_spear = float(pd.read_csv(f"{workdir}/{statistics_all_oligo_cor_merged}", sep='\t')['RNA_spearman'].iloc[0])
+ratio_spear = float(pd.read_csv(f"{workdir}/{statistics_all_oligo_cor_merged}", sep='\t')['Ratio_spearman'].iloc[0])
+```
 
+```{python}
+#| echo: false
 
-if tresh == 10:
-    display(Markdown('''
-::: {.callout-warning}
+if dna_spear < 0.85:
+    display(Markdown(f'''
+::: {"{.callout-important}"}
 
-## Pay Attention
+## DNA correlation below threashold
 
-Using callouts is an effective way to highlight content that your reader should give special consideration or attention.
+The DNA Spearman correlation is {dna_spear:.2f}, which is below the acceptable threshold of 0.85. 
 
 :::
 '''))
@@ -46,87 +54,135 @@ Using callouts is an effective way to highlight content that your reader should 
 ```
 
 
-# Per Barcode 
-## DNA
 ```{python}
 #| echo: false
-display(Image(f"{workdir}/{per_bar_code_dna}")) 
+
+
+if rna_spear < 0.95:
+    display(Markdown(f'''
+::: {"{.callout-important}"}
+
+## RNA correlation below threashold
+
+The RNA Spearman correlation is {rna_spear:.2f}, which is below the acceptable threshold of 0.95. 
+
+:::
+'''))
+
 ```
 
-## RNA
 ```{python}
 #| echo: false
-display(Image(f"{workdir}/{per_bar_code_rna}")) 
+
+
+if ratio_spear < 0.75:
+    display(Markdown(f'''
+::: {"{.callout-important}"}
+
+## Ratio correlation below threashold
+
+The Ratio Spearman correlation is {ratio_spear:.2f}, which is below the acceptable threshold of 0.75. 
+
+:::
+'''))
+
 ```
 
-# Oligo Corelation with Minimum Threashold `{python} tresh`
-## DNA
+
+
+# Oligo Coorelatioin
+::: {.panel-tabset}
+
+## Threashold `{python} tresh`
+# DNA
 ```{python}
 #| echo: false
-display(Image(f"{workdir}/{dna_oligo_coor_min_thre_plot}"))
+display(Image(f"{workdir}/{dna_oligo_coor_min_thre_plot }"))
 ```
 
-## RNA
+# RNA
 ```{python}
 #| echo: false
 display(Image(f"{workdir}/{rna_oligo_coor_min_thre_plot}"))
 ```
 
-## Ratio
+# Ratio
 ```{python}
 #| echo: false
 display(Image(f"{workdir}/{ratio_oligo_min_thre_plot}"))
 ```
 
 
-# Oligo Correlation Table
-```{python}
-#| echo: false
-first_value = pd.read_csv(f"{workdir}/{statistics_all_merged}", sep='\t')['oligos design'].iloc[0]
-```
-The total number of oligos in this experiment is `{python} first_value`.
-
-
-## Merged
-```{python}
-#| echo: false
-a = pd.read_csv(f"{workdir}/{statistics_all_merged}", sep='\t').round(1)
-a.drop(columns=['oligos design'], inplace=True)
-a
-```
-
-## Single
-```{python}
-#| echo: false
-pd.read_csv(f"{workdir}/{statistics_all_single}", sep='\t').round(1)
-```
-
-```{python}
-#| echo: false
-oligo_cor_merged_table = pd.read_csv(f"{workdir}/{statistics_all_oligo_cor_merged}", sep='\t').round(1)
-oligo_cor_merged_table = oligo_cor_merged_table[oligo_cor_merged_table[oligo_cor_merged_table.columns[-1]] == True]
-oligo_cor_merged_table.drop(columns=['DNA_pearson','RNA_pearson', 'Ratio_pearson'], inplace=True)
-oligo_cor_merged_table
-```
-
-
-
-# Oligo Corelation
-## DNA
+## All
+# DNA
 ```{python}
 #| echo: false
 display(Image(f"{workdir}/{dna_oligo_coor_plot}"))
 ```
 
-## RNA
+# RNA
 ```{python}
 #| echo: false
 display(Image(f"{workdir}/{rna_oligo_coor_plot}"))
 ```
 
-## Ratio
+# Ratio
 ```{python}
 #| echo: false
 display(Image(f"{workdir}/{ratio_oligo_coor_plot}"))
 ```
+:::
+
+# Per Barcode 
+
+::: {.panel-tabset}
+# DNA
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{per_bar_code_dna}")) 
+```
+
+# RNA
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{per_bar_code_rna}")) 
+```
+
+:::
+
+# Oligo Correlation Table
+```{python}
+#| echo: false
+first_value = str(pd.read_csv(f"{workdir}/{statistics_all_merged}", sep='\t')['oligos design'].iloc[0])
+```
+The total number of oligos in this experiment is `{python} first_value`.
+
+::: {.panel-tabset}
+
+# Merged
+```{python}
+#| echo: false
+a = pd.read_csv(f"{workdir}/{statistics_all_merged}", sep='\t').round(2)
+a.drop(columns=['oligos design'], inplace=True)
+a
+```
+
+# Single
+```{python}
+#| echo: false
+pd.read_csv(f"{workdir}/{statistics_all_single}", sep='\t').round(2)
+```
+
+:::
+
+
+# Statistics All
+```{python}
+#| echo: false
+oligo_cor_merged_table = pd.read_csv(f"{workdir}/{statistics_all_oligo_cor_merged}", sep='\t').round(2)
+oligo_cor_merged_table = oligo_cor_merged_table[oligo_cor_merged_table[oligo_cor_merged_table.columns[-1]] == False]
+oligo_cor_merged_table.drop(columns=['DNA_pearson','RNA_pearson', 'Ratio_pearson'], inplace=True)
+oligo_cor_merged_table
+```
+
 
