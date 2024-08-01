@@ -182,6 +182,7 @@ pd.read_csv(f"{workdir}/{statistics_all_single}", sep='\t').round(2)
 oligo_cor_merged_table = pd.read_csv(f"{workdir}/{statistics_all_oligo_cor_merged}", sep='\t').round(2)
 oligo_cor_merged_table = oligo_cor_merged_table[oligo_cor_merged_table[oligo_cor_merged_table.columns[-1]] == False]
 oligo_cor_merged_table.drop(columns=['DNA_pearson','RNA_pearson', 'Ratio_pearson'], inplace=True)
+oligo_cor_merged_table = oligo_cor_merged_table.drop(oligo_cor_merged_table.columns[-1], axis=1)
 oligo_cor_merged_table
 ```
 
