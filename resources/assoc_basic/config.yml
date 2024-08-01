@@ -20,6 +20,6 @@ assignments:
       - data/SRR10800986_2.fastq.gz
     REV:
       - data/SRR10800986_3.fastq.gz
-    design_file: data/design.fa
+    design_file: design.fa
     configs:
       default: {}

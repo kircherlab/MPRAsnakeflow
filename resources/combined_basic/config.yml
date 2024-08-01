@@ -20,7 +20,7 @@ assignments:
       - data/SRR10800986_2.fastq.gz
     REV:
       - data/SRR10800986_3.fastq.gz
-    design_file: data/design.fa
+    design_file: design.fa
     configs:
       default: {}
 experiments:
@@ -28,13 +28,13 @@ experiments:
     bc_length: 15
     umi_length: 10
     data_folder: data
-    experiment_file: data/experiment.csv
+    experiment_file: experiment.csv
     demultiplex: false
     assignments:
       fromWorkflow:
         type: config
         assignment_name: assocBasic
         assignment_config: configs
-    design_file: data/design.fa
+    design_file: design.fa
     configs:
       default: {}
