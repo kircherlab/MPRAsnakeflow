@@ -1,15 +1,5 @@
 import os
 
-# rule qc_report:
-#     input:
-#         getOutputProject_helper(
-#             [
-#                 "results/experiments/{project}/qc_report/qc_report.html",
-#             ]
-#         ),
-#        expand("results/assignment/{assignment}/qc_report.html", assignment=config['assignments'])
-
-
 rule qc_report_assoc:
     input:
         quarto_script=getScript("report/qc_report_assoc.qmd"),
