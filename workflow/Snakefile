@@ -50,6 +50,17 @@ include: "rules/common.smk"
 
 rule all:
     input:
+        ## report
+        getAssignmentConfig_helper(
+            [
+                "results/assignment/{assignment}/qc_report.{config}.html"
+            ]
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            [
+            "results/experiments/{project}/qc_report.{condition}.{assignment}.{config}.html"
+            ]
+        ),
         ## assignments
         getAssignmentConfig_helper(
             [
@@ -151,6 +162,19 @@ rule all:
             False,
         ),
 
+rule all_qc_report:
+    input:
+        getAssignmentConfig_helper(
+            [
+                "results/assignment/{assignment}/qc_report.{config}.html"
+            ]
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            [
+            "results/experiments/{project}/qc_report.{condition}.{assignment}.{config}.html"
+            ]
+        ),
+        
 
 rule all_assignments:
     input:
