@@ -32,120 +32,151 @@ import pandas as pd
 
 ```{python}
 #| echo: false
-dna_spear = float(pd.read_csv(f"{workdir}/{statistics_all_oligo_cor_merged}", sep='\t')['DNA_spearman'].iloc[0])
-rna_spear = float(pd.read_csv(f"{workdir}/{statistics_all_oligo_cor_merged}", sep='\t')['RNA_spearman'].iloc[0])
-ratio_spear = float(pd.read_csv(f"{workdir}/{statistics_all_oligo_cor_merged}", sep='\t')['Ratio_spearman'].iloc[0])
+oligo_cor_merged_table = pd.read_csv(f"{workdir}/{statistics_all_oligo_cor_merged}", sep='\t')
+oligo_cor_merged_table_thresh = oligo_cor_merged_table[oligo_cor_merged_table[oligo_cor_merged_table.columns[-1]] == True]
+oligo_cor_merged_table_all = oligo_cor_merged_table[oligo_cor_merged_table[oligo_cor_merged_table.columns[-1]] == False]
+
+dna_spear = oligo_cor_merged_table_thresh['DNA_spearman'].min()
+rna_spear = oligo_cor_merged_table_thresh['RNA_spearman'].min()
+ratio_spear = oligo_cor_merged_table_thresh['Ratio_spearman'].min()
 ```
 
 ```{python}
 #| echo: false
 
-if dna_spear < 0.85:
+threshold_dna_spear = 0.85
+threshold_rna_spear = 0.95
+threshold_ratio_spear = 0.75
+
+important = dna_spear < threshold_dna_spear and rna_spear < threshold_rna_spear and ratio_spear < threshold_ratio_spear
+warning = dna_spear < threshold_dna_spear or rna_spear < threshold_rna_spear or ratio_spear < threshold_ratio_spear
+
+if important:
     display(Markdown(f'''
 ::: {"{.callout-important}"}
 
-## DNA correlation below threashold
+## Low correlation!
 
-The DNA Spearman correlation is {dna_spear:.2f}, which is below the acceptable threshold of 0.85. 
+Spearman correlation across replicates is low using a barcode threshold per oligo of {thresh}! Spearman correlation of DNA is {dna_spear:.2f}, RNA is {rna_spear:.2f} and DNA/RNA ratio is {ratio_spear:.2f}. Minimum allowed varues are {threshold_dna_spear:.2f}, {threshold_rna_spear:.2f}, and {threshold_ratio_spear:.2f}.
+
+:::
+'''))
+elif warning:
+    display(Markdown(f'''
+::: {"{.callout-warning}"}
+
+## Low correlation warning!
+
+At least one (not all) Spearman correlations across replicates is low using a barcode threshold per oligo of {thresh}! Spearman correlation of DNA is {dna_spear:.2f}, RNA is {rna_spear:.2f} and DNA/RNA ratio is {ratio_spear:.2f}. Minimum allowed varues are {threshold_dna_spear:.2f}, {threshold_rna_spear:.2f}, and {threshold_ratio_spear:.2f}.
+
+:::
+'''))
+else:
+    display(Markdown(f'''
+::: {"{.callout-tip}"}
+
+## Good Spearman correlation across replicates!
+
+The data has a good Spearman correlations across replicates using a barcode threshold per oligo of {thresh}! Spearman correlation of DNA is {dna_spear:.2f}, RNA is {rna_spear:.2f} and DNA/RNA ratio is {ratio_spear:.2f}.
 
 :::
 '''))
 
 ```
-
-
-```{python}
-#| echo: false
-
-
-if rna_spear < 0.95:
-    display(Markdown(f'''
-::: {"{.callout-important}"}
-
-## RNA correlation below threashold
-
-The RNA Spearman correlation is {rna_spear:.2f}, which is below the acceptable threshold of 0.95. 
-
-:::
-'''))
-
-```
-
-```{python}
-#| echo: false
-
-
-if ratio_spear < 0.75:
-    display(Markdown(f'''
-::: {"{.callout-important}"}
-
-## Ratio correlation below threashold
-
-The Ratio Spearman correlation is {ratio_spear:.2f}, which is below the acceptable threshold of 0.75. 
-
-:::
-'''))
-
-```
-
 
 
 # Oligo Coorelatioin
+
+Oligo correlation plots of DNA, RNA and DNA/RNA ratios across replicates. First tab shows plots using (in average) `{python} "%d" % oligo_cor_merged_table_thresh['number_Oligos_Joined'].mean()` oligos with a minimum number of  `{python} thresh` barcodes. Second tab shows all `{python} "%d" % oligo_cor_merged_table_all['number_Oligos_Joined'].mean()` oligos that have assigned barcodes.
+
 ::: {.panel-tabset}
 
-## Threashold `{python} tresh`
-# DNA
+## Threshold `{python} thresh`
+
+::: {.panel-tabset}
+
+### DNA
 ```{python}
 #| echo: false
 display(Image(f"{workdir}/{dna_oligo_coor_min_thre_plot }"))
 ```
 
-# RNA
+### RNA
 ```{python}
 #| echo: false
 display(Image(f"{workdir}/{rna_oligo_coor_min_thre_plot}"))
 ```
 
-# Ratio
+### Ratio
 ```{python}
 #| echo: false
 display(Image(f"{workdir}/{ratio_oligo_min_thre_plot}"))
 ```
 
+:::
+
 
 ## All
-# DNA
+
+::: {.panel-tabset}
+
+### DNA
 ```{python}
 #| echo: false
 display(Image(f"{workdir}/{dna_oligo_coor_plot}"))
 ```
 
-# RNA
+### RNA
 ```{python}
 #| echo: false
 display(Image(f"{workdir}/{rna_oligo_coor_plot}"))
 ```
 
-# Ratio
+### Ratio
 ```{python}
 #| echo: false
 display(Image(f"{workdir}/{ratio_oligo_coor_plot}"))
 ```
+
 :::
 
-# Per Barcode 
+:::
+
+# Activity
+
+Violin and box plot of the log2 fold change of all oligos by the assay. Grouped by labels (if set).
+
+::: {.panel-tabset}
+
+## Threshold `{python} thresh`
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{activity_thresh}"))
+```
+
+## All
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{activity_all}"))
+```
+
+:::
+
+# Number of barcodes per oligo
+
+Histogramm of number of barcodes per oligo. Median is blue, mean is red.
 
 ::: {.panel-tabset}
 # DNA
 ```{python}
 #| echo: false
-display(Image(f"{workdir}/{per_bar_code_dna}")) 
+display(Image(f"{workdir}/{counts_per_oligo_dna}")) 
 ```
 
 # RNA
 ```{python}
 #| echo: false
-display(Image(f"{workdir}/{per_bar_code_rna}")) 
+display(Image(f"{workdir}/{counts_per_oligo_rna}")) 
 ```
 
 :::
@@ -175,15 +206,33 @@ pd.read_csv(f"{workdir}/{statistics_all_single}", sep='\t').round(2)
 
 :::
 
+# Statistics between replicates
 
-# Statistics All
 ```{python}
 #| echo: false
-oligo_cor_merged_table = pd.read_csv(f"{workdir}/{statistics_all_oligo_cor_merged}", sep='\t').round(2)
-oligo_cor_merged_table = oligo_cor_merged_table[oligo_cor_merged_table[oligo_cor_merged_table.columns[-1]] == False]
-oligo_cor_merged_table.drop(columns=['DNA_pearson','RNA_pearson', 'Ratio_pearson'], inplace=True)
-oligo_cor_merged_table = oligo_cor_merged_table.drop(oligo_cor_merged_table.columns[-1], axis=1)
-oligo_cor_merged_table
+
+def filter_table(df):
+    df = df.round(2).drop(columns=['DNA_pearson','RNA_pearson', 'Ratio_pearson'])
+    df = df.drop(df.columns[-1], axis=1)
+    return(df)
 ```
 
 
+
+::: {.panel-tabset}
+
+## Threshold `{python} thresh`
+```{python}
+#| echo: false
+oligo_cor_merged_table_thresh = filter_table(oligo_cor_merged_table_thresh)
+oligo_cor_merged_table_thresh
+```
+
+## All
+```{python}
+#| echo: false
+oligo_cor_merged_table_all = filter_table(oligo_cor_merged_table_all)
+oligo_cor_merged_table_all
+```
+
+:::

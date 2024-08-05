@@ -55,8 +55,10 @@ rule qc_report_count:
         statistics_all_merged="results/experiments/{project}/statistic/statistic_assigned_counts_merged_{assignment}_{config}.tsv",
         statistics_all_single="results/experiments/{project}/statistic/statistic_assigned_counts_single_{assignment}_{config}.tsv",
         statistics_all_oligo_cor_merged="results/experiments/{project}/statistic/statistic_oligo_correlation_merged_{assignment}_{config}.tsv",
-        per_bar_code_dna="results/experiments/{project}/statistic/barcode/counts/{condition}_{config}_DNA_perBarcode.png",
-        per_bar_code_rna="results/experiments/{project}/statistic/barcode/counts/{condition}_{config}_RNA_perBarcode.png",
+        counts_per_oligo_dna="results/experiments/{project}/statistic/barcode/assigned_counts/{assignment}/{condition}_{config}_DNA_perBarcode.png",
+        counts_per_oligo_rna="results/experiments/{project}/statistic/barcode/assigned_counts/{assignment}/{condition}_{config}_RNA_perBarcode.png",
+        activity_thresh="results/experiments/{project}/statistic/activity/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png",
+        activity_all="results/experiments/{project}/statistic/activity/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png",
         # TODO add some explanation from the documentation about the headers in the table.
         # TODO Later, after discussion with Max you can get multiple files for the pngs expanding {condition}.
     output:
@@ -69,7 +71,7 @@ rule qc_report_count:
     params:
         condition=lambda wildcards: getConditions(wildcards.project),
         workdir=os.getcwd(),
-        tresh=lambda wildcards: str(
+        thresh=lambda wildcards: str(
             config["experiments"][wildcards.project]["configs"][wildcards.config][
                 "filter"
             ]["bc_threshold"]
@@ -88,10 +90,12 @@ rule qc_report_count:
         -P ratio_oligo_coor_plot:{input.ratio_oligo_coor_plot} \
         -P ratio_oligo_min_thre_plot:{input.ratio_oligo_min_thre_plot} \
         -P statistics_all_merged:{input.statistics_all_merged} \
-        -P per_bar_code_dna:{input.per_bar_code_dna} \
-        -P per_bar_code_rna:{input.per_bar_code_rna} \
+        -P counts_per_oligo_dna:{input.counts_per_oligo_dna} \
+        -P counts_per_oligo_rna:{input.counts_per_oligo_rna} \
         -P statistics_all_single:{input.statistics_all_single} \
+        -P activity_all:{input.activity_all} \
+        -P activity_thresh:{input.activity_thresh} \
         -P statistics_all_oligo_cor_merged:{input.statistics_all_oligo_cor_merged} \
-        -P tresh:{params.tresh} \
+        -P thresh:{params.thresh} \
         -P workdir:{params.workdir}
         """
