@@ -2,6 +2,11 @@ import os
 
 
 rule qc_report_assoc:
+    """
+    This rule generates the QC report for the assignment.
+    """
+    conda:
+        "../envs/quarto.yaml"
     input:
         quarto_script=getScript("report/qc_report_assoc.qmd"),
         design_file=lambda wc: config["assignments"][wc.assignment]["design_file"],
@@ -13,8 +18,6 @@ rule qc_report_assoc:
         quarto_file=temp(
             "results/assignment/{assignment}/qc_report.{assignment_config}.qmd"
         ),
-    conda:
-        "../envs/quarto.yaml"
     params:
         bc_length=lambda wc: config["assignments"][wc.assignment]["bc_length"],
         fw=lambda wc: ";".join(list(config["assignments"][wc.assignment]["FW"])),
@@ -25,6 +28,8 @@ rule qc_report_assoc:
             if key in config["assignments"][wc.assignment]
         ],
         workdir=os.getcwd(),
+    log:
+        "results/logs/qc_report/assoc.{project}.{condition}.{assignment}.{config}.log",
     shell:
         """
         cp {input.quarto_script} {output.quarto_file};
@@ -40,11 +45,16 @@ rule qc_report_assoc:
         -P configs:{wildcards.assignment_config} \
         -P plot_file:{input.plot} \
         -P statistic_filter_file:{input.statistic_filter} \
-        -P statistic_all_file:{input.statistic_all}
+        -P statistic_all_file:{input.statistic_all} &> {log}
         """
 
 
 rule qc_report_count:
+    """
+    This rule generates the QC report for the count data.
+    """
+    conda:
+        "../envs/quarto.yaml"
     input:
         quarto_script=getScript("report/qc_report_count.qmd"),
         dna_oligo_coor_min_thre_plot="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_DNA_pairwise_minThreshold.png",
@@ -61,14 +71,11 @@ rule qc_report_count:
         counts_per_oligo_rna="results/experiments/{project}/statistic/barcode/assigned_counts/{assignment}/{condition}_{config}_RNA_perBarcode.png",
         activity_thresh="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png",
         activity_all="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png",
-        # TODO Later, after discussion with Max you can get multiple files for the pngs expanding {condition}.
     output:
         count_file="results/experiments/{project}/qc_report.{condition}.{assignment}.{config}.html",
         quarto_file=temp(
             "results/experiments/{project}/qc_report.{condition}.{assignment}.{config}.qmd"
         ),
-    conda:
-        "../envs/quarto.yaml"
     params:
         condition=lambda wildcards: getConditions(wildcards.project),
         workdir=os.getcwd(),
@@ -77,6 +84,8 @@ rule qc_report_count:
                 "filter"
             ]["bc_threshold"]
         ),
+    log:
+        "results/logs/qc_report/count.{project}.{condition}.{assignment}.{config}.log",
     shell:
         """
         cp {input.quarto_script} {output.quarto_file};
@@ -99,5 +108,5 @@ rule qc_report_count:
         -P statistics_all_oligo_cor_all:{input.statistics_all_oligo_cor_all} \
         -P statistics_all_oligo_cor_thresh:{input.statistics_all_oligo_cor_thresh} \
         -P thresh:{params.thresh} \
-        -P workdir:{params.workdir}
+        -P workdir:{params.workdir} &> {log}
         """
