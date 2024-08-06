@@ -32,20 +32,22 @@ rule qc_report_assoc:
         "results/logs/qc_report/assoc.{assignment}.{assignment_config}.log",
     shell:
         """
-        cp {input.quarto_script} {output.quarto_file};
-        cd `dirname {output.quarto_file}`;
-        quarto render `basename {output.quarto_file}` --output `basename {output.assi_file}` \
-        -P assignment:{wildcards.assignment} \
-        -P bc_length:{params.bc_length} \
-        -P fw:{params.fw} \
-        -P rev:{params.rev} \
-        -P bc:{params.bc} \
-        -P workdir:{params.workdir} \
-        -P design_file:{input.design_file} \
-        -P configs:{wildcards.assignment_config} \
-        -P plot_file:{input.plot} \
-        -P statistic_filter_file:{input.statistic_filter} \
-        -P statistic_all_file:{input.statistic_all} &> {log}
+        (
+            cp {input.quarto_script} {output.quarto_file};
+            cd `dirname {output.quarto_file}`;
+            quarto render `basename {output.quarto_file}` --output `basename {output.assi_file}` \
+            -P assignment:{wildcards.assignment} \
+            -P bc_length:{params.bc_length} \
+            -P fw:{params.fw} \
+            -P rev:{params.rev} \
+            -P bc:{params.bc} \
+            -P workdir:{params.workdir} \
+            -P design_file:{input.design_file} \
+            -P configs:{wildcards.assignment_config} \
+            -P plot_file:{input.plot} \
+            -P statistic_filter_file:{input.statistic_filter} \
+            -P statistic_all_file:{input.statistic_all} 
+        ) &> {log}
         """
 
 
@@ -88,25 +90,27 @@ rule qc_report_count:
         "results/logs/qc_report/count.{project}.{condition}.{assignment}.{config}.log",
     shell:
         """
-        cp {input.quarto_script} {output.quarto_file};
-        cd `dirname {output.quarto_file}`;
-        quarto render `basename {output.quarto_file}` --output `basename {output.count_file}` \
-        -P assignment:{wildcards.assignment} \
-        -P project:{wildcards.project} \
-        -P dna_oligo_coor_min_thre_plot:{input.dna_oligo_coor_min_thre_plot} \
-        -P rna_oligo_coor_min_thre_plot:{input.rna_oligo_coor_min_thre_plot} \
-        -P dna_oligo_coor_plot:{input.dna_oligo_coor_plot} \
-        -P rna_oligo_coor_plot:{input.rna_oligo_coor_plot} \
-        -P ratio_oligo_coor_plot:{input.ratio_oligo_coor_plot} \
-        -P ratio_oligo_min_thre_plot:{input.ratio_oligo_min_thre_plot} \
-        -P statistics_all_merged:{input.statistics_all_merged} \
-        -P counts_per_oligo_dna:{input.counts_per_oligo_dna} \
-        -P counts_per_oligo_rna:{input.counts_per_oligo_rna} \
-        -P statistics_all_single:{input.statistics_all_single} \
-        -P activity_all:{input.activity_all} \
-        -P activity_thresh:{input.activity_thresh} \
-        -P statistics_all_oligo_cor_all:{input.statistics_all_oligo_cor_all} \
-        -P statistics_all_oligo_cor_thresh:{input.statistics_all_oligo_cor_thresh} \
-        -P thresh:{params.thresh} \
-        -P workdir:{params.workdir} &> {log}
+        (
+            cp {input.quarto_script} {output.quarto_file};
+            cd `dirname {output.quarto_file}`;
+            quarto render `basename {output.quarto_file}` --output `basename {output.count_file}` \
+            -P assignment:{wildcards.assignment} \
+            -P project:{wildcards.project} \
+            -P dna_oligo_coor_min_thre_plot:{input.dna_oligo_coor_min_thre_plot} \
+            -P rna_oligo_coor_min_thre_plot:{input.rna_oligo_coor_min_thre_plot} \
+            -P dna_oligo_coor_plot:{input.dna_oligo_coor_plot} \
+            -P rna_oligo_coor_plot:{input.rna_oligo_coor_plot} \
+            -P ratio_oligo_coor_plot:{input.ratio_oligo_coor_plot} \
+            -P ratio_oligo_min_thre_plot:{input.ratio_oligo_min_thre_plot} \
+            -P statistics_all_merged:{input.statistics_all_merged} \
+            -P counts_per_oligo_dna:{input.counts_per_oligo_dna} \
+            -P counts_per_oligo_rna:{input.counts_per_oligo_rna} \
+            -P statistics_all_single:{input.statistics_all_single} \
+            -P activity_all:{input.activity_all} \
+            -P activity_thresh:{input.activity_thresh} \
+            -P statistics_all_oligo_cor_all:{input.statistics_all_oligo_cor_all} \
+            -P statistics_all_oligo_cor_thresh:{input.statistics_all_oligo_cor_thresh} \
+            -P thresh:{params.thresh} \
+            -P workdir:{params.workdir} 
+        ) &> {log}
         """
