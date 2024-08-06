@@ -130,6 +130,25 @@ COPY workflow/envs/python27.yaml /conda-envs/c1d850971f4158052cd52615fbc1591a/en
 RUN mkdir -p /conda-envs/d49adba2589cd2a66656b9298acdbece
 COPY workflow/envs/cutadapt.yaml /conda-envs/d49adba2589cd2a66656b9298acdbece/environment.yaml
 
+# Conda environment:
+#   source: workflow/envs/quarto.yaml
+#   prefix: /conda-envs/b8e51d222ab0d9caac2206a127729b1c
+#   channels:
+#      - conda-forge
+#      - bioconda
+#      - defaults
+#   dependencies:
+#      - python
+#      - quarto
+#      - jupyter
+#      - pandas
+#      - matplotlib
+#      - papermill
+RUN mkdir -p /conda-envs/b8e51d222ab0d9caac2206a127729b1c
+COPY workflow/envs/quarto.yaml /conda-envs/b8e51d222ab0d9caac2206a127729b1c/environment.yaml
+
+
+
 # Step 2: Generate conda environments
 
 RUN mamba env create --prefix /conda-envs/c243bde7dc056785a077f6c33e56e8d6 --file /conda-envs/c243bde7dc056785a077f6c33e56e8d6/environment.yaml && \
@@ -140,4 +159,5 @@ RUN mamba env create --prefix /conda-envs/c243bde7dc056785a077f6c33e56e8d6 --fil
     mamba env create --prefix /conda-envs/e6c048b22dbbbe081b8d18143c20afe3 --file /conda-envs/e6c048b22dbbbe081b8d18143c20afe3/environment.yaml && \
     mamba env create --prefix /conda-envs/c1d850971f4158052cd52615fbc1591a --file /conda-envs/c1d850971f4158052cd52615fbc1591a/environment.yaml && \
     mamba env create --prefix /conda-envs/d49adba2589cd2a66656b9298acdbece --file /conda-envs/d49adba2589cd2a66656b9298acdbece/environment.yaml && \
+    mamba env create --prefix /conda-envs/b8e51d222ab0d9caac2206a127729b1c --file /conda-envs/b8e51d222ab0d9caac2206a127729b1c/environment.yaml && \
     mamba clean --all -y
