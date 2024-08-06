@@ -57,8 +57,8 @@ rule qc_report_count:
         statistics_all_oligo_cor_merged="results/experiments/{project}/statistic/statistic_oligo_correlation_merged_{assignment}_{config}.tsv",
         counts_per_oligo_dna="results/experiments/{project}/statistic/barcode/assigned_counts/{assignment}/{condition}_{config}_DNA_perBarcode.png",
         counts_per_oligo_rna="results/experiments/{project}/statistic/barcode/assigned_counts/{assignment}/{condition}_{config}_RNA_perBarcode.png",
-        activity_thresh="results/experiments/{project}/statistic/activity/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png",
-        activity_all="results/experiments/{project}/statistic/activity/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png",
+        activity_thresh="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png",
+        activity_all="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png",
         # TODO add some explanation from the documentation about the headers in the table.
         # TODO Later, after discussion with Max you can get multiple files for the pngs expanding {condition}.
     output:

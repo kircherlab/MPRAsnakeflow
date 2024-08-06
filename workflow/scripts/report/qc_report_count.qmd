@@ -144,7 +144,7 @@ display(Image(f"{workdir}/{ratio_oligo_coor_plot}"))
 
 # Activity
 
-Violin and box plot of the log2 fold change of all oligos by the assay. Grouped by labels (if set).
+Violin and box plots of the log2 fold change of all oligos by the assay. Grouped by labels if set, otherwise `NA`. First tab shows plots using (in average) `{python} "%d" % oligo_cor_merged_table_thresh['number_Oligos_Joined'].mean()` oligos with a minimum number of  `{python} thresh` barcodes. Second tab shows all `{python} "%d" % oligo_cor_merged_table_all['number_Oligos_Joined'].mean()` oligos that have assigned barcodes.
 
 ::: {.panel-tabset}
 
@@ -184,18 +184,21 @@ display(Image(f"{workdir}/{counts_per_oligo_rna}"))
 # Oligo Correlation Table
 ```{python}
 #| echo: false
-first_value = str(pd.read_csv(f"{workdir}/{statistics_all_merged}", sep='\t')['oligos design'].iloc[0])
+
+pd_merged = pd.read_csv(f"{workdir}/{statistics_all_merged}", sep='\t').round(2)
+n_oligos = str(pd_merged['oligos design'].iloc[0])
 ```
-The total number of oligos in this experiment is `{python} first_value`.
+
+
+The total number of oligos in this experiment is `{python} n_oligos`.
 
 ::: {.panel-tabset}
 
 # Merged
 ```{python}
 #| echo: false
-a = pd.read_csv(f"{workdir}/{statistics_all_merged}", sep='\t').round(2)
-a.drop(columns=['oligos design'], inplace=True)
-a
+pd_merged.drop(columns=['oligos design'], inplace=True)
+pd_merged
 ```
 
 # Single
