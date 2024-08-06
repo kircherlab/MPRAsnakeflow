@@ -104,15 +104,15 @@ def filter_table(df):
 ## Threshold `{python} thresh`
 ```{python}
 #| echo: false
-oligo_cor_merged_table_thresh = filter_table(oligo_cor_merged_table_thresh)
-oligo_cor_merged_table_thresh.style.hide(axis="index").format( precision=2) 
+oligo_cor_merged_table_thresh_filter = filter_table(oligo_cor_merged_table_thresh)
+oligo_cor_merged_table_thresh_filter.style.hide(axis="index").format( precision=2) 
 ```
 
 ## All
 ```{python}
 #| echo: false
-oligo_cor_merged_table_all = filter_table(oligo_cor_merged_table_all)
-oligo_cor_merged_table_all.style.hide(axis="index").format( precision=2) 
+oligo_cor_merged_table_all_filter = filter_table(oligo_cor_merged_table_all)
+oligo_cor_merged_table_all_filter.style.hide(axis="index").format( precision=2) 
 ```
 
 :::
@@ -213,6 +213,7 @@ df_single.style.hide(axis="index").format( precision=2)
 Histogramm of number of barcodes per oligo. Median is blue, mean is red.
 
 ::: {.panel-tabset}
+
 # DNA
 ```{python}
 #| echo: false
@@ -226,7 +227,6 @@ display(Image(f"{workdir}/{counts_per_oligo_rna}"))
 ```
 
 :::
-
 
 # Activity
 
