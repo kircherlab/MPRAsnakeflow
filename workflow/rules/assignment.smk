@@ -203,7 +203,7 @@ rule assignment_collectBCs:
             )
         ),
     output:
-        "results/assignment/{assignment}/barcodes_incl_other.sorted.tsv.gz",
+        "results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
     params:
         batch_size="--batch-size=%d" % getSplitNumber() if getSplitNumber() > 1 else "",
     conda:
@@ -221,12 +221,14 @@ rule assignment_collectBCs:
 rule assignment_filter:
     """
     Filter the barcodes file based on the config given in the config-file.
+    FIXME: Limitation is that oligos cannot have a name ambiguous or other.
     """
     input:
-        assignment="results/assignment/{assignment}/barcodes_incl_other.sorted.tsv.gz",
+        assignment="results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
         script=getScript("assignment/filterAssignmentTsv.py"),
     output:
-        "results/assignment/{assignment}/assignment_barcodes.{assignment_config}.sorted.tsv.gz",
+        final="results/assignment/{assignment}/assignment_barcodes.{assignment_config}.tsv.gz",
+        ambigous="results/assignment/{assignment}/assignment_barcodes_with_ambigous.{assignment_config}.tsv.gz",
     conda:
         "../envs/python3.yaml"
     log:
@@ -238,20 +240,8 @@ rule assignment_filter:
         fraction=lambda wc: config["assignments"][wc.assignment]["configs"][
             wc.assignment_config
         ]["fraction"],
-        unknown_other=lambda wc: (
-            "-o"
-            if config["assignments"][wc.assignment]["configs"][wc.assignment_config][
-                "unknown_other"
-            ]
-            else ""
-        ),
-        ambiguous=lambda wc: (
-            "-a"
-            if config["assignments"][wc.assignment]["configs"][wc.assignment_config][
-                "ambiguous"
-            ]
-            else ""
-        ),
+        unknown_other="-o",
+        ambiguous="-a",
         bc_length=lambda wc: config["assignments"][wc.assignment]["bc_length"],
     shell:
         """
@@ -259,5 +249,7 @@ rule assignment_filter:
         awk -v "OFS=\\t" -F"\\t" '{{if (length($1)=={params.bc_length}){{print $0 }}}}' | \
         python {input.script} \
         -m {params.min_support} -f {params.fraction} {params.unknown_other} {params.ambiguous} | \
-        gzip -c > {output} 2> {log}
+        tee >(gzip -c > {output.ambigous}) | \
+        awk -v "OFS=\\t"  -F"\\t" '{{ if (($2 != \"ambiguous\") && ($2 != \"other\")) {{ print $0 }} }}' | \
+        gzip -c > {output.final} 2> {log}
         """

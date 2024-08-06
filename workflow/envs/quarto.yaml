@@ -1,0 +1,11 @@
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python
+  - quarto
+  - jupyter
+  - pandas
+  - matplotlib
+  - papermill

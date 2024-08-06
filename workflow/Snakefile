@@ -50,16 +50,25 @@ include: "rules/common.smk"
 
 rule all:
     input:
+        ## report
+        getAssignmentConfig_helper(
+            ["results/assignment/{assignment}/qc_report.{config}.html"]
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            [
+                "results/experiments/{project}/qc_report.{condition}.{assignment}.{config}.html"
+            ]
+        ),
         ## assignments
         getAssignmentConfig_helper(
             [
-                "results/assignment/{assignment}/assignment_barcodes.{config}.sorted.tsv.gz",
-                "results/assignment/{assignment}/statistic/assigned_counts.{config}.tsv.gz",
+                "results/assignment/{assignment}/assignment_barcodes.{config}.tsv.gz",
+                "results/assignment/{assignment}/statistic/assigned_counts.{config}.tsv",
                 "results/assignment/{assignment}/statistic/assignment.{config}.png",
             ]
         ),
         getAssignment_helper(
-            ["results/assignment/{assignment}/statistic/total_counts.tsv.gz"]
+            ["results/assignment/{assignment}/statistic/total_counts.tsv"]
         ),
         getAssignment_helper(
             ["results/assignment/{assignment}/statistic/assignment/bam_stats.txt"],
@@ -152,17 +161,29 @@ rule all:
         ),
 
 
+rule all_qc_report:
+    input:
+        getAssignmentConfig_helper(
+            ["results/assignment/{assignment}/qc_report.{config}.html"]
+        ),
+        getOutputProjectConditionAssignmentConfig_helper(
+            [
+                "results/experiments/{project}/qc_report.{condition}.{assignment}.{config}.html"
+            ]
+        ),
+
+
 rule all_assignments:
     input:
         getAssignmentConfig_helper(
             [
-                "results/assignment/{assignment}/assignment_barcodes.{config}.sorted.tsv.gz",
-                "results/assignment/{assignment}/statistic/assigned_counts.{config}.tsv.gz",
+                "results/assignment/{assignment}/assignment_barcodes.{config}.tsv.gz",
+                "results/assignment/{assignment}/statistic/assigned_counts.{config}.tsv",
                 "results/assignment/{assignment}/statistic/assignment.{config}.png",
             ]
         ),
         getAssignment_helper(
-            ["results/assignment/{assignment}/statistic/total_counts.tsv.gz"]
+            ["results/assignment/{assignment}/statistic/total_counts.tsv"]
         ),
         getAssignment_helper(
             ["results/assignment/{assignment}/statistic/assignment/bam_stats.txt"],
@@ -383,3 +404,5 @@ include: "rules/assigned_counts.smk"
 include: "rules/statistic.smk"
 # variant subworkflow (creating variant effects)
 include: "rules/variants.smk"
+# generating QC measures report
+include: "rules/qc_report.smk"

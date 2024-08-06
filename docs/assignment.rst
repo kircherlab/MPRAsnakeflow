@@ -113,13 +113,13 @@ assignment_mapping_exact_reference
 rule assignment_mapping_exact
     Map the reads to the reference and sort using exact match (code:`exact` mapping approach).
 assignment_getBCs
-   Get the barcodes (not filtered). Results are in :code:`results/assignment/<assignment_name>/barcodes_incl_other.sorted.tsv.gz`
+   Get the barcodes (not filtered). Results are in :code:`results/assignment/<assignment_name>/barcodes_incl_other.tsv.gz`
 assignment_statistic_totalCounts
-   Statistic of the total (unfiltered counts). Results are in :code:`results/assignment/<assignment_name>/statistic/total_counts.tsv.gz`
+   Statistic of the total (unfiltered counts). Results are in :code:`results/assignment/<assignment_name>/statistic/total_counts.tsv`
 assignment_filter
-   Filter the barcodes file based on the config given in the config-file. Results for this run are here :code:`results/assignment/<assignment_name>/assignment_barcodes.<config_name>.sorted.tsv.gz`.
+   Filter the barcodes file based on the config given in the config-file. Results for this run are here :code:`results/assignment/<assignment_name>/assignment_barcodes.<config_name>.tsv.gz`.
 assignment_statistic_assignedCounts
-   Statistic of filtered the assigned counts. Result is here :code:`results/assignment/<assignment_name>/statistic/assigned_counts.<config_name>.tsv.gz`.
+   Statistic of filtered the assigned counts. Result is here :code:`results/assignment/<assignment_name>/statistic/assigned_counts.<config_name>.tsv`.
 assignment_statistic_assignment
    Statistic of the filtered assignment.  Result is here :code:`results/assignment/<assignment_name>/statistic/assignment.<config_name>.tsv.gz` and a plot here :code:`results/assignment/<assignment_name>/statistic/assignment.<config_name>.png`.
 
@@ -140,8 +140,9 @@ File tree of the result folder (names in :code:`< >` can be specified in the con
     │   └── <assignment_name>
     │       ├── aligned_merged_reads.bam
     │       ├── aligned_merged_reads.bam.bai
-    │       ├── assignment_barcodes.<config_name>.sorted.tsv.gz
-    │       ├── barcodes_incl_other.sorted.tsv.gz
+    │       ├── assignment_barcodes.<config_name>.tsv.gz
+    │       ├── assignment_barcodes_with_ambigous.<config_name>.tsv.gz
+    │       ├── barcodes_incl_other.tsv.gz
     │       ├── reference
     │       │   ├── reference.fa
     │       │   ├── reference.fa.amb
@@ -152,19 +153,19 @@ File tree of the result folder (names in :code:`< >` can be specified in the con
     │       │   ├── reference.fa.pac
     │       │   └── reference.fa.sa
     │       └── statistic
-    │           ├── assigned_counts.<config_name>.tsv.gz
+    │           ├── assigned_counts.<config_name>.tsv
     │           ├── assignment
     │           │   └── bam_stats.txt
     │           ├── assignment.<config_name>.png
     │           ├── assignment.<config_name>.tsv.gz
-    │           └── total_counts.tsv.gz
+    │           └── total_counts.tsv
 
 
 
 
-total_counts.tsv.gz
-    Statistic of BCs mapped to oligos.
-assigned_counts.<config_name>.tsv.gz
+total_counts.tsv
+    Raw statistic of BCs mapped to oligos (number of observerd BCs and Oligos).
+assigned_counts.<config_name>.tsv
     Statistic of BCs mapped to oligos after fitering defined by config.
 assignment.<config_name>.tsv.gz
     Average/median support of BC per oligo. Oligos with >= 15 BCs.
@@ -172,10 +173,12 @@ reference.fa
     Design file.
 aligned_merged_reads.bam
     Sorted bamfile for oligo alignment
-barcodes_incl_other.sorted.tsv.gz
+barcodes_incl_other.tsv.gz
     Complete list of all barcodes found in mapping file (ambigous and unambigous) with mappings (if possible)
-assignment_barcodes.<config_name>.sorted.tsv.gz
-    Mapping file of barcodes to sequence. 
+assignment_barcodes.<config_name>.tsv.gz
+    Mapping file of barcodes to sequence. Can be used as input for the experiment workflow.
+assignment_barcodes_with_ambigous.<config_name>.tsv.gz
+    Mapping file of barcodes to sequence including ambigous and other observed barcodes. 
 assignment.<config_name>.png
     Visualization of number of barcodes mapping to oligo.
 bam_stats.txt

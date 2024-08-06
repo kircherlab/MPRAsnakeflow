@@ -97,7 +97,7 @@ Each assignment you want to process you have to giv him a name like :code:`examp
         (Optional) Check if there are identical sequences in the design file. Default :code:`true`.
 
 :configs:
-    After mapping the reads to the design file and extracting the barcodes per oligo the configuration (using different names) can be used to generate multiple filtering and configuration settings of the final maq oligo to barcode. Each configuration is a dictionary with the following keys:
+    After mapping the reads to the design file and extracting the barcodes per oligo the configuration (using different names) can be used to generate multiple filtering and configuration settings of the final maq oligo to barcode. Use `<your_config_name>: {}` to use the default values for the keys. Each configuration is a dictionary with the following keys:
     
     :min_support:
         Minimum number of same BC that map to the same oligo. Larger value gives more evidence to be correct. But can remove lot's of BCs (depedning on the complexity, sequencing depth and quality of sequencing). Recommended option is :code:`3`.

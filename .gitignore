@@ -1,7 +1,6 @@
 .vscode/
 report.html
 logs
-results
 .cache
 !analysis/README.md
 !config
@@ -24,5 +23,7 @@ config/sbatch_omics_cluster.yaml
 data
 docs_data
 mix_data
+*data
 *report.html
 *.simg
+*results
