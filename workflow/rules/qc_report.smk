@@ -29,7 +29,7 @@ rule qc_report_assoc:
         ],
         workdir=os.getcwd(),
     log:
-        "results/logs/qc_report/assoc.{project}.{condition}.{assignment}.{config}.log",
+        "results/logs/qc_report/assoc.{assignment}.{assignment_config}.log",
     shell:
         """
         cp {input.quarto_script} {output.quarto_file};
