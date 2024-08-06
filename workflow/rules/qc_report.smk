@@ -1,5 +1,6 @@
 import os
 
+
 rule qc_report_assoc:
     input:
         quarto_script=getScript("report/qc_report_assoc.qmd"),
@@ -54,12 +55,12 @@ rule qc_report_count:
         ratio_oligo_min_thre_plot="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_Ratio_pairwise_minThreshold.png",
         statistics_all_merged="results/experiments/{project}/statistic/statistic_assigned_counts_merged_{assignment}_{config}.tsv",
         statistics_all_single="results/experiments/{project}/statistic/statistic_assigned_counts_single_{assignment}_{config}.tsv",
-        statistics_all_oligo_cor_merged="results/experiments/{project}/statistic/statistic_oligo_correlation_merged_{assignment}_{config}.tsv",
+        statistics_all_oligo_cor_all="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_correlation.tsv",
+        statistics_all_oligo_cor_thresh="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_correlation_minThreshold.tsv",
         counts_per_oligo_dna="results/experiments/{project}/statistic/barcode/assigned_counts/{assignment}/{condition}_{config}_DNA_perBarcode.png",
         counts_per_oligo_rna="results/experiments/{project}/statistic/barcode/assigned_counts/{assignment}/{condition}_{config}_RNA_perBarcode.png",
         activity_thresh="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png",
         activity_all="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png",
-        # TODO add some explanation from the documentation about the headers in the table.
         # TODO Later, after discussion with Max you can get multiple files for the pngs expanding {condition}.
     output:
         count_file="results/experiments/{project}/qc_report.{condition}.{assignment}.{config}.html",
@@ -95,7 +96,8 @@ rule qc_report_count:
         -P statistics_all_single:{input.statistics_all_single} \
         -P activity_all:{input.activity_all} \
         -P activity_thresh:{input.activity_thresh} \
-        -P statistics_all_oligo_cor_merged:{input.statistics_all_oligo_cor_merged} \
+        -P statistics_all_oligo_cor_all:{input.statistics_all_oligo_cor_all} \
+        -P statistics_all_oligo_cor_thresh:{input.statistics_all_oligo_cor_thresh} \
         -P thresh:{params.thresh} \
         -P workdir:{params.workdir}
         """
