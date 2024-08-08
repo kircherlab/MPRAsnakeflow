@@ -97,7 +97,7 @@ def getAssignmentFile(project, assignment):
             "assignment_name"
         ]
         return expand(
-            "results/assignment/{assignment}/assignment_barcodes.{config}.sorted.tsv.gz",
+            "results/assignment/{assignment}/assignment_barcodes.{config}.tsv.gz",
             assignment=name,
             config=conf,
         )

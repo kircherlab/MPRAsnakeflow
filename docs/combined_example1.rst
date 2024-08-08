@@ -203,8 +203,8 @@ Total file tree of the results folder:
     │   └── assocBasic
     │       ├── aligned_merged_reads.bam
     │       ├── aligned_merged_reads.bam.bai
-    │       ├── assignment_barcodes.default.sorted.tsv.gz
-    │       ├── barcodes_incl_other.sorted.tsv.gz
+    │       ├── assignment_barcodes.default.tsv.gz
+    │       ├── barcodes_incl_other.tsv.gz
     │       ├── reference
     │       │   ├── reference.fa
     │       │   ├── reference.fa.amb

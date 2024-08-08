@@ -168,11 +168,11 @@ assignment_collectBCs
 assignment_flagstat
    Run samtools flagstat. Results are in :code:`results/assignment/assocBasic/statistic/assignment/bam_stats.txt`
 assignment_getBCs
-   Get the barcodes (not filtered). Results are in :code:`results/assignment/assocBasic/barcodes_incl_other.sorted.tsv.gz`
+   Get the barcodes (not filtered). Results are in :code:`results/assignment/assocBasic/barcodes_incl_othertsv.gz`
 assignment_statistic_totalCounts
    Statistic of the total (unfiltered counts). Results are in :code:`results/assignment/assocBasic/statistic/total_counts.tsv.gz`
 assignment_filter
-   Filter the barcodes file based on the config given in the config-file. Results for this run are here :code:`results/assignment/assocBasic/assignment_barcodes.default.sorted.tsv.gz` (default config).
+   Filter the barcodes file based on the config given in the config-file. Results for this run are here :code:`results/assignment/assocBasic/assignment_barcodes.default.tsv.gz` (default config).
 assignment_statistic_assignedCounts
    Statistic of filtered the assigned counts. Result is here :code:`results/assignment/assocBasic/statistic/assigned_counts.default.tsv.gz` (default)
 assignment_statistic_assignment
@@ -181,7 +181,7 @@ assignment_statistic_assignment
 Results
 -----------------
 
-All needed output files will be in the :code:`results/assignment/assocBasic` folder. The final assignment is in :code:`results/assignment/assocBasic/assignment_barcodes.default.sorted.tsv.gz`. 
+All needed output files will be in the :code:`results/assignment/assocBasic` folder. The final assignment is in :code:`results/assignment/assocBasic/assignment_barcodes.default.tsv.gz`. 
 
 .. note:: Please note that for the experiment/count workflow you have to remove ambigous BCs. It is possible to retain ambigous BCs in the final file by configuring in the config file. But the default option will remove them from the final file.
 
@@ -195,8 +195,8 @@ Total file tree of the results folder:
     │   └── assocBasic
     │       ├── aligned_merged_reads.bam
     │       ├── aligned_merged_reads.bam.bai
-    │       ├── assignment_barcodes.default.sorted.tsv.gz
-    │       ├── barcodes_incl_other.sorted.tsv.gz
+    │       ├── assignment_barcodes.default.tsv.gz
+    │       ├── barcodes_incl_other.tsv.gz
     │       ├── reference
     │       │   ├── reference.fa
     │       │   ├── reference.fa.amb
