@@ -1,5 +1,5 @@
 ---
-title: "QC Measures"
+title: "MPRAsnakeflow experiment QC report"
 page-layout: full
 format:
   html:

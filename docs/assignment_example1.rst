@@ -170,11 +170,11 @@ assignment_flagstat
 assignment_getBCs
    Get the barcodes (not filtered). Results are in :code:`results/assignment/assocBasic/barcodes_incl_othertsv.gz`
 assignment_statistic_totalCounts
-   Statistic of the total (unfiltered counts). Results are in :code:`results/assignment/assocBasic/statistic/total_counts.tsv.gz`
+   Statistic of the total (unfiltered counts). Results are in :code:`results/assignment/assocBasic/statistic/total_counts.tsv`
 assignment_filter
    Filter the barcodes file based on the config given in the config-file. Results for this run are here :code:`results/assignment/assocBasic/assignment_barcodes.default.tsv.gz` (default config).
 assignment_statistic_assignedCounts
-   Statistic of filtered the assigned counts. Result is here :code:`results/assignment/assocBasic/statistic/assigned_counts.default.tsv.gz` (default)
+   Statistic of filtered the assigned counts. Result is here :code:`results/assignment/assocBasic/statistic/assigned_counts.default.tsv` (default)
 assignment_statistic_assignment
    Statistic of the filtered assignment.  Result is here :code:`results/assignment/assocBasic/statistic/assignment.default.tsv.gz` and a plot here :code:`results/assignment/assocBasic/statistic/assignment.default.png`.
 

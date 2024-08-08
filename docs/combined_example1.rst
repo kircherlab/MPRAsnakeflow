@@ -215,7 +215,7 @@ Total file tree of the results folder:
     │       │   ├── reference.fa.pac
     │       │   └── reference.fa.sa
     │       └── statistic
-    │           ├── assigned_counts.default.tsv.gz
+    │           ├── assigned_counts.default.tsv
     │           ├── assignment
     │           │   └── bam_stats.txt
     │           ├── assignment.default.png

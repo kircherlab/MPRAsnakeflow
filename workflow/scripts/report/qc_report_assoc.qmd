@@ -1,5 +1,5 @@
 ---
-title: "QC Measures"
+title: "MPRAsnakeflow assignment QC report"
 page-layout: full
 format:
   html:
@@ -21,20 +21,19 @@ jupyter: python3
 ```{python}
 #| echo: false
 # Imports
-from IPython.display import display, Image
+from IPython.display import display, Image, Markdown
 ```
 
 
-
-# Assignment QC Report
+# Overview
 The Assignment QC (Quality Control) Report is a comprehensive document designed to evaluate and 
 ensure the quality of data or processes involved in a specific assignment. This report is generated 
 for the `{python} assignment` assignment with settings defined in the config `{python} configs`. The barcode length for this experiment is `{python} bc_length` base pairs.
 
-Forward: `{python} fw`  
-Reverse: `{python} rev`  
-Barcode: `{python} bc`  
-Design File: `{python} design_file`
+- **Forward:** `{python} fw`  
+- **Reverse:** `{python} rev`  
+- **Barcode:** `{python} bc`  
+- **Design File:** `{python} design_file`
 
 
 ```{python}
@@ -68,11 +67,8 @@ df_design = pd.DataFrame({' ': ['Oligos'], 'Design': int(seq_num_in_design)})
 df_total = pd.read_csv(f"{workdir}/{statistic_all_file}", sep='\t').rename(columns={'Unnamed: 0': ' ', 'Counts': 'Raw data'})
 df_filter = pd.read_csv(f"{workdir}/{statistic_filter_file}", sep='\t').rename(columns={'Unnamed: 0': ' ', 'Counts': 'Filtered data'})
 
-
-
 # Concatenate the new row DataFrame with the original DataFrame
 df = df_design.merge(df_total, on=' ', how="right")
 df = df.merge(df_filter, on=' ', how="right").reset_index(drop=True).fillna(0).astype({"Design": int, "Raw data": int, "Filtered data": int})
-df
-
+df.style.hide(axis="index").format( precision=2)
 ```
