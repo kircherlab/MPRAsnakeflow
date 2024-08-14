@@ -79,6 +79,8 @@ def combine_replicates(label_file, df_allreps, total_dna_counts, total_rna_count
     df_out["mean_rna_normalized"] = df_allreps.rna_normalized["mean"]
     df_out["mean_ratio"] = df_allreps.ratio["mean"]
     df_out["mean_log2"] = df_allreps.log2["mean"]
+    
+    df_out["mean_n_obs_bc"] = df_allreps.n_obs_bc["mean"]
 
 
     if label_file:
