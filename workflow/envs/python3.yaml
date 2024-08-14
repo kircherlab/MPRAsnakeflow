@@ -9,6 +9,6 @@ dependencies:
   - dask
   - matplotlib
   - numpy
-  - pandas
+  - pandas=1.5.3
   - polars
   - python
