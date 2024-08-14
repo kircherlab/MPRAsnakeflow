@@ -1,8 +1,6 @@
 ---
 $schema: "https://json-schema.org/draft/2020-12/schema"
 
-$id: /schemas/config.schema.yaml
-
 description: snakemake configuration file
 
 type: object
@@ -14,6 +12,7 @@ properties:
   global:
     type: object
     default:
+      threads: 1
       assignments:
         split_number: 1
     properties:
@@ -24,6 +23,9 @@ properties:
             type: integer
             default: 1
         additionalProperties: false
+      threads:
+        type: integer
+        default: 1
     additionalProperties: false
   # start_assignments
   assignments:
@@ -33,82 +35,19 @@ properties:
       description: name of the assignment
       ^([^_\.]+)$:
         type: object
-        properties:
-          alignment_tool:
+        patternProperties:
+          ^((sequence_length)|(alignment_start))$:
             type: object
             properties:
-              tool:
-                type: string
-                enum:
-                  - exact
-                  - bwa
-                default: bwa
-            allOf:
-              - if:
-                  properties:
-                    tool:
-                      const: bwa
-                then:
-                  properties:
-                    configs:
-                      type: object
-                      properties:
-                        min_mapping_quality:
-                          type: integer
-                          minimum: 0
-                          default: 1
-                        sequence_length:
-                          type: object
-                          properties:
-                            min:
-                              type: integer
-                            max:
-                              type: integer
-                          additionalProperties: false
-                          required:
-                            - min
-                            - max
-                        alignment_start:
-                          type: object
-                          properties:
-                            min:
-                              type: integer
-                            max:
-                              type: integer
-                          additionalProperties: false
-                          required:
-                            - min
-                            - max
-                      additionalProperties: false
-                      required:
-                        - sequence_length
-                        - alignment_start
-                        - min_mapping_quality
-                  required:
-                    - configs
-              - if:
-                  properties:
-                    tool:
-                      const: exact
-                then:
-                  properties:
-                    configs:
-                      type: object
-                      properties:
-                        sequence_length:
-                          type: integer
-                          minimum: 1
-                        alignment_start:
-                          type: integer
-                          minimum: 1
-                      additionalProperties: false
-                      required:
-                        - sequence_length
-                        - alignment_start
-                  required:
-                    - configs
+              min:
+                type: integer
+              max:
+                type: integer
+            additionalProperties: false
             required:
-              - tool
+              - min
+              - max
+        properties:
           bc_length:
             type: integer
           BC_rev_comp:
@@ -137,6 +76,10 @@ properties:
               type: string
             minItems: 1
             uniqueItems: true
+          min_mapping_quality:
+            type: integer
+            default: 1
+            minimum: 0
           NGmerge:
             type: object
             properties:
@@ -155,22 +98,8 @@ properties:
               - min_dovetailed_overlap
             default: {}
             additionalProperties: false
-          design_file:
+          reference:
             type: string
-          design_check:
-            type: object
-            properties:
-              fast:
-                type: boolean
-                default: true
-              sequence_collitions:
-                type: boolean
-                default: true
-            default: {}
-            required:
-              - fast
-              - sequence_collitions
-            additionalProperties: false
           configs:
             type: object
             patternProperties:
@@ -185,7 +114,13 @@ properties:
                     type: number
                     exclusiveMinimum: 0.5
                     maximum: 1
-                    default: 0.75
+                    default: 0.7
+                  unknown_other:
+                    type: boolean
+                    default: false
+                  ambiguous:
+                    type: boolean
+                    default: false
                 required:
                   - min_support
                   - fraction
@@ -194,18 +129,20 @@ properties:
             minProperties: 1
         oneOf:
           - required:
-              - linker_length
+            - linker_length
           - required:
-              - linker
+            - linker
           - required:
-              - BC
+            - BC
         required:
           - FW
           - REV
           - bc_length
-          - design_file
+          - reference
           - configs
-          - alignment_tool
+          - alignment_start
+          - sequence_length
+          - min_mapping_quality
           - NGmerge
         additionalProperties: false
     additionalProperties: false
@@ -235,6 +172,8 @@ properties:
           demultiplex:
             type: boolean
             default: false
+          design_file:
+            type: string
           label_file:
             type: string
           assignments:
@@ -366,6 +305,7 @@ properties:
           - data_folder
           - experiment_file
           - demultiplex
+          - design_file
           - assignments
           - configs
       additionalProperties: false

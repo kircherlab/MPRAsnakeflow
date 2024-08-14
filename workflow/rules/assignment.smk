@@ -13,7 +13,7 @@ include: "assignment/statistic.smk"
 
 rule assignment_fastq_split:
     """
-    Split the fastq files into n files for parallelisation. 
+    Split the fastq files into n files for parallelisation.
     n is given by split_read in the configuration file.
     """
     input:
@@ -75,7 +75,7 @@ rule assignment_attach_idx:
 
 rule assignment_merge:
     """
-    Merge the FW,REV and BC fastq files into one. 
+    Merge the FW,REV and BC fastq files into one.
     Extract the index sequence and add it to the header.
     """
     conda:
@@ -85,8 +85,7 @@ rule assignment_merge:
         REV="results/assignment/{assignment}/fastq/splits/REV.split{split}.BCattached.fastq.gz",
     output:
         un="results/assignment/{assignment}/fastq/merge_split{split}.un.fastq.gz",
-        join=
-            "results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
+        join="results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
     params:
         min_overlap=lambda wc: config["assignments"][wc.assignment]["NGmerge"][
             "min_overlap"
@@ -119,7 +118,7 @@ rule assignment_bwa_ref:
     Create mapping reference for BWA from design file.
     """
     input:
-        lambda wc: config["assignments"][wc.assignment]["reference"],
+        lambda wc: config["assignments"][wc.assignment]["design_file"],
     output:
         ref="results/assignment/{assignment}/reference/reference.fa",
         bwa=expand(
@@ -152,10 +151,9 @@ rule assignment_mapping:
             ext=["fai", "dict"] + assignment_bwa_dicts,
         ),
     output:
-        bam="results/assignment/{assignment}/bam/merge_split{split}.mapped.bam",
+        bam=temp("results/assignment/{assignment}/bam/merge_split{split}.mapped.bam"),
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
-    threads: config["global"]["threads"]
     log:
         temp("results/logs/assignment/mapping.{assignment}.{split}.log"),
     shell:
@@ -189,7 +187,7 @@ rule assignment_getBCs_additional_filter:
         python {input.script} \
         --identity_threshold {params.identity_threshold} --mismatches_threshold {params.mismatches_threshold} \
         --use_expected_alignment_length {params.use_expected_alignment_length} --expected_alignment_length {params.expected_alignment_length} \
-        --bamfile {input.bam} --verbose {params.verbose} --output {output} > {log} && sort -k1,1 -k2,2 -k3,3 -o {output} {output}
+        --bamfile {input.bam} --verbose {params.verbose} --output {output} 2> {log} && sort -k1,1 -k2,2 -k3,3 -o {output} {output}
         """
 
 rule assignment_collect:
@@ -205,7 +203,6 @@ rule assignment_collect:
         "results/assignment/{assignment}/aligned_merged_reads.bam",
     conda:
         "../envs/bwa_samtools_picard_htslib.yaml"
-    threads: config["global"]["threads"]
     log:
         temp("results/logs/assignment/collect.{assignment}.log"),
     shell:
@@ -295,16 +292,8 @@ rule assignment_filter:
         fraction=lambda wc: config["assignments"][wc.assignment]["configs"][
             wc.assignment_config
         ]["fraction"],
-        unknown_other=lambda wc: "-o"
-        if config["assignments"][wc.assignment]["configs"][wc.assignment_config][
-            "unknown_other"
-        ]
-        else "",
-        ambiguous=lambda wc: "-a"
-        if config["assignments"][wc.assignment]["configs"][wc.assignment_config][
-            "ambiguous"
-        ]
-        else "",
+        unknown_other="-o",
+        ambiguous="-a",
         bc_length=lambda wc: config["assignments"][wc.assignment]["bc_length"],
     shell:
         """

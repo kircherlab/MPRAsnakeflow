@@ -19,12 +19,12 @@ report: "report/workflow.rst"
 
 ##### General wirldcard constrains #####
 wildcard_constraints:
-    project="[^/\.]+",
-    assignment="[^/\.]+",
-    condition="[^/_\.]+",
-    replicate="[^/_\.]+",
+    project=r"[^/\.]+",
+    assignment=r"[^/\.]+",
+    condition=r"[^/_\.]+",
+    replicate=r"[^/_\.]+",
     type="(DNA)|(RNA)",
-    config="[^/\.]+",
+    config=r"[^/\.]+",
 
 
 ##### localrules #####

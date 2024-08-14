@@ -117,6 +117,11 @@ assigned_counts_filterAssignment:
   queue: "medium"
   mem: 15G
 
+assigned_counts_combine_replicates_barcode_output:
+  time: "0-01:00"
+  queue: "medium"
+  mem: 20G
+
 #################
 ### Statistic ###
 #################
