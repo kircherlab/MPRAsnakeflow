@@ -29,6 +29,9 @@ def cli(counts_file, declaration_file, output_file):
     click.echo("Read declaration file...")
     declaration = pd.read_csv(declaration_file, header=0, sep="\t", index_col=0)
     # ID REF ALT
+    declaration.rename(columns={col: 'REF' for col in declaration.columns if 'REF' in col}, inplace=True)
+    declaration.rename(columns={col: 'ALT' for col in declaration.columns if 'ALT' in col}, inplace=True)
+    declaration.index.rename('ID', inplace=True)
 
     # get count df
     click.echo("Read count file...")
