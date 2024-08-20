@@ -151,7 +151,6 @@ File tree
         |-HepG2_1_2_DNA_pairwise.png
         |-HepG2_1_2_Ratio_pairwise.png
         |-HepG2_1_2_RNA_pairwise.png
-        |-HepG2_all_barcodesPerInsert_box.png
         |-HepG2_barcodesPerInsert.png
             |-Reps
                 |-HepG2_1_counts.tsv
@@ -180,8 +179,6 @@ HepG2_1_2_Ratio_pairwise.png
   Correlation plot of normalized log2(RNA/DNA) condition vs two reps (ie: HepG2 replicate 1 vs replicate 2)
 HepG2_1_2_RNA_pairwise.png
   Correlation plot of RNA counts condition vs two reps (ie: HepG2 replicate 1 vs replicate 2)
-HepG2_all_barcodesPerInsert_box.png
-  Box plot of each CRS accross replicates for all barcodes in each condidtion. Colored by the label file.
 HepG2_barcodesPerInsert.png
   Histogram of number of barcodes detected per CRS
 HepG2_group_barcodesPerInsert_box.png

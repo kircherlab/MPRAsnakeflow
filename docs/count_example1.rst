@@ -353,8 +353,6 @@ Total file tree of the results folder:
                 │       │   ├── HEPG2_1_merged_assigned_counts.statistic.tsv.gz
                 │       │   ├── HEPG2_2_merged_assigned_counts.statistic.tsv.gz
                 │       │   ├── HEPG2_3_merged_assigned_counts.statistic.tsv.gz
-                │       │   ├── HEPG2_all_barcodesPerInsert_box_minThreshold.png
-                │       │   ├── HEPG2_all_barcodesPerInsert_box.png
                 │       │   ├── HEPG2_average_allreps_merged.tsv.gz
                 │       │   ├── HEPG2_barcodesPerInsert.png
                 │       │   ├── HEPG2_correlation_minThreshold.tsv
