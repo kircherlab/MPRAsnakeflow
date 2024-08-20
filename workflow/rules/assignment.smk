@@ -182,41 +182,34 @@ rule assignment_merge:
 
 
 include: "assignment/mapping_exact.smk"
-# include: "assignment/mapping_bwa.smk"
+include: "assignment/mapping_bwa.smk"
 include: "assignment/mapping_bbmap.smk"
 
 
-# rule assignment_collectBCs:
-#     """
-#     Get the barcodes.
-#     """
-#     input:
-#         lambda wc: (
-#             expand(
-#                 "results/assignment/{{assignment}}/BCs/barcodes_exact.{split}.tsv",
-#                     split=range(0, getSplitNumber()),
-#                 )
-#                 if config["assignments"][wc.assignment]["alignment_tool"]["tool"]
-#             == "exact"
-#             else expand(
-#                 "results/assignment/{{assignment}}/BCs/barcodes_incl_other.{split}.tsv",
-#                 split=range(0, getSplitNumber()),
-#             )
-#         ),
-#     output:
-#         "results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
-#     params:
-#         batch_size="--batch-size=%d" % getSplitNumber() if getSplitNumber() > 1 else "",
-#     conda:
-#         "../envs/default.yaml"
-#     log:
-#         temp("results/logs/assignment/collectBCs.{assignment}.log"),
-#     shell:
-#         """
-#         export LC_ALL=C # speed up sort
-#         sort -S 7G {params.batch_size} --parallel={threads} -k1,1 -k2,2 -k3,3 -m {input} | \
-#         gzip -c > {output} 2> {log}
-#         """
+rule assignment_collectBCs:
+    """
+    Get the barcodes.
+    """
+    input:
+        lambda wc: expand(
+            "results/assignment/{{wc.assignment}}/BCs/barcodes_{mapper}.{split}.tsv",
+            split=range(0, getSplitNumber()),
+            mapper=config["assignments"][wc.assignment]["alignment_tool"]["tool"],
+        ),
+    output:
+        "results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
+    params:
+        batch_size="--batch-size=%d" % getSplitNumber() if getSplitNumber() > 1 else "",
+    conda:
+        "../envs/default.yaml"
+    log:
+        temp("results/logs/assignment/collectBCs.{assignment}.log"),
+    shell:
+        """
+        export LC_ALL=C # speed up sort
+        sort -S 7G {params.batch_size} --parallel={threads} -k1,1 -k2,2 -k3,3 -m {input} | \
+        gzip -c > {output} 2> {log}
+        """
 
 
 rule assignment_filter:

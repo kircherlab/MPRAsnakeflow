@@ -6,5 +6,4 @@ channels:
 dependencies:
   - bbmap
   - samtools
-  - picard
   - htslib

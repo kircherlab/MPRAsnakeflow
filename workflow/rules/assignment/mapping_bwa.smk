@@ -1,4 +1,4 @@
-rule assignment_bwa_ref:
+rule assignment_mapping_bwa_ref:
     """
     Create mapping reference for BWA from design file.
     """
@@ -14,7 +14,7 @@ rule assignment_bwa_ref:
         ),
         d="results/assignment/{assignment}/reference/reference.fa.dict",
     log:
-        temp("results/logs/assignment/bwa_ref.{assignment}.log"),
+        temp("results/logs/assignment/mapping.bwa_ref.{assignment}.log"),
     shell:
         """
         bwa index -a bwtsw {input.ref} &> {log};
@@ -37,9 +37,9 @@ rule assignment_mapping_bwa:
             ext=["fai", "dict"] + assignment_bwa_dicts,
         ),
     output:
-        bam=temp("results/assignment/{assignment}/bam/merge_split{split}.mapped.bam"),
+        bam=temp("results/assignment/{assignment}/bwa/merge_split{split}.mapped.bam"),
     log:
-        temp("results/logs/assignment/mapping.{assignment}.{split}.log"),
+        temp("results/logs/assignment/mapping.bwa.{assignment}.{split}.log"),
     shell:
         """
         bwa mem -t {threads} -L 80 -M -C {input.reference} <(
@@ -48,16 +48,16 @@ rule assignment_mapping_bwa:
         """
 
 
-rule assignment_getBCs:
+rule assignment_mapping_bwa_getBCs:
     """
     Get the barcodes.
     """
     conda:
         "../../envs/bwa_samtools_picard_htslib.yaml"
     input:
-        "results/assignment/{assignment}/bam/merge_split{split}.mapped.bam",
+        "results/assignment/{assignment}/bwa/merge_split{split}.mapped.bam",
     output:
-        temp("results/assignment/{assignment}/BCs/barcodes_incl_other.{split}.tsv"),
+        temp("results/assignment/{assignment}/BCs/barcodes_bwa.{split}.tsv"),
     params:
         alignment_start_min=lambda wc: config["assignments"][wc.assignment][
             "alignment_tool"
@@ -75,7 +75,7 @@ rule assignment_getBCs:
             "alignment_tool"
         ]["configs"]["min_mapping_quality"],
     log:
-        temp("results/logs/assignment/getBCs.{assignment}.{split}.log"),
+        temp("results/logs/assignment/mapping.bwa.getBCs.{assignment}.{split}.log"),
     shell:
         """
         export LC_ALL=C # speed up sorting
@@ -102,8 +102,9 @@ rule assignment_collect:
         "../../envs/bwa_samtools_picard_htslib.yaml"
     input:
         bams=expand(
-            "results/assignment/{{assignment}}/bam/merge_split{split}.mapped.bam",
+            "results/assignment/{{assignment}}/{mapper}/merge_split{split}.mapped.bam",
             split=range(0, getSplitNumber()),
+            mapper=config["assignments"][wc.assignment]["alignment_tool"]["tool"],
         ),
     output:
         "results/assignment/{assignment}/aligned_merged_reads.bam",

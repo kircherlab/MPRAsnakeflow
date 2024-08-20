@@ -42,7 +42,8 @@ properties:
                 enum:
                   - exact
                   - bwa
-                default: bwa
+                  - bbmap
+                default: bbmap
             allOf:
               - if:
                   properties:
@@ -83,6 +84,24 @@ properties:
                       required:
                         - sequence_length
                         - alignment_start
+                        - min_mapping_quality
+                  required:
+                    - configs
+              - if:
+                  properties:
+                    tool:
+                      const: bwa
+                then:
+                  properties:
+                    configs:
+                      type: object
+                      properties:
+                        min_mapping_quality:
+                          type: integer
+                          minimum: 0
+                          default: 35
+                      additionalProperties: false
+                      required:
                         - min_mapping_quality
                   required:
                     - configs
