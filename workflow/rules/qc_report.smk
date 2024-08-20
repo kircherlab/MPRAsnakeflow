@@ -20,13 +20,25 @@ rule qc_report_assoc:
         ),
     params:
         bc_length=lambda wc: config["assignments"][wc.assignment]["bc_length"],
-        fw=lambda wc: ";".join(list(config["assignments"][wc.assignment]["FW"])),
-        rev=lambda wc: ";".join(list(config["assignments"][wc.assignment]["REV"])),
+        fw=lambda wc: (
+            ";".join(config["assignments"][wc.assignment]["FW"])
+            if isinstance(config["assignments"][wc.assignment]["FW"], list)
+            else config["assignments"][wc.assignment]["FW"]
+        ),
+        rev=lambda wc: (
+            ";".join(config["assignments"][wc.assignment]["REV"])
+            if isinstance(config["assignments"][wc.assignment]["REV"], list)
+            else config["assignments"][wc.assignment]["REV"]
+        ),
         bc=lambda wc: [
-            ";".join(list(config["assignments"][wc.assignment][key]))
+            (
+                ";".join(config["assignments"][wc.assignment][key])
+                if isinstance(config["assignments"][wc.assignment][key], list)
+                else config["assignments"][wc.assignment][key]
+            )
             for key in ["BC", "linker", "linker_length"]
             if key in config["assignments"][wc.assignment]
-        ],
+        ][0],
         workdir=os.getcwd(),
     log:
         "results/logs/qc_report/assoc.{assignment}.{assignment_config}.log",
