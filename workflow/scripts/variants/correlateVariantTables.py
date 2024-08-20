@@ -59,18 +59,15 @@ def cli(condition, variants, bc_threshold, output_file):
             click.echo("Join variants file...")
             variants_join = variants_1.join(variants_2, how="inner", lsuffix='_A', rsuffix='_B')[["log2_expression_A", "log2_expression_B"]]
 
-
-
-
-            output = output.append([[condition, rep_1, rep_2, variants_join.shape[0], bc_threshold, variants_join.corr(method="pearson").iloc[0,1],variants_join.corr(method="spearman").iloc[0,1]]])
-
-
+            output = pd.concat([output, pd.DataFrame.from_records([{"Condition": condition, "Replicate_A": rep_1, "Replicate_B": rep_2, "n_Variants": variants_join.shape[0], "minBarcodes": bc_threshold, "Pearson": variants_join.corr(method="pearson").iloc[0,1], "Spearman": variants_join.corr(method="spearman").iloc[0,1]}])])
+    
     # write output
     click.echo("Write files...")
-    output = output.rename(columns={0:"Condition", 1:"Replicate_A", 2:"Replicate_B", 3:"n_Variants", 4:"minBarcodes", 5:"Pearson", 6:"Spearman"})
+    # deprecated because of concat instead of append output = output.rename(columns={0:"Condition", 1:"Replicate_A", 2:"Replicate_B", 3:"n_Variants", 4:"minBarcodes", 5:"Pearson", 6:"Spearman"})
     click.echo(output)
     output.to_csv(output_file, index=False, sep='\t', header=True, compression='gzip')
 
 
 if __name__ == '__main__':
     cli()
+
