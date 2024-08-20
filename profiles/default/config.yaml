@@ -11,6 +11,7 @@ default-resources:
 ##################
 set-threads:
   assignment_mapping_bwa: 30
+  assignment_mapping_bbmap: 30
   assignment_collect: 30
   assignment_collectBCs: 20
   assignment_merge: 10
@@ -36,6 +37,10 @@ set-resources:
     mem: 10G
     slurm_partition: medium
   assignment_mapping_bwa:
+    runtime: 120
+    mem: 10G
+    slurm_partition: medium
+  assignment_mapping_bbmap:
     runtime: 120
     mem: 10G
     slurm_partition: medium

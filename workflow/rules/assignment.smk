@@ -48,7 +48,7 @@ rule assignment_check_design:
         ),
         fast_check=lambda wc: (
             "--fast-dict"
-            if config["assignments"][wc.assignment]["design_check"]["fast"]
+            if config["assignments"][wc.assignment]["design_check"]["fast"] or config["assignments"][wc.assignment]["alignment_tool"]["tool"] == "bbmap"
             else "--slow-string-search"
         ),
         check_sequence_collitions=lambda wc: (
@@ -192,7 +192,7 @@ rule assignment_collectBCs:
     """
     input:
         lambda wc: expand(
-            "results/assignment/{{wc.assignment}}/BCs/barcodes_{mapper}.{split}.tsv",
+            "results/assignment/{{assignment}}/BCs/barcodes_{mapper}.{split}.tsv",
             split=range(0, getSplitNumber()),
             mapper=config["assignments"][wc.assignment]["alignment_tool"]["tool"],
         ),

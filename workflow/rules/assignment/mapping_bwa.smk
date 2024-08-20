@@ -101,7 +101,7 @@ rule assignment_collect:
     conda:
         "../../envs/bwa_samtools_picard_htslib.yaml"
     input:
-        bams=expand(
+        bams=lambda wc: expand(
             "results/assignment/{{assignment}}/{mapper}/merge_split{split}.mapped.bam",
             split=range(0, getSplitNumber()),
             mapper=config["assignments"][wc.assignment]["alignment_tool"]["tool"],

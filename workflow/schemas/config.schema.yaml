@@ -90,7 +90,7 @@ properties:
               - if:
                   properties:
                     tool:
-                      const: bwa
+                      const: bbmap
                 then:
                   properties:
                     configs:
@@ -100,9 +100,33 @@ properties:
                           type: integer
                           minimum: 0
                           default: 35
+                        sequence_length:
+                          type: object
+                          properties:
+                            min:
+                              type: integer
+                            max:
+                              type: integer
+                          additionalProperties: false
+                          required:
+                            - min
+                            - max
+                        alignment_start:
+                          type: object
+                          properties:
+                            min:
+                              type: integer
+                            max:
+                              type: integer
+                          additionalProperties: false
+                          required:
+                            - min
+                            - max
                       additionalProperties: false
                       required:
                         - min_mapping_quality
+                        - sequence_length
+                        - alignment_start
                   required:
                     - configs
               - if:

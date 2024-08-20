@@ -69,7 +69,7 @@ rule assignment_mapping_bbmap_getBCs:
             "alignment_tool"
         ]["configs"]["min_mapping_quality"],
     log:
-        temp("results/logs/assignment/mapping.bbmap.getBCs.{assignment}.log"),
+        temp("results/logs/assignment/mapping.bbmap.getBCs.{assignment}.{split}.log"),
     shell:
         """
         export LC_ALL=C # speed up sorting
