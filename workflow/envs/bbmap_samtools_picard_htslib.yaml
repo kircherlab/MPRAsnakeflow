@@ -1,0 +1,10 @@
+---
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - bbmap
+  - samtools
+  - picard
+  - htslib
