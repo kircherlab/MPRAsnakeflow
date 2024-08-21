@@ -32,12 +32,30 @@ option_list <- list(
         default = 10,
         help = "Number of required barcodes (default 10)"
     ),
+        make_option(
+        c("-w", "--plot_width"),
+        type = "integer",
+        default = 29,
+        help = "Width of the plots created by this script (default 29)"
+    ),
+    make_option(
+        c("-h", "--plot_height"),
+        type = "integer",
+        default = 17,
+        help = "Height of the plots created by this script (default 17)"
+    ),
+    make_option(
+        c("-n", "--legend_nrow"),
+        type = "integer",
+        default = 6,
+        help = "Number of rows in the legend of the plots created by this script (default 6)"
+    ),
     make_option(c("-o", "--outdir"),
                 type = "character",
                 help = "Outdir of the plots and table.")
 )
 
-parser <- OptionParser(option_list = option_list)
+parser <- OptionParser(add_help_option=FALSE, option_list = option_list)
 arguments <- parse_args(parser, positional_arguments = TRUE)
 opt <- arguments$options
 
@@ -72,6 +90,10 @@ if ("label" %in% names(opt)) {
     use_labels <- FALSE
 }
 
+# plot configuration
+plot_width <- opt$plot_width
+plot_height <- opt$plot_height
+legend_nrow <- opt$legend_nrow
 
 # replicates and count files
 files <- strsplit(opt$files, ",")[[1]]
@@ -85,13 +107,12 @@ data["Condition"] <- cond
 
 print(data)
 
-# pairwise comparison only if more than one replicate
 thresh <- opt$threshold
 
 plot_correlations_dna <- function(data, condition, r1, r2, name) {
     dna_p <-
         ggplot(data, aes(dna_normalized_log2.x, dna_normalized_log2.y)) +
-        geom_point(aes(colour = label.x), show.legend = TRUE) +
+        geom_point(aes(colour = label.x)) +
         xlim(-5, 5) +
         ylim(-5, 5) +
         xlab(sprintf(
@@ -126,13 +147,16 @@ plot_correlations_dna <- function(data, condition, r1, r2, name) {
             size = 10
         ) +
         geom_abline(intercept = 0, slope = 1) +
-        theme_classic(base_size = 30)
+        theme_classic(base_size = 30) + 
+        theme(legend.position="bottom") + # show legend below the plot
+        guides(fill=guide_legend(nrow=legend_nrow, byrow=TRUE)) + # show labels in rows
+        labs(color = "label\n") # legend name
     return(dna_p)
 }
 plot_correlations_rna <- function(data, condition, r1, r2, name) {
     rna_p <-
         ggplot(data, aes(rna_normalized_log2.x, rna_normalized_log2.y)) +
-        geom_point(aes(colour = label.x), show.legend = TRUE) +
+        geom_point(aes(colour = label.x)) +
         xlim(-5, 5) +
         ylim(-5, 5) +
         xlab(sprintf(
@@ -165,12 +189,15 @@ plot_correlations_rna <- function(data, condition, r1, r2, name) {
             size = 10
         ) +
         geom_abline(intercept = 0, slope = 1) +
-        theme_classic(base_size = 30)
+        theme_classic(base_size = 30) + 
+        theme(legend.position="bottom") + # show legend below the plot
+        guides(fill=guide_legend(nrow=legend_nrow, byrow=TRUE)) + # show labels in rows
+        labs(color = "label\n") # legend name
     return(rna_p)
 }
 plot_correlations_ratio <- function(data, condition, r1, r2, name) {
     ratio_p <- ggplot(data, aes(ratio_log2.x, ratio_log2.y)) +
-        geom_point(aes(colour = label.x), show.legend = TRUE) +
+        geom_point(aes(colour = label.x)) +
         xlim(-5, 5) +
         ylim(-5, 5) +
         xlab(sprintf(paste(
@@ -198,7 +225,10 @@ plot_correlations_ratio <- function(data, condition, r1, r2, name) {
             size = 10
         ) +
         geom_abline(intercept = 0, slope = 1) +
-        theme_classic(base_size = 30)
+        theme_classic(base_size = 30) + 
+        theme(legend.position="bottom") + # show legend below the plot
+        guides(fill=guide_legend(nrow=legend_nrow, byrow=TRUE)) + # show labels in rows
+        labs(color = "label\n") # legend name
     return(ratio_p)
 }
 
@@ -268,8 +298,9 @@ write_correlation_plots <- function(plots, name) {
 
     ggplot2::ggsave(name,
                     correlation_plots,
-                    width = 15,
-                    height = 10 * length(plots))
+                    width = plot_width,
+                    height = plot_height * length(plots),
+                    limitsize = FALSE)
 }
 
 write_correlation <- function(correlations, name) {
@@ -324,7 +355,7 @@ if (use_labels) {
         all$label <- "NA"
     }
 }
-
+# pairwise comparison only if more than one replicate
 if (data %>% nrow() > 1 && nrow(all) > 1) {
     print("Pairwise comparisons")
     # make pairwise combinations
