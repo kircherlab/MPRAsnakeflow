@@ -25,7 +25,7 @@ set-resources:
     runtime: 1140
     mem: 2G
     slurm_partition: medium
-  assignmemt_hybridFWRead_get_reads_by_cutadapt:
+  assignment_hybridFWRead_get_reads_by_cutadapt:
     runtime: 1200
     mem: 4G
     slurm_partition: medium
@@ -47,9 +47,6 @@ set-resources:
   assignment_collect:
     runtime: 2160
     mem: 10G
-    slurm_partition: medium
-  assignment_getBCs:
-    runtime: 240
     slurm_partition: medium
   assignment_collectBCs:
     runtime: 3120

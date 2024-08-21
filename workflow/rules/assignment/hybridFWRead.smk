@@ -37,7 +37,7 @@ rule assignment_hybridFWRead_get_reads_by_length:
         """
 
 
-rule assignmemt_hybridFWRead_get_reads_by_cutadapt:
+rule assignment_hybridFWRead_get_reads_by_cutadapt:
     """
     Get the barcode and read from the FW read using cutadapt.
     Uses the paired end mode of cutadapt to write the FW and BC read.

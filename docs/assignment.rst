@@ -36,7 +36,13 @@ Example file:
 
 Config File
 -----------
-Multiple mapping strategies are implemented to find the corresponding CRS sequence for each read. The mapping strategy can be chosen in the config file (bwa mem or exact matches). The config file also defines the filtering of the mapping results and is is a yaml file.
+Multiple mapping strategies are implemented to find the corresponding CRS sequence for each read. The mapping strategy can be chosen in the config file (bbmap, bwa mem or exact matches). The config file also defines the filtering of the mapping results and is is a yaml file.
+
+
+Example of an assignment file using bbmap and the standard filtering (we reccommend to use bbmap as default):
+
+.. literalinclude:: ../config/example_assignment_bbmap.yaml
+   :language: yaml
 
 Example of an assignment file using bwa and the standard filtering:
 
@@ -84,45 +90,48 @@ Rules run by snakemake in the assignment utility.
 
 all
    The overall all rule. Here is defined what final output files are expected.
+all_assignments
+    Run all steps of the assignmenmt workflow.
 assignment_attach_idx
     Extract the index sequence and add it to the header.
-assignment_bwa_ref
-   Create mapping reference for BWA from design file (code:`bwa` mapping approach).
 assignment_collect
     Collect mapped reads into one BAM.
 assignment_collectBCs
     Get the barcodes.
 assignment_fastq_split
    Split the fastq files into n files for parallelisation. N is given by split_read in the configuration file.
-assignment_getInputs
-   Concat the input fastq files per R1,R2,R3. If only single fastq file is provided a symbolic link is created.
-assignment_hybridFWRead_get_reads_by_length
-   Get the barcode and read from the FW read using fixed length (when no index BC read is present).
-assignmemt_hybridFWRead_get_reads_by_cutadapt
-    Get the barcode and read from the FW read using cutadapt (when no index BC read is present). Uses the paired end mode of cutadapt to write the FW and BC read.
-assignment_merge
-   Merge the FW,REV and BC fastq files into one. Extract the index sequence from the middle and end of an Illumina run. Separates reads for Paired End runs. Merge/Adapter trim reads stored in BAM.
-assignment_mapping_bwa
-   Map the reads to the reference (code:`bwa` mapping approach).
-assignment_idx_bam
-   Index the BAM file (code:`bwa` mapping approach).
-assignment_flagstat
-   Run samtools flagstat. Results are in :code:`results/assignment/<assignment_name>/statistic/assignment/bam_stats.txt`  (code:`bwa` mapping approach).
-assignment_mapping_exact_reference
-    Create reference to map the exact design  (code:`exact` mapping approach).
-rule assignment_mapping_exact
-    Map the reads to the reference and sort using exact match (code:`exact` mapping approach).
-assignment_getBCs
-   Get the barcodes (not filtered). Results are in :code:`results/assignment/<assignment_name>/barcodes_incl_other.tsv.gz`
-assignment_statistic_totalCounts
-   Statistic of the total (unfiltered counts). Results are in :code:`results/assignment/<assignment_name>/statistic/total_counts.tsv`
 assignment_filter
    Filter the barcodes file based on the config given in the config-file. Results for this run are here :code:`results/assignment/<assignment_name>/assignment_barcodes.<config_name>.tsv.gz`.
+assignment_flagstat
+   Run samtools flagstat. Results are in :code:`results/assignment/<assignment_name>/statistic/assignment/bam_stats.txt`  (code:`bwa` or code:`bbmap` mapping approach).
+assignment_hybridFWRead_get_reads_by_length
+   Get the barcode and read from the FW read using fixed length (when no index BC read is present).
+assignment_hybridFWRead_get_reads_by_cutadapt
+    Get the barcode and read from the FW read using cutadapt (when no index BC read is present). Uses the paired end mode of cutadapt to write the FW and BC read.
+assignment_idx_bam
+   Index the BAM file (code:`bwa` or code:`bbmap` mapping approach).
+assignment_mapping_bbmap
+   Map the reads to the reference (code:`bbmap` mapping approach).
+assignment_mapping_bbmap_getBCs
+   Get the barcodes based on mapq in the mapping file of bbmap.
+assignment_mapping_bwa
+   Map the reads to the reference (code:`bwa` mapping approach).
+assignment_mapping_bwa_getBCs
+   Get the barcodes based on mapq, min/max sequence startd and min/max sequence length in the mapping file of bwa.
+assignment_mapping_bwa_ref
+   Create mapping reference for BWA from design file (code:`bwa` mapping approach).
+assignment_mapping_exact_reference
+    Create reference to map the exact design  (code:`exact` mapping approach).
+assignment_mapping_exact
+    Map the reads to the reference and sort using exact match (code:`exact` mapping approach).
+assignment_merge
+   Merge the FW,REV and BC fastq files into one. Extract the index sequence from the middle and end of an Illumina run. Separates reads for Paired End runs. Merge/Adapter trim reads stored in BAM.
 assignment_statistic_assignedCounts
    Statistic of filtered the assigned counts. Result is here :code:`results/assignment/<assignment_name>/statistic/assigned_counts.<config_name>.tsv`.
 assignment_statistic_assignment
    Statistic of the filtered assignment.  Result is here :code:`results/assignment/<assignment_name>/statistic/assignment.<config_name>.tsv.gz` and a plot here :code:`results/assignment/<assignment_name>/statistic/assignment.<config_name>.png`.
-
+assignment_statistic_totalCounts
+   Statistic of the total (unfiltered counts). Results are in :code:`results/assignment/<assignment_name>/statistic/total_counts.tsv`
 
 Output
 ==========
@@ -137,32 +146,33 @@ File tree of the result folder (names in :code:`< >` can be specified in the con
 .. code-block:: text
 
     ├── assignment
-    │   └── <assignment_name>
-    │       ├── aligned_merged_reads.bam
-    │       ├── aligned_merged_reads.bam.bai
-    │       ├── assignment_barcodes.<config_name>.tsv.gz
-    │       ├── assignment_barcodes_with_ambigous.<config_name>.tsv.gz
-    │       ├── barcodes_incl_other.tsv.gz
-    │       ├── reference
-    │       │   ├── reference.fa
-    │       │   ├── reference.fa.amb
-    │       │   ├── reference.fa.ann
-    │       │   ├── reference.fa.bwt
-    │       │   ├── reference.fa.dict
-    │       │   ├── reference.fa.fai
-    │       │   ├── reference.fa.pac
-    │       │   └── reference.fa.sa
-    │       └── statistic
-    │           ├── assigned_counts.<config_name>.tsv
-    │           ├── assignment
-    │           │   └── bam_stats.txt
-    │           ├── assignment.<config_name>.png
-    │           ├── assignment.<config_name>.tsv.gz
-    │           └── total_counts.tsv
+    └── <assignment_name>
+        ├── BCs
+        ├── aligned_merged_reads.bam
+        ├── aligned_merged_reads.bam.bai
+        ├── assignment_barcodes.default.tsv.gz
+        ├── assignment_barcodes_with_ambigous.default.tsv.gz
+        ├── barcodes_incl_other.tsv.gz
+        ├── bbmap
+        ├── design_check.done
+        ├── design_check.err
+        ├── fastq
+        │   └── splits
+        ├── qc_report.default.html
+        ├── reference
+        │   └── reference.fa
+        └── statistic
+            ├── assigned_counts.default.tsv
+            ├── assignment
+            │   └── bam_stats.txt
+            ├── assignment.default.png
+            ├── assignment.default.tsv.gz
+            └── total_counts.tsv
 
 
 
-
+qc_report.default.html
+    QC report of the assignment!
 total_counts.tsv
     Raw statistic of BCs mapped to oligos (number of observerd BCs and Oligos).
 assigned_counts.<config_name>.tsv
@@ -183,3 +193,5 @@ assignment.<config_name>.png
     Visualization of number of barcodes mapping to oligo.
 bam_stats.txt
     samtools bamstat output.
+design_check.done and design_check.err
+    Chek files if the design fasta has correct headers and no duplicated sequences (sense and antisense)

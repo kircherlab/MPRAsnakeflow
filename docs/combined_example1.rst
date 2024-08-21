@@ -136,7 +136,7 @@ You should see a list of rules that will be executed. This is the summary:
     assignment_fastq_split                                              3              1              1
     assignment_filter                                                   1              1              1
     assignment_flagstat                                                 1              1              1
-    assignment_getBCs                                                   1              1              1
+    assignment_mapping_bwa_getBCs                                       1              1              1
     assignment_idx_bam                                                  1              1              1
     assignment_mapping                                                  1             10             10
     assignment_merge                                                   30              1              1
