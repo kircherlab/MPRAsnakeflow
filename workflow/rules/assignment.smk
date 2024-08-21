@@ -226,7 +226,8 @@ rule assignment_filter:
     conda:
         "../envs/python3.yaml"
     log:
-        temp("results/logs/assignment/filter.{assignment}.{assignment_config}.log"),
+        log=temp("results/logs/assignment/filter.{assignment}.{assignment_config}.log"),
+        err=temp("results/logs/assignment/filter.{assignment}.{assignment_config}.err"),
     params:
         min_support=lambda wc: config["assignments"][wc.assignment]["configs"][
             wc.assignment_config
@@ -239,11 +240,14 @@ rule assignment_filter:
         bc_length=lambda wc: config["assignments"][wc.assignment]["bc_length"],
     shell:
         """
+        trap "cat {log.err}" ERR
         zcat  {input.assignment} | \
         awk -v "OFS=\\t" -F"\\t" '{{if (length($1)=={params.bc_length}){{print $0 }}}}' | \
         python {input.script} \
         -m {params.min_support} -f {params.fraction} {params.unknown_other} {params.ambiguous} | \
         tee >(gzip -c > {output.ambigous}) | \
         awk -v "OFS=\\t"  -F"\\t" '{{ if (($2 != \"ambiguous\") && ($2 != \"other\")) {{ print $0 }} }}' | \
-        gzip -c > {output.final} 2> {log}
+        gzip -c > {output.final} 2> {log.err};
+        gzip -l {output.final} | awk 'NR==2 {{exit($2==0)}}' || {{ echo "Error: Empty barcode file {output.final}. No barcodes detected!" >> {log.err}; exit 1; }}
         """
+

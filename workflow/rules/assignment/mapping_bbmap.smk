@@ -40,7 +40,7 @@ rule assignment_mapping_bbmap:
     shell:
         """
         bbmap.sh in={input.reads} ref={input.reference} nodisk -t={threads} out={output.bam} &> {log};
-        samtools sort -l 0 -@ {threads} {output.bam} > {output.sorted_bam} &>> {log};
+        samtools sort -l 0 -@ {threads} {output.bam} > {output.sorted_bam} 2>> {log};
         """
 
 
@@ -87,6 +87,3 @@ rule assignment_mapping_bbmap_getBCs:
             }}
         }}' | sort -k1,1 -k2,2 -k3,3 -S 7G > {output} 2> {log}
         """
-
-
-# bbmap output bam: M06205:82:000000000-LGYKG:1:1101:16472:10372 XI:Z:AACGACGATCTCTAT,YI:Z:>AAA1AD>1A>BGDG  0       CB_404305_000000        16      42      78=1D59=1X42=1X18=      *       0       0       TGCAAGGATGCAGAGGAAGTTAAGAGGGAAAGTTGCTTTGAGAGGAGGACACTGGGAGGGGTTGGGAGTGGCTCCTGAGGCGGTGATAGGCAGGCAGGCCTGACTTGTCCACAGCTCACCGGAGGCCACCTTGGCAGAACCTGTAGGAAGGGCATGTCTGGCCTCCACACCAGCCCCCTCACTCTTCACCATTTCCCCT AAAAABA?FFFBGFEFCGGAEFHFFHACGCHFH2ADGDHFHC0FEHCEHIGEIC=GHHGHGEFHHGGDHHHHG:GH@IHHGH-G=B>F>(CFH=<EGGGFC=GCF>E>CH6GC=G#<FGC<E=G=<=CCGHIHIGE=#C#=DFGDEFHH#E1110FF//F/A/1/B/00/0E00EB0BB13AFA111B@1BAA>11A>1 NM:i:3  AM:i:42
