@@ -14,4 +14,11 @@ in alphabetical order
 Contributors
 ------------
 
-- You name here
+- Ali Hassan
+- Hyejung Won
+- Jonathan D. Rosen
+- Kilian Salomon
+- Martin Kircher
+- Michael I. Love
+- Pia Keukeleire
+- Pyaree M. Dash
