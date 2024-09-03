@@ -129,10 +129,11 @@ print("Histogram plots, RNA/DNA correlation plots, Violin plots")
 plot_avg_dna_rna_correlation <- function(data) {
   data <- data %>%
     group_by(name) %>%
-    summarise(dna_normalized = mean(dna_counts), rna_normalized = mean(rna_counts))
+    summarise(dna_normalized = median(dna_normalized), rna_normalized = median(rna_normalized), n = n())
+  data <- data %>% filter(n == length(replicates))
   p <- ggplot(data, aes(x = dna_normalized, y = rna_normalized)) +
     geom_point() +
-    ggtitle("Average counts across replicates") +
+    ggtitle("Median normalized counts across replicates") +
     xlab("DNA") +
     ylab("RNA") +
     geom_abline(intercept = 0, slope = 1) +
