@@ -72,7 +72,7 @@ rule all:
         ),
         getAssignment_helper(
             ["results/assignment/{assignment}/statistic/assignment/bam_stats.txt"],
-            match_methods=["bwa","bbmap"],
+            match_methods=["bwa", "bbmap"],
         ),
         ## experiments
         # statistic BC nucleotide composition
@@ -185,7 +185,7 @@ rule all_assignments:
         ),
         getAssignment_helper(
             ["results/assignment/{assignment}/statistic/assignment/bam_stats.txt"],
-            match_methods=["bwa","bbmap"],
+            match_methods=["bwa", "bbmap"],
         ),
 
 

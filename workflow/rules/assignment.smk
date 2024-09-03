@@ -48,7 +48,9 @@ rule assignment_check_design:
         ),
         fast_check=lambda wc: (
             "--fast-dict"
-            if config["assignments"][wc.assignment]["design_check"]["fast"] or config["assignments"][wc.assignment]["alignment_tool"]["tool"] == "bbmap"
+            if config["assignments"][wc.assignment]["design_check"]["fast"]
+            or config["assignments"][wc.assignment]["alignment_tool"]["tool"]
+            == "bbmap"
             else "--slow-string-search"
         ),
         check_sequence_collitions=lambda wc: (
@@ -250,4 +252,3 @@ rule assignment_filter:
         gzip -c > {output.final} 2> {log.err};
         gzip -l {output.final} | awk 'NR==2 {{exit($2==0)}}' || {{ echo "Error: Empty barcode file {output.final}. No barcodes detected!" >> {log.err}; exit 1; }}
         """
-

@@ -352,7 +352,6 @@ rule statistic_correlation_hist_box_plots:
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png",
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_dna_vs_rna.png",
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_dna_vs_rna_minThreshold.png",
-        
     params:
         cond="{condition}",
         files=lambda wc: ",".join(
