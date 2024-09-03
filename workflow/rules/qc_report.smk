@@ -85,6 +85,8 @@ rule qc_report_count:
         counts_per_oligo_rna="results/experiments/{project}/statistic/barcode/assigned_counts/{assignment}/{condition}_{config}_RNA_perBarcode.png",
         activity_thresh="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png",
         activity_all="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png",
+        dna_over_rna="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_dna_vs_rna.png",
+        dna_over_rna_thresh="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_dna_vs_rna_minThreshold.png",
     output:
         count_file="results/experiments/{project}/qc_report.{condition}.{assignment}.{config}.html",
         quarto_file=temp(
@@ -108,6 +110,8 @@ rule qc_report_count:
             quarto render `basename {output.quarto_file}` --output `basename {output.count_file}` \
             -P assignment:{wildcards.assignment} \
             -P project:{wildcards.project} \
+            -P dna_over_rna_plot:{input.dna_over_rna} \
+            -P dna_over_rna_thresh_plot:{input.dna_over_rna_thresh} \
             -P dna_oligo_coor_min_thre_plot:{input.dna_oligo_coor_min_thre_plot} \
             -P rna_oligo_coor_min_thre_plot:{input.rna_oligo_coor_min_thre_plot} \
             -P dna_oligo_coor_plot:{input.dna_oligo_coor_plot} \

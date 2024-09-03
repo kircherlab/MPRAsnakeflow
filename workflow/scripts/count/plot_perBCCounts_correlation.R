@@ -1,8 +1,6 @@
-
 library(optparse)
 library(cowplot)
 library(tidyverse)
-library(ggplot2)
 
 
 option_list <- list(
@@ -59,7 +57,7 @@ if (!"outdir" %in% names(opt)) {
 
 # global scaling factor
 scaling <- 10**6
-plot_sampling<-10**5
+plot_sampling <- 10**5
 
 # condition
 cond <- opt$condition
@@ -81,25 +79,44 @@ data$Condition <- cond
 plot_correlations_dna <- function(data, plot_data, condition, r1, r2, name) {
   max <- max(data$`DNA_normalized_log2.y`)
   min <- min(data$`DNA_normalized_log2.x`)
+
   dna_p <- ggplot(plot_data, aes(DNA_normalized_log2.x, DNA_normalized_log2.y)) +
     geom_point() +
-    xlab(sprintf(paste("log2 Normalized DNA count per barcode,\n replicate", r1))) +
-    ylab(sprintf(paste("log2 Normalized DNA count per barcode,\n replicate", r2))) +
-    geom_text(x = min + 0.5, y = max - 0.5, label = sprintf("   r = %.2f", cor(data$DNA_normalized_log2.x, data$DNA_normalized_log2.y, method = "pearson")), size = 10) +
-    geom_text(x = min + 0.5, y = max - 1.0, label = sprintf("rho = %.2f", cor(data$DNA_normalized.x, data$DNA_normalized.y, method = "spearman")), size = 10) +
+    ggtitle("Log2 normalized DNA counts per barcode", subtitle = sprintf("Replicate %s and %s", r1, r2)) +
+    xlab(sprintf("Replicate %s", r1)) +
+    ylab(sprintf("Replicate %s", r2)) +
+    geom_text(
+      x = min + 0.5, y = max - 0.5,
+      label = sprintf("   r = %.2f", cor(data$DNA_normalized_log2.x, data$DNA_normalized_log2.y, method = "pearson")),
+      size = 10
+    ) +
+    geom_text(
+      x = min + 0.5, y = max - 1.0,
+      label = sprintf("rho = %.2f", cor(data$DNA_normalized_log2.x, data$DNA_normalized_log2.y, method = "spearman")),
+      size = 10
+    ) +
     geom_abline(intercept = 0, slope = 1) +
     theme_classic(base_size = 30)
+
   return(dna_p)
 }
 plot_correlations_rna <- function(data, plot_data, condition, r1, r2, name) {
-  max <- max(data$`RNA_normalized.y_log2`)
-  min <- min(data$`RNA_normalized.x_log2`)
+  max <- max(data$`RNA_normalized_log2.y`)
+  min <- min(data$`RNA_normalized_log2.x`)
   rna_p <- ggplot(plot_data, aes(RNA_normalized_log2.x, RNA_normalized_log2.y)) +
     geom_point() +
-    xlab(sprintf(paste("log2 Normalized RNA count per barcode,\n replicate", r1))) +
-    ylab(sprintf(paste("log2 Normalized RNA count per barcode,\n replicate", r2))) +
-    geom_text(x = min + 0.5, y = max - 0.5, label = sprintf("   r = %.2f", cor(data$RNA_normalized_log2.x, data$RNA_normalized_log2.y, method = "pearson")), size = 10) +
-    geom_text(x = min + 0.5, y = max - 1.0, label = sprintf("rho = %.2f", cor(data$RNA_normalized.x, data$RNA_normalized.y, method = "spearman")), size = 10) +
+    ggtitle("Log2 normalized RNA counts per barcode", subtitle = sprintf("Replicate %s and %s", r1, r2)) +
+    xlab(sprintf("Replicate %s", r1)) +
+    ylab(sprintf("Replicate %s", r2)) +
+    geom_text(
+      x = min + 0.5, y = max - 0.5,
+      label = sprintf("   r = %.2f", cor(data$RNA_normalized_log2.x, data$RNA_normalized_log2.y, method = "pearson")),
+      size = 10
+    ) +
+    geom_text(
+      x = min + 0.5, y = max - 1.0,
+      label = sprintf("rho = %.2f", cor(data$RNA_normalized.x, data$RNA_normalized.y, method = "spearman")), size = 10
+    ) +
     geom_abline(intercept = 0, slope = 1) +
     theme_classic(base_size = 30)
   return(rna_p)
@@ -109,10 +126,18 @@ plot_correlations_ratio <- function(data, plot_data, condition, r1, r2, name) {
   min <- min(data$`Ratio_log2.x`)
   ratio_p <- ggplot(plot_data, aes(Ratio_log2.x, Ratio_log2.y)) +
     geom_point() +
-    xlab(sprintf(paste("log2 RNA/DNA per barcode,\n replicate", r1))) +
-    ylab(sprintf(paste("log2 RNA/DNA per barcode,\n replicate", r2))) +
-    geom_text(x = min + 0.5, y = max - 0.5, label = sprintf("   r = %.2f", cor(data$Ratio_log2.x, res$Ratio_log2.y, method = "pearson")), size = 10) +
-    geom_text(x = min + 0.5, y = max - 1.0, label = sprintf("rho = %.2f", cor(data$Ratio.x, data$Ratio.y, method = "spearman")), size = 10) +
+    ggtitle("Log2 RNA/DNA count ratio per barcode", subtitle = sprintf("Replicate %s and %s", r1, r2)) +
+    xlab(sprintf("Replicate %s", r1)) +
+    ylab(sprintf("Replicate %s", r2)) +
+    geom_text(
+      x = min + 0.5, y = max - 0.5,
+      label = sprintf("   r = %.2f", cor(data$Ratio_log2.x, res$Ratio_log2.y, method = "pearson")), size = 10
+    ) +
+    geom_text(
+      x = min + 0.5, y = max - 1.0,
+      label = sprintf("rho = %.2f", cor(data$Ratio.x, data$Ratio.y, method = "spearman")),
+      size = 10
+    ) +
     geom_abline(intercept = 0, slope = 1) +
     theme_classic(base_size = 30)
   return(ratio_p)
@@ -122,7 +147,7 @@ correlate <- function(x, y, method) {
   return(sprintf("%.5f", cor(x, y, method = method)))
 }
 
-getCorrelationStats <- function(data, n_bc_r1, n_bc_r2, condition, r1, r2, name) {
+get_correlation_stats <- function(data, n_bc_r1, n_bc_r2, condition, r1, r2, name) {
   norm <- abs(length(which((data$Ratio.x - data$Ratio.y) > 0)) - length(which((data$Ratio.x - data$Ratio.y) < 0)))
   +abs(length(which((data$Ratio.x - data$Ratio.y) > 0)) - length(which((data$Ratio.x - data$Ratio.y) < 0)))
   +abs(length(which((data$Ratio.x - data$Ratio.y) > 0)) - length(which((data$Ratio.x - data$Ratio.y) < 0)))
@@ -149,20 +174,21 @@ getCorrelationStats <- function(data, n_bc_r1, n_bc_r2, condition, r1, r2, name)
   return(outs)
 }
 
-writeCorrelationPlots <- function(plots, name) {
+write_correlation_plots <- function(plots, name) {
   correlation_plots <- cowplot::plot_grid(plotlist = plots, ncol = 1)
   # correlation_plots <- do.call("grid.arrange", c(plots))
 
-  ggsave(name, correlation_plots, width = 15, height = 10 * length(plots), dpi=96, type="cairo")
+  ggsave(name, correlation_plots, width = 15, height = 10 * length(plots), dpi = 96, type = "cairo")
 }
 
-writeCorrelation <- function(correlations, name) {
+write_correlation <- function(correlations, name) {
   write.table(correlations, file = name, quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE)
 }
 
-readData <- function(file, mindnacounts, minrnacounts, scaling) {
-  data <- read.table(file, as.is = T,
-    sep = "\t", header = F, stringsAsFactors = F
+read_data <- function(file, mindnacounts, minrnacounts, scaling) {
+  data <- read.table(file,
+    as.is = TRUE,
+    sep = "\t", header = FALSE, stringsAsFactors = FALSE
   )
   colnames(data) <- c("Barcode", "DNA", "RNA")
 
@@ -171,7 +197,7 @@ readData <- function(file, mindnacounts, minrnacounts, scaling) {
   data <- data %>%
     filter(DNA >= mindnacounts, RNA >= minrnacounts) %>%
     mutate(
-      DNA_normalized = (DNA + pseudocountdna) / sum(DNA + pseudocountdna) * scaling, 
+      DNA_normalized = (DNA + pseudocountdna) / sum(DNA + pseudocountdna) * scaling,
       RNA_normalized = (RNA + pseudocountrna) / sum(RNA + pseudocountrna) * scaling,
       Ratio = DNA_normalized / RNA_normalized,
       DNA_normalized_log2 = log2(DNA_normalized),
@@ -182,7 +208,6 @@ readData <- function(file, mindnacounts, minrnacounts, scaling) {
 }
 
 if (data %>% nrow() > 1) {
-
   # make pairwise combinations
   selected <- combn(data$Replicate, 2)
   print("sel")
@@ -197,32 +222,37 @@ if (data %>% nrow() > 1) {
     print(selected[, i])
     r1 <- selected[1, i]
     r2 <- selected[2, i]
-    data1 <- readData(as.character((data %>% filter(Replicate == r1))$File),
-        opt$mindnacounts, opt$minrnacounts, scaling)
-    data2 <- readData(as.character((data %>% filter(Replicate == r2))$File),
-        opt$mindnacounts, opt$minrnacounts, scaling)
+    data1 <- read_data(
+      as.character((data %>% filter(Replicate == r1))$File),
+      opt$mindnacounts, opt$minrnacounts, scaling
+    )
+    data2 <- read_data(
+      as.character((data %>% filter(Replicate == r2))$File),
+      opt$mindnacounts, opt$minrnacounts, scaling
+    )
 
     n_bc_r1 <- data1 %>% nrow()
     n_bc_r2 <- data2 %>% nrow()
 
     res <- data1 %>% inner_join(data2, by = c("Barcode"))
-    if (res %>% nrow > plot_sampling)
+    if (res %>% nrow() > plot_sampling) {
       res_plot <- sample_n(res, plot_sampling)
-    else {
+    } else {
       res_plot <- res
     }
     plots_correlations_dna[[i]] <- plot_correlations_dna(res, res_plot, cond, r1, r2, "pairwise")
     plots_correlations_rna[[i]] <- plot_correlations_rna(res, res_plot, cond, r1, r2, "pairwise")
     plots_correlations_ratio[[i]] <- plot_correlations_ratio(res, res_plot, cond, r1, r2, "pairwise")
 
-    stats_correlations <- stats_correlations %>% bind_rows(getCorrelationStats(res, n_bc_r1, n_bc_r2, cond, r1, r2, "correlation"))
+    stats_correlations <- stats_correlations %>% bind_rows(
+      get_correlation_stats(res, n_bc_r1, n_bc_r2, cond, r1, r2, "correlation")
+    )
   }
 
   print("write correlation stats")
-  writeCorrelation(stats_correlations, sprintf("%s_barcode_correlation.tsv", outdir))
+  write_correlation(stats_correlations, sprintf("%s_barcode_correlation.tsv", outdir))
   print("write correlation plots")
-  writeCorrelationPlots(plots_correlations_dna, sprintf("%s_barcode_DNA_pairwise.png", outdir))
-  writeCorrelationPlots(plots_correlations_rna, sprintf("%s_barcode_RNA_pairwise.png", outdir))
-  writeCorrelationPlots(plots_correlations_ratio, sprintf("%s_barcode_Ratio_pairwise.png", outdir))
-
+  write_correlation_plots(plots_correlations_dna, sprintf("%s_barcode_DNA_pairwise.png", outdir))
+  write_correlation_plots(plots_correlations_rna, sprintf("%s_barcode_RNA_pairwise.png", outdir))
+  write_correlation_plots(plots_correlations_ratio, sprintf("%s_barcode_Ratio_pairwise.png", outdir))
 }

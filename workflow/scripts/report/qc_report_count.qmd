@@ -83,8 +83,27 @@ The data has a good Spearman correlations across replicates using a barcode thre
 
 ```
 
+# DNA over RNA counts
 
-# Oligo Coorelatioin
+Plotting normalized counts of DNA vs RNA  (median across replicates). Only oligos within all replicates are shown. We should see a variation within the RNA count data (along the y axis). If count data between RNA and DNA is highly correlated (e.g. follows the identity line) there is no variation between designed oligos. This is an indication that RNA is inflated with DNA and the DNA digestion before creating cDNA did not work as expected.
+
+::: {.panel-tabset}
+
+## Threshold `{python} thresh`
+```{python}
+#| echo: false
+Image(f"{workdir}/{dna_over_rna_thresh_plot}")
+```
+
+## All
+```{python}
+#| echo: false
+Image(f"{workdir}/{dna_over_rna_plot}")
+```
+
+:::
+
+# Oligo correlation
 
 Oligo correlation plots of DNA, RNA and DNA/RNA ratios across replicates. First tab shows plots using (in average) `{python} "%d" % oligo_cor_merged_table_thresh['number_Oligos_Joined'].mean()` oligos with a minimum number of  `{python} thresh` barcodes. Second tab shows all `{python} "%d" % oligo_cor_merged_table_all['number_Oligos_Joined'].mean()` oligos that have assigned barcodes.
 
