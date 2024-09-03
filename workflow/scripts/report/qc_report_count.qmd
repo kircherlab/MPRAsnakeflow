@@ -85,7 +85,7 @@ The data has a good Spearman correlations across replicates using a barcode thre
 
 # DNA over RNA counts
 
-Plotting normalized counts of DNA vs RNA  (median across replicates, only when oligo available in all replicates). We should see a variation within the RNA count data, usually above the line. If count data between RNA and DNA is highly correlated (e.g. follows the identity line) there is no variation between designed oligos. This is an indication that RNA is inflated with DNA and the DNA digestion before creating cDNA did not work as expected.
+Plotting normalized counts of DNA vs RNA  (median across replicates). We should see a variation within the RNA count data (along the y axis). If count data between RNA and DNA is highly correlated (e.g. follows the identity line) there is no variation between designed oligos. This is an indication that RNA is inflated with DNA and the DNA digestion before creating cDNA did not work as expected.
 
 ::: {.panel-tabset}
 

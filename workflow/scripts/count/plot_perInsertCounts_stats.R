@@ -126,16 +126,16 @@ if (use_labels) {
 print("Histogram plots, RNA/DNA correlation plots, Violin plots")
 
 
-plot_avg_dna_rna_correlation <- function(data) {
+plot_median_dna_rna_correlation <- function(data) {
   data <- data %>%
     group_by(name) %>%
-    summarise(dna_normalized = median(dna_normalized), rna_normalized = median(rna_normalized), n = n())
-  data <- data %>% filter(n == length(replicates))
+    summarise(dna_normalized = median(log10(dna_normalized)), rna_normalized = median(log10(rna_normalized)), n = n())
+  #data <- data %>% filter(n == length(replicates))
   p <- ggplot(data, aes(x = dna_normalized, y = rna_normalized)) +
     geom_point() +
     ggtitle("Median normalized counts across replicates") +
-    xlab("DNA") +
-    ylab("RNA") +
+    xlab("DNA [log10]") +
+    ylab("RNA [log10]") +
     geom_abline(intercept = 0, slope = 1) +
     theme_classic(base_size = 30) +
     theme(
@@ -176,11 +176,11 @@ plot_group_bc_per_insert <- function(data) {
 }
 
 ggsave(sprintf("%s_dna_vs_rna.png", outdir),
-  plot_avg_dna_rna_correlation(all),
+  plot_median_dna_rna_correlation(all),
   width = 10, height = 10
 )
 ggsave(sprintf("%s_dna_vs_rna_minThreshold.png", outdir),
-  plot_avg_dna_rna_correlation(all %>% filter(n_obs_bc >= thresh)),
+  plot_median_dna_rna_correlation(all %>% filter(n_obs_bc >= thresh)),
   width = 10, height = 10
 )
 
