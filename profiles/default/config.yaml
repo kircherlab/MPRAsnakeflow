@@ -37,6 +37,7 @@ set-resources:
     mem: 10G
     slurm_partition: medium
   assignment_mapping_bwa:
+    cpus_per_task: 30
     runtime: 120
     mem: 10G
     slurm_partition: medium
