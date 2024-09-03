@@ -126,7 +126,7 @@ You should see a list of rules that will be executed. This is the summary:
     assignment_fastq_split                     3
     assignment_filter                          1
     assignment_flagstat                        1
-    assignment_getBCs                         30
+    assignment_mapping_bwa_getBCs              30
     assignment_idx_bam                         1
     assignment_mapping_bwa                    30
     assignment_merge                          30
@@ -167,8 +167,6 @@ assignment_collectBCs
     Get the barcodes.
 assignment_flagstat
    Run samtools flagstat. Results are in :code:`results/assignment/assocBasic/statistic/assignment/bam_stats.txt`
-assignment_getBCs
-   Get the barcodes (not filtered). Results are in :code:`results/assignment/assocBasic/barcodes_incl_othertsv.gz`
 assignment_statistic_totalCounts
    Statistic of the total (unfiltered counts). Results are in :code:`results/assignment/assocBasic/statistic/total_counts.tsv`
 assignment_filter

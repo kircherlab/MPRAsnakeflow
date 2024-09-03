@@ -48,7 +48,7 @@ rule assignment_check_design:
         ),
         fast_check=lambda wc: (
             "--fast-dict"
-            if config["assignments"][wc.assignment]["design_check"]["fast"]
+            if config["assignments"][wc.assignment]["design_check"]["fast"] or config["assignments"][wc.assignment]["alignment_tool"]["tool"] == "bbmap"
             else "--slow-string-search"
         ),
         check_sequence_collitions=lambda wc: (
@@ -73,7 +73,7 @@ rule assignment_check_design:
 
 rule assignment_fastq_split:
     """
-    Split the fastq files into n files for parallelisation. 
+    Split the fastq files into n files for parallelisation.
     n is given by split_read in the configuration file.
 
     Runs only if the design file is correct.
@@ -141,7 +141,7 @@ rule assignment_attach_idx:
 
 rule assignment_merge:
     """
-    Merge the FW,REV and BC fastq files into one. 
+    Merge the FW,REV and BC fastq files into one.
     Extract the index sequence and add it to the header.
     """
     conda:
@@ -183,6 +183,7 @@ rule assignment_merge:
 
 include: "assignment/mapping_exact.smk"
 include: "assignment/mapping_bwa.smk"
+include: "assignment/mapping_bbmap.smk"
 
 
 rule assignment_collectBCs:
@@ -190,17 +191,10 @@ rule assignment_collectBCs:
     Get the barcodes.
     """
     input:
-        lambda wc: (
-            expand(
-                "results/assignment/{{assignment}}/BCs/barcodes_exact.{split}.tsv",
-                    split=range(0, getSplitNumber()),
-                )
-                if config["assignments"][wc.assignment]["alignment_tool"]["tool"]
-            == "exact"
-            else expand(
-                "results/assignment/{{assignment}}/BCs/barcodes_incl_other.{split}.tsv",
-                split=range(0, getSplitNumber()),
-            )
+        lambda wc: expand(
+            "results/assignment/{{assignment}}/BCs/barcodes_{mapper}.{split}.tsv",
+            split=range(0, getSplitNumber()),
+            mapper=config["assignments"][wc.assignment]["alignment_tool"]["tool"],
         ),
     output:
         "results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
@@ -232,7 +226,8 @@ rule assignment_filter:
     conda:
         "../envs/python3.yaml"
     log:
-        temp("results/logs/assignment/filter.{assignment}.{assignment_config}.log"),
+        log=temp("results/logs/assignment/filter.{assignment}.{assignment_config}.log"),
+        err=temp("results/logs/assignment/filter.{assignment}.{assignment_config}.err"),
     params:
         min_support=lambda wc: config["assignments"][wc.assignment]["configs"][
             wc.assignment_config
@@ -245,11 +240,14 @@ rule assignment_filter:
         bc_length=lambda wc: config["assignments"][wc.assignment]["bc_length"],
     shell:
         """
+        trap "cat {log.err}" ERR
         zcat  {input.assignment} | \
         awk -v "OFS=\\t" -F"\\t" '{{if (length($1)=={params.bc_length}){{print $0 }}}}' | \
         python {input.script} \
         -m {params.min_support} -f {params.fraction} {params.unknown_other} {params.ambiguous} | \
         tee >(gzip -c > {output.ambigous}) | \
         awk -v "OFS=\\t"  -F"\\t" '{{ if (($2 != \"ambiguous\") && ($2 != \"other\")) {{ print $0 }} }}' | \
-        gzip -c > {output.final} 2> {log}
+        gzip -c > {output.final} 2> {log.err};
+        gzip -l {output.final} | awk 'NR==2 {{exit($2==0)}}' || {{ echo "Error: Empty barcode file {output.final}. No barcodes detected!" >> {log.err}; exit 1; }}
         """
+

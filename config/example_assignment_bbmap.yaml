@@ -6,9 +6,9 @@ assignments:
   exampleAssignment: # name of an example assignment (can be any string)
     bc_length: 15
     alignment_tool:
-      tool: bwa
+      tool: bbmap
       configs:
-        min_mapping_quality: 1 # integer >=0 Please use 1 when you have oligos that differ by 1 base in your reference/design_file
+        min_mapping_quality: 35 # integer >=0. 35 is default
         sequence_length: # sequence length of design excluding adapters.
           min: 166
           max: 175

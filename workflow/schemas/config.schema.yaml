@@ -42,7 +42,8 @@ properties:
                 enum:
                   - exact
                   - bwa
-                default: bwa
+                  - bbmap
+                default: bbmap
             allOf:
               - if:
                   properties:
@@ -84,6 +85,48 @@ properties:
                         - sequence_length
                         - alignment_start
                         - min_mapping_quality
+                  required:
+                    - configs
+              - if:
+                  properties:
+                    tool:
+                      const: bbmap
+                then:
+                  properties:
+                    configs:
+                      type: object
+                      properties:
+                        min_mapping_quality:
+                          type: integer
+                          minimum: 0
+                          default: 35
+                        sequence_length:
+                          type: object
+                          properties:
+                            min:
+                              type: integer
+                            max:
+                              type: integer
+                          additionalProperties: false
+                          required:
+                            - min
+                            - max
+                        alignment_start:
+                          type: object
+                          properties:
+                            min:
+                              type: integer
+                            max:
+                              type: integer
+                          additionalProperties: false
+                          required:
+                            - min
+                            - max
+                      additionalProperties: false
+                      required:
+                        - min_mapping_quality
+                        - sequence_length
+                        - alignment_start
                   required:
                     - configs
               - if:
