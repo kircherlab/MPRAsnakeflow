@@ -6,7 +6,7 @@ assignments:
   assocBasic:
     bc_length: 15
     alignment_tool:
-      tool: bwa
+      tool: bbmap
       configs:
         sequence_length:
           min: 166
