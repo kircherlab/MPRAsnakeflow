@@ -26,20 +26,20 @@ from IPython.display import display, Image, Markdown
 
 
 # Overview
-The Assignment QC (Quality Control) Report is a comprehensive document designed to evaluate and 
-ensure the quality of data or processes involved in a specific assignment. This report is generated 
+The Assignment QC (Quality Control) Report is a comprehensive document designed to evaluate and
+ensure the quality of data or processes involved in a specific assignment. This report is generated
 for the `{python} assignment` assignment with settings defined in the config `{python} configs`. The barcode length for this experiment is `{python} bc_length` base pairs.
 
-- **Forward:** `{python} fw`  
-- **Reverse:** `{python} rev`  
-- **Barcode:** `{python} bc`  
+- **Forward:** `{python} fw`
+- **Reverse:** `{python} rev`
+- **Barcode:** `{python} bc`
 - **Design File:** `{python} design_file`
 
 
 ```{python}
 #| echo: false
 
-with open(f"{workdir}/{design_file}") as f:
+with open(f"{workdir}/{design_file_checked}") as f:
     seq_num_in_design = 0
     lines = f.readlines()
     for line in lines:
@@ -56,7 +56,7 @@ display(Image(f"{workdir}/{plot_file}"))
 ```
 
 
-# Counts of barcodes and oligos 
+# Counts of barcodes and oligos
 
 ```{python}
 #| echo: false

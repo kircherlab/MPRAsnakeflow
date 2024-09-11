@@ -41,6 +41,11 @@ def cli(input_files, minRNACounts, minDNACounts, output_file):
     for input_file in input_files:
         df = pd.concat([df, pd.read_csv(input_file, header=0, sep="\t")], axis=0, sort=False)
 
+    # filter based on minDNACounts and minRNACounts
+    df = df.query('dna_counts_REF >= %d & dna_counts_ALT >= %d' % (minDNACounts, minDNACounts))
+
+    df = df.query('rna_counts_REF >= %d & rna_counts_ALT >= %d' % (minRNACounts, minRNACounts))
+
     click.echo("Create new expression values...")
     df = df.groupby(['ID', 'REF', 'ALT']).agg(dna_counts_REF=('dna_counts_REF', sum),
                                               rna_counts_REF=('rna_counts_REF', sum),

@@ -10,6 +10,7 @@ rule qc_report_assoc:
     input:
         quarto_script=getScript("report/qc_report_assoc.qmd"),
         design_file=lambda wc: config["assignments"][wc.assignment]["design_file"],
+        design_file_checked="results/assignment/{assignment}/reference/reference.fa",
         statistic_filter="results/assignment/{assignment}/statistic/assigned_counts.{assignment_config}.tsv",
         statistic_all="results/assignment/{assignment}/statistic/total_counts.tsv",
         plot="results/assignment/{assignment}/statistic/assignment.{assignment_config}.png",
@@ -55,10 +56,11 @@ rule qc_report_assoc:
             -P bc:{params.bc} \
             -P workdir:{params.workdir} \
             -P design_file:{input.design_file} \
+            -P design_file_checked:{input.design_file_checked} \
             -P configs:{wildcards.assignment_config} \
             -P plot_file:{input.plot} \
             -P statistic_filter_file:{input.statistic_filter} \
-            -P statistic_all_file:{input.statistic_all} 
+            -P statistic_all_file:{input.statistic_all}
         ) &> {log}
         """
 
@@ -127,6 +129,6 @@ rule qc_report_count:
             -P statistics_all_oligo_cor_all:{input.statistics_all_oligo_cor_all} \
             -P statistics_all_oligo_cor_thresh:{input.statistics_all_oligo_cor_thresh} \
             -P thresh:{params.thresh} \
-            -P workdir:{params.workdir} 
+            -P workdir:{params.workdir}
         ) &> {log}
         """

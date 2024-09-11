@@ -89,7 +89,7 @@ thresh <- opt$threshold
 plot_correlations_dna <- function(data, condition, r1, r2, name) {
   rna_p <-
     ggplot(data, aes(dna_normalized_log2.x, dna_normalized_log2.y)) +
-    geom_point(aes(colour = label.x), show.legend = TRUE) +
+    geom_point() +
     xlim(-5, 5) +
     ylim(-5, 5) +
     ggtitle("Log2 DNA counts per oligo", subtitle = sprintf("Replicate %s and %s", r1, r2)) +
@@ -126,7 +126,7 @@ plot_correlations_dna <- function(data, condition, r1, r2, name) {
 plot_correlations_rna <- function(data, condition, r1, r2, name) {
   rna_p <-
     ggplot(data, aes(rna_normalized_log2.x, rna_normalized_log2.y)) +
-    geom_point(aes(colour = label.x), show.legend = TRUE) +
+    geom_point() +
     xlim(-5, 5) +
     ylim(-5, 5) +
     ggtitle("Log2 RNA counts per oligo", subtitle = sprintf("Replicate %s and %s", r1, r2)) +
@@ -162,7 +162,7 @@ plot_correlations_rna <- function(data, condition, r1, r2, name) {
 }
 plot_correlations_ratio <- function(data, condition, r1, r2, name) {
   ratio_p <- ggplot(data, aes(ratio_log2.x, ratio_log2.y)) +
-    geom_point(aes(colour = label.x), show.legend = TRUE) +
+    geom_point() +
     xlim(-5, 5) +
     ylim(-5, 5) +
     ggtitle("Log2 RNA/DNA count ratio per oligo", subtitle = sprintf("Replicate %s and %s", r1, r2)) +
