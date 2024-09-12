@@ -118,6 +118,14 @@ Indices and tables
     experiment
 
 .. toctree::
+    :caption: MPRAsnakeflow Tutorials
+    :name: mprasnakeflow-tutorials
+    :maxdepth: 1
+    :hidden:
+
+    tutorial
+
+.. toctree::
     :caption: MPRAsnakeflow Examples
     :name: mprasnakeflow-examples
     :maxdepth: 2

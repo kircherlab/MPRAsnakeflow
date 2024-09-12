@@ -4,7 +4,7 @@
 Experiment (Count)
 =====================
 
-.. image:: Count_util.png
+.. image:: MPRAsnakeflow_experiment_overview.png
 
 Input files
 ===============

@@ -4,7 +4,7 @@
 Assignment
 =====================
 
-.. image:: MPRAsnakeflow_assignment.png
+.. image:: MPRAsnakeflow_assignment_overview.png
 
 Input files
 ===============

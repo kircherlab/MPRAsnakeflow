@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath('.'))
 # -- Project information -----------------------------------------------------
 
 project = u'MPRAsnakeflow'
-copyright = u'2022, Max Schubach'
+copyright = u'2024, Max Schubach'
 author = u'Max Schubach'
 
 # The short X.Y version
@@ -45,7 +45,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx_rtd_theme',
-    'recommonmark'
+    'myst_parser'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -55,7 +55,11 @@ templates_path = ['_templates']
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = ['.rst', '.md']
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.txt': 'markdown',
+    '.md': 'markdown',
+}
 
 # The master toctree document.
 master_doc = 'index'

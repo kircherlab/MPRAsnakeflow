@@ -1,14 +1,10 @@
 ---
 channels:
-  - bioconda
   - conda-forge
   - defaults
 dependencies:
-  - pip
-  - python
+  - python==3.12
   - sphinx
   - rstcheck
-  - recommonmark
-  - urllib3
-  - pip:
-      - sphinx-rtd-theme
+  - myst-parser
+  - sphinx-rtd-theme

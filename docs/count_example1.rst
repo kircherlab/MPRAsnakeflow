@@ -280,7 +280,7 @@ statistic_counts_table
 Results
 -----------------
 
-All needed output files will be in the :code:`results/assignment/countBasic`folder.
+All needed output files will be in the :code:`results/assignment/countBasic` folder.
 
 
 To generate a final report, the following code can be used
@@ -294,6 +294,7 @@ This html contains als information about the snakemake run and integrates statis
 Total file tree of the results folder:
 
 .. code-block:: text
+
     results
     └── experiments
         └── countBasic

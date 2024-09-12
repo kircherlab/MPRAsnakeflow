@@ -179,7 +179,7 @@ When dry-drun does not give any errors we will run the workflow. We use a machin
 
 .. note:: Please modify your code when running in a cluster environment. We have an example SLURM config file here :code:`config/sbatch.yml`.
 
-If everything works fine the 40 rules showed above will run. Please goto the :ref:`Assignment example`_ and the :ref:`Count example`_ 
+If everything works fine the 40 rules showed above will run. Please goto the :ref:`Assignment example` and the :ref:`Count example`.
 
 Results
 -----------------
@@ -198,6 +198,7 @@ This html contains als information about the snakemake run and integrates statis
 Total file tree of the results folder:
 
 .. code-block:: text
+
     results
     ├── assignment
     │   └── assocBasic
