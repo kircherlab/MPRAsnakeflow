@@ -8,7 +8,7 @@ MPRAsnakeflow is a pipeline that processes sequencing data from MPRA to create c
 The code can be found [here](https://github.com/kircherlab/MPRAsnakeflow) and an extensive documentation [here](https://mprasnakeflow.readthedocs.io).  
 This readme explains the types of notebooks that are within the repository and type of example data as well as the structure of the input or MPRAsnakeflow.
 
-If you have more questions or need help, please write an issue on the [MPRAsnakeflow_tutorial repository](https://github.com/kircherlab/MPRAsnakeflow_tutorial/issues). For general questions about MPRAsnakeflow, please write an issue on the [MPRAsnakeflow repository](https://github.com/kircherlab/MPRAsnakeflow/issues). You can also contact the main developer [Max Schubach](max.schubach@bih-charite.de).
+If you have more questions or need help, please write an issue on the [MPRAsnakeflow_tutorial repository](https://github.com/kircherlab/MPRAsnakeflow_tutorial/issues). For general questions about MPRAsnakeflow, please write an issue on the [MPRAsnakeflow repository](https://github.com/kircherlab/MPRAsnakeflow/issues). You can also contact the main developer Max Schubach (<max.schubach@bih-charite.de>).
 
 
 ## Notebooks

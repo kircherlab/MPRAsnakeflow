@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath('.'))
 # -- Project information -----------------------------------------------------
 
 project = u'MPRAsnakeflow'
-copyright = u'2022, Max Schubach'
+copyright = u'2024, Max Schubach'
 author = u'Max Schubach'
 
 # The short X.Y version
