@@ -43,7 +43,8 @@ median_support <- median(bcs$support / bcs$all)
 
 bcs <- bcs %>%
     group_by(X2) %>%
-    count() %>% ungroup()
+    count() %>%
+    ungroup()
 
 oligos_support <- bcs %>%
     filter(n >= 15) %>%
@@ -56,17 +57,23 @@ rownames(output) <- c("Average support of BC for Oligo:", "Median support of BC 
 write.table(output, file = opt$statistic, quote = FALSE, sep = "\t", row.names = TRUE, col.names = FALSE)
 
 p <- ggplot(bcs, aes(n)) +
-    geom_histogram(binwidth = 1) +
+    geom_histogram(bins = 150) +
+    xlab("Number of BCs") +
+    ylab("Number of Oligos") +
     geom_vline(aes(xintercept = mean(bcs$n)), col = "red", linewidth = 2) +
-    geom_text(aes(
-        y = 500, label = sprintf("\nmean = %f", mean(bcs$n)),
-        x = max(n) / 2
-    ), colour = "red") +
+    geom_text(
+        aes(
+            label = sprintf("\nmean = %.2f", mean(bcs$n)),
+            x = Inf, y = Inf
+        ), hjust = 1.1, vjust = 1.3, colour = "red"
+    ) +
     geom_vline(aes(xintercept = median(bcs$n)), col = "blue", linewidth = 2) +
-    geom_text(aes(
-        y = 500, label = sprintf("median = %f\n", median(bcs$n)),
-        x = max(n) / 2
-    ), colour = "blue") +
+    geom_text(
+        aes(
+            label = sprintf("median = %.2f\n", median(bcs$n)),
+            x = Inf, y = Inf
+        ), hjust = 1.1, vjust = 1.3, colour = "blue"
+    ) +
     theme_bw()
 
-ggsave(opt$plot, p, type="cairo", dpi=300)
+ggsave(opt$plot, p, type = "cairo", dpi = 300)

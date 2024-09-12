@@ -11,3 +11,5 @@ dependencies:
   - numpy
   - pandas
   - python
+  - pysam
+  - pyfastx

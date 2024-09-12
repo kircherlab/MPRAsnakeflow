@@ -31,7 +31,7 @@ It is necessary to get the ordered oligo array so that each enhancer sequence ca
     cd combined_basic/data
     wget ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM4237nnn/GSM4237954/suppl/GSM4237954_9MPRA_elements.fa.gz
 
-    zcat GSM4237954_9MPRA_elements.fa.gz |awk '{ count+=1; if (count == 1) { print } else { print substr($1,1,171)}; if (count == 2) { count=0 } }' > design.fa
+    zcat GSM4237954_9MPRA_elements.fa.gz |awk '{ count+=1; if (count == 1) { print } else { print substr($1,1,171)}; if (count == 2) { count=0 } }' | awk '{gsub(/[\]\[]/,"_")} $0'> design.fa
 
 Reads
 ----------
@@ -118,7 +118,7 @@ First we do a try run using snakemake :code:`-n` option. The MPRAsnakeflow comma
 
     cd combined_basic
     conda activate mprasnakeflow
-    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/combined_basic/config.yml -n
+    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/combined_basic/config.yml -n -q
 
 You should see a list of rules that will be executed. This is the summary:
 
@@ -136,7 +136,7 @@ You should see a list of rules that will be executed. This is the summary:
     assignment_fastq_split                                              3              1              1
     assignment_filter                                                   1              1              1
     assignment_flagstat                                                 1              1              1
-    assignment_getBCs                                                   1              1              1
+    assignment_mapping_bwa_getBCs                                       1              1              1
     assignment_idx_bam                                                  1              1              1
     assignment_mapping                                                  1             10             10
     assignment_merge                                                   30              1              1
@@ -203,8 +203,8 @@ Total file tree of the results folder:
     │   └── assocBasic
     │       ├── aligned_merged_reads.bam
     │       ├── aligned_merged_reads.bam.bai
-    │       ├── assignment_barcodes.exampleConfig.sorted.tsv.gz
-    │       ├── barcodes_incl_other.sorted.tsv.gz
+    │       ├── assignment_barcodes.default.tsv.gz
+    │       ├── barcodes_incl_other.tsv.gz
     │       ├── reference
     │       │   ├── reference.fa
     │       │   ├── reference.fa.amb
@@ -215,31 +215,31 @@ Total file tree of the results folder:
     │       │   ├── reference.fa.pac
     │       │   └── reference.fa.sa
     │       └── statistic
-    │           ├── assigned_counts.exampleConfig.tsv.gz
+    │           ├── assigned_counts.default.tsv
     │           ├── assignment
     │           │   └── bam_stats.txt
-    │           ├── assignment.exampleConfig.png
-    │           ├── assignment.exampleConfig.tsv.gz
+    │           ├── assignment.default.png
+    │           ├── assignment.default.tsv.gz
     │           └── total_counts.tsv.gz
     └── experiments
         └── countBasic
             ├── assigned_counts
             │   └── fromWorkflow
-            │       ├── exampleConfig
+            │       ├── default
             │       │   ├── HEPG2_1_merged_assigned_counts.tsv.gz
             │       │   ├── HEPG2_2_merged_assigned_counts.tsv.gz
             │       │   ├── HEPG2_3_merged_assigned_counts.tsv.gz
             │       │   ├── HEPG2_allreps_merged.tsv.gz
             │       │   └── HEPG2_allreps_minThreshold_merged.tsv.gz
-            │       ├── HEPG2_1_DNA_final_counts.config.exampleConfig.tsv.gz
-            │       ├── HEPG2_1.merged.config.exampleConfig.tsv.gz
-            │       ├── HEPG2_1_RNA_final_counts.config.exampleConfig.tsv.gz
-            │       ├── HEPG2_2_DNA_final_counts.config.exampleConfig.tsv.gz
-            │       ├── HEPG2_2.merged.config.exampleConfig.tsv.gz
-            │       ├── HEPG2_2_RNA_final_counts.config.exampleConfig.tsv.gz
-            │       ├── HEPG2_3_DNA_final_counts.config.exampleConfig.tsv.gz
-            │       ├── HEPG2_3.merged.config.exampleConfig.tsv.gz
-            │       └── HEPG2_3_RNA_final_counts.config.exampleConfig.tsv.gz
+            │       ├── HEPG2_1_DNA_final_counts.config.default.tsv.gz
+            │       ├── HEPG2_1.merged.config.default.tsv.gz
+            │       ├── HEPG2_1_RNA_final_counts.config.default.tsv.gz
+            │       ├── HEPG2_2_DNA_final_counts.config.default.tsv.gz
+            │       ├── HEPG2_2.merged.config.default.tsv.gz
+            │       ├── HEPG2_2_RNA_final_counts.config.default.tsv.gz
+            │       ├── HEPG2_3_DNA_final_counts.config.default.tsv.gz
+            │       ├── HEPG2_3.merged.config.default.tsv.gz
+            │       └── HEPG2_3_RNA_final_counts.config.default.tsv.gz
             ├── assignment
             │   └── fromWorkflow.tsv.gz
             ├── counts
@@ -247,7 +247,7 @@ Total file tree of the results folder:
             │   ├── HEPG2_1_DNA_filtered_counts.tsv.gz
             │   ├── HEPG2_1_DNA_final_counts.tsv.gz
             │   ├── HEPG2_1_DNA_raw_counts.tsv.gz
-            │   ├── HEPG2_1.merged.config.exampleConfig.tsv.gz
+            │   ├── HEPG2_1.merged.config.default.tsv.gz
             │   ├── HEPG2_1_RNA.bam
             │   ├── HEPG2_1_RNA_filtered_counts.tsv.gz
             │   ├── HEPG2_1_RNA_final_counts.tsv.gz
@@ -256,7 +256,7 @@ Total file tree of the results folder:
             │   ├── HEPG2_2_DNA_filtered_counts.tsv.gz
             │   ├── HEPG2_2_DNA_final_counts.tsv.gz
             │   ├── HEPG2_2_DNA_raw_counts.tsv.gz
-            │   ├── HEPG2_2.merged.config.exampleConfig.tsv.gz
+            │   ├── HEPG2_2.merged.config.default.tsv.gz
             │   ├── HEPG2_2_RNA.bam
             │   ├── HEPG2_2_RNA_filtered_counts.tsv.gz
             │   ├── HEPG2_2_RNA_final_counts.tsv.gz
@@ -265,7 +265,7 @@ Total file tree of the results folder:
             │   ├── HEPG2_3_DNA_filtered_counts.tsv.gz
             │   ├── HEPG2_3_DNA_final_counts.tsv.gz
             │   ├── HEPG2_3_DNA_raw_counts.tsv.gz
-            │   ├── HEPG2_3.merged.config.exampleConfig.tsv.gz
+            │   ├── HEPG2_3.merged.config.default.tsv.gz
             │   ├── HEPG2_3_RNA.bam
             │   ├── HEPG2_3_RNA_filtered_counts.tsv.gz
             │   ├── HEPG2_3_RNA_final_counts.tsv.gz
@@ -273,14 +273,12 @@ Total file tree of the results folder:
             └── statistic
                 ├── assigned_counts
                 │   └── fromWorkflow
-                │       ├── exampleConfig
+                │       ├── default
                 │       │   ├── combined
                 │       │   │   └── HEPG2_merged_assigned_counts.statistic.tsv.gz
                 │       │   ├── HEPG2_1_merged_assigned_counts.statistic.tsv.gz
                 │       │   ├── HEPG2_2_merged_assigned_counts.statistic.tsv.gz
                 │       │   ├── HEPG2_3_merged_assigned_counts.statistic.tsv.gz
-                │       │   ├── HEPG2_all_barcodesPerInsert_box_minThreshold.png
-                │       │   ├── HEPG2_all_barcodesPerInsert_box.png
                 │       │   ├── HEPG2_average_allreps_merged.tsv.gz
                 │       │   ├── HEPG2_barcodesPerInsert.png
                 │       │   ├── HEPG2_correlation_minThreshold.tsv
@@ -293,30 +291,30 @@ Total file tree of the results folder:
                 │       │   ├── HEPG2_Ratio_pairwise.png
                 │       │   ├── HEPG2_RNA_pairwise_minThreshold.png
                 │       │   └── HEPG2_RNA_pairwise.png
-                │       ├── HEPG2_1_DNA_exampleConfig.statistic.tsv.gz
-                │       ├── HEPG2_1_RNA_exampleConfig.statistic.tsv.gz
-                │       ├── HEPG2_2_DNA_exampleConfig.statistic.tsv.gz
-                │       ├── HEPG2_2_RNA_exampleConfig.statistic.tsv.gz
-                │       ├── HEPG2_3_DNA_exampleConfig.statistic.tsv.gz
-                │       └── HEPG2_3_RNA_exampleConfig.statistic.tsv.gz
+                │       ├── HEPG2_1_DNA_default.statistic.tsv.gz
+                │       ├── HEPG2_1_RNA_default.statistic.tsv.gz
+                │       ├── HEPG2_2_DNA_default.statistic.tsv.gz
+                │       ├── HEPG2_2_RNA_default.statistic.tsv.gz
+                │       ├── HEPG2_3_DNA_default.statistic.tsv.gz
+                │       └── HEPG2_3_RNA_default.statistic.tsv.gz
                 ├── barcode
                 │   ├── assigned_counts
                 │   │   └── fromWorkflow
-                │   │       ├── HEPG2_exampleConfig_barcode_correlation.tsv
-                │   │       ├── HEPG2_exampleConfig_barcode_DNA_pairwise.png
-                │   │       ├── HEPG2_exampleConfig_barcode_Ratio_pairwise.png
-                │   │       ├── HEPG2_exampleConfig_barcode_RNA_pairwise.png
-                │   │       ├── HEPG2_exampleConfig_DNA_perBarcode.png
-                │   │       └── HEPG2_exampleConfig_RNA_perBarcode.png
+                │   │       ├── HEPG2_default_barcode_correlation.tsv
+                │   │       ├── HEPG2_default_barcode_DNA_pairwise.png
+                │   │       ├── HEPG2_default_barcode_Ratio_pairwise.png
+                │   │       ├── HEPG2_default_barcode_RNA_pairwise.png
+                │   │       ├── HEPG2_default_DNA_perBarcode.png
+                │   │       └── HEPG2_default_RNA_perBarcode.png
                 │   └── counts
-                │       ├── HEPG2_exampleConfig_barcode_correlation.tsv
-                │       ├── HEPG2_exampleConfig_barcode_DNA_pairwise.png
-                │       ├── HEPG2_exampleConfig_barcode_Ratio_pairwise.png
-                │       ├── HEPG2_exampleConfig_barcode_RNA_pairwise.png
-                │       ├── HEPG2_exampleConfig_DNA_perBarcode.png
-                │       └── HEPG2_exampleConfig_RNA_perBarcode.png
-                ├── bc_overlap.assigned_counts.exampleConfig.fromWorkflow.tsv
-                ├── bc_overlap.counts.exampleConfig.tsv
+                │       ├── HEPG2_default_barcode_correlation.tsv
+                │       ├── HEPG2_default_barcode_DNA_pairwise.png
+                │       ├── HEPG2_default_barcode_Ratio_pairwise.png
+                │       ├── HEPG2_default_barcode_RNA_pairwise.png
+                │       ├── HEPG2_default_DNA_perBarcode.png
+                │       └── HEPG2_default_RNA_perBarcode.png
+                ├── bc_overlap.assigned_counts.default.fromWorkflow.tsv
+                ├── bc_overlap.counts.default.tsv
                 ├── counts
                 │   ├── BCNucleotideComposition.HEPG2_1_DNA.tsv.gz
                 │   ├── BCNucleotideComposition.HEPG2_1_RNA.tsv.gz
@@ -332,8 +330,8 @@ Total file tree of the results folder:
                 ├── counts.freqUMIs.HEPG2_3_DNA.txt
                 ├── counts.freqUMIs.HEPG2_3_RNA.txt
                 ├── counts.raw.tsv
-                ├── statistic_assigned_bc_correlation_merged_fromWorkflow_exampleConfig.tsv
-                ├── statistic_assigned_counts_merged_fromWorkflow_exampleConfig.tsv
-                ├── statistic_assigned_counts_single_fromWorkflow_exampleConfig.tsv
-                ├── statistic_bc_correlation_merged_exampleConfig.tsv
-                └── statistic_oligo_correlation_merged_fromWorkflow_exampleConfig.tsv
+                ├── statistic_assigned_bc_correlation_merged_fromWorkflow_default.tsv
+                ├── statistic_assigned_counts_merged_fromWorkflow_default.tsv
+                ├── statistic_assigned_counts_single_fromWorkflow_default.tsv
+                ├── statistic_bc_correlation_merged_default.tsv
+                └── statistic_oligo_correlation_merged_fromWorkflow_default.tsv

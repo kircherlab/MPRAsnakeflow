@@ -14,8 +14,10 @@ rule counts_umi_create_BAM:
         fw_fastq=lambda wc: getFW(wc.project, wc.condition, wc.replicate, wc.type),
         rev_fastq=lambda wc: getRev(wc.project, wc.condition, wc.replicate, wc.type),
         umi_fastq=lambda wc: getUMI(wc.project, wc.condition, wc.replicate, wc.type),
-        script_FastQ2doubleIndexBAM=getScript("count/FastQ2doubleIndexBAM.py"),
-        script_MergeTrimReadsBAM=getScript("count/MergeTrimReadsBAM.py"),
+        script_FastQ2doubleIndexBAM=getScript("count/FastQ2doubleIndexBAM_python3.py"),
+        module_FastQ2doubleIndexBAM=getScript("count/library_python3.py"),
+        script_MergeTrimReadsBAM=getScript("count/MergeTrimReadsBAM_python3.py"),
+        module_MergeTrimReadsBAM=getScript("count/MergeTrimReads_python3.py"),
     output:
         "results/experiments/{project}/counts/useUMI.{condition}_{replicate}_{type}.bam",
     params:
@@ -23,7 +25,7 @@ rule counts_umi_create_BAM:
         umi_length=lambda wc: config["experiments"][wc.project]["umi_length"],
         datasetID="{condition}_{replicate}_{type}",
     conda:
-        "../../envs/python27.yaml"
+        "../../envs/python3.yaml"
     log:
         temp(
             "results/logs/counts/umi/create_BAM.{project}.{condition}.{replicate}.{type}.log"
@@ -39,13 +41,13 @@ rule counts_umi_create_BAM:
 
         minoverlap=`echo ${{fwd_length}} ${{fwd_length}} {params.bc_length} | awk '{{print ($1+$2-$3-1 < 11) ? $1+$2-$3-1 : 11}}'`;
 
-        echo $rev_start
-        echo $minoverlap
+        echo $rev_start >> {log}
+        echo $minoverlap >> {log}
 
         paste <( zcat {input.fw_fastq} ) <( zcat {input.rev_fastq}  ) <( zcat {input.umi_fastq} ) | \
         awk '{{if (NR % 4 == 2 || NR % 4 == 0) {{print $1$2$3}} else {{print $1}}}}' | \
         python {input.script_FastQ2doubleIndexBAM} -p -s $rev_start -l 0 -m {params.umi_length} --RG {params.datasetID} | \
-        python {input.script_MergeTrimReadsBAM} --FirstReadChimeraFilter '' --adapterFirstRead '' --adapterSecondRead '' -p --mergeoverlap --minoverlap $minoverlap > {output} 2> {log}
+        python {input.script_MergeTrimReadsBAM} --FirstReadChimeraFilter '' --adapterFirstRead '' --adapterSecondRead '' -p --mergeoverlap --minoverlap $minoverlap > {output} 2>> {log}
         """
 
 

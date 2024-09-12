@@ -1,0 +1,268 @@
+---
+title: "MPRAsnakeflow experiment QC report"
+page-layout: full
+format:
+  html:
+    code-fold: true
+    code-tools: true
+    embed-resources: true
+    anchor-sections: true
+    smooth-scroll: true
+    toc: true
+theme:
+  light: flatly
+  dark: darkly
+jupyter: python3
+
+---
+
+
+```{python}
+#| echo: false
+# Imports
+from IPython.display import display, Image, Markdown
+import pandas as pd
+```
+
+```{python}
+#| tags: [parameters]
+#| echo: false
+```
+
+
+```{python}
+#| echo: false
+oligo_cor_merged_table_thresh = pd.read_csv(f"{workdir}/{statistics_all_oligo_cor_thresh}", sep='\t')
+oligo_cor_merged_table_all = pd.read_csv(f"{workdir}/{statistics_all_oligo_cor_all}", sep='\t')
+
+dna_spear = oligo_cor_merged_table_thresh['DNA_spearman'].min()
+rna_spear = oligo_cor_merged_table_thresh['RNA_spearman'].min()
+ratio_spear = oligo_cor_merged_table_thresh['Ratio_spearman'].min()
+```
+
+```{python}
+#| echo: false
+
+threshold_dna_spear = 0.85
+threshold_rna_spear = 0.95
+threshold_ratio_spear = 0.75
+
+important = dna_spear < threshold_dna_spear and rna_spear < threshold_rna_spear and ratio_spear < threshold_ratio_spear
+warning = dna_spear < threshold_dna_spear or rna_spear < threshold_rna_spear or ratio_spear < threshold_ratio_spear
+
+if important:
+    display(Markdown(f'''
+::: {"{.callout-important}"}
+
+## Low correlation!
+
+Spearman correlation across replicates is low using a barcode threshold per oligo of {thresh}! Spearman correlation of DNA is {dna_spear:.2f}, RNA is {rna_spear:.2f} and DNA/RNA ratio is {ratio_spear:.2f}. Minimum allowed values are {threshold_dna_spear:.2f}, {threshold_rna_spear:.2f}, and {threshold_ratio_spear:.2f}.
+
+:::
+'''))
+elif warning:
+    display(Markdown(f'''
+::: {"{.callout-warning}"}
+
+## Low correlation warning!
+
+At least one (not all) Spearman correlations across replicates is low using a barcode threshold per oligo of {thresh}! Spearman correlation of DNA is {dna_spear:.2f}, RNA is {rna_spear:.2f} and DNA/RNA ratio is {ratio_spear:.2f}. Minimum allowed values are {threshold_dna_spear:.2f}, {threshold_rna_spear:.2f}, and {threshold_ratio_spear:.2f}.
+
+:::
+'''))
+else:
+    display(Markdown(f'''
+::: {"{.callout-tip}"}
+
+## Good Spearman correlation across replicates!
+
+The data has a good Spearman correlations across replicates using a barcode threshold per oligo of {thresh}! Spearman correlation of DNA is {dna_spear:.2f}, RNA is {rna_spear:.2f} and DNA/RNA ratio is {ratio_spear:.2f}.
+
+:::
+'''))
+
+```
+
+# DNA over RNA counts
+
+Plotting normalized counts of DNA vs RNA  (median across replicates). Only oligos within all replicates are shown. We should see a variation within the RNA count data (along the y axis). If count data between RNA and DNA is highly correlated (e.g. follows the identity line) there is no variation between designed oligos. This is an indication that RNA is inflated with DNA and the DNA digestion before creating cDNA did not work as expected.
+
+::: {.panel-tabset}
+
+## Threshold `{python} thresh`
+```{python}
+#| echo: false
+Image(f"{workdir}/{dna_over_rna_thresh_plot}")
+```
+
+## All
+```{python}
+#| echo: false
+Image(f"{workdir}/{dna_over_rna_plot}")
+```
+
+:::
+
+# Oligo correlation
+
+Oligo correlation plots of DNA, RNA and DNA/RNA ratios across replicates. First tab shows plots using (in average) `{python} "%d" % oligo_cor_merged_table_thresh['number_Oligos_Joined'].mean()` oligos with a minimum number of  `{python} thresh` barcodes. Second tab shows all `{python} "%d" % oligo_cor_merged_table_all['number_Oligos_Joined'].mean()` oligos that have assigned barcodes.
+
+```{python}
+#| echo: false
+
+def filter_table(df):
+    df = df.round(2).drop(columns=['DNA_pearson','RNA_pearson', 'Ratio_pearson', 'fraction_Oligos_ReplicateA', 'fraction_Oligos_ReplicateB', 'NormSymmetry'])
+    df.columns = df.columns.str.replace("_", " ", regex=False).str.replace("Replicate", " ", regex=False).str.replace("number ", "#", regex=False)
+    return(df)
+```
+
+
+
+::: {.panel-tabset}
+
+## Threshold `{python} thresh`
+```{python}
+#| echo: false
+oligo_cor_merged_table_thresh_filter = filter_table(oligo_cor_merged_table_thresh)
+oligo_cor_merged_table_thresh_filter.style.hide(axis="index").format( precision=2) 
+```
+
+## All
+```{python}
+#| echo: false
+oligo_cor_merged_table_all_filter = filter_table(oligo_cor_merged_table_all)
+oligo_cor_merged_table_all_filter.style.hide(axis="index").format( precision=2) 
+```
+
+:::
+
+::: {.panel-tabset}
+
+## Threshold `{python} thresh`
+
+::: {.panel-tabset}
+
+### DNA
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{dna_oligo_coor_min_thre_plot }"))
+```
+
+### RNA
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{rna_oligo_coor_min_thre_plot}"))
+```
+
+### Ratio
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{ratio_oligo_min_thre_plot}"))
+```
+
+:::
+
+
+## All
+
+::: {.panel-tabset}
+
+### DNA
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{dna_oligo_coor_plot}"))
+```
+
+### RNA
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{rna_oligo_coor_plot}"))
+```
+
+### Ratio
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{ratio_oligo_coor_plot}"))
+```
+
+:::
+
+:::
+
+# Experiment statistic
+
+```{python}
+#| echo: false
+
+df_merged = pd.read_csv(f"{workdir}/{statistics_all_merged}", sep='\t').round(2)
+n_oligos = df_merged['oligos design'].iloc[0]
+n_barcodes = df_merged['barcodes design'].iloc[0]
+
+avg_oligos = df_merged['oligos dna/rna'].mean()
+avg_matched_barcodes =  df_merged['matched barcodes'].mean()
+avg_unknown_barcodes =  df_merged['unknown barcodes dna/rna'].mean()
+
+```
+
+
+The total number of oligos in this experiment is `{python} f"{n_oligos}"` (defined by the assignment) with `{python} f"{n_barcodes}"` associated barcodes. 
+
+In average across replicates we see `{python} f"{avg_oligos:.0f}"` from `{python} f"{avg_matched_barcodes:.0f}"` average barcodes in the count data and around `{python} f"{avg_unknown_barcodes:.0f}"` barcodes where not in the assignment.
+
+::: {.panel-tabset}
+
+# DNA/RNA merged
+```{python}
+#| echo: false
+df_merged.drop(columns=['oligos design','barcodes design', 'barcodes dna/rna'], inplace=True)
+df_merged.style.hide(axis="index").format( precision=2) 
+```
+
+# DNA/RNA individual
+```{python}
+#| echo: false
+df_single = pd.read_csv(f"{workdir}/{statistics_all_single}", sep='\t').round(2)
+df_single.style.hide(axis="index").format( precision=2) 
+```
+
+:::
+
+# Number of barcodes per oligo
+
+Histogramm of number of barcodes per oligo. Median is blue, mean is red.
+
+::: {.panel-tabset}
+
+# DNA
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{counts_per_oligo_dna}")) 
+```
+
+# RNA
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{counts_per_oligo_rna}")) 
+```
+
+:::
+
+# Activity
+
+Violin and box plots of the log2 fold change of all oligos by the assay. Grouped by labels if set, otherwise `NA`. First tab shows plots using (in average) `{python} "%d" % oligo_cor_merged_table_thresh['number_Oligos_Joined'].mean()` oligos with a minimum number of  `{python} thresh` barcodes. Second tab shows all `{python} "%d" % oligo_cor_merged_table_all['number_Oligos_Joined'].mean()` oligos that have assigned barcodes.
+
+::: {.panel-tabset}
+
+## Threshold `{python} thresh`
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{activity_thresh}"))
+```
+
+## All
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{activity_all}"))
+```
+
+:::

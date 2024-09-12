@@ -195,9 +195,11 @@ rule statistic_correlation_calculate:
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
         label=(
-            lambda wc: config["experiments"][wc.project]["label_file"]
-            if "label_file" in config["experiments"][wc.project]
-            else []
+            lambda wc: (
+                config["experiments"][wc.project]["label_file"]
+                if "label_file" in config["experiments"][wc.project]
+                else []
+            )
         ),
         script=getScript("count/plot_perInsertCounts_correlation.R"),
     output:
@@ -239,48 +241,48 @@ rule statistic_correlation_calculate:
         ),
         report(
             "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_DNA_pairwise_minThreshold.png",
-        category="{project}",
-        subcategory="Oligo correlation plots",
-        labels=lambda wc: {
-            "Assignment": "{assignment}",
-            "Condition": "{condition}",
-            "Configuration": "{config}",
-            "Plot": "DNA",
-            "Threshold": str(
-                config["experiments"][wc.project]["configs"][wc.config]["filter"][
-        "bc_threshold"
+            category="{project}",
+            subcategory="Oligo correlation plots",
+            labels=lambda wc: {
+                "Assignment": "{assignment}",
+                "Condition": "{condition}",
+                "Configuration": "{config}",
+                "Plot": "DNA",
+                "Threshold": str(
+                    config["experiments"][wc.project]["configs"][wc.config]["filter"][
+                        "bc_threshold"
                     ]
                 ),
             },
         ),
         report(
             "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_RNA_pairwise_minThreshold.png",
-        category="{project}",
-        subcategory="Oligo correlation plots",
-        labels=lambda wc: {
-            "Assignment": "{assignment}",
-            "Condition": "{condition}",
-            "Configuration": "{config}",
-            "Plot": "RNA",
-            "Threshold": str(
-                config["experiments"][wc.project]["configs"][wc.config]["filter"][
-        "bc_threshold"
+            category="{project}",
+            subcategory="Oligo correlation plots",
+            labels=lambda wc: {
+                "Assignment": "{assignment}",
+                "Condition": "{condition}",
+                "Configuration": "{config}",
+                "Plot": "RNA",
+                "Threshold": str(
+                    config["experiments"][wc.project]["configs"][wc.config]["filter"][
+                        "bc_threshold"
                     ]
                 ),
             },
         ),
         report(
             "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_Ratio_pairwise_minThreshold.png",
-        category="{project}",
-        subcategory="Oligo correlation plots",
-        labels=lambda wc: {
-            "Assignment": "{assignment}",
-            "Condition": "{condition}",
-            "Configuration": "{config}",
-            "Plot": "Ratio",
-            "Threshold": str(
-                config["experiments"][wc.project]["configs"][wc.config]["filter"][
-        "bc_threshold"
+            category="{project}",
+            subcategory="Oligo correlation plots",
+            labels=lambda wc: {
+                "Assignment": "{assignment}",
+                "Condition": "{condition}",
+                "Configuration": "{config}",
+                "Plot": "Ratio",
+                "Threshold": str(
+                    config["experiments"][wc.project]["configs"][wc.config]["filter"][
+                        "bc_threshold"
                     ]
                 ),
             },
@@ -307,9 +309,11 @@ rule statistic_correlation_calculate:
         ]["bc_threshold"],
         outdir="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}",
         label=(
-            lambda wc: "--label %s" % config["experiments"][wc.project]["label_file"]
-            if "label_file" in config["experiments"][wc.project]
-            else ""
+            lambda wc: (
+                "--label %s" % config["experiments"][wc.project]["label_file"]
+                if "label_file" in config["experiments"][wc.project]
+                else ""
+            )
         ),
     log:
         temp(
@@ -336,16 +340,18 @@ rule statistic_correlation_hist_box_plots:
             replicate=getReplicatesOfCondition(wc.project, wc.condition),
         ),
         label=(
-            lambda wc: config["experiments"][wc.project]["label_file"]
-            if "label_file" in config["experiments"][wc.project]
-            else []
+            lambda wc: (
+                config["experiments"][wc.project]["label_file"]
+                if "label_file" in config["experiments"][wc.project]
+                else []
+            )
         ),
         script=getScript("count/plot_perInsertCounts_stats.R"),
     output:
-        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box.png",
-        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_all_barcodesPerInsert_box_minThreshold.png",
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png",
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png",
+        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_dna_vs_rna.png",
+        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_dna_vs_rna_minThreshold.png",
     params:
         cond="{condition}",
         files=lambda wc: ",".join(
@@ -366,9 +372,11 @@ rule statistic_correlation_hist_box_plots:
         ]["bc_threshold"],
         outdir="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}",
         label=(
-            lambda wc: "--label %s" % config["experiments"][wc.project]["label_file"]
-            if "label_file" in config["experiments"][wc.project]
-            else ""
+            lambda wc: (
+                "--label %s" % config["experiments"][wc.project]["label_file"]
+                if "label_file" in config["experiments"][wc.project]
+                else ""
+            )
         ),
     log:
         temp(

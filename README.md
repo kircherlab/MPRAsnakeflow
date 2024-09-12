@@ -6,7 +6,7 @@
 
 This pipeline processes sequencing data from Massively Parallel Reporter Assays (MPRA) to create count tables for candidate sequences tested in the experiment.
 
-MPRAsnakeflow is built on top of [Snakemake](https://snakemake.readthedocs.io). Insert your code into the respective folders, i.e. ``scripts``, ``rules``, and ``envs``. Define the entry point of the workflow in the ``Snakefile`` and the main configuration in a ``config.yaml`` file.
+MPRAsnakeflow is built on top of [Snakemake](https://snakemake.readthedocs.io).
 
 ## Authors
 
@@ -14,26 +14,28 @@ MPRAsnakeflow is built on top of [Snakemake](https://snakemake.readthedocs.io). 
 
 ## Documentation
 
-You can find a extensive documentations [here](https://mprasnakeflow.readthedocs.io)
+You can find an extensive documentation [here](https://mprasnakeflow.readthedocs.io)
 
+## Tutorial
+
+We have [tutorial](https://github.com/kircherlab/MPRAsnakeflow_tutorial) created in jupyter notebooks to run MPRAsnakeflow locally or within colab.
 
 ## Usage
 
-If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of this (original) repository and, if available, its DOI (see above). 
+If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of this (original) repository and, if available, its DOI (see above). Here is a very short description of the usage. Please look at the [documentation](https://mprasnakeflow.readthedocs.io) for more comprehensive usage. 
 
 ### Step 1: Obtain a copy of this workflow
 
-[Clone](https://help.github.com/en/articles/cloning-a-repository) this repository to your local system, into the place where you want to perform the data analysis.
+[Clone](https://help.github.com/en/articles/cloning-a-repository) this repository to your local system, into the place where you have access on your compute nodes. It does not necessarily be the the same folder where you start your analysis, but it can.
 
 ### Step 2: Configure workflow
-
-Configure the workflow according to your needs via editing the files in the `config/` folder. Create or adjust the `config.yaml` to configure the workflow execution. When running on a cluster environment there are `drmaa.yaml` for drmaa runs or `cluster.yaml` for SLURM environment which contain the resources required for each job.
+Create or adjust the `config/example_config.yaml` in the repository to your needs to configure the workflow execution. When running on a cluster environment you need a special [exccecutor plugin](https://snakemake.github.io/snakemake-plugin-catalog/), e.g. like [SLURM](https://snakemake.github.io/snakemake-plugin-catalog/plugins/executor/slurm.html), and use an adapted workflow profile (original `profiles/default/config.yaml`) to set the correct values (like slurm partitions).
 
 ### Step 3: Install Snakemake
 
-Install Snakemake using [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html):
+Install Snakemake (recommended version >= 8.x) using [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) or [mamba](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html) (recommended installation via [miniforge](https://github.com/conda-forge/miniforge)):
 
-    conda create -c bioconda -n snakemake snakemake
+    mamba create -c bioconda -n snakemake snakemake
 
 For installation details, see the [instructions in the Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
 
@@ -41,49 +43,51 @@ For installation details, see the [instructions in the Snakemake documentation](
 
 Activate the conda environment:
 
-    conda activate snakemake
+    mamba activate snakemake
 
 Test your configuration by performing a dry-run via
 
-    snakemake --use-conda --configfile conf/config.yaml -n
+    snakemake --software-deployment-method conda --configfile config.yaml -n
 
 Execute the workflow locally via
 
-    snakemake --use-conda --cores $N --configfile conf/config.yaml
+    snakemake --software-deployment-method conda --cores $N --configfile config.yaml --workflow-profile profiles/default
 
-using `$N` cores or run it in a cluster environment (SLURM using sbatch) via
+using `$N` cores or run it in a cluster environment (here SLURM) via the [slurm excecutor plugin](https://snakemake.github.io/snakemake-plugin-catalog/plugins/executor/slurm.html),
 
-    snakemake --use-conda --configfile conf/config.yaml --cluster "sbatch --nodes=1 --ntasks={cluster.threads} --mem={cluster.mem} -t {cluster.time} -p {cluster.queue} -o {cluster.output}" --jobs 100 --cluster-config config/sbatch.yaml
+    snakemake --software-deployment-method conda --executor slurm --cores $N --configfile config.yaml --workflow-profile profiles/default
 
-or
+Please note that `profiles/default/config.yaml` has to be adapted to your needs (like partition names).
+For snakemake 7.x this might work too using slurm sbatch (but depricated in newer snakemake versions:
 
-    snakemake --use-conda --configfile conf/config.yaml --drmaa "-n {cluster.threads} --mem={cluster.mem} -t {cluster.time} -p {cluster.queue} -o {cluster.output}" --jobs 100
+    snakemake --use-conda --configfile config.yaml --cluster "sbatch --nodes=1 --ntasks={cluster.threads} --mem={cluster.mem} -t {cluster.time} -p {cluster.queue} -o {cluster.output}" --jobs 100 --cluster-config config/sbatch.yaml
 
-using DRMAA.
 
 Please note that the log folder of the cluster environment has to be generated first, e.g:
 
     mkdir -p logs
 
-For other cluster environments please check the [Snakemake](https://snakemake.readthedocs.io) documentation and adapt accodingly.
+For other cluster environments please check the [Snakemake](https://snakemake.readthedocs.io) documentation nad look for other [exccecutor plugins](https://snakemake.github.io/snakemake-plugin-catalog/) and adapt accodingly.
 
 If you not only want to fix the software stack but also the underlying OS, use
 
-    snakemake --use-conda --use-singularity --configfile conf/config.yaml
+    snakemake --sdm apptainer,conda --cores $N --configfile config.yaml --workflow-profile profiles/default
 
-in combination with any of the modes above.
+in combination with any of the modes above. This will use a pre-build singularity container of MPRAsnakeflow with the conda ens installed in.
+
 
 It is also possible to run the workflow in a different folder so that the results get stored not in the MPRAsnakeflow folder. Here you have to specify the snakefile path, like
 
-    snakemake --use-conda --configfile yourConfigFile.yaml --snakefile <path/to/MPRAsnakeflow>/MPRAsnakeflow/workflow/Snakefile --cores $N
+    snakemake --sdm conda --configfile yourConfigFile.yaml --snakefile <path/to/MPRAsnakeflow>/MPRAsnakeflow/workflow/Snakefile --cores $N --workflow-profile <path/to/MPRAsnakeflow>/profiles/default
 
 See the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/executable.html) for further details.
 
 ### Step 5: Investigate results
 
+This part still works but it is outdated. Use the QC report, see documentation.
 After successful execution, you can create a self-contained interactive HTML report with all results via:
 
-    snakemake --report report.html --configfile conf/config.yaml
+    snakemake --report report.html --configfile config.yaml
 
 This report can, e.g., be forwarded to your collaborators.
 

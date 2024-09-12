@@ -1,61 +1,35 @@
 ---
-global:  # generall configs effecting one or multiple parts
-  threads: 1
+global: # generall configs effecting one or multiple parts
   assignments:
-    split_number: 1  # number of files fastq should be split for parallelization
+    split_number: 1 # number of files fastq should be split for parallelization
 assignments:
-  exampleAssignment:  # name of an example assignment (can be any string)
+  exampleAssignment: # name of an example assignment (can be any string)
     bc_length: 15
-    sequence_length:  # sequence length of design excluding adapters.
-      min: 195
-      max: 205
-    alignment_start:  # start of an alignment in the reference. Here using 15 bp adapters. Can be different when using adapter free approaches
-      min: 15  # integer
-      max: 17  # integer
-    min_mapping_quality: 1  # integer >=0 Please use 1 when you have oligos that differ by 1 base in your reference/design file
+    alignment_tool:
+      tool: exact # bbbmap, bwa or exact
+      configs:
+        sequence_length: 170 # sequence length of design excluding adapters.
+        alignment_start: 1 # start of the alignment in the reference/design_file
     FW:
-      - resources/Assignment_BasiC/R1.fastq.gz
+      - resources/assoc_basic/data/SRR10800986_1.fastq.gz
     BC:
-      - resources/Assignment_BasiC/R2.fastq.gz
+      - resources/assoc_basic/data/SRR10800986_2.fastq.gz
     REV:
-      - resources/Assignment_BasiC/R3.fastq.gz
-    reference: resources/design.fa
+      - resources/assoc_basic/data/SRR10800986_3.fastq.gz
+    design_file: resources/assoc_basic/design.fa
     configs:
-      exampleAssignmentConfig:  # name of an example filtering config
-        min_support: 3
-        fraction: 0.7
+      default: {} # name of an example filtering config
 experiments:
   exampleCount:
     bc_length: 15
     umi_length: 10
-    data_folder: resources/Count_Basic/data
-    experiment_file: resources/example_experiment.csv
+    data_folder: resources/count_basic/data
+    experiment_file: resources/count_basic/experiment.csv
     demultiplex: false
     assignments:
       fromFile:
         type: file
-        assignment_file: resources/SRR10800986_filtered_coords_to_barcodes.tsv.gz
-      fromWorkflow:
-        type: config
-        assignment_name: exampleAssignment
-        assignment_config: exampleAssignmentConfig
-    design_file: resources/design.fa
-    label_file: resources/labels.tsv  # optional
+        assignment_file: resources/count_basic/SRR10800986_barcodes_to_coords.tsv.gz
+    # label_file: resources/labels.tsv # optional
     configs:
-      exampleConfig:
-        filter:
-          bc_threshold: 10
-          DNA:
-            min_counts: 1
-          RNA:
-            min_counts: 1
-        sampling:  # optional, just for benmarking
-          DNA:
-            total: 30000000
-            threshold: 300
-          RNA:
-            total: 50000000
-            threshold: 300
-    variants:  # optional
-      map: resources/variant_map.tsv
-      min_barcodes: [5, 10]  # min BC for ref and alt sequence
+      default: {}

@@ -17,7 +17,7 @@ import click
               required=True,
               type=click.Path(exists=True, readable=True),
               help="Declaration file which is oligo is ref and alt. " +
-              "Should be ID REF ALT  as TSV (also with this header).")
+              "Should be ID REF ALT as TSV (also with this header).")
 @click.option('--output',
               'output_file',
               required=True,
@@ -27,16 +27,16 @@ def cli(counts_file, declaration_file, output_file):
 
     # declaration file
     click.echo("Read declaration file...")
-    declaration = pd.read_csv(declaration_file, header=0, sep="\t", index_col=0)
-    # ID REF ALT
+    # expected column names: ID REF ALT
+    declaration = pd.read_csv(declaration_file, header=0, sep="\t")
 
     # get count df
     click.echo("Read count file...")
+    # expected column names: name dna_counts rna_counts dna_normalized rna_normalized ratio log2 n_obs_bc
     counts = pd.read_csv(counts_file, header=0, sep="\t", index_col=0)
-    # name dna_counts rna_counts dna_normalized rna_normalized ratio log2 n_obs_bc
-
-    # join ref
+    # join ref with index of counts
     output = declaration.join(counts, on='REF')
+    # join again for the alt columns
     output = output.join(counts, on='ALT', lsuffix='_REF', rsuffix='_ALT')
     output["log2_expression"] = np.log2(output['ratio_ALT']/output['ratio_REF'])
 
@@ -48,7 +48,7 @@ def cli(counts_file, declaration_file, output_file):
 
     # write output
     click.echo("Write files...")
-    output.to_csv(output_file, index=True, sep='\t', header=True, compression='gzip')
+    output.to_csv(output_file, sep='\t', header=True, compression='gzip')
 
 
 if __name__ == '__main__':

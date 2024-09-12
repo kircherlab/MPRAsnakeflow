@@ -59,10 +59,7 @@ def cli(condition, variants, bc_threshold, output_file):
             click.echo("Join variants file...")
             variants_join = variants_1.join(variants_2, how="inner", lsuffix='_A', rsuffix='_B')[["log2_expression_A", "log2_expression_B"]]
 
-
-
-
-            output = output.append([[condition, rep_1, rep_2, variants_join.shape[0], bc_threshold, variants_join.corr(method="pearson").iloc[0,1],variants_join.corr(method="spearman").iloc[0,1]]])
+            output = pd.concat([output, pd.DataFrame([[condition, rep_1, rep_2, variants_join.shape[0], bc_threshold, variants_join.corr(method="pearson").iloc[0,1],variants_join.corr(method="spearman").iloc[0,1]]])], ignore_index=True)
 
 
     # write output

@@ -4,14 +4,14 @@
 Config File
 =====================
 
-The config file is a yaml file that contains the configuration. Different runs can be configured. We recommend to use one config file per MPRA experiment or MPRA roject. But in theory many different experiments can be configured in only one file. It is divided into :code:`global` (generell settings), :code:`assignments` (assigment workflow), and :code:`experiments` (count workflow including variants). This is a full example file with all possible configurations. :download:`config/example_config.yaml <../config/example_config.yaml>`.
+The config file is a yaml file that contains the configuration. Different runs can be configured. We recommend to use one config file per MPRA experiment or MPRA project. But in theory many different experiments can be configured in only one file. It is divided into :code:`global` (generell settings), :code:`assignments` (assigment workflow), and :code:`experiments` (count workflow including variants). This is a full example file with default configurations. :download:`config/example_config.yaml <../config/example_config.yaml>`.
 
 .. literalinclude:: ../config/example_config.yaml
    :language: yaml
    :linenos:
 
 
-Note that teh config file is conrolled by jscon schema. This means that the config file is validated against the schema. If the config file is not valid, the program will exit with an error message. The schema is located in :download:`workflow/schemas/config.schema.yaml <../workflow/schemas/config.schema.yaml>`.
+Note that the config file is conrolled by json schema. This means that the config file is validated against the schema. If the config file is not valid, the program will exit with an error message. The schema is located in :download:`workflow/schemas/config.schema.yaml <../workflow/schemas/config.schema.yaml>`.
 
 ----------------
 General settings
@@ -24,8 +24,6 @@ The general settings are located in the :code:`global` section. The following se
    :start-after: start_global
    :end-before: start_assignments
 
-:threads:
-    Number of threads that are available to run a rule. Right now this is used for bwa mem in the assignment workflow. Be sure to set up the snakemake option :code:`-c` correctly when using larger number of possible threads. Default is set to 1.
 :assignments:
     Global parameters that hold for the assignment workflow.
 
@@ -43,16 +41,29 @@ The assignment workflow is configured in the :code:`assignments` section. The fo
    :start-after: start_assignments
    :end-before: start_experiments
 
-Each asignment you want to process you have to giv him a name like :code:`example_assignment`. The name is used to name the output files.
+Each assignment you want to process you have to giv him a name like :code:`example_assignment`. The name is used to name the output files.
 
-:sequence_length:
-    Defines the :code:`min` and :code:`max` of a :code:`sequence_length` specify . :code:`sequence_length` is basically the length of a sequence alignment to an oligo in the reference file. Because there can be insertion and deletions we recommend to vary it a bit around the exact length (e.g. +-5). In theory this option enables designs with multiple sequence lengths.
-:alignment_start:
-    Defines the :code:`min` and :code:`max` of the start of the alignment in an oligo. When using adapters you have to set basically the length of the adapter. Otherwise 1 will be the choice for most cases. We also recommend to vary this value a bit because the start might not be exact after the adapter. E.g. by +-1.
-:min_mapping_quality:
-    (Optinal) Defines the minimum mapping quality (MAPQ) of the alinment to an oligo. When using oligos with only 1bp difference it is recommended to set it to 0. Otherwise the default value of 1 is recommended. 
+:alignment_tool:
+    Alignment tool configuration that is used to map the reads to the oligos.
+    
+    :tool:
+        Alignment tool that is used. Currently :code:`bwa` and :code:`exact` is supported.
+    :configs:
+        Configurations of the alignment tool selected.
+
+        :sequence_length (bwa):
+            Defines the :code:`min` and :code:`max` of a :code:`sequence_length` specify . :code:`sequence_length` is basically the length of a sequence alignment to an oligo in the design file. Because there can be insertion and deletions we recommend to vary it a bit around the exact length (e.g. +-5). In theory this option enables designs with multiple sequence lengths.
+        :alignment_start (bwa):
+            Defines the :code:`min` and :code:`max` of the start of the alignment in an oligo. When using adapters you have to set basically the length of the adapter. Otherwise 1 will be the choice for most cases. We also recommend to vary this value a bit because the start might not be exact after the adapter. E.g. by +-1.
+        :min_mapping_quality (bwa):
+            (Optinal) Defines the minimum mapping quality (MAPQ) of the alinment to an oligo. When using oligos with only 1bp difference it is recommended to set it to 1. For regions only with larger edit distances 30 or 40 might be a good choice. Default :code:`1`. 
+        :sequence_length (exact):
+            Defines the :code:`sequence_length` which is the length of a sequence alignment to an oligo in the design file. Only one length design is supported.
+        :alignment_start (exact):
+            Defines the start of the alignment in an oligo. When using adapters you have to set basically the length of the adapter. Otherwise 1 will be the choice for most cases.
+
 :bc_length:
-    Length of the barcode. Must match with the length of :code:`R2`.
+    Length of the barcode. Must match with the length of :code:`BC`.
 :BC_rev_comp:
     (Optional) If set to :code:`true` the barcode of is reverse complemented. Default is :code:`false`.
 :linker_length:
@@ -60,30 +71,38 @@ Each asignment you want to process you have to giv him a name like :code:`exampl
 :linker:
     (Optional) Length of the linker. Only needed if you don't have a barcode read and the barcode is in the FW read with the structure: BC+Linker+Insert. Uses cutadapt to trim the linker to get the barcode as well as the starting of the insert.
 :FW:
-    List of forward read files in gzipped fastq format. The full or relative path to the files should be used. Same order in R1, R2, and R3 is important.
+    List of forward read files in gzipped fastq format. The full or relative path to the files should be used. Same order in FW, BC, and REV is important.
 :REV:
-    list of reverse read files in gzipped fastq format. The full or relative path to the files should be used. Same order in R1, R2, and R3 is important.
+    list of reverse read files in gzipped fastq format. The full or relative path to the files should be used. Same order in FW, BC, and REV is important.
 :BC:
-    List of index read files in gzipped fastq format. The full or relative path to the files should be used. Same order in R1, R2, and R3 is important.
+    List of index read files in gzipped fastq format. The full or relative path to the files should be used. Same order in FW, BC, and REV is important.
 :NGmerge:
     (Optional) Options for NGmerge. NGmerge is used merge FW and REV reads. The following options are possible (we recommend to use the default values):
 
     :min_overlap:
-        (Optional) Minimum overlap of the reads. Default is set to 20.
+        (Optional) Minimum overlap of the reads. Default :code:`20`.
     :frac_mismatches_allowed:
-        (Optional) Fraction of mismatches allowed in the overlap. Default is set to 0.1.
+        (Optional) Fraction of mismatches allowed in the overlap. Default :code:`0.1`.
     :min_dovetailed_overlap:
-        (Optional) Minimum dovetailed overlap. Default is set to 10.
+        (Optional) Minimum dovetailed overlap. Default :code:`10`.
 
-:reference:
+:design_file:
     Design file (full or relative path) in fasta format. The design file should contain the oligos in fasta format. The header should contain the oligo name and should be unique. The sequence should be the sequence of the oligo and must also be unique. When having multiple oligo names with the same sequence please merge them into one fasta entry. The oligo name later used to link barcode to oligo. The sequence is used to map the reads to the oligos. Adapters can be in the seuqence and therefore :code:`alignment_start` has to be adjusted.
+:design_check:
+    (Optional) Options for checking your design fasta file. Design  file cannot have :code:`[` or :code:`]`, duplicated headers and for best performance sequences should not be identical.
+
+    :fast:
+        (Optional) Using a simple dictionary to find identical sequences. This is faster but uses only the whole (or center part depending on start/length) of the design file. Cannot find substrings as part of any sequence. Set to false for more correct, but slower, search. Default :code:`true`.
+    :sequence_collitions:
+        (Optional) Check if there are identical sequences in the design file. Default :code:`true`.
+
 :configs:
-    After mapping the reads to the design file and extracting the barcodes per oligo the configuration (using different names) can be used to generate multiple filtering and configuration settings of the final maq oligo to barcode. Each configuration is a dictionary with the following keys:
+    After mapping the reads to the design file and extracting the barcodes per oligo the configuration (using different names) can be used to generate multiple filtering and configuration settings of the final maq oligo to barcode. Use `<your_config_name>: {}` to use the default values for the keys. Each configuration is a dictionary with the following keys:
     
     :min_support:
-        Minimum number of same BC that map to teh same oligo. Larger value gives more evidence to be correct. But can remove lot's of BCs (depedning on the complexity, sequencing depth and quality of sequencing). Recommended option is :code:`3`.
+        Minimum number of same BC that map to the same oligo. Larger value gives more evidence to be correct. But can remove lot's of BCs (depedning on the complexity, sequencing depth and quality of sequencing). Recommended option is :code:`3`.
     :fraction:
-        Minumum fraction of same BC that map to teh same oligo. E.g. :code:`0.7` means that at least 70% of the BC map to the same oligo. Larger value gives more evidence to be correct. But can remove lot's of BCs (depedning on the complexity, sequencing depth and quality of sequencing). Recommended option is :code:`0.7`.
+        Minumum fraction of same BC that map to the same oligo. E.g. :code:`0.7` means that at least 70% of the BC map to the same oligo. Larger value gives more evidence to be correct. But can remove lot's of BCs (depedning on the complexity, sequencing depth and quality of sequencing). Recommended option is :code:`0.7`.
     :unknown_other:
             (Optional) Shows not mapped BCs in the final output map. Not recommended to use as mapping file fore the experiment workflow. But can be usefull for debugging. Default is :code:`false`. 
     :ambigous:
@@ -112,8 +131,6 @@ The experiment workflow is configured in the :code:`experiments` section. Each e
     Path to the experiment file. The full or relative path to the file should be used. The experiment file is a comma separated file and is decribed in the `Experiment file`_ section.
 :demultiplex:
     (Optional) If set to :code:`true` the reads are demultiplexed. This means that the reads are split into different files for each barcode. This is usefull for further analysis. Default is :code:`false`.
-:design_file:
-    Design file (full or relative path) in fasta format. The design file should contain the oligos in fasta format. The header should contain the oligo name and should be unique. The sequence should be the sequence of the oligo and must also be unique. When having multiple oligo names with the same sequence please merge them into one fasta entry. Should be the same as :code:`reference` in the `Assignment workflow`_.
 :label_file:
     (Optional) Path to the label file. The full or relative path to the file should be used. The label file is a tab separated file and contais the oligo name and the label of it. The oligo name should be the same as in the design file. The label is used to group the oligos in the final output, e.g. for plotting. 
     

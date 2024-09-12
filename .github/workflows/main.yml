@@ -3,17 +3,17 @@ name: Tests
 
 on:
   push:
-    branches: [master]
+    branches: [master, development]
   pull_request:
-    branches: [master]
+    branches: [master, development]
 
 jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: install micromamba
-        uses: mamba-org/provision-with-micromamba@v12
+        uses: mamba-org/provision-with-micromamba@v16
         with:
           environment-file: docs/environment.yml
           environment-name: sphinx
@@ -24,11 +24,11 @@ jobs:
   Formatting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Formatting
-        uses: github/super-linter@v4
+        uses: super-linter/super-linter@v6
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: master
@@ -44,9 +44,9 @@ jobs:
   Linting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Lint workflow
-        uses: snakemake/snakemake-github-action@v1.24.0
+        uses: snakemake/snakemake-github-action@v1
         with:
           directory: .
           snakefile: workflow/Snakefile

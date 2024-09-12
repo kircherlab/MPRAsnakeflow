@@ -1,13 +1,12 @@
 .vscode/
 report.html
-resources
 logs
-results
+.cache
 !analysis/README.md
 !config
 !config/*
 !resources
-!resources/*
+!resources/**
 !workflow
 !workflow/**
 !.gitattributes
@@ -20,3 +19,11 @@ results
 .ipynb_checkpoints
 *.pyc
 docs/_build/
+config/sbatch_omics_cluster.yaml
+data
+docs_data
+mix_data
+*data
+*report.html
+*.simg
+*results

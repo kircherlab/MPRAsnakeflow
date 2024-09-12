@@ -14,7 +14,7 @@ assignment_hybridFWRead_get_reads_by_length:
   threads: 1
   mem: 2G
   queue: "medium"
-assignmemt_hybridFWRead_get_reads_by_cutadapt:
+assignment_hybridFWRead_get_reads_by_cutadapt:
   time: "0-20:00"
   threads: 1
   mem: 4G
@@ -27,7 +27,7 @@ assignment_fastq_split:
   threads: 1
   mem: 10G
   queue: medium
-assignment_mapping:
+assignment_mapping_bwa:
   time: "0-02:00"
   threads: 30
   mem: 10G
@@ -37,15 +37,16 @@ assignment_collect:
   threads: 30
   mem: 10G
   queue: medium
-assignment_getBCs:
-  time: "0-04:00"
-  threads: 1
-  queue: medium
 assignment_collectBCs:
   time: "2-04:00"
   threads: 20
   mem: 10G
   queue: medium
+assignment_mapping_exact:
+  time: "0-01:00"
+  threads: 1
+  mem: 10G
+  queue: debug
 assignment_statistic_totalCounts:
   time: "0-01:00"
   threads: 1
@@ -81,12 +82,16 @@ counts_umi_raw_counts:
   mem: 6G
   queue: "medium"
 counts_noUMI_create_BAM:
-  time: "4-00:00"
+  time: 4-00:00
   mem: 12G
-  queue: "medium"
+  queue: medium
+counts_filter_counts:
+  time: 0-02:00
+  queue: medium
 counts_final_counts_samplerer:
   mem: 20G
   queue: medium
+
 #########################
 ### (ASSIGNED) COUNTS ###
 #########################
@@ -115,7 +120,7 @@ assigned_counts_createAssignmentPickleFile:
 assigned_counts_filterAssignment:
   time: "0-01:00"
   queue: "medium"
-  mem: 10G
+  mem: 15G
 
 #################
 ### Statistic ###
@@ -133,6 +138,9 @@ statistic_counts_barcode_base_composition:
   time: "1-00:00"
   queue: "medium"
   mem: 20G
+statistic_counts_table:
+  time: 0-02:00
+  queue: medium
 
 #############################
 ### Statistic/correlation ###

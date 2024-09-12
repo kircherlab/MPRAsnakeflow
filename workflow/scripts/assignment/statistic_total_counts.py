@@ -6,41 +6,46 @@ import click
 
 # options
 @click.command()
-@click.option('--input',
-              'input_file',
-              required=True,
-              type=click.Path(exists=True, readable=True),
-              help='file with BC oligo/other counts')
-@click.option('--output',
-              'output_file',
-              required=True,
-              type=click.Path(writable=True),
-              help='Output file.')
+@click.option(
+    "--input",
+    "input_file",
+    required=True,
+    type=click.Path(exists=True, readable=True),
+    help="file with BC oligo/other counts",
+)
+@click.option(
+    "--output",
+    "output_file",
+    required=True,
+    type=click.Path(writable=True),
+    help="Output file.",
+)
 def cli(input_file, output_file):
 
-    bcs=set()
-    oligos=set()
-    other_bcs=set()
-    ambiguous_bc=set()
+    bcs = set()
+    oligos = set()
+    other_bcs = set()
+    ambiguous_bc = set()
 
-    chunksize = 10 ** 6
-    chunk = pd.read_csv(input_file, usecols=[0, 1], names=["BC", "Oligo"], sep="\t", chunksize=chunksize)
+    chunksize = 10**6
+    chunk = pd.read_csv(
+        input_file, usecols=[0, 1], names=["BC", "Oligo"], sep="\t", chunksize=chunksize
+    )
     for df in chunk:
         bcs.update(df.BC)
         oligos.update(df.Oligo)
-        if 'other' in df.Oligo:
+        if "other" in df.Oligo.unique():
             other_bcs.update(df[df.Oligo == "other"].BC)
-        if 'ambiguous' in df.Oligo:
+        if "ambiguous" in df.Oligo.unique():
             ambiguous_bc.update(df[df.Oligo == "ambiguous"].BC)
 
     n_bcs = len(bcs)
 
     n_other_bcs = len(other_bcs)
-    
+
     n_ambiguous_bc = len(ambiguous_bc)
 
     n_assigned_bcs = n_bcs - n_other_bcs - n_ambiguous_bc
-
 
     n_matched_oligos = len(oligos)
 
@@ -49,11 +54,21 @@ def cli(input_file, output_file):
     if "other" in oligos:
         n_matched_oligos -= 1
 
-    output = pd.DataFrame({"Counts": [n_bcs, n_assigned_bcs, n_matched_oligos, n_other_bcs, n_ambiguous_bc]}, index=[
-                          "Total BCs", "Total assigned BCs", "Total assigned oligos", "Total other BCs", "Total ambiguous BCs"])
+    output = pd.DataFrame(
+        {
+            "Counts": [
+                n_matched_oligos,
+                n_bcs,
+                n_assigned_bcs,
+                n_other_bcs,
+                n_ambiguous_bc,
+            ]
+        },
+        index=["Oligos", "BCs", "Assigned BCs", "Other BCs", "Ambiguous BCs"],
+    )
 
-    output.to_csv(output_file, sep='\t', header=True, index=True)
+    output.to_csv(output_file, sep="\t", header=True, index=True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli()

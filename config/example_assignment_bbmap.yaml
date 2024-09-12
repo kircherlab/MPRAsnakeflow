@@ -1,0 +1,26 @@
+---
+global: # generall configs effecting one or multiple parts
+  assignments:
+    split_number: 1 # number of files fastq should be split for parallelization
+assignments:
+  exampleAssignment: # name of an example assignment (can be any string)
+    bc_length: 15
+    alignment_tool:
+      tool: bbmap
+      configs:
+        min_mapping_quality: 35 # integer >=0. 35 is default
+        sequence_length: # sequence length of design excluding adapters.
+          min: 166
+          max: 175
+        alignment_start: # start of an alignment in the reference/design_file. Here using 15 bp adapters. Can be different when using adapter free approaches
+          min: 1 # integer
+          max: 3 # integer
+    FW:
+      - resources/Assignment_BasiC/R1.fastq.gz
+    BC:
+      - resources/Assignment_BasiC/R2.fastq.gz
+    REV:
+      - resources/Assignment_BasiC/R3.fastq.gz
+    design_file: resources/design.fa
+    configs:
+      default: {} # name of an example filtering config

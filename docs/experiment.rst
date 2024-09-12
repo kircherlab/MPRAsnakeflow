@@ -23,23 +23,6 @@ Comma separated file (CSV) that assigns all fastq files present in a directory t
     Condidtion2,1,C2R1_DNA_barcode_F.fastq.gz,C2R1_DNA_barcode_UMI.fastq.gz,C2R1_DNA_barcode_R.fastq.gz,C2R1_RNA_barcode_F.fastq.gz,C2R1_RNA_barcode_UMI.fastq.gz,C2R1_RNA_barcode_R.fastq.gz
     Condidtion2,2,C2R2_DNA_barcode_F.fastq.gz,C2R2_DNA_barcode_UMI.fastq.gz,C2R2_DNA_barcode_R.fastq.gz,C2R2_RNA_barcode_F.fastq.gz,C2R2_RNA_barcode_UMI.fastq.gz,C2R2_RNA_barcode_R.fastq.gz
     Condidtion2,3,C2R3_DNA_barcode_F.fastq.gz,C2R3_DNA_barcode_UMI.fastq.gz,C2R3_DNA_barcode_R.fastq.gz,C2R3_RNA_barcode_F.fastq.gz,C2R3_RNA_barcode_UMI.fastq.gz,C2R3_RNA_barcode_R.fastq.gz
-
-Design File
------------
-Fasta file of of CRS sequences with unique headers describing each tested sequence
-
-Example file:
-
-.. code-block:: text
-
-    >CRS1
-    GACGGGAACGTTTGAGCGAGATCGAGGATAGGAGGAGCGGA
-    >CRS2
-    GGGCTCTCTTATATTAAGGGGGTGTGTGAACGCTCGCGATT
-    >CRS3
-    GGCGCGCTTTTTCGAAGAAACCCGCCGGAGAATATAAGGGA
-    >CRS4
-    TTAGACCGCCCTTTACCCCGAGAAAACTCAGCTACACACTC
     
 Assignment File or configuration
 --------------------------------
@@ -97,8 +80,8 @@ Mandatory arguments:
     Use at most N CPU cores/jobs in parallel. If N is omitted or 'all', the limit is set to the number of available CPU cores. In case of cluster/cloud execution, this argument sets the number of total cores used over all jobs (made available to rules via workflow.cores).(default: None)
   :\-\-configfile:
     Specify or overwrite the config file of the workflow (see the docs). Values specified in JSON or YAML format are available in the global config dictionary inside the workflow. Multiple files overwrite each other in the given order. Thereby missing keys in previous config files are extended by following configfiles. Note that this order also includes a config file defined in the workflow definition itself (which will come first). (default: None)
-  :\-\-use-conda:             
-    **Required to run MPRAsnakeflow.** If defined in the rule, run job in a conda environment. If this flag is not set, the conda directive is ignored. (default: False)
+  :\-\-sdm:             
+    **Required to run MPRAsnakeflow.** : :code:`--sdm conda` or :code:`--sdm apptainer` Uses the defined conda environment per rule. We highly recommend to use apptainer where we build a predefined docker container with all software installewd within it. :code:`--sdm conda` teh conda envs will be installed by the first excecution of the workflow. If this flag is not set, the conda/apptainer directive is ignored. (default: False)
 Recommended arguments:
   :\-\-snakefile:             
     You should not need to specify this. By default, Snakemake will search for 'Snakefile', 'snakefile', 'workflow/Snakefile','workflow/snakefile' beneath the current working directory, in this order. Only if you definitely want a different layout, you need to use this parameter. This is very usefull when you want to have the results in a different folder than MPRAsnakeflow is in. (default: None)
@@ -168,7 +151,6 @@ File tree
         |-HepG2_1_2_DNA_pairwise.png
         |-HepG2_1_2_Ratio_pairwise.png
         |-HepG2_1_2_RNA_pairwise.png
-        |-HepG2_all_barcodesPerInsert_box.png
         |-HepG2_barcodesPerInsert.png
             |-Reps
                 |-HepG2_1_counts.tsv
@@ -197,8 +179,6 @@ HepG2_1_2_Ratio_pairwise.png
   Correlation plot of normalized log2(RNA/DNA) condition vs two reps (ie: HepG2 replicate 1 vs replicate 2)
 HepG2_1_2_RNA_pairwise.png
   Correlation plot of RNA counts condition vs two reps (ie: HepG2 replicate 1 vs replicate 2)
-HepG2_all_barcodesPerInsert_box.png
-  Box plot of each CRS accross replicates for all barcodes in each condidtion. Colored by the label file.
 HepG2_barcodesPerInsert.png
   Histogram of number of barcodes detected per CRS
 HepG2_group_barcodesPerInsert_box.png

@@ -1,0 +1,13 @@
+:root {
+  --brand-image: url("https://res.cloudinary.com/bioinformaticsguy/image/upload/v1706099661/Work/dv1p1iist0niqbqukglm.png");
+}
+
+#brand {
+  margin: auto;
+  height: 150px;
+  width: 300px;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image: var(--brand-image);
+}
+

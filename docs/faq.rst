@@ -20,7 +20,7 @@ MPRAsnakeflow is not able to create a Conda environment
 
 
 Can I use STARR-seq with MPRAsnakeflow?
-    No, not yet!
+    No! Not yet ;-)
 
 
 The pipeline is giving an error **"BUG: Out of jobs ready to be started, but not all files built yet."** and won't run. How can I fix this?

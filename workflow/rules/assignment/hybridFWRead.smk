@@ -11,7 +11,8 @@ rule assignment_hybridFWRead_get_reads_by_length:
     conda:
         "../../envs/default.yaml"
     input:
-        lambda wc: config["assignments"][wc.assignment]["FW"],
+        fastq=lambda wc: config["assignments"][wc.assignment]["FW"],
+        check="results/assignment/{assignment}/design_check.done",
     output:
         FW_tmp=temp("results/assignment/{assignment}/fastq/FW.byLength.fastq"),
         BC_tmp=temp("results/assignment/{assignment}/fastq/BC.byLength.fastq"),
@@ -26,7 +27,7 @@ rule assignment_hybridFWRead_get_reads_by_length:
         + 1,
     shell:
         """
-        zcat {input} | \
+        zcat {input.fastq} | \
         awk '{{if (NR%4==2 || NR%4==0){{
                 print substr($0,1,20) > "{output.BC_tmp}"; print substr($0,{params.insert_start}) > "{output.FW_tmp}"
             }} else {{
@@ -36,7 +37,7 @@ rule assignment_hybridFWRead_get_reads_by_length:
         """
 
 
-rule assignmemt_hybridFWRead_get_reads_by_cutadapt:
+rule assignment_hybridFWRead_get_reads_by_cutadapt:
     """
     Get the barcode and read from the FW read using cutadapt.
     Uses the paired end mode of cutadapt to write the FW and BC read.
