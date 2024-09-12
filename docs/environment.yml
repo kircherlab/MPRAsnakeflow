@@ -4,10 +4,11 @@ channels:
   - conda-forge
   - defaults
 dependencies:
+  - pip
   - python
   - sphinx
   - rstcheck
   - myst-parser
-  - sphinx-mdinclude
   - urllib3
-  - sphinx-rtd-theme
+  - pip:
+      - sphinx-rtd-theme
