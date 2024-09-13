@@ -1,5 +1,5 @@
 {
-  ".": "0.0.1",
+  ".": "1.0.0",
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
   "draft": true,
