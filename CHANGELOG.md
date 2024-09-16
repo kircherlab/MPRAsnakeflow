@@ -11,4 +11,4 @@ First release of MPRAsnakeflow!
 * QC report for assignment and experiment workflow
 * Barcode count output
 * Snakemake 8 support
-* Extendet documentation
+* Extendet documentation: https://mprasnakeflow.readthedocs.io
