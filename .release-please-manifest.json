@@ -8,5 +8,6 @@
       "draft": true,
       "prerelease": true
     }
-  }
+  },
+  ".": "1.0.0"
 }
