@@ -33,7 +33,7 @@ Getting started
 
 3. Set up the config file
 
-The config file is the heart of MPRAsnakflow. Here different runs can be configured. We recommend to use one config file per MPRA experiment or MPRA roject. But in theory many different experiments can be configured in only one file. It is divided into :code:`global` (generell settings), :code:`assignments` (assigment workflow), and :code:`experiments` (count workflow including variants).
+The config file is the heart of MPRAsnakflow. Here different runs can be configured. We recommend to use one config file per MPRA experiment or MPRA project. But in theory many different experiments can be configured in only one file. It is divided into :code:`global` (generell settings), :code:`assignments` (assigment workflow), and :code:`experiments` (count workflow including variants).
 
 See :ref:`Config` for more details about the config file. Here is an example running only the count experiments and using a provided assignment file.
 
