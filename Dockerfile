@@ -21,6 +21,21 @@ RUN mkdir -p /conda-envs/c243bde7dc056785a077f6c33e56e8d6
 COPY workflow/envs/NGmerge.yaml /conda-envs/c243bde7dc056785a077f6c33e56e8d6/environment.yaml
 
 # Conda environment:
+#   source: workflow/envs/bbmap_samtools_htslib.yaml
+#   prefix: /conda-envs/575ebc82fb464fb2d0748323abbd3a13
+# ---
+# channels:
+#   - bioconda
+#   - conda-forge
+#   - defaults
+# dependencies:
+#   - bbmap
+#   - samtools
+#   - htslib
+RUN mkdir -p /conda-envs/575ebc82fb464fb2d0748323abbd3a13
+COPY workflow/envs/bbmap_samtools_htslib.yaml /conda-envs/575ebc82fb464fb2d0748323abbd3a13/environment.yaml
+
+# Conda environment:
 #   source: workflow/envs/bwa_samtools_picard_htslib.yaml
 #   prefix: /conda-envs/f354d1f7a8fd64abb8ea8902ec91d399
 #   ---
@@ -151,6 +166,7 @@ COPY workflow/envs/quarto.yaml /conda-envs/b8e51d222ab0d9caac2206a127729b1c/envi
 # Step 2: Generate conda environments
 
 RUN mamba env create --prefix /conda-envs/c243bde7dc056785a077f6c33e56e8d6 --file /conda-envs/c243bde7dc056785a077f6c33e56e8d6/environment.yaml
+RUN mamba env create --prefix /conda-envs/575ebc82fb464fb2d0748323abbd3a13 --file /conda-envs/575ebc82fb464fb2d0748323abbd3a13/environment.yaml
 RUN mamba env create --prefix /conda-envs/f354d1f7a8fd64abb8ea8902ec91d399 --file /conda-envs/f354d1f7a8fd64abb8ea8902ec91d399/environment.yaml
 RUN mamba env create --prefix /conda-envs/9444545a0ebc79ec516fa74514742720 --file /conda-envs/9444545a0ebc79ec516fa74514742720/environment.yaml
 RUN mamba env create --prefix /conda-envs/dc242c7dafc90db387bc0290c31dc7ae --file /conda-envs/dc242c7dafc90db387bc0290c31dc7ae/environment.yaml
