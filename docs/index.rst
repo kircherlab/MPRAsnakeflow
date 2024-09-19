@@ -55,18 +55,25 @@ And then run the main workflow with:
 .. code-block:: bash
 
     snakemake --software-deployment-method conda --cores $N --configfile config/example_config.yaml
-    
+
 
 --------
 Features
 --------
 
-:--software-deployment-method:
-  When ```conda`` is set the utility uses mamba to efficiently query repositories and query package dependencies. MPRAsnakeflow also can use containers via apptainer by using ``--software-deployment-method apptainer``. Recommended option: ``--software-deployment-method conda apptainer``
-:--cores:
-  This utility sets the number of cores (``$N``) to be used by MPRAsnakeflow.
-:--configfile:
-  This file (e.g., ``config/example_config.yaml``) contains the project, its objects and properties, and sub-properties and its objects that **must** be set before running MPRAsnakeflow.
+.. list-table:: 
+   :widths: 25 80
+   :header-rows: 1
+
+   * - Option
+     - Description
+   * - ``--software-deployment-method``
+     - When ``conda`` is set, the utility uses mamba to efficiently query repositories and query package dependencies. MPRAsnakeflow also can use containers via apptainer by using ``--software-deployment-method apptainer``. Recommended option: ``--software-deployment-method conda apptainer``
+   * - ``--cores``
+     - This utility sets the number of cores (``$N``) to be used by MPRAsnakeflow.
+   * - ``--configfile``
+     - This file (e.g., ``config/example_config.yaml``) contains the project, its objects and properties, and sub-properties and its objects that **must** be set before running MPRAsnakeflow.
+
 
 -------------------
 Investigate results
