@@ -87,7 +87,7 @@ After successful execution, you can create a self-contained interactive HTML rep
 
 
 This report can be forwarded to your collaborators.
-An example of a generated report (using some trivial test data) can be seen `here <https://cdn.rawgit.com/snakemake-workflows/rna-seq-kallisto-sleuth/master/.test/report.html>`_.
+An example of a generated report (using some trivial test data) can be seen `here <https://snakemake.github.io/resources/report.html>`_.
 
 --------
 Feedback
