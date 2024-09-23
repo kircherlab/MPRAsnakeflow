@@ -1,3 +1,5 @@
+ARG VERSION=0.1.1
+
 FROM condaforge/mambaforge:latest
 LABEL io.github.snakemake.containerized="true"
 LABEL io.github.snakemake.conda_env_hash="7a57714fe74eb25255d53b45e2095cd8a4dd4fe73db79006353670c432af97b1"
@@ -6,7 +8,7 @@ LABEL io.github.snakemake.conda_env_hash="7a57714fe74eb25255d53b45e2095cd8a4dd4f
 
 # Conda environment:
 #   source: workflow/envs/NGmerge.yaml
-#   prefix: /conda-envs/0e6f3bac6cfff71870a0b9169bb008bd
+#   prefix: /conda-envs/8b5bbd33d7ccdbbe3a28773771abe2b3
 #   ---
 #   channels:
 #     - conda-forge
@@ -14,10 +16,10 @@ LABEL io.github.snakemake.conda_env_hash="7a57714fe74eb25255d53b45e2095cd8a4dd4f
 #   dependencies:
 #     - ngmerge=0.3
 #     - python
-#     - click  
+#     - click
 #     - htslib
-RUN mkdir -p /conda-envs/0e6f3bac6cfff71870a0b9169bb008bd
-COPY workflow/envs/NGmerge.yaml /conda-envs/0e6f3bac6cfff71870a0b9169bb008bd/environment.yaml
+RUN mkdir -p /conda-envs/8b5bbd33d7ccdbbe3a28773771abe2b3
+COPY workflow/envs/NGmerge.yaml /conda-envs/8b5bbd33d7ccdbbe3a28773771abe2b3/environment.yaml
 
 # Conda environment:
 #   source: workflow/envs/bbmap_samtools_htslib.yaml
@@ -137,7 +139,8 @@ COPY workflow/envs/cutadapt.yaml /conda-envs/a3e2fce7f2f6fdbe1aa97232e3def601/en
 
 # Conda environment:
 #   source: workflow/envs/quarto.yaml
-#   prefix: /conda-envs/da60aa4f530d789a6e910316dce49728
+#   prefix: /conda-envs/b933cc1aa7c25db04635e7ec0e37f80e
+#   ---
 #   channels:
 #      - conda-forge
 #      - bioconda
@@ -148,20 +151,24 @@ COPY workflow/envs/cutadapt.yaml /conda-envs/a3e2fce7f2f6fdbe1aa97232e3def601/en
 #      - pandas
 #      - matplotlib
 #      - papermill
-RUN mkdir -p /conda-envs/da60aa4f530d789a6e910316dce49728
-COPY workflow/envs/quarto.yaml /conda-envs/da60aa4f530d789a6e910316dce49728/environment.yaml
+RUN mkdir -p /conda-envs/b933cc1aa7c25db04635e7ec0e37f80e
+COPY workflow/envs/quarto.yaml /conda-envs/b933cc1aa7c25db04635e7ec0e37f80e/environment.yaml
 
 
 
 # Step 2: Generate conda environments
 
-RUN mamba env create --no-default-packages --prefix /conda-envs/0e6f3bac6cfff71870a0b9169bb008bd --file /conda-envs/0e6f3bac6cfff71870a0b9169bb008bd/environment.yaml && mamba clean --all -y
-RUN mamba env create --no-default-packages --prefix /conda-envs/f24b0ccfc23aadb93b466380cd592733 --file /conda-envs/f24b0ccfc23aadb93b466380cd592733/environment.yaml && mamba clean --all -y
-RUN mamba env create --no-default-packages --prefix /conda-envs/a0a27bbdca540d02023c7fdcf819bfc1 --file /conda-envs/a0a27bbdca540d02023c7fdcf819bfc1/environment.yaml && mamba clean --all -y
-RUN mamba env create --no-default-packages --prefix /conda-envs/899c0a8c04c6edeed4b242dbc3e0e1c8 --file /conda-envs/899c0a8c04c6edeed4b242dbc3e0e1c8/environment.yaml && mamba clean --all -y
-RUN mamba env create --no-default-packages --prefix /conda-envs/3feb999aa5bcd4bbdbc57fef247c18cc --file /conda-envs/3feb999aa5bcd4bbdbc57fef247c18cc/environment.yaml && mamba clean --all -y
-RUN mamba env create --prefix /conda-envs/a4e1b935cbca52df9b6f192ff86c464c --file /conda-envs/a4e1b935cbca52df9b6f192ff86c464c/environment.yaml && mamba clean --all -y
-RUN mamba env create --no-default-packages --prefix /conda-envs/ae3e37bf43cbb30416a885168e10c552 --file /conda-envs/ae3e37bf43cbb30416a885168e10c552/environment.yaml && mamba clean --all -y
-RUN mamba env create --no-default-packages --prefix /conda-envs/c2ee5a5886e2a786f23dd36e5c10752e --file /conda-envs/c2ee5a5886e2a786f23dd36e5c10752e/environment.yaml && mamba clean --all -y
-RUN mamba env create --no-default-packages --prefix /conda-envs/a3e2fce7f2f6fdbe1aa97232e3def601 --file /conda-envs/a3e2fce7f2f6fdbe1aa97232e3def601/environment.yaml && mamba clean --all -y
-RUN mamba env create --no-default-packages --prefix /conda-envs/da60aa4f530d789a6e910316dce49728 --file /conda-envs/da60aa4f530d789a6e910316dce49728/environment.yaml && mamba clean --all -y
+RUN mamba env create --no-default-packages --prefix /conda-envs/8b5bbd33d7ccdbbe3a28773771abe2b3 --file /conda-envs/8b5bbd33d7ccdbbe3a28773771abe2b3/environment.yaml
+RUN mamba env create --no-default-packages --prefix /conda-envs/f24b0ccfc23aadb93b466380cd592733 --file /conda-envs/f24b0ccfc23aadb93b466380cd592733/environment.yaml
+RUN mamba env create --no-default-packages --prefix /conda-envs/a0a27bbdca540d02023c7fdcf819bfc1 --file /conda-envs/a0a27bbdca540d02023c7fdcf819bfc1/environment.yaml
+RUN mamba env create --no-default-packages --prefix /conda-envs/899c0a8c04c6edeed4b242dbc3e0e1c8 --file /conda-envs/899c0a8c04c6edeed4b242dbc3e0e1c8/environment.yaml
+RUN mamba env create --no-default-packages --prefix /conda-envs/3feb999aa5bcd4bbdbc57fef247c18cc --file /conda-envs/3feb999aa5bcd4bbdbc57fef247c18cc/environment.yaml
+RUN mamba env create --prefix /conda-envs/a4e1b935cbca52df9b6f192ff86c464c --file /conda-envs/a4e1b935cbca52df9b6f192ff86c464c/environment.yaml
+RUN mamba env create --no-default-packages --prefix /conda-envs/ae3e37bf43cbb30416a885168e10c552 --file /conda-envs/ae3e37bf43cbb30416a885168e10c552/environment.yaml
+RUN mamba env create --no-default-packages --prefix /conda-envs/c2ee5a5886e2a786f23dd36e5c10752e --file /conda-envs/c2ee5a5886e2a786f23dd36e5c10752e/environment.yaml
+RUN mamba env create --no-default-packages --prefix /conda-envs/a3e2fce7f2f6fdbe1aa97232e3def601 --file /conda-envs/a3e2fce7f2f6fdbe1aa97232e3def601/environment.yaml
+RUN mamba env create --no-default-packages --prefix /conda-envs/b933cc1aa7c25db04635e7ec0e37f80e --file /conda-envs/b933cc1aa7c25db04635e7ec0e37f80e/environment.yaml
+
+# cleanup when version changed
+ARG VERSION
+RUN mamba clean --all -y
