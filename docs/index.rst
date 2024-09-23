@@ -16,7 +16,7 @@ MPRAsnakeflow's documentation
 MPRAsnakeflow pipeline processes sequencing data from Massively Parallel Reporter Assays (MPRAs)
 to create count tables for candidate sequences tested in the experiment.
 
-MPRAsnakeflow is built on top of `Snakemake <https://snakemake.readthedocs.io/>`_. Insert your code into the respective folders, i.e. ``scripts``, ``rules``, and ``envs``. Define the entry point of the workflow in the ``Snakefile`` and the main configuration in a ``.yaml`` file.
+MPRAsnakeflow is built on top of `Snakemake <https://snakemake.readthedocs.io/>`_ (version 8 preferred) and is configured via a ``.yaml`` file.
 
 Authors
     Max Schubach (`@visze <https://github.com/visze>`_)
@@ -24,7 +24,7 @@ Authors
     Berlin Institute of Health at Charité - Universitätsklinikum Berlin 
 
 Usage
-    If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of the (original) repository and, if available, it's DOI. (see above)
+    If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of the (original) repository.
 
 Installation & Getting Started
     Instructions for the Installation of the program and some examples to get you started.
@@ -32,8 +32,14 @@ Installation & Getting Started
 MPRAsnakeflow Workflows
     An overview of how MPRAsnakeflow works and documentation for the MPRAsnakeflow sub workflows.
 
+MPRAsnakeflow Turorials
+    Get to know MPRAsnakeflow by runnig it via jupyter notebooks or colab on small examples.
+
 MPRAsnakeflow Examples
-    Muliple examples from the literature are listed for every sub workflow in MPRAsnakeflow.
+    Examples from the literature are listed for every sub workflow in MPRAsnakeflow.
+
+Tips & Tricks
+    Find our FAQ here.
 
 Project Information
     More information on the project, including the changelog, list of contributing authors, and contribution instructions.
@@ -43,7 +49,7 @@ Project Information
 Quick Example
 -------------
 
-To run MPRAsnakeflow, first activate the snakemake environment with the following command:
+To run MPRAsnakeflow, first activate the snakemake 8 environment with the following command:
 
 .. code-block:: bash
 
@@ -72,7 +78,9 @@ Features
 Investigate results
 -------------------
 
-After successful execution, you can create a self-contained interactive HTML report with all results via:
+Th ebest option to investiate your results is to have a look at the QC report.
+
+(In development) After successful execution, you can create a self-contained interactive HTML report with all results via:
 
 .. code-block:: bash
 

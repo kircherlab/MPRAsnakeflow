@@ -24,6 +24,13 @@ Comma separated file (CSV) that assigns all fastq files present in a directory t
     Condidtion2,2,C2R2_DNA_barcode_F.fastq.gz,C2R2_DNA_barcode_UMI.fastq.gz,C2R2_DNA_barcode_R.fastq.gz,C2R2_RNA_barcode_F.fastq.gz,C2R2_RNA_barcode_UMI.fastq.gz,C2R2_RNA_barcode_R.fastq.gz
     Condidtion2,3,C2R3_DNA_barcode_F.fastq.gz,C2R3_DNA_barcode_UMI.fastq.gz,C2R3_DNA_barcode_R.fastq.gz,C2R3_RNA_barcode_F.fastq.gz,C2R3_RNA_barcode_UMI.fastq.gz,C2R3_RNA_barcode_R.fastq.gz
     
+
+We allow different flavours of experiment files because sometimes no UMI exists or only a FW read is used. Different options are:
+    * :code:`Condition,Replicate,DNA_BC_F,DNA_UMI,DNA_BC_R,RNA_BC_F,RNA_UMI,RNA_BC_R`
+    * :code:`Condition,Replicate,DNA_BC_F,DNA_BC_R,RNA_BC_F,RNA_BC_R`
+    * :code:`Condition,Replicate,DNA_BC_F,RNA_BC_F`
+
+
 Assignment File or configuration
 --------------------------------
 Tab separated gzipped file with barcode mapped to sequence. Can be generated using the :ref:`Assignment` workflow. Config file must be configured similar to this:

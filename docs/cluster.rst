@@ -11,12 +11,12 @@ Snakemake gives us the opportunity to run MPRAsnakeflow in a cluster environment
     :lines: 1-30
 
 
-We used this workflow successfully in a SLURM environment using the `slurm excecutor plugin <https://snakemake.github.io/snakemake-plugin-catalog/plugins/executor/slurm.html>`_ from snakemake. therfore the partition is set with :code:`slurm_partition` and has to be renamed maybe due to your environment.
+We used this workflow successfully in a SLURM environment using the `slurm excecutor plugin <https://snakemake.github.io/snakemake-plugin-catalog/plugins/executor/slurm.html>`_ from snakemake. Therfore the partition is set with :code:`slurm_partition` and has to be renamed or removed to fith with your own SLURM configuration.
 
 Running with resources
 ----------------------
 
-having 30 cores and 10GB of memory.
+Having 30 cores and 10GB of memory.
 
 .. code-block:: bash
 
@@ -35,13 +35,13 @@ Using the slurm excecutor plugin running 300 jobs in parallel.
 Snakemake 7
 -----------
 
-Here we used the :code:`cluster` option which is not anymore avialable in snakemake 8. You can also use the predefined `config/sbatch.yaml` but this might be outdated and we highly recommend to use resources with the workfloe profile. 
+Here we used the :code:`--cluster` option which is not anymo,onger available in snakemake 8. You can also use the predefined `config/sbatch.yaml` but this might be outdated and we highly recommend to use resources with the workfloe profile. 
 
 .. code-block:: bash
 
     snakemake --use-conda --configfile config/config.yaml --cluster "sbatch --nodes=1 --ntasks={cluster.threads} --mem={cluster.mem} -t {cluster.time} -p {cluster.queue} -o {cluster.output}" --jobs 100 --cluster-config config/sbatch.yaml
 
-Please note that the log folder of the cluster environment has to be generated first, e.g:
+Please note that with this :code:`--cluster` option the log folder of the cluster environment (see :code:` -o {cluster.output}`) has to be generated first, e.g:
 
 .. code-block:: bash
 
