@@ -1,7 +1,7 @@
 ##########################
 #### containerization ####
 ##########################
-containerized: "docker://visze/mprasnakeflow:0.1.0"
+containerized: "docker://visze/mprasnakeflow:0.1.1"
 
 
 #################
