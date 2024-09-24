@@ -24,6 +24,9 @@ rule assignment_mapping_bbmap:
     """
     conda:
         "../../envs/bbmap_samtools_htslib.yaml"
+    threads: 1
+    resources:
+        mem="2G",
     input:
         reads="results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
         check="results/assignment/{assignment}/design_check.done",
@@ -39,7 +42,8 @@ rule assignment_mapping_bbmap:
         temp("results/logs/assignment/mapping.bbmap.{assignment}.{split}.log"),
     shell:
         """
-        bbmap.sh in={input.reads} ref={input.reference} nodisk -t={threads} out={output.bam} &> {log};
+        bbmap.sh -eoom -Xmx{resources.mem} -t={threads} \
+        in={input.reads} ref={input.reference} nodisk out={output.bam} &> {log};
         samtools sort -l 0 -@ {threads} {output.bam} > {output.sorted_bam} 2>> {log};
         """
 
