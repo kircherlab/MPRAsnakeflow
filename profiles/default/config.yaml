@@ -43,7 +43,7 @@ set-resources:
     slurm_partition: medium
   assignment_mapping_bbmap:
     runtime: 120
-    mem: 2G
+    mem: 10G
     slurm_partition: medium
   assignment_collect:
     runtime: 2160

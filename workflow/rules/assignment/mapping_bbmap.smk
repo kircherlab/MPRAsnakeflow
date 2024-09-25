@@ -26,7 +26,7 @@ rule assignment_mapping_bbmap:
         "../../envs/bbmap_samtools_htslib.yaml"
     threads: 1
     resources:
-        mem="2G",
+        mem="4G",
     input:
         reads="results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
         check="results/assignment/{assignment}/design_check.done",
