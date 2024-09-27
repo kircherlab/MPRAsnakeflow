@@ -5,14 +5,14 @@
 Getting started
 =====================
 
-1. Create an :code:`experiment.csv` in the format below, including the header. 
-   `DNA_BC_F` or `RNA_BC_F` is name of the gzipped fastq of the forward read of the DNA or RNA from the defined condition and replicate. 
+1. Create a :code:`experiment.csv` in the format below, including the header. 
+   `DNA_BC_F` or `RNA_BC_F` is the name of the gzipped fastq of the forward read of the DNA or RNA from the defined condition and replicate. 
    `DNA_UMI` or `RNA_UMI` is the corresponding index read with UMIs (excluding sample barcodes), and 
    `DNA_BC_R` or `RNA_BC_R` of the reverse read.
    
-   Multiple fastq files can be used for each column by seperating them with :code:`;`.
+   Multiple fastq files can be used for each column by separating them with :code:`;`.
 
-   Right now an UMI have to be used. If you want to use MPRAsnakeflow without an UMI please sitch to MPRAflow or contact us.
+   Right now a UMI has to be used. If you want to use MPRAsnakeflow without a UMI please switch to MPRAflow or contact us.
 
    Here is an example of an :code:`experiment.csv` file and it can be downloaded :download:`experiment.csv <../resources/example_experiment.csv>`:
 
@@ -21,7 +21,7 @@ Getting started
     :widths: 5, 2, 25, 25, 25, 25, 25, 25
     :header-rows: 1
 
-2. If you would like each designed sequence to be colored based on different user-specified categories, such as `positive control`, `negative control`, `shuffled control`, and `putative enhancer`. To assess the overall quality, you can create a ``label.tsv`` in the format below that maps the name to category as shown here:
+2. If you would like each designed sequence to be coloured based on different user-specified categories, such as `positive control`, `negative control`, `shuffled control`, and `putative enhancer`. To assess the overall quality, you can create a ``label.tsv`` in the format below that maps the name to the category as shown here:
 
   .. code-block:: text
 
@@ -33,7 +33,7 @@ Getting started
 
 3. Set up the config file
 
-The config file is the heart of MPRAsnakflow. Here different runs can be configured. We recommend to use one config file per MPRA experiment or MPRA project. But in theory many different experiments can be configured in only one file. It is divided into :code:`global` (generell settings), :code:`assignments` (assigment workflow), and :code:`experiments` (count workflow including variants).
+The config file is the heart of MPRAsnakflow. Here different runs can be configured. We recommend using one config file per MPRA experiment or MPRA project. But in theory, many different experiments can be configured in only one file. It is divided into :code:`global` (general settings), :code:`assignments` (assigment workflow), and :code:`experiments` (count workflow including variants).
 
 See :ref:`Config` for more details about the config file. Here is an example running only the count experiments and using a provided assignment file.
 
