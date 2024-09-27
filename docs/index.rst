@@ -24,16 +24,16 @@ Authors
     Berlin Institute of Health at Charité - Universitätsklinikum Berlin 
 
 Usage
-    If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of the (original) repository and, if available, it's DOI. (see above)
+    If you use this workflow in a paper, don't forget to give credit to the authors by citing the URL of the (original) repository and, if available, it's DOI. (see above)
 
 Installation & Getting Started
     Instructions for the Installation of the program and some examples to get you started.
 
 MPRAsnakeflow Workflows
-    An overview of how MPRAsnakeflow works and documentation for the MPRAsnakeflow sub workflows.
+    An overview of how MPRAsnakeflow works and documentation for the MPRAsnakeflow sub-workflows.
 
 MPRAsnakeflow Examples
-    Muliple examples from the literature are listed for every sub workflow in MPRAsnakeflow.
+    Multiple examples from the literature are listed for every sub-workflow in MPRAsnakeflow.
 
 Project Information
     More information on the project, including the changelog, list of contributing authors, and contribution instructions.
