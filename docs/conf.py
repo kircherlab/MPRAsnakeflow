@@ -24,9 +24,9 @@ copyright = u'2024, Max Schubach'
 author = u'Max Schubach'
 
 # The short X.Y version
-version = u'1.0'
+version = u'0.1.0'
 # The full version, including alpha/beta/rc tags
-release = u'1.0'
+release = u'0.1.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -161,8 +161,8 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'MPRAsnakeflow', u'MPRAsnakeflow Documentation',
-     author, 'MPRAsnakeflow', 'One line description of project.',
-     'miscellaneous'),
+     author, 'MPRAsnakeflow', 'Snakemake workflow to get assignments or counts from ´MPRA sequencing data.',
+     'MPRA sequencing data workflow'),
 ]
 
 

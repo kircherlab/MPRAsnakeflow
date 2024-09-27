@@ -129,8 +129,8 @@ Use the following steps for installing Sphinx and the dependencies for building 
 .. code-block:: bash
 
     cd MPRAsnakeflow/docs
-    conda env create -f environment.yml -n sphinx
-    conda activate sphinx
+    mamba env create -f environment.yml -n sphinx
+    mamba activate sphinx
 
 Use the following for building the documentation.
 The first two lines is only required for loading the virtualenv.
@@ -162,10 +162,10 @@ First, create your Documentation development setup.
 
    Now you can make your changes locally.
 
-5. When you're done making your changes, make sure that snakemake runs properly
+5. When you're done making your changes, make sure that snakemake runs properly by using a dry-run.
    For snakemake::
 
-    snakemake --use-conda -p -n
+    snakemake --sdm conda --configfile config.yml -p -n
 
    For documentation::
 
