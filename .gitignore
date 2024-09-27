@@ -27,3 +27,4 @@ mix_data
 *report.html
 *.simg
 *results
+.DS_Store

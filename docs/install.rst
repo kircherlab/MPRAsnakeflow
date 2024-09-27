@@ -4,7 +4,7 @@
 Installation
 =====================
 
-Installation should take less than 5 minutes
+Installation should take less than 5 minutes.
 
 System Requirements
 ===================
