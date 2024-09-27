@@ -141,7 +141,7 @@ The output can be found in the folder defined by the option :code:`results/assig
 Files
 -------------
 Once the pipline is finished running then all the output files can be seen in the results folder. This pipline also generates a qc report. 
-For more details, refer to the `HTML documentation <../../qc_report.default.assign.html>`_.
+For more details, refer to the `HTML report <../../qc_report.default.assign.html>`_.
 
 
 
