@@ -149,6 +149,16 @@ Once the pipline is finished running then all the output files can be seen in th
 For more details, refer to the `HTML report <../../qc_report.HepG2.MPRAworkshop.tutorialConfig.html>`_.
 
 
+.. raw:: html
+
+    <iframe src="../../qc_report.HepG2.MPRAworkshop.tutorialConfig.html" width="100%" height="600px"></iframe>
+
+
+.. raw:: html
+   :file: ../../qc_report.HepG2.MPRAworkshop.tutorialConfig.html
+
+
+
 File tree
 
 .. code-block:: text
