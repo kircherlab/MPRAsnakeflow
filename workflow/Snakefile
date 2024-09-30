@@ -1,6 +1,13 @@
 ##########################
 #### containerization ####
 ##########################
+
+f = open(workflow.source_path("../version.txt"))
+version = f.read().strip()
+
+print(f"\033[95mRunning MPRAsnakeflow version {version}\033[0m")
+
+
 containerized: "docker://visze/mprasnakeflow:0.1.0"
 
 
