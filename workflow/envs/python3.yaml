@@ -2,7 +2,6 @@
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
   - biopython
   - click
