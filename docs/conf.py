@@ -23,10 +23,12 @@ project = u'MPRAsnakeflow'
 copyright = u'2024, Max Schubach'
 author = u'Max Schubach'
 
+f = open("../version.txt", "r")
+
 # The short X.Y version
-version = u'0.1.0'
+version = f.read().strip()
 # The full version, including alpha/beta/rc tags
-release = u'0.1.0'
+release = version
 
 
 # -- General configuration ---------------------------------------------------
