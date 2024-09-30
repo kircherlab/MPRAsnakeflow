@@ -146,8 +146,7 @@ The output can be found in the folder defined by the option :code:`results/exper
 Files
 -------------
 Once the pipline is finished running then all the output files can be seen in the results folder. This pipline also generates a qc report. 
-For more details, refer to the `HTML documentation <../../qc_report.HepG2.MPRAworkshop.tutorialConfig.html>`_.
-
+For more details, refer to the `HTML QC report <https://kircherlab.github.io/mprasnakeflow/experiment.html>`_.
 
 File tree
 
