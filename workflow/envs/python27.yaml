@@ -1,7 +1,7 @@
 ---
 channels:
   - bioconda
-  - defaults
+  - conda-forge
 dependencies:
   - htslib
   - pysam
