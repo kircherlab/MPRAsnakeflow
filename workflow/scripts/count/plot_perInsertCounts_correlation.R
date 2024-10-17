@@ -339,10 +339,10 @@ if (data %>% nrow() > 1 && nrow(all) > 1) {
     n_oligos_r2 <- data2 %>% nrow()
 
     n_oligos_r1_thres <- data1 %>%
-      filter(n_obs_bc >= thresh) %>%
+      filter(n_bc >= thresh) %>%
       nrow()
     n_oligos_r2_thres <- data2 %>%
-      filter(n_obs_bc >= thresh) %>%
+      filter(n_bc >= thresh) %>%
       nrow()
 
     res <- data1 %>% inner_join(data2, by = c("name"))
@@ -369,7 +369,7 @@ if (data %>% nrow() > 1 && nrow(all) > 1) {
 
     # Min Threshold
     res <-
-      res %>% filter(n_obs_bc.x >= thresh, n_obs_bc.y >= thresh)
+      res %>% filter(n_bc.x >= thresh, n_bc.y >= thresh)
     plots_cor_min_thresh_dna[[i]] <-
       plot_correlations_dna(res, cond, r1, r2, "pairwise_minThreshold")
     plots_cor_min_thresh_rna[[i]] <-

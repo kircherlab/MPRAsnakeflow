@@ -50,7 +50,7 @@ rule statistic_bc_overlap_combine_counts:
     conda:
         "../../envs/default.yaml"
     input:
-        stats=lambda wc: expand(
+        statistic=lambda wc: expand(
             "results/experiments/{{project}}/statistic/bc_overlap/counts/overlapBCandCounts.{condition}_{type}.{config}.tsv",
             type=["DNA", "RNA"],
             condition=getConditions(wc.project),
@@ -75,7 +75,7 @@ rule statistic_bc_overlap_combine_counts:
         set +o pipefail;
         (
             cat {input.stats[0]} | head -n 1;
-            for i in {input.stats}; do
+            for i in {input.statistic}; do
                 cat $i | tail -n +2
             done;
         ) > {output} 2> {log}
@@ -86,7 +86,7 @@ rule statistic_bc_overlap_combine_assigned_counts:
     conda:
         "../../envs/default.yaml"
     input:
-        stats=lambda wc: expand(
+        statistic=lambda wc: expand(
             "results/experiments/{{project}}/statistic/bc_overlap/assigned_counts/{{assignment}}/overlapBCandCounts.{condition}_{type}.{{config}}.tsv",
             type=["DNA", "RNA"],
             condition=getConditions(wc.project),
@@ -112,7 +112,7 @@ rule statistic_bc_overlap_combine_assigned_counts:
         set +o pipefail;
         (
             cat {input.stats[0]} | head -n 1;
-            for i in {input.stats}; do
+            for i in {input.statistic}; do
                 cat $i | tail -n +2
             done;
         ) > {output} 2> {log}

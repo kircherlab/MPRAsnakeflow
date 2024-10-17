@@ -50,8 +50,8 @@ def combine_replicates(label_file, df_allreps, total_dna_counts, total_rna_count
             "dna_normalized": "mean",
             "rna_normalized": "mean",
             "ratio": "mean",
-            "log2": "mean",
-            "n_obs_bc": ["sum", "mean"],
+            "log2FoldChange": "mean",
+            "n_bc": ["sum", "mean"],
         }
     )
     
@@ -71,14 +71,14 @@ def combine_replicates(label_file, df_allreps, total_dna_counts, total_rna_count
     df_out["rna_normalized"] = df_out["rna_counts"] / total_rna_counts * scaling
 
     df_out["ratio"] = df_out["rna_normalized"] / df_out["dna_normalized"]
-    df_out["log2"] = np.log2(df_out.ratio)
+    df_out["log2FoldChange"] = np.log2(df_out.ratio)
 
     df_out["mean_dna_counts"] = df_allreps.dna_counts["mean"]
     df_out["mean_rna_counts"] = df_allreps.rna_counts["mean"]
     df_out["mean_dna_normalized"] = df_allreps.dna_normalized["mean"]
     df_out["mean_rna_normalized"] = df_allreps.rna_normalized["mean"]
     df_out["mean_ratio"] = df_allreps.ratio["mean"]
-    df_out["mean_log2"] = df_allreps.log2["mean"]
+    df_out["mean_log2FoldChange"] = df_allreps.log2FoldChange["mean"]
 
 
     if label_file:

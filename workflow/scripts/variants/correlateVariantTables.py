@@ -32,7 +32,7 @@ import click
 def cli(condition, variants, bc_threshold, output_file):
 
     def filterOnThreshold(variants, threshold):
-        return(variants.query('n_obs_bc_ALT >= %d & n_obs_bc_REF >= %d' % (threshold, threshold)))
+        return(variants.query('n_bc_ALT >= %d & n_bc_REF >= %d' % (threshold, threshold)))
 
     output = pd.DataFrame()
     for i in range(len(variants)):
