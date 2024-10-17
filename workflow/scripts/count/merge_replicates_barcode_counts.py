@@ -69,19 +69,19 @@ def cli(counts_files, bc_thresh, replicates, output_file):
 		all_reps.append(df)
 
 	df = pd.concat(all_reps)
-	df = df[df["name"] != "no_BC"]
+	df = df[df["oligo_name"] != "no_BC"]
 
 	# only keep oligo's with a number of barcodes of at least the given threshold
-	df_filtered = df.groupby(["name", "replicate"]).filter(lambda x: len(x) >= bc_thresh)
+	df_filtered = df.groupby(["oligo_name", "replicate"]).filter(lambda x: len(x) >= bc_thresh)
 
 	# pivot table to make a dna and rna count column for every replicate
 	df_filtered = df_filtered.pivot_table(
 		values=["dna_count", "rna_count"],
-		index=["Barcode", "name"],
+		index=["barcode", "oligo_name"],
 		columns="replicate",
 		aggfunc='first'
 	)
-	df_filtered = df_filtered.sort_values("name")
+	df_filtered = df_filtered.sort_values("oligo_name")
 
 
 	# order columns to have dna then rna count of each replicate
@@ -97,7 +97,7 @@ def cli(counts_files, bc_thresh, replicates, output_file):
 
 	df_filtered.columns = ['_'.join(col).strip() if col[1] else col[0] for col in df_filtered.columns.values]
 		
-	df_filtered = df_filtered[["Barcode", "name"] + col_order]
+	df_filtered = df_filtered[["barcode", "oligo_name"] + col_order]
 
 	for col in col_order:
 		df_filtered[col] = df_filtered[col].astype('Int64')

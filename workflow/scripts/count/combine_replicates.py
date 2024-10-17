@@ -42,22 +42,21 @@ def cli(input_file, label_file, output_file):
     df_out.to_csv(output_file, sep="\t", index=False)
 
 def combine_replicates(label_file, df_allreps, total_dna_counts, total_rna_counts):
-    df_allreps = df_allreps.groupby(by=["condition", "name"]).aggregate(
+    df_allreps = df_allreps.groupby(by=["oligo_name"]).aggregate(
         {
             "replicate": "count",
             "dna_counts": ["sum", "mean"],
             "rna_counts": ["sum", "mean"],
             "dna_normalized": "mean",
             "rna_normalized": "mean",
-            "ratio": "mean",
             "log2FoldChange": "mean",
             "n_bc": ["sum", "mean"],
         }
     )
     
     df_allreps = df_allreps.reset_index()
-    df_out = df_allreps.iloc[:, 0:2]
-    df_out.columns = ["condition", "name"]
+    df_out = df_allreps.iloc[:, 0:1]
+    df_out.columns = ["oligo_name"]
 
     df_out["replicates"] = df_allreps.replicate["count"]
 
@@ -70,20 +69,19 @@ def combine_replicates(label_file, df_allreps, total_dna_counts, total_rna_count
     df_out["dna_normalized"] = df_out["dna_counts"] / total_dna_counts * scaling
     df_out["rna_normalized"] = df_out["rna_counts"] / total_rna_counts * scaling
 
-    df_out["ratio"] = df_out["rna_normalized"] / df_out["dna_normalized"]
-    df_out["log2FoldChange"] = np.log2(df_out.ratio)
+    df_out["log2FoldChange"] = np.log2(df_out["rna_normalized"] / df_out["dna_normalized"])
 
     df_out["mean_dna_counts"] = df_allreps.dna_counts["mean"]
     df_out["mean_rna_counts"] = df_allreps.rna_counts["mean"]
     df_out["mean_dna_normalized"] = df_allreps.dna_normalized["mean"]
     df_out["mean_rna_normalized"] = df_allreps.rna_normalized["mean"]
-    df_out["mean_ratio"] = df_allreps.ratio["mean"]
+    
     df_out["mean_log2FoldChange"] = df_allreps.log2FoldChange["mean"]
 
 
     if label_file:
-        df_labels = pd.read_csv(label_file, sep="\t", names=["name", "Label"])
-        df_out = df_out.join(df_labels.set_index("name"), on="name")
+        df_labels = pd.read_csv(label_file, sep="\t", names=["oligo_name", "Label"])
+        df_out = df_out.join(df_labels.set_index("oligo_name"), on="oligo_name")
     return df_out
 
 

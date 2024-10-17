@@ -69,7 +69,7 @@ precision <- 4
 
 ## MAKE MASTER TABLE
 master_table <- data.frame()
-for (i in seq_len(files)) {
+for (i in seq_len(length(files))) {
   file <- files[i]
   rep <- replicates[i]
 
@@ -82,38 +82,49 @@ for (i in seq_len(files)) {
 master_table <- master_table %>%
   group_by(replicate) %>%
   filter(!oligo_name %in% c("no_BC")) %>%
-  select(replicate, oligo_name, dna_counts, rna_counts, dna_normalized, rna_normalized, log2FoldChange, n_bc) %>%
   mutate(
     dna_normalized = round(dna_normalized, precision),
     rna_normalized = round(rna_normalized, precision),
+    ratio = round(ratio, precision),
     log2FoldChange = round(log2FoldChange, precision)
   )
 
-# TODO use this? Maybe not because it normalizes across all replicates
-# mutate(ratio = ratio / median(ratio))
-
 master_table_filtered <- master_table %>%
-  filter(n_bc >= thresh) %>%
-  mutate(ratio = ratio / median(ratio), log2FoldChange = round(log2(ratio), 8))
-master_table <- master_table %>% mutate(ratio = ratio / median(ratio), log2FoldChange = round(log2(ratio), 8))
+  filter(n_bc >= thresh)
+# TODO use this? Maybe not because it normalizes across all replicates
+# master_table_filtered %>% mutate(ratio = ratio / median(ratio))
+
+# TODO use this? Maybe not because it normalizes across all replicates
+# master_table %>% mutate(ratio = ratio / median(ratio))
 
 write_file <- function(file, table) {
   gz <- gzfile(file, "w")
-  write.table(table, file = gz, quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE)
+  write.table(
+    table,
+    file = gz, quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE
+  )
   close(gz)
 }
 
-write_file(outfile, master_table_filtered)
+write_file(
+  outfile,
+  master_table_filtered %>%
+    select(replicate, oligo_name, dna_counts, rna_counts, dna_normalized, rna_normalized, log2FoldChange, n_bc)
+)
 
 if ("output-all" %in% names(opt)) {
-  writeFile(opt$`output-all`, master_table)
+  write_file(
+    opt$`output-all`,
+    master_table %>%
+      select(replicate, oligo_name, dna_counts, rna_counts, dna_normalized, rna_normalized, log2FoldChange, n_bc)
+  )
 }
 
 ## MAKE AVERAGED ACROSS REPLICATES
 make_average_across_replicates <- function(table, name) {
   avg <- table %>% summarize(
     mean_ratio = mean(ratio),
-    mean_log2FoldChange = log2(mean(ratio)),
+    mean_log2FoldChange = mean(log2FoldChange),
     mean_n_bc = mean(n_bc)
   )
   avg$BC_filter <- name
@@ -124,7 +135,6 @@ make_average_across_replicates <- function(table, name) {
 all_avg <- make_average_across_replicates(master_table, "None") %>%
   bind_rows(make_average_across_replicates(master_table_filtered, paste0("n_bc >= ", thresh)))
 
-writeFile(avg_outfile, all_avg)
-
+write_file(avg_outfile, all_avg)
 
 print("done")

@@ -64,7 +64,7 @@ if ("label" %in% names(opt)) {
     header = TRUE,
     stringsAsFactors = FALSE
   ))
-  colnames(label_f) <- c("name", "label")
+  colnames(label_f) <- c("oligo_name", "label")
   use_labels <- TRUE
 } else {
   use_labels <- FALSE
@@ -281,7 +281,7 @@ read_data <- function(file) {
     header = TRUE,
     stringsAsFactors = FALSE
   ) %>%
-    filter(name != "no_BC") %>%
+    filter(oligo_name != "no_BC") %>%
     mutate(
       dna_normalized_log2 = log2(dna_normalized),
       rna_normalized_log2 = log2(rna_normalized),
@@ -306,7 +306,7 @@ for (n in 1:(data %>% nrow())) {
 
 if (use_labels) {
   all <- all %>%
-    left_join(label_f, by = c("name")) %>%
+    left_join(label_f, by = c("oligo_name")) %>%
     mutate(label = replace_na(label, "NA"))
 } else {
   if (nrow(all) > 0) { # can be 0 when no BCs are assigned
@@ -345,7 +345,7 @@ if (data %>% nrow() > 1 && nrow(all) > 1) {
       filter(n_bc >= thresh) %>%
       nrow()
 
-    res <- data1 %>% inner_join(data2, by = c("name"))
+    res <- data1 %>% inner_join(data2, by = c("oligo_name"))
 
     plots_correlations_dna[[i]] <-
       plot_correlations_dna(res, cond, r1, r2, "pairwise")

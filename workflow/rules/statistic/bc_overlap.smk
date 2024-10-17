@@ -74,7 +74,7 @@ rule statistic_bc_overlap_combine_counts:
         """
         set +o pipefail;
         (
-            cat {input.stats[0]} | head -n 1;
+            cat {input.statistic[0]} | head -n 1;
             for i in {input.statistic}; do
                 cat $i | tail -n +2
             done;
@@ -111,7 +111,7 @@ rule statistic_bc_overlap_combine_assigned_counts:
         """
         set +o pipefail;
         (
-            cat {input.stats[0]} | head -n 1;
+            cat {input.statistic[0]} | head -n 1;
             for i in {input.statistic}; do
                 cat $i | tail -n +2
             done;
