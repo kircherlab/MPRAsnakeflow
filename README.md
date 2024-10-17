@@ -1,6 +1,6 @@
 # Snakemake workflow: MPRAsnakeflow
 
-[![Documentation Status](https://readthedocs.org/projects/mprasnakeflow/badge/?version=latest)](https://mprasnakeflow.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/mprasnakeflow/badge/?version=latest)](https://mprasnakeflow.readthedocs.io/latest/?badge=latest)
 [![Snakemake](https://img.shields.io/badge/snakemake-≥7.2.1-brightgreen.svg)](https://snakemake.bitbucket.io)
 [![Tests](https://github.com/kircherlab/MPRAsnakeflow/actions/workflows/main.yml/badge.svg)](https://github.com/kircherlab/MPRAsnakeflow/actions/workflows/main.yml)
 
