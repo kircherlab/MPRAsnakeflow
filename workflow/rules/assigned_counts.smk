@@ -187,7 +187,8 @@ rule assigned_counts_combine_replicates_barcode_output:
         ),
         script=getScript("count/merge_replicates_barcode_counts.py"),
     output:
-        bc_merged="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged_barcode_assigned_counts.tsv.gz",
+        bc_merged_thresh="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged_barcode_assigned_counts.tsv.gz",
+        bc_merged_all="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged_barcode_assigned_counts.tsv.gz",
     params:
         thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
             "filter"
@@ -220,7 +221,8 @@ rule assigned_counts_combine_replicates_barcode_output:
         python {input.script} {params.bc_counts} \
         --threshold {params.thresh} \
         {params.replicates}  \
-        --output {output.bc_merged} &> {log}
+        --output-threshold {output.bc_merged_thresh} \
+        --output {output.bc_merged_all} &> {log}
         """
 
 
@@ -251,4 +253,42 @@ rule assigned_counts_combine_replicates:
         --input {input.master_table} \
         {params.label_file} \
         --output {output}  &> {log}
+        """
+
+
+rule assigned_counts_copy_final_all_files:
+    """
+    Will copy final files to the main folder so that it is creal which files to use.
+    """
+    conda:
+        "../envs/default.yaml"
+    input:
+        all=lambda wc: "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.tsv.gz",
+        bc_all=lambda wc: "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged_barcode_assigned_counts.tsv.gz",
+    output:
+        all="results/experiments/{project}/reporter_experiment.oligo.{condition}.{assignment}.{config}.all.tsv.gz",
+        bc_all="results/experiments/{project}/reporter_experiment.barcode.{condition}.{assignment}.{config}.all.tsv.gz",
+    shell:
+        """
+        cp {input.all} {output.all}
+        cp {input.bc_all} {output.bc_all}
+        """
+
+
+rule assigned_counts_copy_final_thresh_files:
+    """
+    Will copy final files to the main folder so that it is creal which files to use.
+    """
+    conda:
+        "../envs/default.yaml"
+    input:
+        thresh=lambda wc: "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged.tsv.gz",
+        bc_thresh=lambda wc: "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged_barcode_assigned_counts.tsv.gz",
+    output:
+        thresh="results/experiments/{project}/reporter_experiment.oligo.{condition}.{assignment}.{config}.min_oligo_threshold_{threshold}.tsv.gz",
+        bc_thresh="results/experiments/{project}/reporter_experiment.barcode.{condition}.{assignment}.{config}.min_oligo_threshold_{threshold}.tsv.gz",
+    shell:
+        """
+        cp {input.thresh} {output.thresh}
+        cp {input.bc_thresh} {output.bc_thresh}
         """

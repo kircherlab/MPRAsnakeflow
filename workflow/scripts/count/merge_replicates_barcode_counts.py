@@ -29,82 +29,93 @@ import click
 )
 @click.option(
     "--output",
+    "output_threshold_file",
+    required=True,
+    type=click.Path(writable=True),
+    help="Output file.",
+)
+@click.option(
+    "--output-threshold",
     "output_file",
     required=True,
     type=click.Path(writable=True),
     help="Output file.",
 )
-def cli(counts_files, bc_thresh, replicates, output_file):
-	"""
-	Merge the associated barcode count files of all replicates.
-	"""
+def cli(counts_files, bc_thresh, replicates, output_threshold_file, output_file):
+    """
+    Merge the associated barcode count files of all replicates.
+    """
 
-	# ensure there are as many replicates as there are files
-	if len(replicates) != len(counts_files):
-		raise (
-			click.BadParameter(
-				"Number of replicates ({}) doesn't equal the number of files ({}).".format(
-					len(replicates), len(counts_files)
-				)
-			)
-		)
+    # ensure there are as many replicates as there are files
+    if len(replicates) != len(counts_files):
+        raise (
+            click.BadParameter(
+                "Number of replicates ({}) doesn't equal the number of files ({}).".format(
+                    len(replicates), len(counts_files)
+                )
+            )
+        )
 
-	# check if every file exists
-	for file in counts_files:
-		if not os.path.exists(file):
-			raise (click.BadParameter("{}: file not found".format(file)))
+    # check if every file exists
+    for file in counts_files:
+        if not os.path.exists(file):
+            raise (click.BadParameter("{}: file not found".format(file)))
 
-	all_reps = []
-	for file in counts_files:
-		curr_rep = -1
-		# find the replicate name of the current file
-		for rep in replicates:
-			if rep in os.path.basename(file).split("_")[1]:
-				curr_rep = rep
-				break
-		if curr_rep == -1:
-			raise (click.BadParameter("{}: incorrect file".format(file)))
-		df = pd.read_csv(file, sep="\t")
-		df['replicate'] = curr_rep
-		all_reps.append(df)
+    all_reps = []
+    for file in counts_files:
+        curr_rep = -1
+        # find the replicate name of the current file
+        for rep in replicates:
+            if rep in os.path.basename(file).split("_")[1]:
+                curr_rep = rep
+                break
+        if curr_rep == -1:
+            raise (click.BadParameter("{}: incorrect file".format(file)))
+        df = pd.read_csv(file, sep="\t")
+        df['replicate'] = curr_rep
+        all_reps.append(df)
 
-	df = pd.concat(all_reps)
-	df = df[df["oligo_name"] != "no_BC"]
+    df = pd.concat(all_reps)
+    df = df[df["oligo_name"] != "no_BC"]
 
-	# only keep oligo's with a number of barcodes of at least the given threshold
-	df_filtered = df.groupby(["oligo_name", "replicate"]).filter(lambda x: len(x) >= bc_thresh)
-
-	# pivot table to make a dna and rna count column for every replicate
-	df_filtered = df_filtered.pivot_table(
-		values=["dna_count", "rna_count"],
-		index=["barcode", "oligo_name"],
-		columns="replicate",
-		aggfunc='first'
-	)
-	df_filtered = df_filtered.sort_values("oligo_name")
+    def pivot_table(df, replicates):
+        # pivot table to make a dna and rna count column for every replicate
+        df = df.pivot_table(
+            values=["dna_count", "rna_count"],
+            index=["barcode", "oligo_name"],
+            columns="replicate",
+            aggfunc='first'
+        )
+        df = df.sort_values("oligo_name")
 
 
-	# order columns to have dna then rna count of each replicate
-	col_order = sum(
-		[
-			["dna_count_" + rep, "rna_count_" + rep]
-			for rep in replicates
-		],
-		[],
-	)
+        # order columns to have dna then rna count of each replicate
+        col_order = sum(
+            [
+                ["dna_count_" + rep, "rna_count_" + rep]
+                for rep in replicates
+            ],
+            [],
+        )
 
-	df_filtered = df_filtered.reset_index()
+        df = df.reset_index()
 
-	df_filtered.columns = ['_'.join(col).strip() if col[1] else col[0] for col in df_filtered.columns.values]
-		
-	df_filtered = df_filtered[["barcode", "oligo_name"] + col_order]
+        df.columns = ['_'.join(col).strip() if col[1] else col[0] for col in df.columns.values]
+            
+        df = df[["barcode", "oligo_name"] + col_order]
 
-	for col in col_order:
-		df_filtered[col] = df_filtered[col].astype('Int64')
+        for col in col_order:
+            df[col] = df[col].astype('Int32')
+        
+        return df
 
-	# write to output file
-	df_filtered.to_csv(output_file, sep="\t", index=False, compression="gzip")
+    # only keep oligo's with a number of barcodes of at least the given threshold
+    df_filtered = df.groupby(["oligo_name", "replicate"]).filter(lambda x: len(x) >= bc_thresh)
+    
+    # write to output file
+    pivot_table(df_filtered,replicates).to_csv(output_threshold_file, sep="\t", index=False, compression="gzip")
+    pivot_table(df,replicates).to_csv(output_file, sep="\t", index=False, compression="gzip")
 
 
 if __name__ == "__main__":
-	cli()
+    cli()
