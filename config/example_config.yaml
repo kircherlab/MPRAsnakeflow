@@ -6,9 +6,9 @@ assignments:
   exampleAssignment: # name of an example assignment (can be any string)
     bc_length: 15
     alignment_tool:
-      tool: exact # bbbmap, bwa or exact
+      tool: exact # bbmap, bwa or exact
       configs:
-        sequence_length: 170 # sequence length of design excluding adapters.
+        sequence_length: 171 # sequence length of design excluding adapters.
         alignment_start: 1 # start of the alignment in the reference/design_file
     FW:
       - resources/assoc_basic/data/SRR10800986_1.fastq.gz

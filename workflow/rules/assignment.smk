@@ -29,28 +29,24 @@ rule assignment_check_design:
         start=lambda wc: (
             config["assignments"][wc.assignment]["alignment_tool"]["configs"][
                 "alignment_start"
-            ]
-            if config["assignments"][wc.assignment]["alignment_tool"]["tool"]
-            == "exact"
+            ]["max"]
+            if config["assignments"][wc.assignment]["alignment_tool"]["tool"] == "bwa"
             else config["assignments"][wc.assignment]["alignment_tool"]["configs"][
                 "alignment_start"
-            ]["max"]
+            ]
         ),
         length=lambda wc: (
             config["assignments"][wc.assignment]["alignment_tool"]["configs"][
                 "sequence_length"
-            ]
-            if config["assignments"][wc.assignment]["alignment_tool"]["tool"]
-            == "exact"
+            ]["min"]
+            if config["assignments"][wc.assignment]["alignment_tool"]["tool"] == "bwa"
             else config["assignments"][wc.assignment]["alignment_tool"]["configs"][
                 "sequence_length"
-            ]["min"]
+            ]
         ),
         fast_check=lambda wc: (
             "--fast-dict"
             if config["assignments"][wc.assignment]["design_check"]["fast"]
-            or config["assignments"][wc.assignment]["alignment_tool"]["tool"]
-            == "bbmap"
             else "--slow-string-search"
         ),
         check_sequence_collitions=lambda wc: (

@@ -99,29 +99,13 @@ properties:
                         min_mapping_quality:
                           type: integer
                           minimum: 0
-                          default: 35
+                          default: 30
                         sequence_length:
-                          type: object
-                          properties:
-                            min:
-                              type: integer
-                            max:
-                              type: integer
-                          additionalProperties: false
-                          required:
-                            - min
-                            - max
+                          type: integer
+                          minimum: 1
                         alignment_start:
-                          type: object
-                          properties:
-                            min:
-                              type: integer
-                            max:
-                              type: integer
-                          additionalProperties: false
-                          required:
-                            - min
-                            - max
+                          type: integer
+                          minimum: 1
                       additionalProperties: false
                       required:
                         - min_mapping_quality
