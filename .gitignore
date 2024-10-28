@@ -7,6 +7,9 @@ logs
 !config/*
 !resources
 !resources/**
+resources/**/.local
+resources/**/.cache
+resources/**/.ipython
 !workflow
 !workflow/**
 !.gitattributes

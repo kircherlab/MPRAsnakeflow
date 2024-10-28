@@ -48,7 +48,7 @@ rule assignment_statistic_assignment:
     conda:
         "../../envs/r.yaml"
     input:
-        bc="results/assignment/{assignment}/assignment_barcodes.{assignment_config}.tsv.gz",
+        bc="results/assignment/{assignment}/assignment_barcodes_with_ambigous.{assignment_config}.tsv.gz",
         script=getScript("assignment/statistic_assignment.R"),
     output:
         stats="results/assignment/{assignment}/statistic/assignment.{assignment_config}.tsv.gz",
