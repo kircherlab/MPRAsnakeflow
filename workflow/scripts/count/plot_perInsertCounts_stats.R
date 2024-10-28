@@ -65,7 +65,7 @@ if ("label" %in% names(opt)) {
     header = TRUE,
     stringsAsFactors = FALSE
   ))
-  colnames(label_f) <- c("name", "label")
+  colnames(label_f) <- c("oligo_name", "label")
   use_labels <- TRUE
 } else {
   use_labels <- FALSE
@@ -95,11 +95,10 @@ read_data <- function(file) {
     header = TRUE,
     stringsAsFactors = FALSE
   ) %>%
-    filter(name != "no_BC") %>%
+    filter(oligo_name != "no_BC") %>%
     mutate(
       dna_normalized_log2 = log2(dna_normalized),
       rna_normalized_log2 = log2(rna_normalized),
-      ratio_log2 = log2(ratio)
     )
   return(data)
 }
@@ -117,7 +116,7 @@ for (n in 1:(data %>% nrow())) {
 
 if (use_labels) {
   all <- all %>%
-    left_join(label_f, by = c("name")) %>%
+    left_join(label_f, by = c("oligo_name")) %>%
     mutate(label = replace_na(label, "NA"))
 } else {
   all$label <- "NA"
@@ -128,7 +127,7 @@ print("Histogram plots, RNA/DNA correlation plots, Violin plots")
 
 plot_median_dna_rna_cor <- function(data) {
   data <- data %>%
-    group_by(name) %>%
+    group_by(oligo_name) %>%
     summarise(dna_normalized = median(log10(dna_normalized)), rna_normalized = median(log10(rna_normalized)), n = n())
   data <- data %>% filter(n == length(replicates))
   p <- ggplot(data, aes(x = dna_normalized, y = rna_normalized)) +
@@ -151,7 +150,7 @@ plot_median_dna_rna_cor <- function(data) {
 }
 
 plot_group_bc_per_insert <- function(data) {
-  bp <- ggplot(data, aes(x = label, y = log2, fill = label)) +
+  bp <- ggplot(data, aes(x = label, y = log2FoldChange, fill = label)) +
     geom_violin() +
     geom_boxplot(width = 0.1, fill = "white") +
     xlab("insert") +
@@ -180,7 +179,7 @@ ggsave(sprintf("%s_dna_vs_rna.png", outdir),
   width = 10, height = 10
 )
 ggsave(sprintf("%s_dna_vs_rna_minThreshold.png", outdir),
-  plot_median_dna_rna_cor(all %>% filter(n_obs_bc >= thresh)),
+  plot_median_dna_rna_cor(all %>% filter(n_bc >= thresh)),
   width = 10, height = 10
 )
 
@@ -196,9 +195,9 @@ for (n in 1:(data %>% nrow())) {
   assigned_counts <- all %>% filter(replicate == rep)
 
   # Histograms
-  intercept <- median(assigned_counts$n_obs_bc)
+  intercept <- median(assigned_counts$n_bc)
   hist_plot_list[[n]] <-
-    ggplot(assigned_counts, aes(x = n_obs_bc)) +
+    ggplot(assigned_counts, aes(x = n_bc)) +
     geom_histogram(bins = 300) +
     geom_vline(xintercept = intercept, colour = "red") +
     xlim(0, 300) +
@@ -210,7 +209,7 @@ for (n in 1:(data %>% nrow())) {
     ggtitle(paste("replicate", rep, sep = " "))
 
   box_plot_insert_thresh_list[[n]] <-
-    plot_group_bc_per_insert(assigned_counts %>% filter(n_obs_bc >= thresh)) +
+    plot_group_bc_per_insert(assigned_counts %>% filter(n_bc >= thresh)) +
     ggtitle(paste("replicate", rep, sep = " "))
 }
 

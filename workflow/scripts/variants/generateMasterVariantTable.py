@@ -49,18 +49,18 @@ def cli(input_files, minRNACounts, minDNACounts, output_file):
     click.echo("Create new expression values...")
     df = df.groupby(['ID', 'REF', 'ALT']).agg(dna_counts_REF=('dna_counts_REF', sum),
                                               rna_counts_REF=('rna_counts_REF', sum),
-                                              n_obs_bc_REF=('n_obs_bc_REF', sum),
+                                              n_bc_REF=('n_bc_REF', sum),
                                               dna_counts_ALT=('dna_counts_ALT', sum),
                                               rna_counts_ALT=('rna_counts_ALT', sum),
-                                              n_obs_bc_ALT=('n_obs_bc_ALT', sum)
+                                              n_bc_ALT=('n_bc_ALT', sum)
                                               ).reset_index()
 
     scaling = 10**6
 
-    df_total = df[['dna_counts_REF', 'rna_counts_REF', 'n_obs_bc_REF',
-                   'dna_counts_ALT', 'rna_counts_ALT', 'n_obs_bc_ALT']].sum()
+    df_total = df[['dna_counts_REF', 'rna_counts_REF', 'n_bc_REF',
+                   'dna_counts_ALT', 'rna_counts_ALT', 'n_bc_ALT']].sum()
 
-    total_bc = df_total['n_obs_bc_REF'] + df_total['n_obs_bc_ALT']
+    total_bc = df_total['n_bc_REF'] + df_total['n_bc_ALT']
     total_dna = df_total['dna_counts_REF'] + df_total['dna_counts_ALT'] + total_bc * pseudocountDNA
     total_rna = df_total['rna_counts_REF'] + df_total['rna_counts_ALT'] + total_bc * pseudocountRNA
 
@@ -68,8 +68,8 @@ def cli(input_files, minRNACounts, minDNACounts, output_file):
 
     def normalize(df, total, count_type, ref_alt, pseudocount, scaling):
         return(((
-            df["%s_counts_%s" % (count_type, ref_alt)] + pseudocount * df['n_obs_bc_%s' % ref_alt]
-        )/df['n_obs_bc_%s' % ref_alt])/total*scaling)
+            df["%s_counts_%s" % (count_type, ref_alt)] + pseudocount * df['n_bc_%s' % ref_alt]
+        )/df['n_bc_%s' % ref_alt])/total*scaling)
 
     for ref_alt in ["REF", "ALT"]:
         for count_type in ["dna", "rna"]:
@@ -80,20 +80,20 @@ def cli(input_files, minRNACounts, minDNACounts, output_file):
                 df, total, count_type, ref_alt, pseudocount, scaling)
 
         df['ratio_%s' % ref_alt] = df['rna_normalized_%s' % ref_alt] / df['dna_normalized_%s' % ref_alt]
-        df['log2_%s' % ref_alt] = np.log2(df['ratio_%s' % ref_alt])
+        df['log2FoldChange_%s' % ref_alt] = np.log2(df['ratio_%s' % ref_alt])
 
-    df["log2_expression"] = np.log2(df['ratio_ALT']/df['ratio_REF'])
+    df["log2FoldChange_expression"] = np.log2(df['ratio_ALT']/df['ratio_REF'])
 
     # fill NA and set correct output types
     df.fillna(0, inplace=True)
-    df = df.astype(dtype={'dna_counts_REF': 'int64', 'rna_counts_REF': 'int64', 'n_obs_bc_REF': 'int64',
-                          'dna_counts_ALT': 'int64', 'rna_counts_ALT': 'int64', 'n_obs_bc_ALT': 'int64'}, copy=False)
+    df = df.astype(dtype={'dna_counts_REF': 'int64', 'rna_counts_REF': 'int64', 'n_bc_REF': 'int64',
+                          'dna_counts_ALT': 'int64', 'rna_counts_ALT': 'int64', 'n_bc_ALT': 'int64'}, copy=False)
 
     df = df.reindex(columns=["ID", "REF", "ALT", "dna_counts_REF", "rna_counts_REF",
-                             "dna_normalized_REF", "rna_normalized_REF", "ratio_REF", "log2_REF",
-                             "n_obs_bc_REF", "dna_counts_ALT", "rna_counts_ALT",
+                             "dna_normalized_REF", "rna_normalized_REF", "ratio_REF", "log2FoldChange_REF",
+                             "n_bc_REF", "dna_counts_ALT", "rna_counts_ALT",
                              "dna_normalized_ALT", "rna_normalized_ALT", "ratio_ALT",
-                             "log2_ALT", "n_obs_bc_ALT", "log2_expression"])
+                             "log2FoldChange_ALT", "n_bc_ALT", "log2FoldChange_expression"])
 
     # write output
     click.echo("Write files...")

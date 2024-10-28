@@ -374,6 +374,34 @@ def getOutputProjectConditionAssignmentConfig_helper(files):
     return output
 
 
+def getOutputProjectConditionAssignmentConfigThreshold_helper(files):
+    """
+    Inserts {project}, {condition}, {assignment} {config} (from configs of project) and Threshold from config into given file.
+    """
+    output = []
+    projects = getProjects()
+    for project in projects:
+        try:
+            conditions = getConditions(project)
+            for condition in conditions:
+                for conf in getConfigs(project):
+                    threshold = config["experiments"][project]["configs"][conf][
+                        "filter"
+                    ]["bc_threshold"]
+                    for file in files:
+                        output += expand(
+                            file,
+                            project=project,
+                            condition=condition,
+                            assignment=getProjectAssignments(project),
+                            config=conf,
+                            threshold=threshold,
+                        )
+        except MissingAssignmentInConfigException:
+            continue
+    return output
+
+
 def getOutputProjectAssignmentConfig_helper(files, betweenReplicates=False):
     """
     Inserts {project}, {assignment} and {config} (from configs of project) from config into given file.
