@@ -23,7 +23,7 @@ import pandas as pd
 ##### check snakemake min version #####
 from snakemake.utils import min_version
 
-min_version("7.15.1")
+min_version("8.24.1")
 
 
 ##### report workflow #####
