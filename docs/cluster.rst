@@ -32,10 +32,10 @@ Using the slurm excecutor plugin running 300 jobs in parallel.
     snakemake --sdm conda --configfile config/config.yaml -j 300  --workflow-profile profiles/default --executor slurm
 
 
-Snakemake 7
------------
+Snakemake 7 (not supported anymore)
+-------------------------------------
 
-Here we used the :code:`--cluster` option which is not anymo,onger available in snakemake 8. You can also use the predefined `config/sbatch.yaml` but this might be outdated and we highly recommend to use resources with the workfloe profile. 
+Here we used the :code:`--cluster` option which is not available in snakemake 8. You can also use the predefined `config/sbatch.yaml` but this might be outdated and we highly recommend to use resources with the workfloe profile. 
 
 .. code-block:: bash
 

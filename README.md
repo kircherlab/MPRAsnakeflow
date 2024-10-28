@@ -1,7 +1,7 @@
 # Snakemake workflow: MPRAsnakeflow
 
 [![Documentation Status](https://readthedocs.org/projects/mprasnakeflow/badge/?version=latest)](https://mprasnakeflow.readthedocs.io/latest/?badge=latest)
-[![Snakemake](https://img.shields.io/badge/snakemake-≥7.2.1-brightgreen.svg)](https://snakemake.bitbucket.io)
+[![Snakemake](https://img.shields.io/badge/snakemake-≥8.24.1-brightgreen.svg)](https://snakemake.github.io/)
 [![Tests](https://github.com/kircherlab/MPRAsnakeflow/actions/workflows/main.yml/badge.svg)](https://github.com/kircherlab/MPRAsnakeflow/actions/workflows/main.yml)
 
 This pipeline processes sequencing data from Massively Parallel Reporter Assays (MPRA) to create count tables for candidate sequences tested in the experiment.
@@ -33,9 +33,9 @@ Create or adjust the `config/example_config.yaml` in the repository to your need
 
 ### Step 3: Install Snakemake
 
-Install Snakemake (recommended version >= 8.x) using [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) or [mamba](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html) (recommended installation via [miniforge](https://github.com/conda-forge/miniforge)):
+Install Snakemake (version >= 8.24.1) using [conda >24.7.1](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) (recommended installation via [miniforge](https://github.com/conda-forge/miniforge)):
 
-    mamba create -c bioconda -n snakemake snakemake
+    conda create -c bioconda -n snakemake snakemake
 
 For installation details, see the [instructions in the Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
 
@@ -43,7 +43,7 @@ For installation details, see the [instructions in the Snakemake documentation](
 
 Activate the conda environment:
 
-    mamba activate snakemake
+    conda activate snakemake
 
 Test your configuration by performing a dry-run via
 
@@ -58,9 +58,6 @@ using `$N` cores or run it in a cluster environment (here SLURM) via the [slurm 
     snakemake --software-deployment-method conda --executor slurm --cores $N --configfile config.yaml --workflow-profile profiles/default
 
 Please note that `profiles/default/config.yaml` has to be adapted to your needs (like partition names).
-For snakemake 7.x this might work too using slurm sbatch (but depricated in newer snakemake versions:
-
-    snakemake --use-conda --configfile config.yaml --cluster "sbatch --nodes=1 --ntasks={cluster.threads} --mem={cluster.mem} -t {cluster.time} -p {cluster.queue} -o {cluster.output}" --jobs 100 --cluster-config config/sbatch.yaml
 
 
 Please note that the log folder of the cluster environment has to be generated first, e.g:

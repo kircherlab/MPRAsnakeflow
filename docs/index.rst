@@ -4,11 +4,11 @@
 MPRAsnakeflow's documentation
 ====================================
 
-.. image:: https://img.shields.io/badge/snakemake-≥7.7.1-brightgreen.svg
-    :target: https://snakemake.bitbucket.io
+.. image:: https://img.shields.io/badge/snakemake-≥8.24.1-brightgreen.svg
+    :target: https://snakemake.github.io/
 
-.. image:: https://img.shields.io/badge/mamba-≥4.6-brightgreen.svg
-    :target: https://docs.conda.io/en/latest/miniconda.html
+.. image:: https://img.shields.io/badge/conda->24.7.1-brightgreen.svg
+    :target: https://github.com/conda-forge/miniforge
 
 
 **Welcome!**
@@ -16,7 +16,7 @@ MPRAsnakeflow's documentation
 MPRAsnakeflow pipeline processes sequencing data from Massively Parallel Reporter Assays (MPRAs)
 to create count tables for candidate sequences tested in the experiment.
 
-MPRAsnakeflow is built on top of `Snakemake <https://snakemake.readthedocs.io/>`_ (version 8 preferred) and is configured via a ``.yaml`` file.
+MPRAsnakeflow is built on top of `Snakemake <https://snakemake.readthedocs.io/>`_ (version ≥8.24.1 required) and is configured via a ``.yaml`` file.
 
 Authors
     Max Schubach (`@visze <https://github.com/visze>`_)
@@ -74,7 +74,7 @@ Features
    * - Option
      - Description
    * - ``--software-deployment-method``
-     - When ``conda`` is set, the utility uses mamba to efficiently query repositories and query package dependencies. MPRAsnakeflow also can use containers via apptainer by using ``--software-deployment-method apptainer``. Recommended option: ``--software-deployment-method conda apptainer``
+     - When ``conda`` is set, the utility uses conda to efficiently query repositories and query package dependencies. MPRAsnakeflow also can use containers via apptainer by using ``--software-deployment-method apptainer``. Recommended option: ``--software-deployment-method conda apptainer``
    * - ``--cores``
      - This utility sets the number of cores (``$N``) to be used by MPRAsnakeflow.
    * - ``--configfile``
