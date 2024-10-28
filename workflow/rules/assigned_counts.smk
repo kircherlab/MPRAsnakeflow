@@ -268,10 +268,14 @@ rule assigned_counts_copy_final_all_files:
     output:
         all="results/experiments/{project}/reporter_experiment.oligo.{condition}.{assignment}.{config}.all.tsv.gz",
         bc_all="results/experiments/{project}/reporter_experiment.barcode.{condition}.{assignment}.{config}.all.tsv.gz",
+    log:
+        temp(
+            "results/logs/assigned_counts/copy_final_all_files.{project}.{condition}.{assignment}.{config}.log"
+        ),
     shell:
         """
-        cp {input.all} {output.all}
-        cp {input.bc_all} {output.bc_all}
+        cp {input.all} {output.all} &> {log}
+        cp {input.bc_all} {output.bc_all} &>> {log}
         """
 
 
@@ -287,8 +291,12 @@ rule assigned_counts_copy_final_thresh_files:
     output:
         thresh="results/experiments/{project}/reporter_experiment.oligo.{condition}.{assignment}.{config}.min_oligo_threshold_{threshold}.tsv.gz",
         bc_thresh="results/experiments/{project}/reporter_experiment.barcode.{condition}.{assignment}.{config}.min_oligo_threshold_{threshold}.tsv.gz",
+    log:
+        temp(
+            "results/logs/assigned_counts/copy_final_thresh_files.{project}.{condition}.{assignment}.{config}.{threshold}.log"
+        ),
     shell:
         """
-        cp {input.thresh} {output.thresh}
-        cp {input.bc_thresh} {output.bc_thresh}
+        cp {input.thresh} {output.thresh} &> {log}
+        cp {input.bc_thresh} {output.bc_thresh} &>> {log}
         """
