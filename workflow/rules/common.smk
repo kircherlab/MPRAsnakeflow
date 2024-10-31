@@ -499,11 +499,8 @@ def useSampling(project, conf, dna_or_rna):
 
 def withoutZeros(project, conf):
     return (
-        config["experiments"][project]["configs"][conf]["filter"]["DNA"]["min_counts"]
-        > 0
-        and config["experiments"][project]["configs"][conf]["filter"]["RNA"][
-            "min_counts"
-        ]
+        config["experiments"][project]["configs"][conf]["filter"]["min_dna_counts"] > 0
+        and config["experiments"][project]["configs"][conf]["filter"]["min_rna_counts"]
         > 0
     )
 
@@ -636,8 +633,8 @@ def counts_aggregate_demultiplex_input(project):
 
 
 def counts_getFilterConfig(project, conf, dna_or_rna, command):
-    value = config["experiments"][project]["configs"][conf]["filter"][dna_or_rna][
-        command
+    value = config["experiments"][project]["configs"][conf]["filter"][
+        "min_%s_counts" % dna_or_rna.lower()
     ]
     filterMap = {"min_counts": "minCounts"}
     if isinstance(value, int):

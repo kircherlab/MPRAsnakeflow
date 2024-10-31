@@ -59,10 +59,10 @@ rule statistic_correlation_bc_counts:
         ),
         minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["filter"]["RNA"]["min_counts"],
+        ]["filter"]["min_rna_counts"],
         minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["filter"]["DNA"]["min_counts"],
+        ]["filter"]["min_dna_counts"],
     log:
         temp(
             "results/logs/statistic/correlation/correlate_bc_counts.{project}.{condition}.{config}.{raw_or_assigned}.log"
@@ -99,10 +99,10 @@ rule statistic_correlation_bc_counts_hist:
         ),
         minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["filter"]["RNA"]["min_counts"],
+        ]["filter"]["min_rna_counts"],
         minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["filter"]["DNA"]["min_counts"],
+        ]["filter"]["min_dna_counts"],
     log:
         temp(
             "results/logs/statistic/correlation/correlate_bc_counts_hist.{project}.{condition}.{config}.{raw_or_assigned}.log"
