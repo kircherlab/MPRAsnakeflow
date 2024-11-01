@@ -47,7 +47,7 @@ For each assignment you want to process you have to give him a name like :code:`
     Alignment tool configuration that is used to map the reads to the oligos.
     
     :tool:
-        Alignment tool that is used. Currently :code:`bwa` and :code:`exact` are supported.
+        Alignment tool that is used. Currently :code:`bbmap` :code:`bwa`, :code:`exact` are supported. Default is :code:`bbmap`.
     :configs:
         Configurations of the alignment tool selected.
 
@@ -55,11 +55,11 @@ For each assignment you want to process you have to give him a name like :code:`
             Defines the :code:`min` and :code:`max` of a :code:`sequence_length` specify. :code:`sequence_length` is basically the length of a sequence alignment to an oligo in the design file. Because there can be insertion and deletions we recommend to vary it a bit around the exact length (e.g. +-5). In theory, this option enables designs with multiple sequence lengths.
         :alignment_start (bwa):
             Defines the :code:`min` and :code:`max` of the start of the alignment in an oligo. When using adapters you have to set basically the length of the adapter. Otherwise, 1 will be the choice for most cases. We also recommend varying this value a bit because the start might not be exact after the adapter. E.g. by +-1.
-        :min_mapping_quality (bwa):
-            (Optional) Defines the minimum mapping quality (MAPQ) of the alignment to an oligo. When using oligos with only 1bp difference it is recommended to set it to 1. For regions only with larger edit distances 30 or 40 might be a good choice. Default :code:`1`. 
-        :sequence_length (exact):
+        :min_mapping_quality (bwa, bbmap):
+            (Optional) Defines the minimum mapping quality (MAPQ) of the alignment to an oligo. MAPQs are different between bbmap and bwa. For bwa: When using oligos with only 1bp difference it is recommended to set it to 1. BBMap is better here and we can use for example 30 or 35- For regions only with larger edit distances 30 or 40 might be a good choice. Default :code:`30` (use bbmap). 
+        :sequence_length (exact, bbmap):
             Defines the :code:`sequence_length` which is the length of a sequence alignment to an oligo in the design file. Only one length design is supported.
-        :alignment_start (exact):
+        :alignment_start (exact, bbmap):
             Defines the start of the alignment in an oligo. When using adapters you have to set basically the length of the adapter. Otherwise, 1 will be the choice for most cases.
 
 :bc_length:
@@ -168,16 +168,22 @@ The experiment workflow is configured in the :code:`experiments` section. Each e
 
         :bc_threshold:
             Minimum number of different BCs required per oligo. A higher value normally increases the correlation betwene replicates but also reduces the number of final oligos. Default option is :code:`10`.
-        :DNA:
-            Settings for DNA
+        :min_dna_counts:
+            Mimimum number of DNA counts per barcode. When set to :code:`0` a pseudo count is added. Default option is :code:`1`.
+        :min_rna_counts:
+            Mimimum number of RNA counts per barcode. When set to :code:`0` a pseudo count is added. Default option is :code:`1`.
+        :outlier_detection:
+            (Optional) Outlier detection. Methods and strategies to remove outlier barcodes in the final counts. The following options are possible:
 
-            :min_counts:
-                Mimimum number of DNA counts per barcode. When set to :code:`0` a pseudo count is added. Default option is :code:`1`.
-        :RNA:
-            Settings for DNA
+            :method:
+                Method to remove outliers. Currently :code:`rna_counts_zscore`, :code:`ratio_mad` or :code:`none` (no outlier detection) are supported. Default option is :code:`rna_counts_zscore`.
+            :mad_bins:
+                (Optional) For method :code:`ratio_mad`:  Number of bins for the median absolute deviation (MAD) method. Default option is :code:`20`.
+            :times_mad:
+                (Optional) For method :code:`ratio_mad`:  Times the MAD to remove outliers. Default option is :code:`5`.
+            :times_zscore:
+                (Optional) For method :code:`rna_counts_zscore`: Times the zscore to remove outliers. Default option is :code:`3`.
 
-            :min_counts:
-                Mimimum number of RNA counts per barcode. When set to :code:`0` a pseudo count is added. Default option is :code:`1`.
     :sampling:
         (Optional) Options for sampling counts and barcodes. Just for debug reasons.
 

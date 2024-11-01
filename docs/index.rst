@@ -74,7 +74,7 @@ Features
    * - Option
      - Description
    * - ``--software-deployment-method``
-     - When ``conda`` is set, the utility uses conda to efficiently query repositories and query package dependencies. MPRAsnakeflow also can use containers via apptainer by using ``--software-deployment-method apptainer``. Recommended option: ``--software-deployment-method conda apptainer``
+     - When ``conda`` is set, the utility uses conda to efficiently query repositories and query package dependencies. MPRAsnakeflow also can use containers via apptainer by using ``--software-deployment-method apptainer conda``. This will use a container to run all rules but inside it will activate the pre-installed conda environments. Recommended option: ``--software-deployment-method apptainer conda``
    * - ``--cores``
      - This utility sets the number of cores (``$N``) to be used by MPRAsnakeflow.
    * - ``--configfile``
