@@ -290,7 +290,7 @@ def cli(
 def outlier_removal_by_rna_zscore(df, times_zscore = 3):
     df["rna_z_scores"] = df.groupby('oligo_name')['rna_count'].transform(lambda x: ( x- np.mean(x)/ np.std(x)))
     
-    m = df.rna_z_scores <= times_zscore
+    m = df.rna_z_scores.abs() <= times_zscore
     barcodes_removed = df[~m].barcode
     df = df[m]
     return df[m], barcodes_removed
