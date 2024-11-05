@@ -8,7 +8,7 @@ assignments:
     alignment_tool:
       tool: bbmap
       configs:
-        min_mapping_quality: 30 # integer >=0. 30 is default for bbmap
+        min_mapping_quality: 30 # 30 is default for bbmap
         sequence_length: 171 # sequence length of design excluding adapters.
         alignment_start: 1 # start of an alignment in the reference/design_file. Here using 15 bp adapters. Can be different when using adapter free approaches
     FW:
