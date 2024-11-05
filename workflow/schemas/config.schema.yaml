@@ -338,7 +338,7 @@ properties:
                               - rna_counts_zscore
                               - ratio_mad
                               - none
-                            default: ratio_mad
+                            default: rna_counts_zscore
                           mad_bins:
                             type: integer
                             minimum: 1
