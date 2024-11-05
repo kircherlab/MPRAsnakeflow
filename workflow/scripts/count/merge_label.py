@@ -288,8 +288,11 @@ def cli(
     statistic.to_csv(statistic_file, index=False, sep="\t", compression="gzip")
 
 def outlier_removal_by_rna_zscore(df, times_zscore = 3):
-    df["rna_z_scores"] = df.groupby('oligo_name')['rna_count'].transform(lambda x: ( x- np.mean(x)/ np.std(x)))
-    
+    df["mean"] = df.groupby('oligo_name')['rna_count'].transform('mean')
+
+    df["std"] = df.groupby('oligo_name')['rna_count'].transform('std')
+    df["rna_z_scores"] = (df["rna_count"] - df["mean"]) / df["std"]
+
     m = df.rna_z_scores.abs() <= times_zscore
     barcodes_removed = df[~m].barcode
     df = df[m]
