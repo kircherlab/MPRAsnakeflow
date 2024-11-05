@@ -48,10 +48,10 @@ rule variants_MasterTable:
         ),
         minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["filter"]["RNA"]["min_counts"],
+        ]["filter"]["min_rna_counts"],
         minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["filter"]["DNA"]["min_counts"],
+        ]["filter"]["min_dna_counts"],
     log:
         temp(
             "results/logs/experiments/variants/MasterTable.{project}.{assignment}/{config}.{condition}.log"

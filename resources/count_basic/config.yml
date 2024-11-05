@@ -13,3 +13,11 @@ experiments:
     design_file: design.fa
     configs:
       default: {}
+      outlierNone:
+        filter:
+          outlier_detection:
+            method: none
+      outlierZscore:
+        filter:
+          outlier_detection:
+            method: rna_counts_zscore

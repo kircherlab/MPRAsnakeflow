@@ -68,7 +68,7 @@ For other cluster environments please check the [Snakemake](https://snakemake.re
 
 If you not only want to fix the software stack but also the underlying OS, use
 
-    snakemake --sdm apptainer,conda --cores $N --configfile config.yaml --workflow-profile profiles/default
+    snakemake --sdm apptainer conda --cores $N --configfile config.yaml --workflow-profile profiles/default
 
 in combination with any of the modes above. This will use a pre-build singularity container of MPRAsnakeflow with the conda ens installed in.
 
