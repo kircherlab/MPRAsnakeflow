@@ -86,7 +86,9 @@ rule statistic_assigned_counts_combine_stats_dna_rna_merge:
         ),
         script=getScript("count/merge_statistic_tables.py"),
     output:
-        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/combined/{condition}_merged_assigned_counts.statistic.tsv.gz",
+        temp(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/combined/{condition}_merged_assigned_counts.statistic.tsv.gz"
+        ),
     params:
         cond="{condition}",
         statistic=lambda wc: " ".join(

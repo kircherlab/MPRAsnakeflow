@@ -8,12 +8,8 @@ assignments:
     alignment_tool:
       tool: bbmap
       configs:
-        sequence_length:
-          min: 166
-          max: 175
-        alignment_start:
-          min: 1
-          max: 3
+        sequence_length: 171
+        alignment_start: 1
     FW:
       - data/SRR10800986_1.fastq.gz
     BC:

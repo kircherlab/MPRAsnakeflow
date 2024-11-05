@@ -374,6 +374,34 @@ def getOutputProjectConditionAssignmentConfig_helper(files):
     return output
 
 
+def getOutputProjectConditionAssignmentConfigThreshold_helper(files):
+    """
+    Inserts {project}, {condition}, {assignment} {config} (from configs of project) and Threshold from config into given file.
+    """
+    output = []
+    projects = getProjects()
+    for project in projects:
+        try:
+            conditions = getConditions(project)
+            for condition in conditions:
+                for conf in getConfigs(project):
+                    threshold = config["experiments"][project]["configs"][conf][
+                        "filter"
+                    ]["bc_threshold"]
+                    for file in files:
+                        output += expand(
+                            file,
+                            project=project,
+                            condition=condition,
+                            assignment=getProjectAssignments(project),
+                            config=conf,
+                            threshold=threshold,
+                        )
+        except MissingAssignmentInConfigException:
+            continue
+    return output
+
+
 def getOutputProjectAssignmentConfig_helper(files, betweenReplicates=False):
     """
     Inserts {project}, {assignment} and {config} (from configs of project) from config into given file.
@@ -471,11 +499,8 @@ def useSampling(project, conf, dna_or_rna):
 
 def withoutZeros(project, conf):
     return (
-        config["experiments"][project]["configs"][conf]["filter"]["DNA"]["min_counts"]
-        > 0
-        and config["experiments"][project]["configs"][conf]["filter"]["RNA"][
-            "min_counts"
-        ]
+        config["experiments"][project]["configs"][conf]["filter"]["min_dna_counts"] > 0
+        and config["experiments"][project]["configs"][conf]["filter"]["min_rna_counts"]
         > 0
     )
 
@@ -608,8 +633,8 @@ def counts_aggregate_demultiplex_input(project):
 
 
 def counts_getFilterConfig(project, conf, dna_or_rna, command):
-    value = config["experiments"][project]["configs"][conf]["filter"][dna_or_rna][
-        command
+    value = config["experiments"][project]["configs"][conf]["filter"][
+        "min_%s_counts" % dna_or_rna.lower()
     ]
     filterMap = {"min_counts": "minCounts"}
     if isinstance(value, int):

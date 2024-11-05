@@ -23,7 +23,7 @@ import pandas as pd
 ##### check snakemake min version #####
 from snakemake.utils import min_version
 
-min_version("7.15.1")
+min_version("8.24.1")
 
 
 ##### report workflow #####
@@ -134,6 +134,15 @@ rule all:
                 "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.combined.tsv.gz",
                 "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged.combined.tsv.gz",
                 "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged_barcode_assigned_counts.tsv.gz",
+                "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged_barcode_assigned_counts.tsv.gz",
+                "results/experiments/{project}/reporter_experiment.oligo.{condition}.{assignment}.{config}.all.tsv.gz",
+                "results/experiments/{project}/reporter_experiment.barcode.{condition}.{assignment}.{config}.all.tsv.gz",
+            ]
+        ),
+        getOutputProjectConditionAssignmentConfigThreshold_helper(
+            [
+                "results/experiments/{project}/reporter_experiment.barcode.{condition}.{assignment}.{config}.min_oligo_threshold_{threshold}.tsv.gz",
+                "results/experiments/{project}/reporter_experiment.oligo.{condition}.{assignment}.{config}.min_oligo_threshold_{threshold}.tsv.gz",
             ]
         ),
         # assignment statistic
@@ -263,6 +272,15 @@ rule all_experiments:
                 "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.combined.tsv.gz",
                 "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged.combined.tsv.gz",
                 "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged_barcode_assigned_counts.tsv.gz",
+                "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged_barcode_assigned_counts.tsv.gz",
+                "results/experiments/{project}/reporter_experiment.oligo.{condition}.{assignment}.{config}.all.tsv.gz",
+                "results/experiments/{project}/reporter_experiment.barcode.{condition}.{assignment}.{config}.all.tsv.gz",
+            ]
+        ),
+        getOutputProjectConditionAssignmentConfigThreshold_helper(
+            [
+                "results/experiments/{project}/reporter_experiment.barcode.{condition}.{assignment}.{config}.min_oligo_threshold_{threshold}.tsv.gz",
+                "results/experiments/{project}/reporter_experiment.oligo.{condition}.{assignment}.{config}.min_oligo_threshold_{threshold}.tsv.gz",
             ]
         ),
         # assignment statistic

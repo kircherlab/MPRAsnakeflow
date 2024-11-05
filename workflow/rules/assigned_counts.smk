@@ -67,7 +67,9 @@ rule assigned_counts_assignBarcodes:
         script=getScript("count/merge_BC_and_assignment.py"),
     output:
         counts="results/experiments/{project}/assigned_counts/{assignment}/{condition}_{replicate}_{type}_final_counts.config.{config}.tsv.gz",
-        stats="results/experiments/{project}/statistic/assigned_counts/{assignment}/{condition}_{replicate}_{type}_{config}.statistic.tsv.gz",
+        statistic=temp(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{condition}_{replicate}_{type}_{config}.statistic.tsv.gz"
+        ),
     params:
         name="{condition}_{replicate}_{type}",
     log:
@@ -79,7 +81,7 @@ rule assigned_counts_assignBarcodes:
         python {input.script} --counts {input.counts} \
         --assignment {input.association} \
         --output {output.counts} \
-        --statistic {output.stats} \
+        --statistic {output.statistic} \
         --name {params.name} &> {log}
         """
 
@@ -97,14 +99,40 @@ rule assigned_counts_dna_rna_merge:
     output:
         counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
         bc_counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_barcode_assigned_counts.tsv.gz",
-        stats="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.statistic.tsv.gz",
+        removed_bcs="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_barcodesRemoved_assigned_counts.tsv.gz",
+        statistic=temp(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.statistic.tsv.gz"
+        ),
     params:
         minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["filter"]["RNA"]["min_counts"],
+        ]["filter"]["min_rna_counts"],
         minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["filter"]["DNA"]["min_counts"],
+        ]["filter"]["min_dna_counts"],
+        outlier_detection=lambda wc: (
+            "--outlier-detection %s "
+            % config["experiments"][wc.project]["configs"][wc.config]["filter"][
+                "outlier_detection"
+            ]["method"]
+            if config["experiments"][wc.project]["configs"][wc.config]["filter"][
+                "outlier_detection"
+            ]["method"]
+            != "none"
+            else ""
+        ),
+        outlier_mad_bins=lambda wc: "--outlier-ratio-mad-bins %d"
+        % config["experiments"][wc.project]["configs"][wc.config]["filter"][
+            "outlier_detection"
+        ]["mad_bins"],
+        outlier_mad_times=lambda wc: "--outlier-ratio-mad-times %f"
+        % config["experiments"][wc.project]["configs"][wc.config]["filter"][
+            "outlier_detection"
+        ]["times_mad"],
+        outlier_zscore_times=lambda wc: "--outlier-rna-zscore-times %f"
+        % config["experiments"][wc.project]["configs"][wc.config]["filter"][
+            "outlier_detection"
+        ]["times_zscore"],
     log:
         temp(
             "results/logs/assigned_counts/{assignment}/dna_rna_merge.{project}.{condition}.{replicate}.{config}.log"
@@ -114,9 +142,11 @@ rule assigned_counts_dna_rna_merge:
         python {input.script} --counts {input.counts} \
         --minRNACounts {params.minRNACounts} --minDNACounts {params.minDNACounts} \
         --assignment {input.association} \
+        {params.outlier_detection} --outlier-barcodes {output.removed_bcs} \
+        {params.outlier_mad_bins} {params.outlier_mad_times} {params.outlier_zscore_times} \
         --output {output.counts} \
         --bcOutput {output.bc_counts} \
-        --statistic {output.stats} &> {log}
+        --statistic {output.statistic} &> {log}
         """
 
 
@@ -137,7 +167,6 @@ rule assigned_counts_make_master_tables:
         all="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.tsv.gz",
         thresh="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged.tsv.gz",
     params:
-        cond="{condition}",
         files=lambda wc: ",".join(
             expand(
                 "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
@@ -161,7 +190,6 @@ rule assigned_counts_make_master_tables:
     shell:
         """
         Rscript {input.script} \
-        --condition {params.cond} \
         --threshold {params.thresh} \
         --files {params.files} \
         --replicates {params.replicates} \
@@ -185,7 +213,8 @@ rule assigned_counts_combine_replicates_barcode_output:
         ),
         script=getScript("count/merge_replicates_barcode_counts.py"),
     output:
-        bc_merged="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged_barcode_assigned_counts.tsv.gz",
+        bc_merged_thresh="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged_barcode_assigned_counts.tsv.gz",
+        bc_merged_all="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged_barcode_assigned_counts.tsv.gz",
     params:
         thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
             "filter"
@@ -218,7 +247,8 @@ rule assigned_counts_combine_replicates_barcode_output:
         python {input.script} {params.bc_counts} \
         --threshold {params.thresh} \
         {params.replicates}  \
-        --output {output.bc_merged} &> {log}
+        --output-threshold {output.bc_merged_thresh} \
+        --output {output.bc_merged_all} &> {log}
         """
 
 
@@ -249,4 +279,50 @@ rule assigned_counts_combine_replicates:
         --input {input.master_table} \
         {params.label_file} \
         --output {output}  &> {log}
+        """
+
+
+rule assigned_counts_copy_final_all_files:
+    """
+    Will copy final files to the main folder so that it is creal which files to use.
+    """
+    conda:
+        "../envs/default.yaml"
+    input:
+        all=lambda wc: "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged.tsv.gz",
+        bc_all=lambda wc: "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_merged_barcode_assigned_counts.tsv.gz",
+    output:
+        all="results/experiments/{project}/reporter_experiment.oligo.{condition}.{assignment}.{config}.all.tsv.gz",
+        bc_all="results/experiments/{project}/reporter_experiment.barcode.{condition}.{assignment}.{config}.all.tsv.gz",
+    log:
+        temp(
+            "results/logs/assigned_counts/copy_final_all_files.{project}.{condition}.{assignment}.{config}.log"
+        ),
+    shell:
+        """
+        cp {input.all} {output.all} &> {log}
+        cp {input.bc_all} {output.bc_all} &>> {log}
+        """
+
+
+rule assigned_counts_copy_final_thresh_files:
+    """
+    Will copy final files to the main folder so that it is creal which files to use.
+    """
+    conda:
+        "../envs/default.yaml"
+    input:
+        thresh=lambda wc: "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged.tsv.gz",
+        bc_thresh=lambda wc: "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_allreps_minThreshold_merged_barcode_assigned_counts.tsv.gz",
+    output:
+        thresh="results/experiments/{project}/reporter_experiment.oligo.{condition}.{assignment}.{config}.min_oligo_threshold_{threshold}.tsv.gz",
+        bc_thresh="results/experiments/{project}/reporter_experiment.barcode.{condition}.{assignment}.{config}.min_oligo_threshold_{threshold}.tsv.gz",
+    log:
+        temp(
+            "results/logs/assigned_counts/copy_final_thresh_files.{project}.{condition}.{assignment}.{config}.{threshold}.log"
+        ),
+    shell:
+        """
+        cp {input.thresh} {output.thresh} &> {log}
+        cp {input.bc_thresh} {output.bc_thresh} &>> {log}
         """

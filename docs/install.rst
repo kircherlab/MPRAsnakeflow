@@ -19,7 +19,7 @@ Package management
 
 .. code-block:: bash
 
-    conda (mamba) 4.6 or above
+    conda >24.7.1 or above
 
 Download here: https://github.com/conda-forge/miniforge
 
@@ -36,7 +36,7 @@ Workflow language
 
 .. code-block:: bash
 
-    snakemake 8.16.0 or above (snakemake >=7.15.1 will also work but cli might be different as here documented)
+    snakemake 8.24.1 or above
 
 Download here: https://snakemake.readthedocs.io/
 
@@ -47,17 +47,17 @@ Clone repository
 Download here: https://github.com/kircherlab/MPRAsnakeflow.git
 
 
-Set up snakemake environment with conda/mamba
+Set up snakemake environment with conda
 =============================================
 
-This pipeline uses python2.7 and python3.6 with additional R scripts in a Snakemake pipeline. The ``.yml`` files provided will create the appropriate environments and is completely handled by MPRAsnakeflow. The whole pipeline is set up to run on a Linux system.
+This pipeline uses python2.7 and python ≥3.7 with additional R scripts in a Snakemake pipeline. The ``.yml`` files provided will create the appropriate environments and is completely handled by MPRAsnakeflow. The whole pipeline is set up to run on a Linux system.
 
 Install the the conda environment. The general conda environment is called ``snakemake``.
 
 .. code-block:: bash
 
     cd MPRAsnakeflow
-    mamba create -c conda-forge -c bioconda -n snakemake snakemake
+    conda create -c conda-forge -c bioconda -n snakemake snakemake
     
     # activate snakemake
     conda activate snakemake

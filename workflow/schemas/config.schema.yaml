@@ -99,29 +99,13 @@ properties:
                         min_mapping_quality:
                           type: integer
                           minimum: 0
-                          default: 35
+                          default: 30
                         sequence_length:
-                          type: object
-                          properties:
-                            min:
-                              type: integer
-                            max:
-                              type: integer
-                          additionalProperties: false
-                          required:
-                            - min
-                            - max
+                          type: integer
+                          minimum: 1
                         alignment_start:
-                          type: object
-                          properties:
-                            min:
-                              type: integer
-                            max:
-                              type: integer
-                          additionalProperties: false
-                          required:
-                            - min
-                            - max
+                          type: integer
+                          minimum: 1
                       additionalProperties: false
                       required:
                         - min_mapping_quality
@@ -339,33 +323,54 @@ properties:
                 properties:
                   filter:
                     type: object
+                    default: {}
                     properties:
                       bc_threshold:
                         type: integer
                         minimum: 1
                         default: 10
-                    patternProperties:
-                      ^((DNA)|(RNA))$:
+                      outlier_detection:
                         type: object
                         properties:
-                          min_counts:
+                          method:
+                            type: string
+                            enum:
+                              - rna_counts_zscore
+                              - ratio_mad
+                              - none
+                            default: rna_counts_zscore
+                          mad_bins:
                             type: integer
-                            miminum: 0
-                            default: 1
-                        additionalProperties: false
+                            minimum: 1
+                            default: 20
+                          times_mad:
+                            type: number
+                            exclusiveMinimum: 0
+                            default: 5
+                          times_zscore:
+                            type: number
+                            exclusiveMinimum: 0
+                            default: 3
                         required:
-                          - min_counts
-                    default:
-                      bc_threshold: 10
-                      DNA:
-                        min_counts: 1
-                      RNA:
-                        min_counts: 1
+                          - method
+                          - mad_bins
+                          - times_mad
+                          - times_zscore
+                        additionalProperties: false
+                        default: {}
+                      min_dna_counts:
+                        type: integer
+                        miminum: 0
+                        default: 1
+                      min_rna_counts:
+                        type: integer
+                        miminum: 0
+                        default: 1
+                    additionalProperties: false
                     required:
                       - bc_threshold
-                      - DNA
-                      - RNA
-                    additionalProperties: false
+                      - min_rna_counts
+                      - min_dna_counts
                   sampling:
                     type: object
                     patternProperties:

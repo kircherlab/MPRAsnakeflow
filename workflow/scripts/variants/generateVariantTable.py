@@ -32,18 +32,18 @@ def cli(counts_file, declaration_file, output_file):
 
     # get count df
     click.echo("Read count file...")
-    # expected column names: name dna_counts rna_counts dna_normalized rna_normalized ratio log2 n_obs_bc
+    # expected column names: name dna_counts rna_counts dna_normalized rna_normalized ratio log2FoldChangeFoldChange n_bc
     counts = pd.read_csv(counts_file, header=0, sep="\t", index_col=0)
     # join ref with index of counts
     output = declaration.join(counts, on='REF')
     # join again for the alt columns
     output = output.join(counts, on='ALT', lsuffix='_REF', rsuffix='_ALT')
-    output["log2_expression"] = np.log2(output['ratio_ALT']/output['ratio_REF'])
+    output["log2FoldChange_expression"] = np.log2(output['ratio_ALT']/output['ratio_REF'])
 
     # fill NA and set correct output types
     output.fillna(0, inplace=True)
-    output = output.astype(dtype={'dna_counts_REF': 'int64', 'rna_counts_REF': 'int64', 'n_obs_bc_REF': 'int64',
-                                  'dna_counts_ALT': 'int64', 'rna_counts_ALT': 'int64', 'n_obs_bc_ALT': 'int64'},
+    output = output.astype(dtype={'dna_counts_REF': 'int64', 'rna_counts_REF': 'int64', 'n_bc_REF': 'int64',
+                                  'dna_counts_ALT': 'int64', 'rna_counts_ALT': 'int64', 'n_bc_ALT': 'int64'},
                            copy=False)
 
     # write output

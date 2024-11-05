@@ -40,6 +40,56 @@ import click
     help="Minimum number of DNA counts required per barcode. If 0 pesudocounts are used.",
 )
 @click.option(
+    "--inlclude-not-assigned-for-normalization/--exclude-not-assigned-for-normalization",
+    "normalize_with_not_assigned",
+    default=False,
+    show_default=True,
+    help="Use barcodes that are not assigned for normalization.",
+)
+@click.option(
+    "--scaling",
+    "scaling",
+    default=10**6,
+    show_default=True,
+    type=float,
+    help="Scaling parameter. Usually counts per million (10**6).",
+)
+@click.option(
+    "--outlier-detection",
+    "outlier_detection_method",
+    required=False,
+    type=click.Choice(['ratio_mad', 'rna_counts_zscore'], case_sensitive=False),
+    help="If set it wil use obe of the outlier detection methods.",
+)
+@click.option(
+    "--outlier-barcodes",
+    "removed_barcodes_file",
+    required=False,
+    type=click.Path(writable=True),
+    help="If outlier detection is enabled it will write out the barcodes that were removed.",
+)
+@click.option(
+    "--outlier-ratio-mad-bins",
+    "ratio_mad_n_bins",
+    default = 20,
+    type=int,
+    help="Number of quantile bins for RNA counts where outlier removal is processed.",
+)
+@click.option(
+    "--outlier-ratio-mad-times",
+    "ratio_mad_times",
+    default = 5,
+    type=float,
+    help="ratio diff does not be larger than the value time mad within a bin.",
+)
+@click.option(
+    "--outlier-rna-zscore-times",
+    "rna_zscore_times",
+    default = 3,
+    type=float,
+    help="ratio diff does not be larger than the value time mad within a bin.",
+)
+@click.option(
     "--output",
     "output_file",
     required=True,
@@ -64,6 +114,13 @@ def cli(
     assignment_file,
     minRNACounts,
     minDNACounts,
+    normalize_with_not_assigned,
+    scaling,
+    outlier_detection_method,
+    ratio_mad_times,
+    ratio_mad_n_bins,
+    rna_zscore_times,
+    removed_barcodes_file,
     output_file,
     statistic_file,
     bc_output_file,
@@ -86,6 +143,7 @@ def cli(
             "total rna counts": [0],
             "avg dna counts per bc": [0.0],
             "avg rna counts per bc": [0.0],
+            "barcode outlier removed": [0.0],
             "avg dna/rna barcodes per oligo": [0.0],
         }
     )
@@ -97,19 +155,19 @@ def cli(
         header=None,
         usecols=[0, 1],
         sep="\t",
-        names=["Barcode", "Oligo"],
+        names=["barcode", "oligo"],
     )
     # drop duplicated barcodes!!!
-    assoc.drop_duplicates("Barcode", keep=False, inplace=True)
-    assoc.set_index("Barcode", inplace=True)
+    assoc.drop_duplicates("barcode", keep=False, inplace=True)
+    assoc.set_index("barcode", inplace=True)
 
-    statistic["oligos design"] = assoc.Oligo.nunique()
+    statistic["oligos design"] = assoc.oligo.nunique()
     statistic[["barcodes design"]] = assoc.shape[0]
 
     # get count df
     click.echo("Read count file...")
     counts = pd.read_csv(
-        counts_file, sep="\t", header=None, names=["Barcode", "dna_count", "rna_count"]
+        counts_file, sep="\t", header=None, names=["barcode", "dna_count", "rna_count"]
     )
     # filter
     counts = counts[
@@ -120,11 +178,11 @@ def cli(
 
     # fill in labels from dictionary
     click.echo("Combine assignment with count file...")
-    counts = pd.merge(assoc, counts, how="right", on="Barcode")
-    counts.Oligo.fillna("no_BC", inplace=True)
-    counts.rename(columns={"Oligo": "name"}, inplace=True)
-    # counts = counts[['name', 'Barcode', 'dna_count', 'rna_count']]
-    statistic[["unknown barcodes dna/rna"]] = counts[counts.name == "no_BC"].shape[0]
+    counts = pd.merge(assoc, counts, how="right", on="barcode")
+    counts['oligo'] = counts['oligo'].fillna("no_BC")
+    counts.rename(columns={"oligo": "oligo_name"}, inplace=True)
+    # counts = counts[['oligo_name', 'barcode', 'dna_count', 'rna_count']]
+    statistic[["unknown barcodes dna/rna"]] = counts[counts.oligo_name == "no_BC"].shape[0]
 
     statistic["matched barcodes"] = (
         statistic["barcodes dna/rna"] - statistic["unknown barcodes dna/rna"]
@@ -133,18 +191,21 @@ def cli(
         statistic["matched barcodes"] / statistic["barcodes dna/rna"]
     ) * 100.0
 
-    if bc_output_file:
-        counts.to_csv(bc_output_file, index=False, sep="\t", compression="gzip")
+    # add pseudocount if needed:
+    counts["dna_count"] = counts["dna_count"] + pseudocountDNA
+    counts["rna_count"] = counts["rna_count"] + pseudocountRNA
 
-    # remove Barcorde. Not needed anymore
-    counts.drop(["Barcode"], axis=1, inplace=True)
 
     # number of DNA and RNA counts
     total_dna_counts = sum(counts["dna_count"])
     total_rna_counts = sum(counts["rna_count"])
 
+    unknown_dna_counts = sum(counts[counts.oligo_name == "no_BC"]["dna_count"])
+    unknown_rna_counts = sum(counts[counts.oligo_name == "no_BC"]["rna_count"])
+
     statistic["total dna counts"] = total_dna_counts
     statistic["total rna counts"] = total_rna_counts
+
     statistic["avg dna counts per bc"] = (
         statistic["total dna counts"] / statistic["barcodes dna/rna"]
     )
@@ -152,64 +213,73 @@ def cli(
         statistic["total rna counts"] / statistic["barcodes dna/rna"]
     )
 
-    grouped_label = counts.groupby("name").agg(
+    if not normalize_with_not_assigned:
+        counts = counts[counts.oligo_name != "no_BC"]
+        total_dna_counts -= unknown_dna_counts
+        total_rna_counts -= unknown_rna_counts
+
+    # outlier removal
+
+    if outlier_detection_method:
+        if outlier_detection_method == "ratio_mad":
+            counts, removed_barcodes = outlier_removal_by_mad(counts, ratio_mad_n_bins, ratio_mad_times)
+        elif outlier_detection_method == "rna_counts_zscore":
+            counts, removed_barcodes = outlier_removal_by_rna_zscore(counts, rna_zscore_times)
+        else:
+            raise ValueError("Outlier removal method not recognized")
+    else:
+        removed_barcodes = pd.DataFrame({'barcode' : []})
+        
+    if removed_barcodes_file:
+        removed_barcodes.to_csv(removed_barcodes_file, columns=["barcode"], header=False, index=False)
+
+    statistic["barcode outlier removed"] = removed_barcodes.shape[0]
+
+    # BC output file
+    if bc_output_file:
+        counts[["barcode", "oligo_name","dna_count","rna_count"]].to_csv(bc_output_file, index=False, sep="\t", compression="gzip")
+
+    # remove Barcorde. Not needed anymore
+    counts.drop(["barcode"], axis=1, inplace=True)
+
+    # group by oligo name 
+    grouped_label = counts.groupby("oligo_name").agg(
         {"dna_count": ["sum", "count"], "rna_count": ["sum", "count"]}
     )
+    
     grouped_label.reset_index(inplace=True)
-
-    # add pseudo BC counts to total number of counts if needed
-    total_dna_counts = (
-        total_dna_counts + sum(grouped_label.dna_count["count"]) * pseudocountDNA
-    )
-    total_rna_counts = (
-        total_rna_counts + sum(grouped_label.rna_count["count"]) * pseudocountRNA
-    )
 
     output = pd.DataFrame()
 
     click.echo(grouped_label.head())
 
-    output["name"] = grouped_label["name"]
+    output["oligo_name"] = grouped_label["oligo_name"]
     output["dna_counts"] = grouped_label.dna_count["sum"]
     output["rna_counts"] = grouped_label.rna_count["sum"]
 
-    statistic["oligos dna/rna"] = len(grouped_label) - 1
+    statistic["oligos dna/rna"] = len(grouped_label)
     statistic["avg dna/rna barcodes per oligo"] = (
-        sum(grouped_label[grouped_label["name"] != "no_BC"].dna_count["count"])
+        sum(grouped_label[grouped_label["oligo_name"] != "no_BC"].dna_count["count"])
         / statistic["oligos dna/rna"]
     )
 
-    # scaling = 10**min([len(str(total_dna_counts))-1,len(str(total_rna_counts))-1])
-    scaling = 10**6
 
     output["dna_normalized"] = (
-        (
-            (
-                grouped_label.dna_count["sum"]
-                + pseudocountDNA * grouped_label.dna_count["count"]
-            )
-            / grouped_label.dna_count["count"]
-        )
+        ( grouped_label.dna_count["sum"]/ grouped_label.dna_count["count"] )
         / total_dna_counts
         * scaling
     )
 
     output["rna_normalized"] = (
-        (
-            (
-                grouped_label.rna_count["sum"]
-                + pseudocountRNA * grouped_label.rna_count["count"]
-            )
-            / grouped_label.rna_count["count"]
-        )
+        ( grouped_label.rna_count["sum"] / grouped_label.rna_count["count"] )
         / total_rna_counts
         * scaling
     )
 
     output["ratio"] = output["rna_normalized"] / output["dna_normalized"]
-    output["log2"] = np.log2(output.ratio)
+    output["log2FoldChange"] = np.log2(output.ratio)
 
-    output["n_obs_bc"] = grouped_label.dna_count["count"]
+    output["n_bc"] = grouped_label.dna_count["count"]
 
     click.echo(output_file)
 
@@ -217,6 +287,40 @@ def cli(
 
     statistic.to_csv(statistic_file, index=False, sep="\t", compression="gzip")
 
+def outlier_removal_by_rna_zscore(df, times_zscore = 3):
+    df["mean"] = df.groupby('oligo_name')['rna_count'].transform('mean')
+
+    df["std"] = df.groupby('oligo_name')['rna_count'].transform('std')
+    df["rna_z_scores"] = (df["rna_count"] - df["mean"]) / df["std"]
+
+    m = df.rna_z_scores.abs() <= times_zscore
+    barcodes_removed = df[~m].barcode
+    df = df[m]
+    return df[m], barcodes_removed
+
+def outlier_removal_by_mad(df, n_bins = 20, times_mad = 5):
+    # df = df[df.oligo_name != "no_BC"]
+    # Calculate ratio, ratio_med, ratio_diff, and mad
+    df['ratio'] = np.log2(df["dna_count"] / df["rna_count"])
+    df['ratio_med'] = df.groupby('oligo_name')['ratio'].transform('median')
+    df['ratio_diff'] = df['ratio'] - df['ratio_med']
+
+    # Calculate quantiles within  n_bins
+    qs = np.unique(np.quantile(np.log10(df['rna_count']), np.arange(0, n_bins) / n_bins))
+    
+    # Create bins based on rna_count
+    df['bin'] = pd.cut(np.log10(df['rna_count']), bins=qs, include_lowest=True, labels=[str(i) for i in range(0, len(qs)-1)])
+    # Filter based on ratio_diff and mad
+    df['ratio_diff_med'] = df.groupby('bin', observed=True)['ratio_diff'].transform('median')
+    df['ratio_diff_med_dist'] = np.abs(df['ratio_diff'] - df['ratio_diff_med'])
+    df['mad'] = df.groupby('bin', observed=True)['ratio_diff_med_dist'].transform('median')
+    # df['mad'] = df.groupby('bin', observed=True)['ratio_diff'].transform(lambda x: np.median(np.abs(x - np.median(x)))) 
+    
+    m = df.ratio_diff <= times_mad * df.mad
+    barcodes_removed = df[~m].barcode
+    df = df[m]
+
+    return df, barcodes_removed
 
 if __name__ == "__main__":
     cli()

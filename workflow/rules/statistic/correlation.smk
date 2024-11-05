@@ -45,7 +45,9 @@ rule statistic_correlation_bc_counts:
                 "Plot": "Ratio",
             },
         ),
-        "results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}_{config}_barcode_correlation.tsv",
+        temp(
+            "results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}_{config}_barcode_correlation.tsv"
+        ),
     params:
         replicates=lambda wc: ",".join(
             getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[1]
@@ -57,10 +59,10 @@ rule statistic_correlation_bc_counts:
         ),
         minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["filter"]["RNA"]["min_counts"],
+        ]["filter"]["min_rna_counts"],
         minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["filter"]["DNA"]["min_counts"],
+        ]["filter"]["min_dna_counts"],
     log:
         temp(
             "results/logs/statistic/correlation/correlate_bc_counts.{project}.{condition}.{config}.{raw_or_assigned}.log"
@@ -97,10 +99,10 @@ rule statistic_correlation_bc_counts_hist:
         ),
         minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["filter"]["RNA"]["min_counts"],
+        ]["filter"]["min_rna_counts"],
         minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
             wc.config
-        ]["filter"]["DNA"]["min_counts"],
+        ]["filter"]["min_dna_counts"],
     log:
         temp(
             "results/logs/statistic/correlation/correlate_bc_counts_hist.{project}.{condition}.{config}.{raw_or_assigned}.log"
@@ -287,8 +289,12 @@ rule statistic_correlation_calculate:
                 ),
             },
         ),
-        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_correlation.tsv",
-        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_correlation_minThreshold.tsv",
+        temp(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_correlation.tsv"
+        ),
+        temp(
+            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_correlation_minThreshold.tsv"
+        ),
     params:
         cond="{condition}",
         files=lambda wc: ",".join(
