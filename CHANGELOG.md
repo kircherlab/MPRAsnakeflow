@@ -2,6 +2,45 @@
 
 ## [0.2.0](https://github.com/kircherlab/MPRAsnakeflow/compare/MPRAsnakeflow-v0.1.1...MPRAsnakeflow-v0.2.0) (2024-11-05)
 
+### ⚠ BREAKING CHANGES
+
+* Support only snakemake >=8.24.1 ([#130](https://github.com/kircherlab/MPRAsnakeflow/pull/130))
+* File output formats and locations changed
+* Normalization changed which may result in different outputs
+
+### Features
+ 
+ * outlier removal methods ([#132](https://github.com/kircherlab/MPRAsnakeflow/pull/132))
+ * No min max length for bbmap. default mapq is 30. ([#131](https://github.com/kircherlab/MPRAsnakeflow/pull/131))
+ * IGVF outputs ([#129](https://github.com/kircherlab/MPRAsnakeflow/pull/129))
+ * Documentation improvements
+
+
+### Bug Fixes
+
+## [0.1.1](https://github.com/kircherlab/MPRAsnakeflow/compare/MPRAsnakeflow-v0.1.0...MPRAsnakeflow-v0.1.1) (2024-09-30)
+
+### Bug Fixes
+
+* Detach from anaconda ([#122](https://github.com/kircherlab/MPRAsnakeflow/issues/122)) ([16bcea2](https://github.com/kircherlab/MPRAsnakeflow/commit/16bcea2f04190a5965ad1865cf30f6dd44f1b6a0))
+* memory resources for bbmap ([#123](https://github.com/kircherlab/MPRAsnakeflow/issues/123)) ([af93f58](https://github.com/kircherlab/MPRAsnakeflow/commit/af93f588e9387ddf91197f5587d36c3481499b38))
+
+## [0.1.0](https://github.com/kircherlab/MPRAsnakeflow/compare/MPRAsnakeflow-v0.0.1...MPRAsnakeflow-v0.1.0) (2024-09-18)
+
+First release of MPRAsnakeflow! 
+
+### Feature highlights
+
+* Multiple assignment mapping strategies (BBMap, exact, bwa)
+* Optimized assignment for variants with BBMap
+* QC report for assignment and experiment workflow
+* Barcode count output
+* Snakemake 8 support
+* Extended documentation: https://mprasnakeflow.readthedocs.io
+
+
+## older development
+
 
 ### ⚠ BREAKING CHANGES
 
@@ -50,23 +89,3 @@
 * upgrade code to new pandas version ([aaea236](https://github.com/kircherlab/MPRAsnakeflow/commit/aaea236bc83f459e7a6c2d3fee96d49c79762325))
 * using correct threads ([6dcad7d](https://github.com/kircherlab/MPRAsnakeflow/commit/6dcad7d34173f37d4538644b1ba0d918afd8f149))
 * using multiple fastq inputs in counts ([95935cf](https://github.com/kircherlab/MPRAsnakeflow/commit/95935cfe69956ca50307a9c6a774c4b96dff860f))
-
-## [0.1.1](https://github.com/kircherlab/MPRAsnakeflow/compare/MPRAsnakeflow-v0.1.0...MPRAsnakeflow-v0.1.1) (2024-09-30)
-
-### Bug Fixes
-
-* Detach from anaconda ([#122](https://github.com/kircherlab/MPRAsnakeflow/issues/122)) ([16bcea2](https://github.com/kircherlab/MPRAsnakeflow/commit/16bcea2f04190a5965ad1865cf30f6dd44f1b6a0))
-* memory resources for bbmap ([#123](https://github.com/kircherlab/MPRAsnakeflow/issues/123)) ([af93f58](https://github.com/kircherlab/MPRAsnakeflow/commit/af93f588e9387ddf91197f5587d36c3481499b38))
-
-## [0.1.0](https://github.com/kircherlab/MPRAsnakeflow/compare/MPRAsnakeflow-v0.0.1...MPRAsnakeflow-v0.1.0) (2024-09-18)
-
-First release of MPRAsnakeflow! 
-
-### Feature highlights
-
-* Multiple assignment mapping strategies (BBMap, exact, bwa)
-* Optimized assignment for variants with BBMap
-* QC report for assignment and experiment workflow
-* Barcode count output
-* Snakemake 8 support
-* Extended documentation: https://mprasnakeflow.readthedocs.io
