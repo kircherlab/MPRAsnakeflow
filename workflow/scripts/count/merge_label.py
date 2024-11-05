@@ -311,7 +311,10 @@ def outlier_removal_by_mad(df, n_bins = 20, times_mad = 5):
     # Create bins based on rna_count
     df['bin'] = pd.cut(np.log10(df['rna_count']), bins=qs, include_lowest=True, labels=[str(i) for i in range(0, len(qs)-1)])
     # Filter based on ratio_diff and mad
-    df['mad'] = df.groupby('bin', observed=True)['ratio_diff'].transform(lambda x: np.median(np.abs(x - np.median(x)))) 
+    df['ratio_diff_med'] = df.groupby('bin', observed=True)['ratio_diff'].transform('median')
+    df['ratio_diff_med_dist'] = np.abs(df['ratio_diff'] - df['ratio_diff_med'])
+    df['mad'] = df.groupby('bin', observed=True)['ratio_diff_med_dist'].transform('median')
+    # df['mad'] = df.groupby('bin', observed=True)['ratio_diff'].transform(lambda x: np.median(np.abs(x - np.median(x)))) 
     
     m = df.ratio_diff <= times_mad * df.mad
     barcodes_removed = df[~m].barcode
