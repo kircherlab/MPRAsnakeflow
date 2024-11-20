@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.0](https://github.com/kircherlab/MPRAsnakeflow/compare/MPRAsnakeflow-v0.2.0...MPRAsnakeflow-v0.3.0) (2024-11-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* versioned config ([#140](https://github.com/kircherlab/MPRAsnakeflow/issues/140))
+
+### Features
+
+* versioned config ([#140](https://github.com/kircherlab/MPRAsnakeflow/issues/140))
+* MAD outlier removal is completely removed ([#140](https://github.com/kircherlab/MPRAsnakeflow/issues/140))
+* default is NO outlier detection (none is not present anymore) ([#140](https://github.com/kircherlab/MPRAsnakeflow/issues/140))
+* global config is removed. splits moved now withing mapping in assignment ([#140](https://github.com/kircherlab/MPRAsnakeflow/issues/140))
+
 ## [0.2.0](https://github.com/kircherlab/MPRAsnakeflow/compare/MPRAsnakeflow-v0.1.1...MPRAsnakeflow-v0.2.0) (2024-11-05)
 
 ### ⚠ BREAKING CHANGES
