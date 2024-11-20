@@ -4,7 +4,7 @@
 Config File
 =====================
 
-The config file is a yaml file that contains the configuration. Different runs can be configured. We recommend using one config file per MPRA experiment or MPRA project. But in theory, many different experiments can be configured in only one file. It is divided into :code:`global` (general settings), :code:`assignments` (assigment workflow), and :code:`experiments` (count workflow including variants). This is a full example file with default configurations. :download:`config/example_config.yaml <../config/example_config.yaml>`.
+The config file is a yaml file that contains the configuration. Different runs can be configured. We recommend using one config file per MPRA experiment or MPRA project. But in theory, many different experiments can be configured in only one file. It is divided into :code:`version` (version of MPRAsnakeflow used), :code:`assignments` (assigment workflow), and :code:`experiments` (count workflow). This is a full example file with default configurations. :download:`config/example_config.yaml <../config/example_config.yaml>`.
 
 .. literalinclude:: ../config/example_config.yaml
    :language: yaml
@@ -14,21 +14,18 @@ The config file is a yaml file that contains the configuration. Different runs c
 Note that the config file is controlled by json schema. This means that the config file is validated against the schema. If the config file is not valid, the program will exit with an error message. The schema is located in :download:`workflow/schemas/config.schema.yaml <../workflow/schemas/config.schema.yaml>`.
 
 ----------------
-General settings
+Version settings
 ----------------
 
-The general settings are located in the :code:`global` section. The following settings are possible:
+Set the version of the of MPRAsnakeflow this configuration is used. This is important for future updates. The version is used to check if the config file is compatible with the current version of the workflow. If the version is not the same the workflow will exit with an error message.
 
 .. literalinclude:: ../workflow/schemas/config.schema.yaml
    :language: yaml
-   :start-after: start_global
+   :start-after: start_version
    :end-before: start_assignments
 
-:assignments:
-    Global parameters that hold for the assignment workflow.
-
-    :split_number:
-        To parallize mapping for assignment the reads are split into :code:`split_number` files. E.g. setting to 300 means that the reads are split into 300 files and each file is mapped in parallel. This is only useful when using on a cluster. Running the workflow only on one machine the default value should be used. The default is set to 1. 
+:version:
+    A a string like "0.2.0" or "1.2". When major version "0" is used the minor version should fit with MPRAsnakeflow, e.g. "0.2.0" is compatible with MPRAsnakeflow 0.2.0. as well as 0.2.1 or 0.2.2. When major version greater 0 used then the major version have to fith with MPRAsnakeflow. E.g. config of "1.2.1" fits also with MPRAsnakeflow 1.7 or 1.0.
 
 --------------------
 Assignment workflow
@@ -43,9 +40,12 @@ The assignment workflow is configured in the :code:`assignments` section. The fo
 
 For each assignment you want to process you have to give him a name like :code:`example_assignment`. The name is used to name the output files.
 
+
 :alignment_tool:
     Alignment tool configuration that is used to map the reads to the oligos.
-    
+
+    :split_number:
+        To parallize mapping for assignment the reads are split into :code:`split_number` files. E.g. setting to 300 means that the reads are split into 300 files and each file is mapped in parallel. This is only useful when using on a cluster. Running the workflow only on one machine the default value should be used. The default is set to :code:`1`. (For technical reasons when multiple assignments defined all will set to the maximum defined in the config.)
     :tool:
         Alignment tool that is used. Currently :code:`bbmap` :code:`bwa`, :code:`exact` are supported. Default is :code:`bbmap`.
     :configs:
