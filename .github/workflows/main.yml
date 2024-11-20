@@ -50,7 +50,7 @@ jobs:
         with:
           directory: .
           snakefile: workflow/Snakefile
-          args: "--lint --config \"version=`cat version.txt`\" --configfile config/example_config.yaml"
+          args: "--lint --configfile config/example_config.yaml --config \"version=$(< cat version.txt)\""
   # Testing:
   #   runs-on: ubuntu-latest
   #   needs:
