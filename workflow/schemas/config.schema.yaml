@@ -15,6 +15,10 @@ properties:
     description: Version of MPRAsnakeflow
     type: string
     pattern: ^(\d+(\.\d+)?(\.\d+)?)|(0\.\d+(\.\d+)?)$
+  skip_version_check:
+    description: Skip version check
+    type: boolean
+    default: false
   # start_assignments
   assignments:
     description: Assignments to run with configurations
@@ -400,4 +404,5 @@ properties:
 additionalProperties: false
 required:
   - version
-minProperties: 2
+  - skip_version_check
+minProperties: 3
