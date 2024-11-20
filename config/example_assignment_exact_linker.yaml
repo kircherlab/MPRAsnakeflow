@@ -1,13 +1,12 @@
 ---
-global: # generall configs effecting one or multiple parts
-  assignments:
-    split_number: 1 # number of files fastq should be split for parallelization
+version: "0.3"
 assignments:
   exampleAssignment: # name of an example assignment (can be any string)
     bc_length: 20
     BC_rev_comp: true
     linker: TCTAGACCGTCACTAACTAACAGTGGGTACCC
     alignment_tool:
+      split_number: 1 # number of files fastq should be split for parallelization
       tool: exact # bwa or exact
       configs:
         sequence_length: 171 # sequence length of design excluding adapters.

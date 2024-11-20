@@ -1,11 +1,10 @@
 ---
-global:
-  assignments:
-    split_number: 30
+version: "0.3"
 assignments:
   assocBasic:
     bc_length: 15
     alignment_tool:
+      split_number: 30
       tool: bbmap
       configs:
         sequence_length: 171
@@ -30,7 +29,7 @@ experiments:
       fromWorkflow:
         type: config
         assignment_name: assocBasic
-        assignment_config: configs
+        assignment_config: default
     design_file: design.fa
     configs:
       default: {}

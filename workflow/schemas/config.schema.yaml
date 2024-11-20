@@ -10,21 +10,15 @@ type: object
 # possible entries of the config file
 
 properties:
-  # start_global
-  global:
-    type: object
-    default:
-      assignments:
-        split_number: 1
-    properties:
-      assignments:
-        type: object
-        properties:
-          split_number:
-            type: integer
-            default: 1
-        additionalProperties: false
-    additionalProperties: false
+  # start_version
+  version:
+    description: Version of MPRAsnakeflow
+    type: string
+    pattern: ^(\d+(\.\d+)?(\.\d+)?)|(0\.\d+(\.\d+)?)$
+  skip_version_check:
+    description: Skip version check
+    type: boolean
+    default: false
   # start_assignments
   assignments:
     description: Assignments to run with configurations
@@ -37,6 +31,9 @@ properties:
           alignment_tool:
             type: object
             properties:
+              split_number:
+                type: integer
+                default: 1
               tool:
                 type: string
                 enum:
@@ -336,25 +333,11 @@ properties:
                             type: string
                             enum:
                               - rna_counts_zscore
-                              - ratio_mad
-                              - none
-                            default: rna_counts_zscore
-                          mad_bins:
-                            type: integer
-                            minimum: 1
-                            default: 20
-                          times_mad:
-                            type: number
-                            exclusiveMinimum: 0
-                            default: 5
                           times_zscore:
                             type: number
                             exclusiveMinimum: 0
                             default: 3
                         required:
-                          - method
-                          - mad_bins
-                          - times_mad
                           - times_zscore
                         additionalProperties: false
                         default: {}
@@ -419,4 +402,7 @@ properties:
       additionalProperties: false
 # end_experiments
 additionalProperties: false
-minProperties: 1
+required:
+  - version
+  - skip_version_check
+minProperties: 3
