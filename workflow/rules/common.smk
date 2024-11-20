@@ -23,6 +23,33 @@ if "experiments" in config:
         validate(experiment, schema="../schemas/experiment_file.schema.yaml")
         experiments[project] = experiment
 
+# validate version of config with MPRAsnakeflow version
+
+import re
+
+# Regular expression to match the first two digits with the dot in the middle
+pattern_major_version = r"^(\d+)"
+pattern_development_version = r"^(0(\.\d+)?)"
+
+
+def check_version(pattern, version, config_version):
+    # Search for the pattern in the string
+    match_version = re.search(pattern, version)
+
+    match_config = re.search(pattern, config_version)
+
+    # Check if a match is found and print the result
+    if match_version and match_config:
+        if match_version.group(1) != match_config.group(1):
+            raise ValueError(
+                f"\033[38;2;255;165;0mVersion mismatch: MPRAsnakeflow version is {version}, but config version is {config_version}\033[0m"
+            )
+
+
+if not config["skip_version_check"]:
+    check_version(pattern_development_version, version, config["version"])
+    check_version(pattern_major_version, version, config["version"])
+
 
 ################################
 #### HELPERS AND EXCEPTIONS ####
@@ -509,14 +536,12 @@ def withoutZeros(project, conf):
 
 
 def getSplitNumber():
-    split = 1
+    splits = []
 
-    if "global" in config:
-        if "assignments" in config["global"]:
-            if "split_number" in config["global"]["assignments"]:
-                split = config["global"]["assignments"]["split_number"]
+    for assignment in config["assignments"]:
+        splits += [config["assignments"][assignment]["alignment_tool"]["split_number"]]
 
-    return split
+    return max(splits)
 
 
 # count.smk specific functions

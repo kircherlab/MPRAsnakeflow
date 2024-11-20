@@ -115,20 +115,12 @@ rule assigned_counts_dna_rna_merge:
             % config["experiments"][wc.project]["configs"][wc.config]["filter"][
                 "outlier_detection"
             ]["method"]
-            if config["experiments"][wc.project]["configs"][wc.config]["filter"][
+            if "method"
+            in config["experiments"][wc.project]["configs"][wc.config]["filter"][
                 "outlier_detection"
-            ]["method"]
-            != "none"
+            ]
             else ""
         ),
-        outlier_mad_bins=lambda wc: "--outlier-ratio-mad-bins %d"
-        % config["experiments"][wc.project]["configs"][wc.config]["filter"][
-            "outlier_detection"
-        ]["mad_bins"],
-        outlier_mad_times=lambda wc: "--outlier-ratio-mad-times %f"
-        % config["experiments"][wc.project]["configs"][wc.config]["filter"][
-            "outlier_detection"
-        ]["times_mad"],
         outlier_zscore_times=lambda wc: "--outlier-rna-zscore-times %f"
         % config["experiments"][wc.project]["configs"][wc.config]["filter"][
             "outlier_detection"
@@ -143,7 +135,7 @@ rule assigned_counts_dna_rna_merge:
         --minRNACounts {params.minRNACounts} --minDNACounts {params.minDNACounts} \
         --assignment {input.association} \
         {params.outlier_detection} --outlier-barcodes {output.removed_bcs} \
-        {params.outlier_mad_bins} {params.outlier_mad_times} {params.outlier_zscore_times} \
+        {params.outlier_zscore_times} \
         --output {output.counts} \
         --bcOutput {output.bc_counts} \
         --statistic {output.statistic} &> {log}

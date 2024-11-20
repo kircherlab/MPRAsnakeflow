@@ -1,4 +1,5 @@
 ---
+version: "0.3"
 experiments:
   exampleCount:
     bc_length: 15
@@ -13,10 +14,6 @@ experiments:
     design_file: design.fa
     configs:
       default: {}
-      outlierNone:
-        filter:
-          outlier_detection:
-            method: none
       outlierZscore:
         filter:
           outlier_detection:
