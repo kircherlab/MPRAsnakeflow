@@ -211,23 +211,10 @@ rule assigned_counts_combine_replicates_barcode_output:
         thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
             "filter"
         ]["bc_threshold"],
-        replicates=lambda wc: " ".join(
-            [
-                "--replicate %s" % r
-                for r in getReplicatesOfCondition(wc.project, wc.condition)
-            ]
-        ),
         bc_counts=lambda wc: " ".join(
             [
-                "--counts %s" % c
-                for c in expand(
-                    "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_barcode_assigned_counts.tsv.gz",
-                    replicate=getReplicatesOfCondition(wc.project, wc.condition),
-                    project=wc.project,
-                    condition=wc.condition,
-                    assignment=wc.assignment,
-                    config=wc.config,
-                )
+                "--counts %s results/experiments/%s/assigned_counts/%s/%s/%s_%s_barcode_assigned_counts.tsv.gz" % (rep, wc.project, wc.assignment, wc.config, wc.condition, rep)
+                for rep in getReplicatesOfCondition(wc.project, wc.condition)
             ]
         ),
     log:
@@ -236,9 +223,9 @@ rule assigned_counts_combine_replicates_barcode_output:
         ),
     shell:
         """
-        python {input.script} {params.bc_counts} \
+        python {input.script} \
+        {params.bc_counts} \
         --threshold {params.thresh} \
-        {params.replicates}  \
         --output-threshold {output.bc_merged_thresh} \
         --output {output.bc_merged_all} &> {log}
         """
