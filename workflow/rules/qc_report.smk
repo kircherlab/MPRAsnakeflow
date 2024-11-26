@@ -49,18 +49,18 @@ rule qc_report_assoc:
             cp {input.quarto_script} {output.quarto_file};
             cd `dirname {output.quarto_file}`;
             quarto render `basename {output.quarto_file}` --output `basename {output.assi_file}` \
-            -P assignment:{wildcards.assignment} \
-            -P bc_length:{params.bc_length} \
-            -P fw:{params.fw} \
-            -P rev:{params.rev} \
-            -P bc:{params.bc} \
-            -P workdir:{params.workdir} \
-            -P design_file:{input.design_file} \
-            -P design_file_checked:{input.design_file_checked} \
-            -P configs:{wildcards.assignment_config} \
-            -P plot_file:{input.plot} \
-            -P statistic_filter_file:{input.statistic_filter} \
-            -P statistic_all_file:{input.statistic_all}
+            -P "assignment:{wildcards.assignment}" \
+            -P "bc_length:{params.bc_length}" \
+            -P "fw:{params.fw}" \
+            -P "rev:{params.rev}" \
+            -P "bc:{params.bc}" \
+            -P "workdir:{params.workdir}" \
+            -P "design_file:{input.design_file}" \
+            -P "design_file_checked:{input.design_file_checked}" \
+            -P "configs:{wildcards.assignment_config}" \
+            -P "plot_file:{input.plot}" \
+            -P "statistic_filter_file:{input.statistic_filter}" \
+            -P "statistic_all_file:{input.statistic_all}"
         ) &> {log}
         """
 
