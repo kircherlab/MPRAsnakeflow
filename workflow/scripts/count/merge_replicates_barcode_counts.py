@@ -8,8 +8,8 @@ import click
     "counts_files",
     required=True,
     multiple=True,
-    type=click.Path(exists=True, readable=True),
-    help="Assigned barcode count file",
+    type=(str,click.Path(exists=True, readable=True)),
+    help="Replicate name and assigned barcode count file",
 )
 @click.option(
     "--threshold",
@@ -18,14 +18,6 @@ import click
     default=10,
     type=int,
     help="Number of required barcodes (default 10)",
-)
-@click.option(
-    "--replicate",
-    "replicates",
-    multiple=True,
-    type=str,
-    help="replicate name",
-    required=True,
 )
 @click.option(
     "--output",
@@ -41,39 +33,18 @@ import click
     type=click.Path(writable=True),
     help="Output file.",
 )
-def cli(counts_files, bc_thresh, replicates, output_threshold_file, output_file):
+def cli(counts_files, bc_thresh, output_threshold_file, output_file):
     """
     Merge the associated barcode count files of all replicates.
     """
 
-    # ensure there are as many replicates as there are files
-    if len(replicates) != len(counts_files):
-        raise (
-            click.BadParameter(
-                "Number of replicates ({}) doesn't equal the number of files ({}).".format(
-                    len(replicates), len(counts_files)
-                )
-            )
-        )
-
-    # check if every file exists
-    for file in counts_files:
-        if not os.path.exists(file):
-            raise (click.BadParameter("{}: file not found".format(file)))
-
     all_reps = []
-    for file in counts_files:
-        curr_rep = -1
-        # find the replicate name of the current file
-        for rep in replicates:
-            if rep in os.path.basename(file).split("_")[1]:
-                curr_rep = rep
-                break
-        if curr_rep == -1:
-            raise (click.BadParameter("{}: incorrect file".format(file)))
+    replicates = []
+    for rep, file in counts_files:
         df = pd.read_csv(file, sep="\t")
-        df['replicate'] = curr_rep
+        df['replicate'] = rep
         all_reps.append(df)
+        replicates.append(rep)
 
     df = pd.concat(all_reps)
     df = df[df["oligo_name"] != "no_BC"]

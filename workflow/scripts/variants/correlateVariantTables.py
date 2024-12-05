@@ -57,7 +57,7 @@ def cli(condition, variants, bc_threshold, output_file):
                 variants_2 = filterOnThreshold(variants_2, bc_threshold)
 
             click.echo("Join variants file...")
-            variants_join = variants_1.join(variants_2, how="inner", lsuffix='_A', rsuffix='_B')[["log2_expression_A", "log2_expression_B"]]
+            variants_join = variants_1.join(variants_2, how="inner", lsuffix='_A', rsuffix='_B')[["log2FoldChange_expression_A", "log2FoldChange_expression_B"]]
 
             output = pd.concat([output, pd.DataFrame([[condition, rep_1, rep_2, variants_join.shape[0], bc_threshold, variants_join.corr(method="pearson").iloc[0,1],variants_join.corr(method="spearman").iloc[0,1]]])], ignore_index=True)
 

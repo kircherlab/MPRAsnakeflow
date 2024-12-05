@@ -536,9 +536,9 @@ def withoutZeros(project, conf):
 
 
 def getSplitNumber():
-    splits = []
+    splits = [1]
 
-    for assignment in config["assignments"]:
+    for assignment in getAssignments():
         splits += [config["assignments"][assignment]["alignment_tool"]["split_number"]]
 
     return max(splits)
