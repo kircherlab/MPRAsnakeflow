@@ -62,7 +62,6 @@ properties:
                               type: integer
                             max:
                               type: integer
-                          additionalProperties: false
                           required:
                             - min
                             - max
@@ -73,11 +72,9 @@ properties:
                               type: integer
                             max:
                               type: integer
-                          additionalProperties: false
                           required:
                             - min
                             - max
-                      additionalProperties: false
                       required:
                         - sequence_length
                         - alignment_start
@@ -103,7 +100,6 @@ properties:
                         alignment_start:
                           type: integer
                           minimum: 1
-                      additionalProperties: false
                       required:
                         - min_mapping_quality
                         - sequence_length
@@ -125,7 +121,6 @@ properties:
                         alignment_start:
                           type: integer
                           minimum: 1
-                      additionalProperties: false
                       required:
                         - sequence_length
                         - alignment_start
@@ -178,7 +173,6 @@ properties:
               - frac_mismatches_allowed
               - min_dovetailed_overlap
             default: {}
-            additionalProperties: false
           design_file:
             type: string
           design_check:
@@ -194,7 +188,6 @@ properties:
             required:
               - fast
               - sequence_collitions
-            additionalProperties: false
           configs:
             type: object
             patternProperties:
@@ -213,8 +206,6 @@ properties:
                 required:
                   - min_support
                   - fraction
-                additionalProperties: false
-            additionalProperties: false
             minProperties: 1
         oneOf:
           - required:
@@ -231,8 +222,6 @@ properties:
           - configs
           - alignment_tool
           - NGmerge
-        additionalProperties: false
-    additionalProperties: false
     minProperties: 1
   # start_experiments
   experiments:
@@ -290,7 +279,6 @@ properties:
                         minimum: 1
                 required:
                   - type
-                additionalProperties: false
                 allOf:
                   - if:
                       properties:
@@ -311,7 +299,6 @@ properties:
                     then:
                       required:
                         - assignment_file
-            additionalProperties: false
           configs:
             type: object
             patternProperties:
@@ -339,7 +326,6 @@ properties:
                             default: 3
                         required:
                           - times_zscore
-                        additionalProperties: false
                         default: {}
                       min_dna_counts:
                         type: integer
@@ -349,7 +335,6 @@ properties:
                         type: integer
                         miminum: 0
                         default: 1
-                    additionalProperties: false
                     required:
                       - bc_threshold
                       - min_rna_counts
@@ -372,12 +357,8 @@ properties:
                             minimum: 1
                           seed:
                             type: integer
-                        additionalProperties: false
-                    additionalProperties: false
-                additionalProperties: false
                 required:
                   - filter
-              additionalProperties: false
           variants:
             type: object
             properties:
@@ -399,7 +380,6 @@ properties:
           - demultiplex
           - assignments
           - configs
-      additionalProperties: false
 # end_experiments
 additionalProperties: false
 required:
