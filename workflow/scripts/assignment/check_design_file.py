@@ -42,12 +42,13 @@ import numpy as np
     help="Using a simple dictionary to find identical sequences. This is faster but uses only the whole (or center part depending on start/length) of the design file. But in theory a substring can only be present and for more correct, but slower, search use the --slow-string-search.",
 )
 @click.option(
-    "--perform-sequence-check/--skip-sequence-check",
-    "sequence_search",
-    default=True,
-    help="When set to False, the script will not check for sequence collisions. This is useful when you know collisions but still want to preoceed with the design file.",
+    '--sequence-check', 
+    'sequence_check', 
+    type=click.Choice(['skip', 'sense_only', 'sense_antisense']), 
+    default='sense_antisense', 
+    help='Choose the type of sequence check. When set to skip, the script will not check for sequence collisions. This is useful when you know collisions but still want to preoceed with the design file.'
 )
-def cli(input_file, start, length, fast_search, sequence_search):
+def cli(input_file, start, length, fast_search, sequence_check):
 
     seq_dict = dict()
 
@@ -76,7 +77,7 @@ def cli(input_file, start, length, fast_search, sequence_search):
         )
         exit(1)
 
-    if sequence_search:
+    if sequence_check != 'skip':
         # build seq dict
         click.echo("Building sequence dictionary...")
         for i in range(len(fa)):
@@ -100,12 +101,12 @@ def cli(input_file, start, length, fast_search, sequence_search):
             antisense_collition = set()
             if fast_search:
                 forward_collition.update(seq_dict.get(sub_seq_forward, set()))
-                antisense_collition.update(seq_dict.get(sub_seq_antisense, set()))
+                antisense_collition.update(seq_dict.get(sub_seq_antisense, set())) if sequence_check == 'sense_antisense' else None
             else:
                 for seq, names in seq_dict.items():
                     if sub_seq_forward in seq:
                         forward_collition.update(names)
-                    if sub_seq_antisense in seq:
+                    if sequence_check == 'sense_antisense' and sub_seq_antisense in seq:
                         antisense_collition.update(names)
 
             if len(forward_collition) > 1:
@@ -135,16 +136,16 @@ def cli(input_file, start, length, fast_search, sequence_search):
                     "\t".join(forward_collitions[i]),
                     err=True,
                 )
-
-            click.echo(
-                "-----------------ANTISENSE COLLISIONS-----------------",
-                err=True,
-            )
-            for i in range(len(antisense_collitions)):
+            if sequence_check == 'sense_antisense':
                 click.echo(
-                    "\t".join(antisense_collitions[i]),
+                    "-----------------ANTISENSE COLLISIONS-----------------",
                     err=True,
                 )
+                for i in range(len(antisense_collitions)):
+                    click.echo(
+                        "\t".join(antisense_collitions[i]),
+                        err=True,
+                    )
             exit(1)
 
         else:

@@ -49,12 +49,12 @@ rule assignment_check_design:
             if config["assignments"][wc.assignment]["design_check"]["fast"]
             else "--slow-string-search"
         ),
-        check_sequence_collitions=lambda wc: (
-            "--perform-sequence-check"
+        sequence_collitions=lambda wc: (
+            "sense_antisense"
             if config["assignments"][wc.assignment]["design_check"][
                 "sequence_collitions"
             ]
-            else "--skip-sequence-check"
+            else "skip"
         ),
     log:
         log=temp("results/logs/assignment/check_design.{assignment}.log"),
@@ -65,7 +65,7 @@ rule assignment_check_design:
         cp {input.design} {output.ref}
         python {input.script} --input {output.ref} \
         --start {params.start} --length {params.length} \
-        {params.fast_check} {params.check_sequence_collitions} > {log.log} 2> {log.err};
+        {params.fast_check} --sequence-check {params.sequence_collitions} > {log.log} 2> {log.err};
         """
 
 
@@ -129,11 +129,12 @@ rule assignment_attach_idx:
             if config["assignments"][wc.assignment]["BC_rev_comp"]
             else ""
         ),
+        attach_sequence="--attach-sequence",
     log:
         temp("results/logs/assignment/attach_idx.{assignment}.{split}.{read}.log"),
     shell:
         """
-        python {input.script} -r {input.read} -b {input.BC} {params.BC_rev_comp} | bgzip -c > {output.read} 2> {log}
+        python {input.script} -r {input.read} -b {input.BC} {params.BC_rev_comp} {params.attach_sequence} | bgzip -c > {output.read} 2> {log}
         """
 
 

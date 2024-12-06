@@ -3,9 +3,17 @@ from common import read_fastq
 import gzip
 
 
-def read_sequence_files(read_file, bc_file, use_BC_reverse_complement=False):
+def read_sequence_files(read_file, bc_file, use_BC_reverse_complement=False, add_sequence_left=None, add_sequence_right=None):
     for read, bc in zip(read_fastq(read_file), read_fastq(bc_file)):
         seqid_read, seq_read, qual_read = read
+        
+        if add_sequence_left:
+            seq_read = add_sequence_left + seq_read
+            qual_read = 'I' * len(add_sequence_left) + qual_read
+        if add_sequence_right:
+            seq_read = seq_read + add_sequence_right
+            qual_read = qual_read + 'I' * len(add_sequence_right)
+
         seqid_read = seqid_read.split(" ")[0]
         seqid_bc, seq_bc, qual_bc = bc
         seqid_bc = seqid_bc.split(" ")[0]
@@ -31,10 +39,25 @@ def read_sequence_files(read_file, bc_file, use_BC_reverse_complement=False):
 @click.option('--reverse-complement',
               "use_reverse_complement",
               is_flag=True)
-def cli(read_file, barcode_file, use_reverse_complement):
+@click.option('--attach-sequence',
+              "attach_sequence",
+              type=(click.Choice(['left', 'right', 'both', 'skip']), click.STRING),
+              default=('skip', 'AGGACCGGATCAACT') 
+              )
+def cli(read_file, barcode_file, use_reverse_complement, attach_sequence):
     
     with gzip.open(read_file, 'rt') as r_file, gzip.open(barcode_file, 'rt') as bc_file:
-        for seqid, seq, qual in read_sequence_files(r_file, bc_file, use_reverse_complement):
+        inputs = {
+            "read_file":r_file, 
+            "bc_file":bc_file, 
+            "use_BC_reverse_complement": use_reverse_complement
+            }
+        if attach_sequence[0] == 'left' or attach_sequence[0] == 'both':
+            inputs['add_sequence_left'] = attach_sequence[1]
+        if attach_sequence[0] == 'right' or attach_sequence[0] == 'both':
+            inputs['add_sequence_right'] = attach_sequence[1]
+        
+        for seqid, seq, qual in read_sequence_files(**inputs):
             click.echo("@%s\n%s\n+\n%s" % (seqid, seq, qual))
 
 def reverse_complement(seq):
