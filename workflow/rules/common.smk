@@ -276,15 +276,16 @@ def getOutputConditionReplicateType_helper(files, project, skip={}):
             return []
     conditions = getConditions(project)
     for condition in conditions:
-        replicates = getReplicatesOfCondition(project, condition)
         for file in files:
-            output += expand(
-                file,
-                project=project,
-                condition=condition,
-                replicate=replicates,
-                type=["RNA", "DNA"],
-            )
+            for type in ["DNA", "RNA"]:
+                replicates = getReplicatesOfConditionType(project, condition, type)
+                output += expand(
+                    file,
+                    project=project,
+                    condition=condition,
+                    replicate=replicates,
+                    type=type,
+                )
     return output
 
 
@@ -687,25 +688,46 @@ def counts_getSamplingConfig(project, conf, dna_or_rna, command):
 
     return ""
 
+def getReplicatesOfConditionType(project, condition, rna_or_dna):
+    exp = getExperiments(project)
 
-def getFinalCounts(project, conf, rna_or_dna, raw_or_assigned):
+    replicates = getReplicatesOfCondition(project, condition)
+
+    if f"{rna_or_dna}_BC_F" in exp.columns:
+
+        exp_filter = exp[exp.Condition == condition]
+
+        if len(replicates) > 1 and exp_filter[f"{rna_or_dna}_BC_F"].nunique() == 1:
+            return [replicates[0]]
+
+    return replicates
+
+
+def getFinalCounts(project, conf, condition, rna_or_dna, raw_or_assigned):
     output = ""
+
+    replicates = getReplicatesOfConditionType(project, condition, rna_or_dna)
+    if len(replicates) > 1:
+        replicate = "{replicate}"
+    else:
+        replicate = replicates[0]
+    
     if raw_or_assigned == "counts":
         if useSampling(project, conf, rna_or_dna):
             output = (
-                "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts.sampling.{config}.tsv.gz"
-                % (raw_or_assigned, rna_or_dna)
+                "results/experiments/{project}/%s/{condition}_%s_%s_final_counts.sampling.{config}.tsv.gz"
+                % (raw_or_assigned, replicate, rna_or_dna)
             )
 
         else:
             output = (
-                "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts.tsv.gz"
-                % (raw_or_assigned, rna_or_dna)
+                "results/experiments/{project}/%s/{condition}_%s_%s_final_counts.tsv.gz"
+                % (raw_or_assigned, replicate, rna_or_dna)
             )
     else:
         output = (
-            "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts.config.{config}.tsv.gz"
-            % (raw_or_assigned, rna_or_dna)
+            "results/experiments/{project}/%s/{condition}_%s_%s_final_counts.config.{config}.tsv.gz"
+            % (raw_or_assigned, replicate, rna_or_dna)
         )
     return output
 
@@ -731,20 +753,6 @@ def assignedCounts_getAssignmentSamplingConfig(project, assignment, command):
 
 
 # statistic.smk specific functions
-
-
-# get all counts of experiment (rule statistic_counts)
-def getCountStats(project, countType):
-    exp = getExperiments(project)
-    output = []
-    for index, row in exp.iterrows():
-        output += expand(
-            "results/experiments/{{project}}/statistic/counts/{condition}_{replicate}_{type}_{{countType}}_counts.tsv.gz",
-            condition=row["Condition"],
-            replicate=row["Replicate"],
-            type=["DNA", "RNA"],
-        )
-    return output
 
 
 # get all barcodes of experiment (rule statistic_BC_in_RNA_DNA)

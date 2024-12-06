@@ -62,7 +62,7 @@ rule assigned_counts_assignBarcodes:
     conda:
         "../envs/python3.yaml"
     input:
-        counts=lambda wc: getFinalCounts(wc.project, wc.config, wc.type, "counts"),
+        counts=lambda wc: getFinalCounts(wc.project, wc.config, wc.condition, wc.type, "counts"),
         association="results/experiments/{project}/assignment/{assignment}.tsv.gz",
         script=getScript("count/merge_BC_and_assignment.py"),
     output:
