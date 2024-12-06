@@ -8,7 +8,9 @@ rule statistic_bc_overlap_run:
         "../../envs/r.yaml"
     input:
         files=lambda wc: expand(
-            getFinalCounts(wc.project, wc.config, wc.condition, wc.type, wc.raw_or_assigned),
+            getFinalCounts(
+                wc.project, wc.config, wc.condition, wc.type, wc.raw_or_assigned
+            ),
             project=wc.project,
             condition=wc.condition,
             config=wc.config,
@@ -22,7 +24,9 @@ rule statistic_bc_overlap_run:
     params:
         input=lambda wc: ",".join(
             expand(
-                getFinalCounts(wc.project, wc.config, wc.condition, wc.type, wc.raw_or_assigned),
+                getFinalCounts(
+                    wc.project, wc.config, wc.condition, wc.type, wc.raw_or_assigned
+                ),
                 project=wc.project,
                 condition=wc.condition,
                 config=wc.config,

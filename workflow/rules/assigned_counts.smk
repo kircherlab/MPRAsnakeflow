@@ -62,7 +62,9 @@ rule assigned_counts_assignBarcodes:
     conda:
         "../envs/python3.yaml"
     input:
-        counts=lambda wc: getFinalCounts(wc.project, wc.config, wc.condition, wc.type, "counts"),
+        counts=lambda wc: getFinalCounts(
+            wc.project, wc.config, wc.condition, wc.type, "counts"
+        ),
         association="results/experiments/{project}/assignment/{assignment}.tsv.gz",
         script=getScript("count/merge_BC_and_assignment.py"),
     output:
@@ -213,7 +215,8 @@ rule assigned_counts_combine_replicates_barcode_output:
         ]["bc_threshold"],
         bc_counts=lambda wc: " ".join(
             [
-                "--counts %s results/experiments/%s/assigned_counts/%s/%s/%s_%s_barcode_assigned_counts.tsv.gz" % (rep, wc.project, wc.assignment, wc.config, wc.condition, rep)
+                "--counts %s results/experiments/%s/assigned_counts/%s/%s/%s_%s_barcode_assigned_counts.tsv.gz"
+                % (rep, wc.project, wc.assignment, wc.config, wc.condition, rep)
                 for rep in getReplicatesOfCondition(wc.project, wc.condition)
             ]
         ),

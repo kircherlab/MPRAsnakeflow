@@ -110,8 +110,12 @@ rule counts_dna_rna_merge_counts:
     conda:
         "../envs/default.yaml"
     input:
-        dna=lambda wc: getFinalCounts(wc.project, wc.config, wc.condition, "DNA", wc.raw_or_assigned),
-        rna=lambda wc: getFinalCounts(wc.project, wc.config, wc.condition, "RNA", wc.raw_or_assigned),
+        dna=lambda wc: getFinalCounts(
+            wc.project, wc.config, wc.condition, "DNA", wc.raw_or_assigned
+        ),
+        rna=lambda wc: getFinalCounts(
+            wc.project, wc.config, wc.condition, "RNA", wc.raw_or_assigned
+        ),
     output:
         "results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}.merged.config.{config}.tsv.gz",
     params:

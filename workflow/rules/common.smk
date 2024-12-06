@@ -688,6 +688,7 @@ def counts_getSamplingConfig(project, conf, dna_or_rna, command):
 
     return ""
 
+
 def getReplicatesOfConditionType(project, condition, rna_or_dna):
     exp = getExperiments(project)
 
@@ -711,7 +712,7 @@ def getFinalCounts(project, conf, condition, rna_or_dna, raw_or_assigned):
         replicate = "{replicate}"
     else:
         replicate = replicates[0]
-    
+
     if raw_or_assigned == "counts":
         if useSampling(project, conf, rna_or_dna):
             output = (

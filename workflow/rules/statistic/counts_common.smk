@@ -21,7 +21,7 @@ def getCountStats(project, countType):
     exp = getExperiments(project)
     output = []
     for index, row in exp.iterrows():
-        condition=row["Condition"]
+        condition = row["Condition"]
         for dna_or_rna in ["DNA", "RNA"]:
             replicates = getReplicatesOfConditionType(project, condition, dna_or_rna)
             if len(replicates) == 1:
