@@ -25,6 +25,7 @@ rule assignment_check_design:
         temp("results/assignment/{assignment}/reference/reference.fa.fxi"),
         touch("results/assignment/{assignment}/design_check.done"),
         ref="results/assignment/{assignment}/reference/reference.fa",
+        ref_tmp=temp("results/assignment/{assignment}/reference/reference.tmp.fa"),
     params:
         start=lambda wc: (
             config["assignments"][wc.assignment]["alignment_tool"]["configs"][
@@ -56,16 +57,31 @@ rule assignment_check_design:
             ]
             else "skip"
         ),
+        attach_sequence=lambda wc: (
+            "--attach-sequence %s %s"
+            % (
+                config["assignments"][wc.assignment]["strand_sensitive"][
+                    "forward_adapter"
+                ],
+                config["assignments"][wc.assignment]["strand_sensitive"][
+                    "reverse_adapter"
+                ],
+            )
+            if config["assignments"][wc.assignment]["strand_sensitive"]["enable"]
+            else ""
+        ),
     log:
         log=temp("results/logs/assignment/check_design.{assignment}.log"),
         err="results/assignment/{assignment}/design_check.err",
     shell:
         """
         trap "cat {log.err}" ERR
-        cp {input.design} {output.ref}
-        python {input.script} --input {output.ref} \
+        cp {input.design} {output.ref_tmp}
+        python {input.script} --input {output.ref_tmp} \
+        --output {output.ref} \
         --start {params.start} --length {params.length} \
-        {params.fast_check} --sequence-check {params.sequence_collitions} > {log.log} 2> {log.err};
+        {params.fast_check} --sequence-check {params.sequence_collitions} \
+        {params.attach_sequence} > {log.log} 2> {log.err};
         """
 
 
@@ -129,7 +145,22 @@ rule assignment_attach_idx:
             if config["assignments"][wc.assignment]["BC_rev_comp"]
             else ""
         ),
-        attach_sequence="--attach-sequence",
+        attach_sequence=lambda wc: (
+            "--attach-sequence left %s"
+            % (
+                config["assignments"][wc.assignment]["strand_sensitive"][
+                    "forward_adapter"
+                ]
+                if wc.read == "FW"
+                else reverse_complement(
+                    config["assignments"][wc.assignment]["strand_sensitive"][
+                        "reverse_adapter"
+                    ]
+                )
+            )
+            if config["assignments"][wc.assignment]["strand_sensitive"]["enable"]
+            else ""
+        ),
     log:
         temp("results/logs/assignment/attach_idx.{assignment}.{split}.{read}.log"),
     shell:

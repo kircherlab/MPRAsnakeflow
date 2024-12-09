@@ -51,6 +51,38 @@ if not config["skip_version_check"]:
     check_version(pattern_major_version, version, config["version"])
 
 
+# modify config based on certain rules
+
+
+def modify_config(config):
+    # update sequence length with when adapters are added via strand sensitive is enabled
+    if "assignments" in config:
+        for assignment in config["assignments"].keys():
+            if config["assignments"][assignment]["strand_sensitive"]["enable"]:
+                add_length = len(
+                    config["assignments"][assignment]["strand_sensitive"][
+                        "forward_adapter"
+                    ]
+                ) + len(
+                    config["assignments"][assignment]["strand_sensitive"][
+                        "reverse_adapter"
+                    ]
+                )
+                if config["assignments"][assignment]["alignment_tool"]["tool"] == "bwa":
+                    config["assignments"][assignment]["alignment_tool"]["configs"][
+                        "sequence_length"
+                    ]["min"] += add_length
+                    config["assignments"][assignment]["alignment_tool"]["configs"][
+                        "sequence_length"
+                    ]["max"] += add_length
+                else:
+                    config["assignments"][assignment]["alignment_tool"]["configs"][
+                        "sequence_length"
+                    ] += add_length
+    return config
+
+
+config = modify_config(config)
 ################################
 #### HELPERS AND EXCEPTIONS ####
 ################################
@@ -534,6 +566,11 @@ def withoutZeros(project, conf):
 
 
 # assignment.smk specific functions
+
+
+def reverse_complement(seq):
+    complementary = {"A": "T", "T": "A", "G": "C", "C": "G", "N": "N"}
+    return "".join(reversed([complementary[i] for i in seq]))
 
 
 def getSplitNumber():

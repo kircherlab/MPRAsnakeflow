@@ -48,15 +48,38 @@ import numpy as np
     default='sense_antisense', 
     help='Choose the type of sequence check. When set to skip, the script will not check for sequence collisions. This is useful when you know collisions but still want to preoceed with the design file.'
 )
-def cli(input_file, start, length, fast_search, sequence_check):
+@click.option(
+    "--attach-sequence",
+    "attach_sequence",
+    required=False,
+    type=(click.STRING, click.STRING),
+    help="Attach a sequence left and right to each entry of the fasta file."
+)
+@click.option(
+    "--output",
+    "output",
+    required=True,
+    type=click.Path(writable=True),
+    help="Output reference fasqt file with attached sequences (if set). Otherwise just a copy.",
+)
+def cli(input_file, start, length, fast_search, sequence_check, attach_sequence, output):
 
     seq_dict = dict()
 
     forward_collitions = []
     antisense_collitions = []
 
+    # attach sequence
+    with open(output, 'w') as fasta_file:
+        for name, seq in pyfastx.Fasta(input_file, build_index=False):
+            new_sequence = seq
+            if attach_sequence:
+                new_sequence = attach_sequence[0] + new_sequence + attach_sequence[1]
+            fasta_file.write(f">{name}\n{new_sequence}\n")
+
+
     # read fasta file
-    fa = pyfastx.Fasta(input_file)
+    fa = pyfastx.Fasta(output)
 
     # check duplicated headers
     click.echo("Searching for duplicated headers...")
@@ -76,6 +99,11 @@ def cli(input_file, start, length, fast_search, sequence_check):
             err=True,
         )
         exit(1)
+
+
+    # read fasta file
+    if attach_sequence:
+        fa = pyfastx.Fasta(output)
 
     if sequence_check != 'skip':
         # build seq dict

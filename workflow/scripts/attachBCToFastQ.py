@@ -41,8 +41,8 @@ def read_sequence_files(read_file, bc_file, use_BC_reverse_complement=False, add
               is_flag=True)
 @click.option('--attach-sequence',
               "attach_sequence",
-              type=(click.Choice(['left', 'right', 'both', 'skip']), click.STRING),
-              default=('skip', 'AGGACCGGATCAACT') 
+              required=False,
+              type=(click.Choice(['left', 'right', 'both']), click.STRING)
               )
 def cli(read_file, barcode_file, use_reverse_complement, attach_sequence):
     
@@ -52,10 +52,11 @@ def cli(read_file, barcode_file, use_reverse_complement, attach_sequence):
             "bc_file":bc_file, 
             "use_BC_reverse_complement": use_reverse_complement
             }
-        if attach_sequence[0] == 'left' or attach_sequence[0] == 'both':
-            inputs['add_sequence_left'] = attach_sequence[1]
-        if attach_sequence[0] == 'right' or attach_sequence[0] == 'both':
-            inputs['add_sequence_right'] = attach_sequence[1]
+        if attach_sequence:
+            if attach_sequence[0] == 'left' or attach_sequence[0] == 'both':
+                inputs['add_sequence_left'] = attach_sequence[1]
+            if attach_sequence[0] == 'right' or attach_sequence[0] == 'both':
+                inputs['add_sequence_right'] = reverse_complement(attach_sequence[1])
         
         for seqid, seq, qual in read_sequence_files(**inputs):
             click.echo("@%s\n%s\n+\n%s" % (seqid, seq, qual))

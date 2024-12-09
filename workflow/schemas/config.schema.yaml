@@ -188,6 +188,21 @@ properties:
             required:
               - fast
               - sequence_collitions
+          strand_sensitive:
+            type: object
+            default: {}
+            properties:
+              enable:
+                type: boolean
+                default: false
+              forward_adapter:
+                type: string
+                pattern: ^[ATCGN]+$
+                default: AGGACCGGATCAACT
+              reverse_adapter:
+                type: string
+                pattern: ^[ATCGN]+$
+                default: TCGGTTCACGCAATG
           configs:
             type: object
             patternProperties:
