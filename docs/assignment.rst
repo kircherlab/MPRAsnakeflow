@@ -59,6 +59,10 @@ Example of an assignment file using exact matches and read 1 with BC, linker and
 .. literalinclude:: ../config/example_assignment_exact_linker.yaml
    :language: yaml
 
+
+If you want to use the strand sensitivity option (e.g. testing enhancer in both directions), you can add the following to the config file: :code:`strand_sensitive: {enable: true}`. Otherwise, MPRAsnakeflow will give you an error because it cannot handle the same sequences in both sense and antisense directions. This is an issue with the mappers because they do not consider the strand and will always call your read ambiguous due to multiple matches.
+
+
 snakemake
 ============================
  
