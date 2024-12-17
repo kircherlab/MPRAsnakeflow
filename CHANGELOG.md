@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/kircherlab/MPRAsnakeflow/compare/MPRAsnakeflow-v0.3.0...MPRAsnakeflow-v0.3.1) (2024-12-17)
+
+
+### Bug Fixes
+
+* Wrong experiment count plots in QC report ([#149](https://github.com/kircherlab/MPRAsnakeflow/issues/149)) ([d2be468](https://github.com/kircherlab/MPRAsnakeflow/commit/d2be46891650ff9aaab61f750a4b3bc3b65e3e88))
+
 ## [0.3.0](https://github.com/kircherlab/MPRAsnakeflow/compare/MPRAsnakeflow-v0.2.0...MPRAsnakeflow-v0.3.0) (2024-11-20)
 
 
