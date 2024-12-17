@@ -611,13 +611,13 @@ def useUMI(project, type="DNA"):
     """
     return "UMI" in experiments[project] or f"{type}_UMI" in experiments[project]
 
+
 def onlyFW(project, type="DNA"):
     """
     helper to check if only forward reads should be used (length option)
     """
-    return (
-        f"{type}_BC_R" not in experiments[project]
-    )
+    return f"{type}_BC_R" not in experiments[project]
+
 
 def noUMI(project, type="DNA"):
     """
