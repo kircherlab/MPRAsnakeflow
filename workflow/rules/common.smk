@@ -605,42 +605,49 @@ def getUMIBamFile(project, condition, replicate, type):
         )
 
 
-def useUMI(project):
+def useUMI(project, type="DNA"):
     """
     helper to check if UMI should be used
     """
-    return "UMI" in experiments[project] or "DNA_UMI" in experiments[project]
+    return "UMI" in experiments[project] or f"{type}_UMI" in experiments[project]
 
 
-def noUMI(project):
+def onlyFW(project, type="DNA"):
+    """
+    helper to check if only forward reads should be used (length option)
+    """
+    return f"{type}_BC_R" not in experiments[project]
+
+
+def noUMI(project, type="DNA"):
     """
     helper to check if UMI should not be used
     """
     return (
         "UMI" not in experiments[project]
-        and "DNA_UMI" not in experiments[project]
-        and "DNA_BC_R" in experiments[project]
+        and f"{type}_UMI" not in experiments[project]
+        and f"{type}_BC_R" in experiments[project]
     )
 
 
-def onlyFWByLength(project):
+def onlyFWByLength(project, type="DNA"):
     """
     helper to check if only forward reads should be used (length option)
     """
     return (
         "UMI" not in experiments[project]
-        and "DNA_BC_R" not in experiments[project]
+        and f"{type}_BC_R" not in experiments[project]
         and "adapter" not in config["experiments"][project]
     )
 
 
-def onlyFWbyCutadapt(project):
+def onlyFWbyCutadapt(project, type="DNA"):
     """
     helper to check if only forward reads should be used (cutadapt option)
     """
     return (
         "UMI" not in experiments[project]
-        and "DNA_BC_R" not in experiments[project]
+        and f"{type}_BC_R" not in experiments[project]
         and "adapter" in config["experiments"][project]
     )
 
@@ -649,22 +656,28 @@ def getRawCounts(project, type):
     """
     Helper to get the correct raw counts file (umi/noUMI or just FW read)
     """
-    if useUMI(project):
-        return (
-            "results/experiments/{project}/counts/useUMI.{condition}_{replicate}_%s_raw_counts.tsv.gz"
-            % type
-        )
-    elif noUMI(project):
+    if useUMI(project, type):
+        if onlyFW(project, type):
+            return (
+                "results/experiments/{project}/counts/onlyFWUMI.{condition}_{replicate}_%s_raw_counts.tsv.gz"
+                % type
+            )
+        else:
+            return (
+                "results/experiments/{project}/counts/useUMI.{condition}_{replicate}_%s_raw_counts.tsv.gz"
+                % type
+            )
+    elif noUMI(project, type):
         return (
             "results/experiments/{project}/counts/noUMI.{condition}_{replicate}_%s_raw_counts.tsv.gz"
             % type
         )
-    elif onlyFWByLength(project):
+    elif onlyFWByLength(project, type):
         return (
             "results/experiments/{project}/counts/onlyFWByLength.{condition}_{replicate}_%s_raw_counts.tsv.gz"
             % type
         )
-    elif onlyFWbyCutadapt(project):
+    elif onlyFWbyCutadapt(project, type):
         return (
             "results/experiments/{project}/counts/onlyFWByCutadapt.{condition}_{replicate}_%s_raw_counts.tsv.gz"
             % type

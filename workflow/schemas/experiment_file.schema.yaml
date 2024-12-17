@@ -59,6 +59,11 @@ anyOf:
   - required:
       - DNA_BC_F
       - RNA_BC_F
+      - DNA_UMI
+      - RNA_UMI
+  - required:
+      - DNA_BC_F
+      - RNA_BC_F
       - DNA_BC_R
       - RNA_BC_R
   - required:
