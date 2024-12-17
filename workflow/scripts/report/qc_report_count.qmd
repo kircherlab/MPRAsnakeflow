@@ -229,20 +229,33 @@ df_single.style.hide(axis="index").format( precision=2)
 
 # Number of barcodes per oligo
 
-Histogramm of number of barcodes per oligo. Median is blue, mean is red.
+ Median is red, mean is blue.
+
+
+# Histograms barcodes per oligo, counts per barcode
+
+Histogramm of number of barcodes per oligo and the number of counts per barcode devidied by DNA and RNA. Median is red, mean is blue.
+
 
 ::: {.panel-tabset}
 
-# DNA
+# Number of barcodes per oligo
 ```{python}
 #| echo: false
-display(Image(f"{workdir}/{counts_per_oligo_dna}")) 
+display(Image(f"{workdir}/{counts_per_oligo}")) 
 ```
 
-# RNA
+
+# Number of counts per DNA barcode
 ```{python}
 #| echo: false
-display(Image(f"{workdir}/{counts_per_oligo_rna}")) 
+display(Image(f"{workdir}/{counts_per_bc_dna}")) 
+```
+
+# Number of counts per DNA barcode
+```{python}
+#| echo: false
+display(Image(f"{workdir}/{counts_per_bc_rna}")) 
 ```
 
 :::

@@ -195,12 +195,17 @@ for (n in 1:(data %>% nrow())) {
   assigned_counts <- all %>% filter(replicate == rep)
 
   # Histograms
-  intercept <- median(assigned_counts$n_bc)
+  x_lim_n_bc <- min(max(assigned_counts$n_bc), 300)
+  intercept_median <- median(assigned_counts$n_bc)
+  intercept_mean <- mean(assigned_counts$n_bc)
   hist_plot_list[[n]] <-
     ggplot(assigned_counts, aes(x = n_bc)) +
-    geom_histogram(bins = 300) +
-    geom_vline(xintercept = intercept, colour = "red") +
-    xlim(0, 300) +
+    geom_histogram(bins = x_lim_n_bc) +
+    geom_vline(xintercept = intercept_median, colour = "red") +
+    geom_vline(xintercept = intercept_mean, colour = "blue") +
+    xlim(0, x_lim_n_bc) +
+    ylab("Frequency") +
+    xlab("Barcodes per oligo") +
     ggtitle(paste("replicate", rep, sep = " "))
 
   # Boxplots
@@ -214,14 +219,14 @@ for (n in 1:(data %>% nrow())) {
 }
 
 hist_plot <- do.call("plot_grid", c(hist_plot_list))
-ggsave(sprintf("%s_barcodesPerInsert.png", outdir), hist_plot, width = 30, height = 30)
+ggsave(sprintf("%s_barcodesPerInsert.png", outdir), hist_plot, dpi = 300, type = "cairo")
 
 
 
 box_plot_insert <- do.call("plot_grid", c(box_plot_insert_list))
 ggsave(sprintf("%s_group_barcodesPerInsert_box.png", outdir),
   box_plot_insert,
-  width = 30, height = 30
+  dpi = 300, type = "cairo"
 )
 
 box_plot_insert_thresh <-
@@ -229,7 +234,7 @@ box_plot_insert_thresh <-
 ggsave(
   sprintf("%s_group_barcodesPerInsert_box_minThreshold.png", outdir),
   box_plot_insert_thresh,
-  width = 30, height = 30
+  dpi = 300, type = "cairo"
 )
 
 print("Script done")
