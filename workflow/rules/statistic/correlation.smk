@@ -354,6 +354,7 @@ rule statistic_correlation_hist_box_plots:
         ),
         script=getScript("count/plot_perInsertCounts_stats.R"),
     output:
+        "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_barcodesPerInsert.png",
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png",
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png",
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_dna_vs_rna.png",
