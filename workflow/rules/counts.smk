@@ -7,6 +7,7 @@ include: "counts/counts_demultiplex.smk"
 include: "counts/counts_umi.smk"
 include: "counts/counts_noUMI.smk"
 include: "counts/counts_onlyFW.smk"
+include: "counts/counts_onlyFWWithUMI.smk"
 
 
 rule counts_filter_counts:
