@@ -44,6 +44,7 @@ rule assignment_hybridFWRead_get_reads_by_cutadapt:
     """
     conda:
         "../../envs/cutadapt.yaml"
+    threads: 1
     input:
         lambda wc: config["assignments"][wc.assignment]["FW"],
     output:
@@ -55,6 +56,6 @@ rule assignment_hybridFWRead_get_reads_by_cutadapt:
         linker=lambda wc: config["assignments"][wc.assignment]["linker"],
     shell:
         """
-        cutadapt -a {params.linker} -G {params.linker}\
+        cutadapt --cores {threads} -a {params.linker} -G {params.linker}\
         -o {output.BC} -p {output.FW} <(zcat {input}) <(zcat {input}) &> {log}
         """

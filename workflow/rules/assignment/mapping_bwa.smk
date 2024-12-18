@@ -29,6 +29,7 @@ rule assignment_mapping_bwa:
     """
     conda:
         "../../envs/bwa_samtools_picard_htslib.yaml"
+    threads: 1
     input:
         reads="results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
         reference="results/assignment/{assignment}/reference/reference.fa",
@@ -100,6 +101,7 @@ rule assignment_collect:
     """
     conda:
         "../../envs/bwa_samtools_picard_htslib.yaml"
+    threads: 1
     input:
         bams=lambda wc: expand(
             "results/assignment/{{assignment}}/{mapper}/merge_split{split}.mapped.bam",
