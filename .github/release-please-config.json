@@ -10,7 +10,8 @@
             "bump-patch-for-minor-pre-major": true,
             "draft": false,
             "prerelease": true,
-            "tag-prefix": "v"
+            "tag-prefix": "v",
+            "include-component-in-tag": false
         }
     }
 }
