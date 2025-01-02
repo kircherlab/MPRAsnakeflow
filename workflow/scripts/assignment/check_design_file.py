@@ -42,20 +42,44 @@ import numpy as np
     help="Using a simple dictionary to find identical sequences. This is faster but uses only the whole (or center part depending on start/length) of the design file. But in theory a substring can only be present and for more correct, but slower, search use the --slow-string-search.",
 )
 @click.option(
-    "--perform-sequence-check/--skip-sequence-check",
-    "sequence_search",
-    default=True,
-    help="When set to False, the script will not check for sequence collisions. This is useful when you know collisions but still want to preoceed with the design file.",
+    '--sequence-check', 
+    'sequence_check', 
+    type=click.Choice(['skip', 'sense_only', 'sense_antisense']), 
+    default='sense_antisense', 
+    help='Choose the type of sequence check. When set to skip, the script will not check for sequence collisions. This is useful when you know collisions but still want to preoceed with the design file.'
 )
-def cli(input_file, start, length, fast_search, sequence_search):
+@click.option(
+    "--attach-sequence",
+    "attach_sequence",
+    required=False,
+    type=(click.STRING, click.STRING),
+    help="Attach a sequence left and right to each entry of the fasta file."
+)
+@click.option(
+    "--output",
+    "output",
+    required=True,
+    type=click.Path(writable=True),
+    help="Output reference fasqt file with attached sequences (if set). Otherwise just a copy.",
+)
+def cli(input_file, start, length, fast_search, sequence_check, attach_sequence, output):
 
     seq_dict = dict()
 
     forward_collitions = []
     antisense_collitions = []
 
+    # attach sequence
+    with open(output, 'w') as fasta_file:
+        for name, seq in pyfastx.Fasta(input_file, build_index=False):
+            new_sequence = seq
+            if attach_sequence:
+                new_sequence = attach_sequence[0] + new_sequence + attach_sequence[1]
+            fasta_file.write(f">{name}\n{new_sequence}\n")
+
+
     # read fasta file
-    fa = pyfastx.Fasta(input_file)
+    fa = pyfastx.Fasta(output)
 
     # check duplicated headers
     click.echo("Searching for duplicated headers...")
@@ -76,7 +100,12 @@ def cli(input_file, start, length, fast_search, sequence_search):
         )
         exit(1)
 
-    if sequence_search:
+
+    # read fasta file
+    if attach_sequence:
+        fa = pyfastx.Fasta(output)
+
+    if sequence_check != 'skip':
         # build seq dict
         click.echo("Building sequence dictionary...")
         for i in range(len(fa)):
@@ -100,12 +129,12 @@ def cli(input_file, start, length, fast_search, sequence_search):
             antisense_collition = set()
             if fast_search:
                 forward_collition.update(seq_dict.get(sub_seq_forward, set()))
-                antisense_collition.update(seq_dict.get(sub_seq_antisense, set()))
+                antisense_collition.update(seq_dict.get(sub_seq_antisense, set())) if sequence_check == 'sense_antisense' else None
             else:
                 for seq, names in seq_dict.items():
                     if sub_seq_forward in seq:
                         forward_collition.update(names)
-                    if sub_seq_antisense in seq:
+                    if sequence_check == 'sense_antisense' and sub_seq_antisense in seq:
                         antisense_collition.update(names)
 
             if len(forward_collition) > 1:
@@ -135,16 +164,16 @@ def cli(input_file, start, length, fast_search, sequence_search):
                     "\t".join(forward_collitions[i]),
                     err=True,
                 )
-
-            click.echo(
-                "-----------------ANTISENSE COLLISIONS-----------------",
-                err=True,
-            )
-            for i in range(len(antisense_collitions)):
+            if sequence_check == 'sense_antisense':
                 click.echo(
-                    "\t".join(antisense_collitions[i]),
+                    "-----------------ANTISENSE COLLISIONS-----------------",
                     err=True,
                 )
+                for i in range(len(antisense_collitions)):
+                    click.echo(
+                        "\t".join(antisense_collitions[i]),
+                        err=True,
+                    )
             exit(1)
 
         else:

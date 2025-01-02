@@ -36,6 +36,7 @@ rule counts_onlyFW_raw_counts_by_cutadapt:
     """
     conda:
         "../../envs/cutadapt.yaml"
+    threads: 1
     input:
         lambda wc: getFW(wc.project, wc.condition, wc.replicate, wc.type),
     output:
@@ -49,7 +50,7 @@ rule counts_onlyFW_raw_counts_by_cutadapt:
     shell:
         """
         zcat {input} | \
-        cutadapt -a {params.adapter} - |
+        cutadapt --cores {threads} -a {params.adapter} - |
         awk 'NR%4==2 {{print $1}}' | \
         sort | \
         gzip -c > {output} 2> {log}

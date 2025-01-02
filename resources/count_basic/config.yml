@@ -12,6 +12,7 @@ experiments:
         type: file
         assignment_file: SRR10800986_barcodes_to_coords.tsv.gz
     design_file: design.fa
+    label_file: labels.tsv
     configs:
       default: {}
       outlierZscore:

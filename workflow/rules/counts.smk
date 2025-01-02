@@ -7,6 +7,7 @@ include: "counts/counts_demultiplex.smk"
 include: "counts/counts_umi.smk"
 include: "counts/counts_noUMI.smk"
 include: "counts/counts_onlyFW.smk"
+include: "counts/counts_onlyFWWithUMI.smk"
 
 
 rule counts_filter_counts:
@@ -110,8 +111,12 @@ rule counts_dna_rna_merge_counts:
     conda:
         "../envs/default.yaml"
     input:
-        dna=lambda wc: getFinalCounts(wc.project, wc.config, "DNA", wc.raw_or_assigned),
-        rna=lambda wc: getFinalCounts(wc.project, wc.config, "RNA", wc.raw_or_assigned),
+        dna=lambda wc: getFinalCounts(
+            wc.project, wc.config, wc.condition, "DNA", wc.raw_or_assigned
+        ),
+        rna=lambda wc: getFinalCounts(
+            wc.project, wc.config, wc.condition, "RNA", wc.raw_or_assigned
+        ),
     output:
         "results/experiments/{project}/{raw_or_assigned}/{condition}_{replicate}.merged.config.{config}.tsv.gz",
     params:
