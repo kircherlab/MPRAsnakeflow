@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.3.1...v0.4.0) (2025-01-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* version change because of config changes
+
+### Features
+
+* update license ([876c2d7](https://github.com/kircherlab/MPRAsnakeflow/commit/876c2d76fb98f021d67af88b588457039066ae4b))
+* version change because of config changes ([fd8430f](https://github.com/kircherlab/MPRAsnakeflow/commit/fd8430ff6c9259d82b38a6c691813c8376203504))
+
 ## [0.3.1](https://github.com/kircherlab/MPRAsnakeflow/compare/MPRAsnakeflow-v0.3.0...MPRAsnakeflow-v0.3.1) (2024-12-17)
 
 
