@@ -280,6 +280,7 @@ read_data <- function(file) {
     as.is = TRUE,
     sep = "\t",
     header = TRUE,
+    comment.char = "",
     stringsAsFactors = FALSE
   ) %>%
     filter(oligo_name != "no_BC") %>%

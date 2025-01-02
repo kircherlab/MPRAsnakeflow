@@ -75,7 +75,7 @@ data$Condition <- cond
 
 readData <- function(file, mindnacounts, minrnacounts) {
   data <- read.table(file, as.is = T,
-    sep = "\t", header = F, stringsAsFactors = F
+    sep = "\t", comment.char = "", header = F, stringsAsFactors = F
   )
   colnames(data) <- c("Barcode", "DNA", "RNA")
 
@@ -105,7 +105,7 @@ for (n in 1:(data %>% nrow())) {
     geom_vline(xintercept = intercept_median, colour = "red") +
     geom_vline(xintercept = intercept_mean, colour = "blue") +
     xlim(0,100) +
-    ggtitle(paste("replicate", data[n, ]$Replicate, sep = " ")) 
+    ggtitle(paste("replicate", data[n, ]$Replicate, sep = " "))
 }
 
 hist_plot <- do.call("plot_grid", c(plots_rna))
