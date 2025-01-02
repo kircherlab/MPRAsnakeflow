@@ -8,8 +8,9 @@
             "release-type": "simple",
             "bump-minor-pre-major": true,
             "bump-patch-for-minor-pre-major": true,
-            "draft": true,
-            "prerelease": true
+            "draft": false,
+            "prerelease": true,
+            "tag-prefix": "v"
         }
     }
 }
