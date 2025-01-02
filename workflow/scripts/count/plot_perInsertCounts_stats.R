@@ -63,6 +63,7 @@ if ("label" %in% names(opt)) {
     opt$label,
     sep = "\t",
     header = TRUE,
+    comment.char = "",
     stringsAsFactors = FALSE
   ))
   colnames(label_f) <- c("oligo_name", "label")
