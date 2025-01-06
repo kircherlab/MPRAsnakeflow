@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.0...v0.4.1) (2025-01-06)
+
+
+### Bug Fixes
+
+* update configs to 0.4 ([bd79b6b](https://github.com/kircherlab/MPRAsnakeflow/commit/bd79b6b22118749a5eec89ec95815b243318dd25))
+
 ## [0.4.0](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.3.1...v0.4.0) (2025-01-02)
 
 
