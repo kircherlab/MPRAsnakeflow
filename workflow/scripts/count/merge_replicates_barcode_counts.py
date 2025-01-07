@@ -21,14 +21,14 @@ import click
 )
 @click.option(
     "--output",
-    "output_threshold_file",
+    "output_file",
     required=True,
     type=click.Path(writable=True),
     help="Output file.",
 )
 @click.option(
     "--output-threshold",
-    "output_file",
+    "output_threshold_file",
     required=True,
     type=click.Path(writable=True),
     help="Output file.",
