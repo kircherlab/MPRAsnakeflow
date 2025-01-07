@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.1...v0.4.2) (2025-01-07)
+
+
+### Bug Fixes
+
+* swapped barcode output files ([a851ad2](https://github.com/kircherlab/MPRAsnakeflow/commit/a851ad2d74aad0834b853eb7432da10f369f8e21))
+
 ## [0.4.1](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.0...v0.4.1) (2025-01-06)
 
 
