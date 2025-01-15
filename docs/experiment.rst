@@ -31,6 +31,9 @@ We allow different flavours of experiment files because sometimes no UMI exists 
     * :code:`Condition,Replicate,DNA_BC_F,RNA_BC_F`
 
 
+It is possible to use only one count experiment per condition across replicates (DNA or RNA, but usually only DNA can make sense). E.g. if you expect the same number of inserts/transfections across replicates. If you use the same files for :code:`DNA` or :code:`RNA` MPRAsnakeflow will only run the first replicate and use the counts for all replicates later.
+
+
 Assignment File or configuration
 --------------------------------
 Tab separated gzipped file with barcode mapped to sequence. Can be generated using the :ref:`Assignment` workflow. Config file must be configured similar to this:

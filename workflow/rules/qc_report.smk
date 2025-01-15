@@ -83,8 +83,9 @@ rule qc_report_count:
         statistics_all_single="results/experiments/{project}/statistic/statistic_assigned_counts_single_{assignment}_{config}.tsv",
         statistics_all_oligo_cor_all="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_correlation.tsv",
         statistics_all_oligo_cor_thresh="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_correlation_minThreshold.tsv",
-        counts_per_oligo_dna="results/experiments/{project}/statistic/barcode/assigned_counts/{assignment}/{condition}_{config}_DNA_perBarcode.png",
-        counts_per_oligo_rna="results/experiments/{project}/statistic/barcode/assigned_counts/{assignment}/{condition}_{config}_RNA_perBarcode.png",
+        counts_per_oligo="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_barcodesPerInsert.png",
+        counts_per_bc_dna="results/experiments/{project}/statistic/barcode/assigned_counts/{assignment}/{condition}_{config}_DNA_perBarcode.png",
+        counts_per_bc_rna="results/experiments/{project}/statistic/barcode/assigned_counts/{assignment}/{condition}_{config}_RNA_perBarcode.png",
         activity_thresh="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png",
         activity_all="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png",
         dna_over_rna="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_dna_vs_rna.png",
@@ -110,25 +111,26 @@ rule qc_report_count:
             cp {input.quarto_script} {output.quarto_file};
             cd `dirname {output.quarto_file}`;
             quarto render `basename {output.quarto_file}` --output `basename {output.count_file}` \
-            -P assignment:{wildcards.assignment} \
-            -P project:{wildcards.project} \
-            -P dna_over_rna_plot:{input.dna_over_rna} \
-            -P dna_over_rna_thresh_plot:{input.dna_over_rna_thresh} \
-            -P dna_oligo_coor_min_thre_plot:{input.dna_oligo_coor_min_thre_plot} \
-            -P rna_oligo_coor_min_thre_plot:{input.rna_oligo_coor_min_thre_plot} \
-            -P dna_oligo_coor_plot:{input.dna_oligo_coor_plot} \
-            -P rna_oligo_coor_plot:{input.rna_oligo_coor_plot} \
-            -P ratio_oligo_coor_plot:{input.ratio_oligo_coor_plot} \
-            -P ratio_oligo_min_thre_plot:{input.ratio_oligo_min_thre_plot} \
-            -P statistics_all_merged:{input.statistics_all_merged} \
-            -P counts_per_oligo_dna:{input.counts_per_oligo_dna} \
-            -P counts_per_oligo_rna:{input.counts_per_oligo_rna} \
-            -P statistics_all_single:{input.statistics_all_single} \
-            -P activity_all:{input.activity_all} \
-            -P activity_thresh:{input.activity_thresh} \
-            -P statistics_all_oligo_cor_all:{input.statistics_all_oligo_cor_all} \
-            -P statistics_all_oligo_cor_thresh:{input.statistics_all_oligo_cor_thresh} \
-            -P thresh:{params.thresh} \
-            -P workdir:{params.workdir}
+            -P "assignment:{wildcards.assignment}" \
+            -P "project:{wildcards.project}" \
+            -P "dna_over_rna_plot:{input.dna_over_rna}" \
+            -P "dna_over_rna_thresh_plot:{input.dna_over_rna_thresh}" \
+            -P "dna_oligo_coor_min_thre_plot:{input.dna_oligo_coor_min_thre_plot}" \
+            -P "rna_oligo_coor_min_thre_plot:{input.rna_oligo_coor_min_thre_plot}" \
+            -P "dna_oligo_coor_plot:{input.dna_oligo_coor_plot}" \
+            -P "rna_oligo_coor_plot:{input.rna_oligo_coor_plot}" \
+            -P "ratio_oligo_coor_plot:{input.ratio_oligo_coor_plot}" \
+            -P "ratio_oligo_min_thre_plot:{input.ratio_oligo_min_thre_plot}" \
+            -P "statistics_all_merged:{input.statistics_all_merged}" \
+            -P "counts_per_oligo:{input.counts_per_oligo}" \
+            -P "counts_per_bc_dna:{input.counts_per_bc_dna}" \
+            -P "counts_per_bc_rna:{input.counts_per_bc_rna}" \
+            -P "statistics_all_single:{input.statistics_all_single}" \
+            -P "activity_all:{input.activity_all}" \
+            -P "activity_thresh:{input.activity_thresh}" \
+            -P "statistics_all_oligo_cor_all:{input.statistics_all_oligo_cor_all}" \
+            -P "statistics_all_oligo_cor_thresh:{input.statistics_all_oligo_cor_thresh}" \
+            -P "thresh:{params.thresh}" \
+            -P "workdir:{params.workdir}"
         ) &> {log}
         """

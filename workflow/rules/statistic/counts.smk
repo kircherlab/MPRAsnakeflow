@@ -1,3 +1,6 @@
+include: "counts_common.smk"
+
+
 #################################
 ## count 10 most frequent UMIs ##
 #################################
@@ -148,15 +151,11 @@ rule statistic_counts_BC_in_RNA_DNA:
     conda:
         "../../envs/default.yaml"
     input:
-        dna=lambda wc: (
-            "results/experiments/{project}/counts/{condition}_{replicate}_DNA_{countType}_counts.tsv.gz"
-            if wc.countType != "raw"
-            else getRawCounts(wc.project, "DNA")
+        dna=lambda wc: statistic_counts_BC_in_RNA_DNA_helper(
+            project, wc.condition, "DNA", wc.countType
         ),
-        rna=lambda wc: (
-            "results/experiments/{project}/counts/{condition}_{replicate}_RNA_{countType}_counts.tsv.gz"
-            if wc.countType != "raw"
-            else getRawCounts(wc.project, "RNA")
+        rna=lambda wc: statistic_counts_BC_in_RNA_DNA_helper(
+            project, wc.condition, "RNA", wc.countType
         ),
     output:
         temp(

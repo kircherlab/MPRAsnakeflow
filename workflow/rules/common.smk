@@ -51,6 +51,38 @@ if not config["skip_version_check"]:
     check_version(pattern_major_version, version, config["version"])
 
 
+# modify config based on certain rules
+
+
+def modify_config(config):
+    # update sequence length with when adapters are added via strand sensitive is enabled
+    if "assignments" in config:
+        for assignment in config["assignments"].keys():
+            if config["assignments"][assignment]["strand_sensitive"]["enable"]:
+                add_length = len(
+                    config["assignments"][assignment]["strand_sensitive"][
+                        "forward_adapter"
+                    ]
+                ) + len(
+                    config["assignments"][assignment]["strand_sensitive"][
+                        "reverse_adapter"
+                    ]
+                )
+                if config["assignments"][assignment]["alignment_tool"]["tool"] == "bwa":
+                    config["assignments"][assignment]["alignment_tool"]["configs"][
+                        "sequence_length"
+                    ]["min"] += add_length
+                    config["assignments"][assignment]["alignment_tool"]["configs"][
+                        "sequence_length"
+                    ]["max"] += add_length
+                else:
+                    config["assignments"][assignment]["alignment_tool"]["configs"][
+                        "sequence_length"
+                    ] += add_length
+    return config
+
+
+config = modify_config(config)
 ################################
 #### HELPERS AND EXCEPTIONS ####
 ################################
@@ -276,15 +308,16 @@ def getOutputConditionReplicateType_helper(files, project, skip={}):
             return []
     conditions = getConditions(project)
     for condition in conditions:
-        replicates = getReplicatesOfCondition(project, condition)
         for file in files:
-            output += expand(
-                file,
-                project=project,
-                condition=condition,
-                replicate=replicates,
-                type=["RNA", "DNA"],
-            )
+            for type in ["DNA", "RNA"]:
+                replicates = getReplicatesOfConditionType(project, condition, type)
+                output += expand(
+                    file,
+                    project=project,
+                    condition=condition,
+                    replicate=replicates,
+                    type=type,
+                )
     return output
 
 
@@ -535,6 +568,11 @@ def withoutZeros(project, conf):
 # assignment.smk specific functions
 
 
+def reverse_complement(seq):
+    complementary = {"A": "T", "T": "A", "G": "C", "C": "G", "N": "N"}
+    return "".join(reversed([complementary[i] for i in seq]))
+
+
 def getSplitNumber():
     splits = [1]
 
@@ -567,42 +605,49 @@ def getUMIBamFile(project, condition, replicate, type):
         )
 
 
-def useUMI(project):
+def useUMI(project, type="DNA"):
     """
     helper to check if UMI should be used
     """
-    return "UMI" in experiments[project] or "DNA_UMI" in experiments[project]
+    return "UMI" in experiments[project] or f"{type}_UMI" in experiments[project]
 
 
-def noUMI(project):
+def onlyFW(project, type="DNA"):
+    """
+    helper to check if only forward reads should be used (length option)
+    """
+    return f"{type}_BC_R" not in experiments[project]
+
+
+def noUMI(project, type="DNA"):
     """
     helper to check if UMI should not be used
     """
     return (
         "UMI" not in experiments[project]
-        and "DNA_UMI" not in experiments[project]
-        and "DNA_BC_R" in experiments[project]
+        and f"{type}_UMI" not in experiments[project]
+        and f"{type}_BC_R" in experiments[project]
     )
 
 
-def onlyFWByLength(project):
+def onlyFWByLength(project, type="DNA"):
     """
     helper to check if only forward reads should be used (length option)
     """
     return (
         "UMI" not in experiments[project]
-        and "DNA_BC_R" not in experiments[project]
+        and f"{type}_BC_R" not in experiments[project]
         and "adapter" not in config["experiments"][project]
     )
 
 
-def onlyFWbyCutadapt(project):
+def onlyFWbyCutadapt(project, type="DNA"):
     """
     helper to check if only forward reads should be used (cutadapt option)
     """
     return (
         "UMI" not in experiments[project]
-        and "DNA_BC_R" not in experiments[project]
+        and f"{type}_BC_R" not in experiments[project]
         and "adapter" in config["experiments"][project]
     )
 
@@ -611,22 +656,28 @@ def getRawCounts(project, type):
     """
     Helper to get the correct raw counts file (umi/noUMI or just FW read)
     """
-    if useUMI(project):
-        return (
-            "results/experiments/{project}/counts/useUMI.{condition}_{replicate}_%s_raw_counts.tsv.gz"
-            % type
-        )
-    elif noUMI(project):
+    if useUMI(project, type):
+        if onlyFW(project, type):
+            return (
+                "results/experiments/{project}/counts/onlyFWUMI.{condition}_{replicate}_%s_raw_counts.tsv.gz"
+                % type
+            )
+        else:
+            return (
+                "results/experiments/{project}/counts/useUMI.{condition}_{replicate}_%s_raw_counts.tsv.gz"
+                % type
+            )
+    elif noUMI(project, type):
         return (
             "results/experiments/{project}/counts/noUMI.{condition}_{replicate}_%s_raw_counts.tsv.gz"
             % type
         )
-    elif onlyFWByLength(project):
+    elif onlyFWByLength(project, type):
         return (
             "results/experiments/{project}/counts/onlyFWByLength.{condition}_{replicate}_%s_raw_counts.tsv.gz"
             % type
         )
-    elif onlyFWbyCutadapt(project):
+    elif onlyFWbyCutadapt(project, type):
         return (
             "results/experiments/{project}/counts/onlyFWByCutadapt.{condition}_{replicate}_%s_raw_counts.tsv.gz"
             % type
@@ -688,24 +739,46 @@ def counts_getSamplingConfig(project, conf, dna_or_rna, command):
     return ""
 
 
-def getFinalCounts(project, conf, rna_or_dna, raw_or_assigned):
+def getReplicatesOfConditionType(project, condition, rna_or_dna):
+    exp = getExperiments(project)
+
+    replicates = getReplicatesOfCondition(project, condition)
+
+    if f"{rna_or_dna}_BC_F" in exp.columns:
+
+        exp_filter = exp[exp.Condition == condition]
+
+        if len(replicates) > 1 and exp_filter[f"{rna_or_dna}_BC_F"].nunique() == 1:
+            return [replicates[0]]
+
+    return replicates
+
+
+def getFinalCounts(project, conf, condition, rna_or_dna, raw_or_assigned):
     output = ""
+
+    replicates = getReplicatesOfConditionType(project, condition, rna_or_dna)
+    if len(replicates) > 1:
+        replicate = "{replicate}"
+    else:
+        replicate = replicates[0]
+
     if raw_or_assigned == "counts":
         if useSampling(project, conf, rna_or_dna):
             output = (
-                "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts.sampling.{config}.tsv.gz"
-                % (raw_or_assigned, rna_or_dna)
+                "results/experiments/{project}/%s/{condition}_%s_%s_final_counts.sampling.{config}.tsv.gz"
+                % (raw_or_assigned, replicate, rna_or_dna)
             )
 
         else:
             output = (
-                "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts.tsv.gz"
-                % (raw_or_assigned, rna_or_dna)
+                "results/experiments/{project}/%s/{condition}_%s_%s_final_counts.tsv.gz"
+                % (raw_or_assigned, replicate, rna_or_dna)
             )
     else:
         output = (
-            "results/experiments/{project}/%s/{condition}_{replicate}_%s_final_counts.config.{config}.tsv.gz"
-            % (raw_or_assigned, rna_or_dna)
+            "results/experiments/{project}/%s/{condition}_%s_%s_final_counts.config.{config}.tsv.gz"
+            % (raw_or_assigned, replicate, rna_or_dna)
         )
     return output
 
@@ -731,20 +804,6 @@ def assignedCounts_getAssignmentSamplingConfig(project, assignment, command):
 
 
 # statistic.smk specific functions
-
-
-# get all counts of experiment (rule statistic_counts)
-def getCountStats(project, countType):
-    exp = getExperiments(project)
-    output = []
-    for index, row in exp.iterrows():
-        output += expand(
-            "results/experiments/{{project}}/statistic/counts/{condition}_{replicate}_{type}_{{countType}}_counts.tsv.gz",
-            condition=row["Condition"],
-            replicate=row["Replicate"],
-            type=["DNA", "RNA"],
-        )
-    return output
 
 
 # get all barcodes of experiment (rule statistic_BC_in_RNA_DNA)

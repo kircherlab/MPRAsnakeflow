@@ -22,6 +22,33 @@ Having 30 cores and 10GB of memory.
 
     snakemake --sdm conda --configfile config/config.yaml -c 30 --resources mem_mb=10000  --workflow-profile profiles/default
 
+Performance tweaks: Running specific rules with different resources
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Some of the rule swill benefit from multithreading or more memory. This can be specified within your profile, worflow profile or in the command line interface using :code:`--set-resources RULE_NAME:RESOURCE_NAME=VALUE` or :code:`---set-threads RULE_NAME=VALUE`. Before changing resources make sure that you really need the rule by running a dry run getting the list of executed rules only::code:`snakemamake -n --quiet rules`.
+
+Possible rules to tweaks:
+
+:Assignment:
+
+    :assignment_hybridFWRead_get_reads_by_cutadapt:
+        Only needed when using linker option in config. You can add more threads using :code:`--set-threads assignment_hybridFWRead_get_reads_by_cutadapt=4`. Default is always 1 thread.
+
+    :assignment_mapping_bbmap:
+        Only needed when using bbmap for mapping. Memory and threads can be optimized e.g. via :code:`--set-threads assignment_mapping_bbmap=30 --set-resources assignment_mapping_bbmap:mem_mb=10000`. Default is 1 thread and 4GB memory but we recommend to use 30 threads and 10GB if available.
+
+    :assignment_mapping_bwa:
+        Only needed when using bwa for mapping. Memory and threads can be optimized e.g. via :code:`--set-threads assignment_mapping_bwa=30 --set-resources assignment_mapping_bwa:mem_mb:10000`. Default is 1 thread but we recommend to use 30 threads and 10GB if available.
+
+    :assignment_collectBCs:
+        Threads can be optimized e.g. via :code:`--set-threads assignment_collectBCs=30`. Default is 1 thread but we recommend to use 30 threads if available.
+
+:Experiment:
+
+    :counts_onlyFW_raw_counts_by_cutadapt:
+        Only needed when you have only FW reads and use the adapter option. Threads can be optimized e.g. via :code:`--set-threads counts_onlyFW_raw_counts_by_cutadapt=30`. Default is 1 thread.
+
+
 Running on an HPC using SLURM
 -----------------------------
 

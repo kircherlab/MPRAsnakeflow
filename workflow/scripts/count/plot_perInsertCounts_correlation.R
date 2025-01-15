@@ -1,3 +1,32 @@
+#' This script generates correlation plots and statistics for RNA and DNA counts per oligo from multiple replicates.
+#'
+#' The script takes several input parameters, including condition name, label file, input files of assigned counts,
+#' names of the replicates, threshold for the number of required barcodes, and output directory for the plots and table.
+#'
+#' The script performs the following steps:
+#' 1. Parses input arguments.
+#' 2. Reads input files and processes the data.
+#' 3. Generates pairwise comparisons of replicates if more than one replicate is provided.
+#' 4. Creates correlation plots for DNA, RNA, and RNA/DNA count ratios.
+#' 5. Computes correlation statistics (Spearman and Pearson) for the counts and their log2 transformations.
+#' 6. Saves the generated plots and statistics to the specified output directory.
+#'
+#' Functions:
+#' - plot_correlations_dna: Generates correlation plots for DNA counts.
+#' - plot_correlations_rna: Generates correlation plots for RNA counts.
+#' - plot_correlations_ratio: Generates correlation plots for RNA/DNA count ratios.
+#' - correlate: Computes correlation between two vectors using the specified method.
+#' - get_correlation_stats: Computes correlation statistics for the given data.
+#' - write_correlation_plots: Saves the generated correlation plots to a file.
+#' - write_correlation: Saves the computed correlation statistics to a file.
+#' - read_data: Reads and processes the input data file.
+#'
+#' Usage:
+#' Rscript plot_perInsertCounts_correlation.R -c <condition> -f <files> -r
+#' <replicates> [-l <label>] [-t <threshold>] [-o <outdir>]
+#'
+#' Example:
+#' Rscript plot_perInsertCounts_correlation.R -c "Condition1" -f "file1.txt,file2.txt" -r "rep1,rep2" -o "./output"
 # adapted from Vikram Agarwal by Gracie Gordon
 
 library(tidyverse)
@@ -9,50 +38,48 @@ library(cowplot)
 option_list <- list(
   make_option(c("-c", "--condition"),
     type = "character",
-    help = "Condition name"
+    help = "Condition name",
+    metavar = "character"
   ),
   make_option(c("-l", "--label"),
     type = "character",
-    help = "Label file. (optional)"
+    help = "Label file (optional)",
+    metavar = "character"
   ),
   make_option(c("-f", "--files"),
     type = "character",
-    help = "Comma separated input files of assigned counts"
+    help = "Comma separated input files of assigned counts",
+    metavar = "character"
   ),
   make_option(c("-r", "--replicates"),
     type = "character",
-    help = "Comma separated name of the replicates (same order than files)"
+    help = "Comma separated names of the replicates (same order as files)",
+    metavar = "character"
   ),
   make_option(
     c("-t", "--threshold"),
     type = "integer",
     default = 10,
-    help = "Number of required barcodes (default 10)"
+    help = "Number of required barcodes (default: 10)",
+    metavar = "integer"
   ),
   make_option(c("-o", "--outdir"),
     type = "character",
-    help = "Outdir of the plots and table."
+    help = "Output directory for the plots and table",
+    metavar = "character"
   )
 )
 
 parser <- OptionParser(option_list = option_list)
-arguments <- parse_args(parser, positional_arguments = TRUE)
-opt <- arguments$options
+opt <- parse_args(parser)
 
-if (!"condition" %in% names(opt)) {
-  stop("--condition parameter must be provided. See script usage (--help)")
+required_opts <- c("condition", "files", "replicates")
+missing_opts <- setdiff(required_opts, names(opt))
+if (length(missing_opts) > 0) {
+  stop(sprintf("Missing required parameters: %s. See script usage (--help)", paste(missing_opts, collapse = ", ")))
 }
-if (!"files" %in% names(opt)) {
-  stop("--files parameter must be provided. See script usage (--help)")
-}
-if (!"replicates" %in% names(opt)) {
-  stop("--replicates parameter must be provided. See script usage (--help)")
-}
-if (!"outdir" %in% names(opt)) {
-  outdir <- "./unknown"
-} else {
-  outdir <- opt$outdir
-}
+
+outdir <- ifelse("outdir" %in% names(opt), opt$outdir, "./unknown")
 
 # condition
 cond <- opt$condition
@@ -258,7 +285,8 @@ write_correlation_plots <- function(plots, name) {
   ggplot2::ggsave(name,
     correlation_plots,
     width = 15,
-    height = 10 * length(plots)
+    height = 10 * length(plots),
+    limitsize = FALSE
   )
 }
 

@@ -4,11 +4,11 @@
 Config File
 =====================
 
-The config file is a yaml file that contains the configuration. Different runs can be configured. We recommend using one config file per MPRA experiment or MPRA project. But in theory, many different experiments can be configured in only one file. It is divided into :code:`version` (version of MPRAsnakeflow used), :code:`assignments` (assigment workflow), and :code:`experiments` (count workflow). This is a full example file with default configurations. :download:`config/example_config.yaml <../config/example_config.yaml>`.
+The config file is a yaml file that contains the configuration. Different runs can be configured. We recommend using one config file per MPRA experiment or MPRA project. But in theory, many different experiments can be configured in only one file. It is divided into :code:`version` (version of MPRAsnakeflow used), :code:`assignments` (assignment workflow), and :code:`experiments` (count workflow). This is a full example file with default configurations. :download:`config/example_config.yaml <../config/example_config.yaml>`.
 
 .. literalinclude:: ../config/example_config.yaml
-   :language: yaml
-   :linenos:
+    :language: yaml
+    :linenos:
 
 
 Note that the config file is controlled by json schema. This means that the config file is validated against the schema. If the config file is not valid, the program will exit with an error message. The schema is located in :download:`workflow/schemas/config.schema.yaml <../workflow/schemas/config.schema.yaml>`.
@@ -17,15 +17,15 @@ Note that the config file is controlled by json schema. This means that the conf
 Version settings
 ----------------
 
-Set the version of the of MPRAsnakeflow this configuration is used. This is important for future updates. The version is used to check if the config file is compatible with the current version of the workflow. If the version is not the same the workflow will exit with an error message.
+Set the version of the MPRAsnakeflow this configuration is used. This is important for future updates. The version is used to check if the config file is compatible with the current version of the workflow. If the version is not the same the workflow will exit with an error message.
 
 .. literalinclude:: ../workflow/schemas/config.schema.yaml
-   :language: yaml
-   :start-after: start_version
-   :end-before: start_assignments
+    :language: yaml
+    :start-after: start_version
+    :end-before: start_assignments
 
 :version:
-    A a string like "0.2.0" or "1.2". When major version "0" is used the minor version should fit with MPRAsnakeflow, e.g. "0.2.0" is compatible with MPRAsnakeflow 0.2.0. as well as 0.2.1 or 0.2.2. When major version greater 0 used then the major version have to fith with MPRAsnakeflow. E.g. config of "1.2.1" fits also with MPRAsnakeflow 1.7 or 1.0.
+     A string like "0.2.0" or "1.2". When major version "0" is used the minor version should fit with MPRAsnakeflow, e.g. "0.2.0" is compatible with MPRAsnakeflow 0.2.0. as well as 0.2.1 or 0.2.2. When major version greater than 0 is used then the major version has to fit with MPRAsnakeflow. E.g. config of "1.2.1" fits also with MPRAsnakeflow 1.7 or 1.0.
 
 --------------------
 Assignment workflow
@@ -95,6 +95,16 @@ For each assignment you want to process you have to give him a name like :code:`
         (Optional) Using a simple dictionary to find identical sequences. This is faster but uses only the whole (or center part depending on start/length) of the design file. Cannot find substrings as part of any sequence. Set to false for more correct, but slower, search. Default :code:`true`.
     :sequence_collitions:
         (Optional) Check if there are identical sequences in the design file. Default :code:`true`.
+:strand_sensitive:
+    (Optional) If is enabled the reads are mapped to the oligos in a strand-sensitive way by adding unique adapters to both ends of the oligo reference as well as the FASTQ files. Then MPRASnakeflow is able to distiguish between sense and antisense. By default this option is not enabled.
+
+    :enable:
+        (Optional) If set to :code:`true` the strand-sensitive mapping is enabled. Default is :code:`false`.
+    :forward_adapter:
+        (Optional) Adapter sequence added 5' of the oligo. Default is :code:`AGGACCGGATCAACT`.
+    :reverse_adapter:
+        (Optional) Adapter sequence added 3' of the oligo. Default is :code:`TCGGTTCACGCAATG`.
+
 
 :configs:
     After mapping the reads to the design file and extracting the barcodes per oligo, the configuration (using different names) can be used to generate multiple filtering and configuration settings of the final mapping oligo to barcode. Use `<your_config_name>: {}` to use the default values for the keys. Each configuration is a dictionary with the following keys:
