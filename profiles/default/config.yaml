@@ -1,4 +1,5 @@
 ---
+configfile: config/example_config.yaml
 software-deployment-method: conda
 default-resources:
   slurm_partition: debug
