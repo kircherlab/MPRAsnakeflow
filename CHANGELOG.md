@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.2...v0.4.3) (2025-01-29)
+
+
+### Bug Fixes
+
+* swap activity threshold and all output file paths in qc_report rule ([#172](https://github.com/kircherlab/MPRAsnakeflow/issues/172)) ([ff1b11c](https://github.com/kircherlab/MPRAsnakeflow/commit/ff1b11cc3baf84a0a0c45201d93b36d8f630d42b))
+
 ## [0.4.2](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.1...v0.4.2) (2025-01-07)
 
 
