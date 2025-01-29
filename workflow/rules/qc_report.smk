@@ -86,8 +86,8 @@ rule qc_report_count:
         counts_per_oligo="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_barcodesPerInsert.png",
         counts_per_bc_dna="results/experiments/{project}/statistic/barcode/assigned_counts/{assignment}/{condition}_{config}_DNA_perBarcode.png",
         counts_per_bc_rna="results/experiments/{project}/statistic/barcode/assigned_counts/{assignment}/{condition}_{config}_RNA_perBarcode.png",
-        activity_thresh="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png",
-        activity_all="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png",
+        activity_all="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box.png",
+        activity_thresh="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png",
         dna_over_rna="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_dna_vs_rna.png",
         dna_over_rna_thresh="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_dna_vs_rna_minThreshold.png",
     output:
