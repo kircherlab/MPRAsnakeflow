@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.4](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.3...v0.4.4) (2025-02-05)
+
+
+### Bug Fixes
+
+* qc report count typo fix ([#174](https://github.com/kircherlab/MPRAsnakeflow/issues/174)) ([d78d339](https://github.com/kircherlab/MPRAsnakeflow/commit/d78d3391700c092c90742d1e47dc7b65b4d6d808))
+
 ## [0.4.3](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.2...v0.4.3) (2025-01-29)
 
 
