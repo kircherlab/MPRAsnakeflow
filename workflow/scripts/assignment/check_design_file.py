@@ -42,10 +42,10 @@ import numpy as np
     help="Using a simple dictionary to find identical sequences. This is faster but uses only the whole (or center part depending on start/length) of the design file. But in theory a substring can only be present and for more correct, but slower, search use the --slow-string-search.",
 )
 @click.option(
-    '--sequence-check', 
-    'sequence_check', 
-    type=click.Choice(['skip', 'sense_only', 'sense_antisense']), 
-    default='sense_antisense', 
+    '--sequence-check',
+    'sequence_check',
+    type=click.Choice(['skip', 'sense_only', 'sense_antisense']),
+    default='sense_antisense',
     help='Choose the type of sequence check. When set to skip, the script will not check for sequence collisions. This is useful when you know collisions but still want to preoceed with the design file.'
 )
 @click.option(
@@ -104,6 +104,7 @@ def cli(input_file, start, length, fast_search, sequence_check, attach_sequence,
     # read fasta file
     if attach_sequence:
         fa = pyfastx.Fasta(output)
+        length += len(attach_sequence[0]) + len(attach_sequence[1]) # add length of attached sequences
 
     if sequence_check != 'skip':
         # build seq dict
