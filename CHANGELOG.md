@@ -5,8 +5,6 @@
 
 ### Bug Fixes
 
-* Assignment design check change the length of the sequence we want to check in the attach_sequence case ([f484d15](https://github.com/kircherlab/MPRAsnakeflow/commit/f484d15401e4f4befe22dd6916795e3a9d10a98a))
-* Assignment design check change the length of the sequence we want to check in the attach_sequence case ([f484d15](https://github.com/kircherlab/MPRAsnakeflow/commit/f484d15401e4f4befe22dd6916795e3a9d10a98a))
 * change the length of the sequence we want to check in the attach_sequence case ([#177](https://github.com/kircherlab/MPRAsnakeflow/issues/177)) ([e3db5cf](https://github.com/kircherlab/MPRAsnakeflow/commit/e3db5cf487423126ada0fda5305f42a0b38f25cb))
 
 ## [0.4.4](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.3...v0.4.4) (2025-02-05)
