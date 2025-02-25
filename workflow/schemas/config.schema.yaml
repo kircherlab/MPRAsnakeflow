@@ -40,6 +40,7 @@ properties:
                   - exact
                   - bwa
                   - bbmap
+                  - bwa-additional-filtering
                 default: bbmap
             allOf:
               - if:
@@ -79,6 +80,36 @@ properties:
                         - sequence_length
                         - alignment_start
                         - min_mapping_quality
+                  required:
+                    - configs
+              - if:
+                  properties:
+                    tool:
+                      const: bwa-additional-filtering
+                then:
+                  properties:
+                    configs:
+                      type: object
+                      properties:
+                        min_mapping_quality:
+                          type: integer
+                          minimum: 0
+                          default: 1
+                        identity_threshold: # identity threshold is used to choose which alignments are worth trying to rescue
+                          type: number
+                          default: 0.98
+                        mismatches_threshold: # threshold of mismatches we investigate if we should try to rescue
+                          type: integer
+                          default: 3
+                        use_expected_alignment_length: # TODO: enforce that expected_alignment_length is required if use_expected_alignment_length is set
+                          type: boolean
+                          default: True
+                        expected_alignment_length: # expected alignment length: highly dependen on the length of the designed sequences 300 because I added the adapters to the fastqs
+                          type: integer
+                          default: 265
+                        verbose: # print which alignments were rescured and which could not be rescued
+                          type: boolean
+                          default: True
                   required:
                     - configs
               - if:
