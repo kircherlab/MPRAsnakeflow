@@ -73,7 +73,7 @@ for (i in seq_len(length(files))) {
   file <- files[i]
   rep <- replicates[i]
 
-  table <- as.data.frame(read.table(file, header = TRUE), stringsAsFactors = FALSE)
+  table <- as.data.frame(read.table(file, header = TRUE, sep = "\t", comment.char = ""), stringsAsFactors = FALSE)
   table$replicate <- rep
 
   master_table <- master_table %>% bind_rows(table)
