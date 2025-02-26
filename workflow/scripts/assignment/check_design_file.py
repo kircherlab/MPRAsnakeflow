@@ -77,7 +77,6 @@ def cli(input_file, start, length, fast_search, sequence_check, attach_sequence,
                 new_sequence = attach_sequence[0] + new_sequence + attach_sequence[1]
             fasta_file.write(f">{name}\n{new_sequence}\n")
 
-
     # read fasta file
     fa = pyfastx.Fasta(output)
 
@@ -122,7 +121,7 @@ def cli(input_file, start, length, fast_search, sequence_check, attach_sequence,
         # search for collisions
         click.echo("Searching for collisions...")
         for i in range(len(fa)):
-            sub_seq = fa[i][start - 1 : start + length - 1]
+            sub_seq = fa[i][start - 1: start + length - 1]
             sub_seq_forward = sub_seq.seq
             sub_seq_antisense = sub_seq.antisense
 
