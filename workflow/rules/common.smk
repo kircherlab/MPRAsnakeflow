@@ -68,17 +68,19 @@ def modify_config(config):
                         "reverse_adapter"
                     ]
                 )
-                if config["assignments"][assignment]["alignment_tool"]["tool"] == "bwa":
+                if config["assignments"][assignment]["alignment_tool"]["tool"] in ["bwa", "bwa-additional-filtering"]:
                     config["assignments"][assignment]["alignment_tool"]["configs"][
                         "sequence_length"
                     ]["min"] += add_length
                     config["assignments"][assignment]["alignment_tool"]["configs"][
                         "sequence_length"
                     ]["max"] += add_length
-                else:
+                elif config["assignments"][assignment]["alignment_tool"]["tool"] in ["bbmap", "exact"]:
                     config["assignments"][assignment]["alignment_tool"]["configs"][
                         "sequence_length"
                     ] += add_length
+                else:
+                    raise ValueError(f'Unknown alignment tool {config["assignments"][assignment]["alignment_tool"]["tool"]} for modifying config file due to strand sensitivity.')
     return config
 
 

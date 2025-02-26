@@ -104,7 +104,6 @@ def cli(input_file, start, length, fast_search, sequence_check, attach_sequence,
     # read fasta file
     if attach_sequence:
         fa = pyfastx.Fasta(output)
-        length += len(attach_sequence[0]) + len(attach_sequence[1]) # add length of attached sequences
 
     if sequence_check != 'skip':
         # build seq dict
