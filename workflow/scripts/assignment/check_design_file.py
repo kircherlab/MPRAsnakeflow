@@ -42,18 +42,18 @@ import numpy as np
     help="Using a simple dictionary to find identical sequences. This is faster but uses only the whole (or center part depending on start/length) of the design file. But in theory a substring can only be present and for more correct, but slower, search use the --slow-string-search.",
 )
 @click.option(
-    '--sequence-check',
-    'sequence_check',
-    type=click.Choice(['skip', 'sense_only', 'sense_antisense']),
-    default='sense_antisense',
-    help='Choose the type of sequence check. When set to skip, the script will not check for sequence collisions. This is useful when you know collisions but still want to preoceed with the design file.'
+    "--sequence-check",
+    "sequence_check",
+    type=click.Choice(["skip", "sense_only", "sense_antisense"]),
+    default="sense_antisense",
+    help="Choose the type of sequence check. When set to skip, the script will not check for sequence collisions. This is useful when you know collisions but still want to preoceed with the design file.",
 )
 @click.option(
     "--attach-sequence",
     "attach_sequence",
     required=False,
     type=(click.STRING, click.STRING),
-    help="Attach a sequence left and right to each entry of the fasta file."
+    help="Attach a sequence left and right to each entry of the fasta file.",
 )
 @click.option(
     "--output",
@@ -70,13 +70,12 @@ def cli(input_file, start, length, fast_search, sequence_check, attach_sequence,
     antisense_collitions = []
 
     # attach sequence
-    with open(output, 'w') as fasta_file:
+    with open(output, "w") as fasta_file:
         for name, seq in pyfastx.Fasta(input_file, build_index=False):
             new_sequence = seq
             if attach_sequence:
                 new_sequence = attach_sequence[0] + new_sequence + attach_sequence[1]
             fasta_file.write(f">{name}\n{new_sequence}\n")
-
 
     # read fasta file
     fa = pyfastx.Fasta(output)
@@ -90,9 +89,7 @@ def cli(input_file, start, length, fast_search, sequence_check, attach_sequence,
 
     # check for illegal characters
     click.echo("Searching for illegal characters in header...")
-    illegal_characters = np.array(
-        [True if "[" in i or "]" in i else False for i in set(ids)], dtype=bool
-    ).sum()
+    illegal_characters = np.array([True if "[" in i or "]" in i else False for i in set(ids)], dtype=bool).sum()
     if illegal_characters > 0:
         click.echo(
             f"{illegal_characters} headers contain illegal characters ('[',']').",
@@ -100,13 +97,11 @@ def cli(input_file, start, length, fast_search, sequence_check, attach_sequence,
         )
         exit(1)
 
-
     # read fasta file
     if attach_sequence:
         fa = pyfastx.Fasta(output)
-        length += len(attach_sequence[0]) + len(attach_sequence[1]) # add length of attached sequences
 
-    if sequence_check != 'skip':
+    if sequence_check != "skip":
         # build seq dict
         click.echo("Building sequence dictionary...")
         for i in range(len(fa)):
@@ -130,12 +125,16 @@ def cli(input_file, start, length, fast_search, sequence_check, attach_sequence,
             antisense_collition = set()
             if fast_search:
                 forward_collition.update(seq_dict.get(sub_seq_forward, set()))
-                antisense_collition.update(seq_dict.get(sub_seq_antisense, set())) if sequence_check == 'sense_antisense' else None
+                (
+                    antisense_collition.update(seq_dict.get(sub_seq_antisense, set()))
+                    if sequence_check == "sense_antisense"
+                    else None
+                )
             else:
                 for seq, names in seq_dict.items():
                     if sub_seq_forward in seq:
                         forward_collition.update(names)
-                    if sequence_check == 'sense_antisense' and sub_seq_antisense in seq:
+                    if sequence_check == "sense_antisense" and sub_seq_antisense in seq:
                         antisense_collition.update(names)
 
             if len(forward_collition) > 1:
@@ -144,12 +143,8 @@ def cli(input_file, start, length, fast_search, sequence_check, attach_sequence,
                 antisense_collitions.append(antisense_collition)
 
         # unique names
-        forward_collitions = [
-            list(i) for i in set(tuple(i) for i in forward_collitions)
-        ]
-        antisense_collition = [
-            list(i) for i in set(tuple(i) for i in antisense_collition)
-        ]
+        forward_collitions = [list(i) for i in set(tuple(i) for i in forward_collitions)]
+        antisense_collition = [list(i) for i in set(tuple(i) for i in antisense_collition)]
 
         if (len(forward_collitions) > 0) or (len(antisense_collitions) > 0):
             click.echo(
@@ -165,7 +160,7 @@ def cli(input_file, start, length, fast_search, sequence_check, attach_sequence,
                     "\t".join(forward_collitions[i]),
                     err=True,
                 )
-            if sequence_check == 'sense_antisense':
+            if sequence_check == "sense_antisense":
                 click.echo(
                     "-----------------ANTISENSE COLLISIONS-----------------",
                     err=True,
