@@ -227,10 +227,6 @@ df_single.style.hide(axis="index").format( precision=2)
 
 :::
 
-# Number of barcodes per oligo
-
- Median is red, mean is blue.
-
 
 # Histograms barcodes per oligo, counts per barcode
 

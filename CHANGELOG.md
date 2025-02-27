@@ -1,13 +1,68 @@
 # Changelog
 
-## [0.3.1](https://github.com/kircherlab/MPRAsnakeflow/compare/MPRAsnakeflow-v0.3.0...MPRAsnakeflow-v0.3.1) (2024-12-17)
+## [0.4.6](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.5...v0.4.6) (2025-02-26)
 
+
+### Bug Fixes
+
+* revert v0.4.5. The fix was already implemented within the common.smk file ([7997440](https://github.com/kircherlab/MPRAsnakeflow/commit/799744050b540d96545ac72bc2280e8e37a2b61e))
+
+## [0.4.5](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.4...v0.4.5) (2025-02-24)
+
+
+### Bug Fixes
+
+* change the length of the sequence we want to check in the attach_sequence case ([#177](https://github.com/kircherlab/MPRAsnakeflow/issues/177)) ([e3db5cf](https://github.com/kircherlab/MPRAsnakeflow/commit/e3db5cf487423126ada0fda5305f42a0b38f25cb))
+
+## [0.4.4](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.3...v0.4.4) (2025-02-05)
+
+
+### Bug Fixes
+
+* qc report count typo fix ([#174](https://github.com/kircherlab/MPRAsnakeflow/issues/174)) ([d78d339](https://github.com/kircherlab/MPRAsnakeflow/commit/d78d3391700c092c90742d1e47dc7b65b4d6d808))
+
+## [0.4.3](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.2...v0.4.3) (2025-01-29)
+
+
+### Bug Fixes
+
+* swap activity threshold and all output file paths in qc_report rule ([#172](https://github.com/kircherlab/MPRAsnakeflow/issues/172)) ([ff1b11c](https://github.com/kircherlab/MPRAsnakeflow/commit/ff1b11cc3baf84a0a0c45201d93b36d8f630d42b))
+
+## [0.4.2](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.1...v0.4.2) (2025-01-07)
+
+
+### Bug Fixes
+
+* swapped barcode output files ([a851ad2](https://github.com/kircherlab/MPRAsnakeflow/commit/a851ad2d74aad0834b853eb7432da10f369f8e21))
+
+## [0.4.1](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.0...v0.4.1) (2025-01-06)
+
+
+### Bug Fixes
+
+* update configs to 0.4 ([bd79b6b](https://github.com/kircherlab/MPRAsnakeflow/commit/bd79b6b22118749a5eec89ec95815b243318dd25))
+
+## [0.4.0](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.3.1...v0.4.0) (2025-01-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* Major version change because of changes in config that are not backward compatible.
+
+### Features
+
+* Add performance tweaks for resource optimization in workflow rules ([5ed1ef9](https://github.com/kircherlab/MPRAsnakeflow/commit/5ed1ef9fb92acc56c999f26183e5ef0d4caf5be0))
+* Allowing also only FW reads with a UMI ([56b2254](https://github.com/kircherlab/MPRAsnakeflow/commit/56b225405bba024779edba11a332872b01ac02de))
+* Strand sensitive option ([f315aab](https://github.com/kircherlab/MPRAsnakeflow/commit/f315aabd24ebe6f524b9fb3b008f5af96987775d))
+* One DNA or RNA count file across multiple replicates ([ccbacee](https://github.com/kircherlab/MPRAsnakeflow/commit/ccbacee28bd551f9508e80d4e966188f970ba077))
+
+## [0.3.1](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.3.0...v0.3.1) (2024-12-17)
 
 ### Bug Fixes
 
 * Wrong experiment count plots in QC report ([#149](https://github.com/kircherlab/MPRAsnakeflow/issues/149)) ([d2be468](https://github.com/kircherlab/MPRAsnakeflow/commit/d2be46891650ff9aaab61f750a4b3bc3b65e3e88))
 
-## [0.3.0](https://github.com/kircherlab/MPRAsnakeflow/compare/MPRAsnakeflow-v0.2.0...MPRAsnakeflow-v0.3.0) (2024-11-20)
+## [0.3.0](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.2.0...v0.3.0) (2024-11-20)
 
 
 ### ⚠ BREAKING CHANGES
@@ -21,7 +76,7 @@
 * default is NO outlier detection (none is not present anymore) ([#140](https://github.com/kircherlab/MPRAsnakeflow/issues/140))
 * global config is removed. splits moved now withing mapping in assignment ([#140](https://github.com/kircherlab/MPRAsnakeflow/issues/140))
 
-## [0.2.0](https://github.com/kircherlab/MPRAsnakeflow/compare/MPRAsnakeflow-v0.1.1...MPRAsnakeflow-v0.2.0) (2024-11-05)
+## [0.2.0](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.1.1...v0.2.0) (2024-11-05)
 
 ### ⚠ BREAKING CHANGES
 
@@ -39,14 +94,14 @@
 
 ### Bug Fixes
 
-## [0.1.1](https://github.com/kircherlab/MPRAsnakeflow/compare/MPRAsnakeflow-v0.1.0...MPRAsnakeflow-v0.1.1) (2024-09-30)
+## [0.1.1](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.1.0...v0.1.1) (2024-09-30)
 
 ### Bug Fixes
 
 * Detach from anaconda ([#122](https://github.com/kircherlab/MPRAsnakeflow/issues/122)) ([16bcea2](https://github.com/kircherlab/MPRAsnakeflow/commit/16bcea2f04190a5965ad1865cf30f6dd44f1b6a0))
 * memory resources for bbmap ([#123](https://github.com/kircherlab/MPRAsnakeflow/issues/123)) ([af93f58](https://github.com/kircherlab/MPRAsnakeflow/commit/af93f588e9387ddf91197f5587d36c3481499b38))
 
-## [0.1.0](https://github.com/kircherlab/MPRAsnakeflow/compare/MPRAsnakeflow-v0.0.1...MPRAsnakeflow-v0.1.0) (2024-09-18)
+## [0.1.0](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.0.1...v0.1.0) (2024-09-18)
 
 First release of MPRAsnakeflow! 
 

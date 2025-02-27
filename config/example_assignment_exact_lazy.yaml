@@ -1,5 +1,5 @@
 ---
-version: "0.3"
+version: "0.4"
 assignments:
   exampleAssignment: # name of an example assignment (can be any string)
     bc_length: 15
