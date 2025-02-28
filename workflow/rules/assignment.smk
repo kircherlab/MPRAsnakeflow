@@ -31,7 +31,7 @@ rule assignment_check_design:
             config["assignments"][wc.assignment]["alignment_tool"]["configs"][
                 "alignment_start"
             ]["max"]
-            if config["assignments"][assignment]["alignment_tool"]["tool"] in ["bwa", "bwa-additional-filtering"]
+            if config["assignments"][wc.assignment]["alignment_tool"]["tool"] in ["bwa", "bwa-additional-filtering"]
             else config["assignments"][wc.assignment]["alignment_tool"]["configs"][
                 "alignment_start"
             ]
@@ -40,7 +40,7 @@ rule assignment_check_design:
             config["assignments"][wc.assignment]["alignment_tool"]["configs"][
                 "sequence_length"
             ]["min"]
-            if config["assignments"][assignment]["alignment_tool"]["tool"] in ["bwa", "bwa-additional-filtering"]:
+            if config["assignments"][wc.assignment]["alignment_tool"]["tool"] in ["bwa", "bwa-additional-filtering"]
             else config["assignments"][wc.assignment]["alignment_tool"]["configs"][
                 "sequence_length"
             ]
@@ -81,7 +81,7 @@ rule assignment_check_design:
         --output {output.ref} \
         --start {params.start} --length {params.length} \
         {params.fast_check} --sequence-check {params.sequence_collitions} \
-        {params.attach_sequence} > {log.log} 2> {log.err};
+         > {log.log} 2> {log.err};
         """
 
 
