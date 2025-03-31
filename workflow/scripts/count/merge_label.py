@@ -191,11 +191,6 @@ def cli(
         statistic["matched barcodes"] / statistic["barcodes dna/rna"]
     ) * 100.0
 
-    # add pseudocount if needed:
-    counts["dna_count"] = counts["dna_count"] + pseudocountDNA
-    counts["rna_count"] = counts["rna_count"] + pseudocountRNA
-
-
     # number of DNA and RNA counts
     total_dna_counts = sum(counts["dna_count"])
     total_rna_counts = sum(counts["rna_count"])
@@ -241,6 +236,15 @@ def cli(
 
     # remove Barcorde. Not needed anymore
     counts.drop(["barcode"], axis=1, inplace=True)
+
+    # pseudocount if needed
+    counts["dna_count"] = counts["dna_count"] + pseudocountDNA
+    counts["rna_count"] = counts["rna_count"] + pseudocountRNA
+
+    if pseudocountDNA != 0:
+        total_dna_counts = sum(counts["dna_count"])
+    if pseudocountRNA != 0:
+        total_rna_counts = sum(counts["rna_count"])
 
     # group by oligo name 
     grouped_label = counts.groupby("oligo_name").agg(
