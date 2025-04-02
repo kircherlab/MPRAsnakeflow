@@ -21,8 +21,12 @@ rule qc_report_assoc:
         ),
     params:
         bc_length=lambda wc: config["assignments"][wc.assignment]["bc_length"],
-        fraction=lambda wc: config["assignments"][wc.assignment]["configs"][wc.assignment_config]["fraction"],
-        min_support=lambda wc: config["assignments"][wc.assignment]["configs"][wc.assignment_config]["min_support"],
+        fraction=lambda wc: config["assignments"][wc.assignment]["configs"][
+            wc.assignment_config
+        ]["fraction"],
+        min_support=lambda wc: config["assignments"][wc.assignment]["configs"][
+            wc.assignment_config
+        ]["min_support"],
         fw=lambda wc: (
             ";".join(config["assignments"][wc.assignment]["FW"])
             if isinstance(config["assignments"][wc.assignment]["FW"], list)
