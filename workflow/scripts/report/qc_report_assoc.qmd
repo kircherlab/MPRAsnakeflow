@@ -59,12 +59,12 @@ display(Image(f"{workdir}/{plot_file}"))
 # Counts of barcodes and oligos
 
 <details>
-    <summary>Table explanation</details>
+    <summary>Table explanation</summary>
 
-    - **BCs** are the different observed barcodes in the sequencing data (not the overall barcode count/number of BC reads).
-    - Differences in row `BCs` between `Raw data` and `Filtered data` are due to barcodes that do not match the length of `{python} bc_length` bases defined in the `{python} configs` config of the config file.
-    - **Other BCs** are those barcodes where no oligo could be assigned due to mapping (e.g., due to MAPQ filter or due to multiple matches).
-    - **Ambiguous BCs** are those that map to a designed oligo but failed the minimum required barcodes per oligo of `{python} min_support` and/or the minimum required fraction of `{python} fraction` assigned to one unique oligo.
+- **BCs** are the different observed barcodes in the sequencing data (not the overall barcode count/number of BC reads).
+- Differences in row `BCs` between `Raw data` and `Filtered data` are due to barcodes that do not match the length of `{python} bc_length` bases defined in the `{python} configs` config of the config file.
+- **Other BCs** are those barcodes where no oligo could be assigned due to mapping (e.g., due to MAPQ filter or due to multiple matches).
+- **Ambiguous BCs** are those that map to a designed oligo but failed the minimum required barcodes per oligo of `{python} min_support` and/or the minimum required fraction of `{python} fraction` assigned to one unique oligo.
     
 </details>
 
