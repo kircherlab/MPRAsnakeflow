@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.4.7](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.6...v0.4.7) (2025-04-03)
+
+
+### Bug Fixes
+
+* assignment barcode counting ([9584802](https://github.com/kircherlab/MPRAsnakeflow/commit/95848023860f9b43e9c5a2e594c0fb9d3eda4205))
+* merge.label.py does not return pseudocounts in barcode file ([#187](https://github.com/kircherlab/MPRAsnakeflow/issues/187)) ([023110a](https://github.com/kircherlab/MPRAsnakeflow/commit/023110a5368704e0efb464dbaef1a1d5fdcf6c86))
+* report also barcodes that are lower than the min barcodes. ([90f1b14](https://github.com/kircherlab/MPRAsnakeflow/commit/90f1b14d04737723fa5852c809c44e497b2e2d3b)), closes [#185](https://github.com/kircherlab/MPRAsnakeflow/issues/185)
+* issues on some environments while plotting with statistic_assignment.R ([#186](https://github.com/kircherlab/MPRAsnakeflow/pull/186))
+
 ## [0.4.6](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.5...v0.4.6) (2025-02-26)
 
 
