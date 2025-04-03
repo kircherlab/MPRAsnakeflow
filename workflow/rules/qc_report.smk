@@ -21,6 +21,12 @@ rule qc_report_assoc:
         ),
     params:
         bc_length=lambda wc: config["assignments"][wc.assignment]["bc_length"],
+        fraction=lambda wc: config["assignments"][wc.assignment]["configs"][
+            wc.assignment_config
+        ]["fraction"],
+        min_support=lambda wc: config["assignments"][wc.assignment]["configs"][
+            wc.assignment_config
+        ]["min_support"],
         fw=lambda wc: (
             ";".join(config["assignments"][wc.assignment]["FW"])
             if isinstance(config["assignments"][wc.assignment]["FW"], list)
@@ -51,6 +57,8 @@ rule qc_report_assoc:
             quarto render `basename {output.quarto_file}` --output `basename {output.assi_file}` \
             -P "assignment:{wildcards.assignment}" \
             -P "bc_length:{params.bc_length}" \
+            -P "fraction:{params.fraction}" \
+            -P "min_support:{params.min_support}" \
             -P "fw:{params.fw}" \
             -P "rev:{params.rev}" \
             -P "bc:{params.bc}" \
