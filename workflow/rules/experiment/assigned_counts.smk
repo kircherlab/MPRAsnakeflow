@@ -25,7 +25,9 @@ rule experiment_assigned_counts_filterAssignment:
             wc.project, wc.assignment, "seed"
         ),
     log:
-        temp("results/logs/experiment/assigned_counts/filterAssignment.{project}.{assignment}.log"),
+        temp(
+            "results/logs/experiment/assigned_counts/filterAssignment.{project}.{assignment}.log"
+        ),
     shell:
         """
         python {input.script} \

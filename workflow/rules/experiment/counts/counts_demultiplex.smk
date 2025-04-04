@@ -5,7 +5,7 @@
 ### Create_BAM_umi with demultiplexing ###
 
 
-rule counts_demultiplex_create_index:
+rule experiment_counts_demultiplex_create_index:
     conda:
         getCondaEnv("python3.yaml")
     input:
@@ -14,7 +14,7 @@ rule counts_demultiplex_create_index:
     output:
         "results/experiments/{project}/counts/demultiplex_index.tsv",
     log:
-        temp("results/logs/counts/create_demultiplexed_index.{project}.log"),
+        temp("results/logs/experiment/counts/create_demultiplexed_index.{project}.log"),
     shell:
         """
         python {input.script} \
@@ -23,7 +23,7 @@ rule counts_demultiplex_create_index:
         """
 
 
-checkpoint counts_demultiplex_BAM_umi:
+checkpoint experiment_counts_demultiplex_BAM_umi:
     input:
         fw_fastq=lambda wc: getFWWithIndex(wc.project),
         rev_fastq=lambda wc: getRevWithIndex(wc.project),
@@ -38,7 +38,7 @@ checkpoint counts_demultiplex_BAM_umi:
     conda:
         getCondaEnv("python27.yaml")
     log:
-        temp("results/logs/counts/demultiplex_BAM_umi.{project}.{name}.log"),
+        temp("results/logs/experiment/counts/demultiplex_BAM_umi.{project}.{name}.log"),
     shell:
         """
             set +o pipefail;
@@ -66,14 +66,14 @@ checkpoint counts_demultiplex_BAM_umi:
         """
 
 
-rule counts_demultiplex_aggregate:
+rule experiment_counts_demultiplex_aggregate:
     input:
         lambda wc: counts_aggregate_demultiplex_input(wc.project),
     output:
         touch("results/experiments/{project}/counts/demultiplex.done"),
 
 
-rule counts_demultiplex_mergeTrimReads_BAM_umi:
+rule experiment_counts_demultiplex_mergeTrimReads_BAM_umi:
     input:
         demultiplex="results/experiments/{project}/counts/demultiplex.done",
         script=getScript("count/MergeTrimReadsBAM.py"),
@@ -85,7 +85,7 @@ rule counts_demultiplex_mergeTrimReads_BAM_umi:
         bam="results/experiments/{project}/counts/demultiplex.{condition}_{replicate}_{type}.bam",
     log:
         temp(
-            "results/logs/counts/mergeTrimReads_demultiplex_BAM_umi.{project}.{condition}.{replicate}.{type}.log"
+            "results/logs/experiment/counts/mergeTrimReads_demultiplex_BAM_umi.{project}.{condition}.{replicate}.{type}.log"
         ),
     shell:
         """

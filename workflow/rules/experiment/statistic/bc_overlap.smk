@@ -73,7 +73,9 @@ rule experiment_statistic_bc_overlap_combine_counts:
             },
         ),
     log:
-        temp("results/logs/experiment/statistic/bc_overlap/combine_counts.{project}.{config}.log"),
+        temp(
+            "results/logs/experiment/statistic/bc_overlap/combine_counts.{project}.{config}.log"
+        ),
     shell:
         """
         set +o pipefail;

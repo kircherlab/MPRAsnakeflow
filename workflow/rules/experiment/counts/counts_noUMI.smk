@@ -6,7 +6,7 @@
 ### Create_BAM_umi without demultiplexing ###
 
 
-rule counts_noUMI_create_BAM:
+rule experiment_counts_noUMI_create_BAM:
     """
     Create a BAM file from FASTQ input, merge FW and REV read and save UMI in XI flag.
     """
@@ -26,7 +26,7 @@ rule counts_noUMI_create_BAM:
         getCondaEnv("python3.yaml")
     log:
         temp(
-            "results/logs/counts/noUMI/create_BAM.{project}.{condition}.{replicate}.{type}.log"
+            "results/logs/experiment/counts/noUMI/create_BAM.{project}.{condition}.{replicate}.{type}.log"
         ),
     shell:
         """
@@ -53,7 +53,7 @@ rule counts_noUMI_create_BAM:
 ### START COUNTING ####
 
 
-rule counts_noUMI_raw_counts:
+rule experiment_counts_noUMI_raw_counts:
     """
     Counting BCsxUMIs from the BAM files.
     """
@@ -67,7 +67,7 @@ rule counts_noUMI_raw_counts:
         datasetID="{condition}_{replicate}_{type}",
     log:
         temp(
-            "results/logs/counts/noUMI/raw_counts_umi.{project}.{condition}.{replicate}.{type}.log"
+            "results/logs/experiment/counts/noUMI/raw_counts_umi.{project}.{condition}.{replicate}.{type}.log"
         ),
     shell:
         """

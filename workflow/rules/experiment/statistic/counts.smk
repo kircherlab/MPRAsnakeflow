@@ -139,7 +139,9 @@ rule experiment_statistic_counts_stats_merge:
     output:
         temp("results/experiments/{project}/statistic/counts/count_{countType}.tsv"),
     log:
-        temp("results/logs/experiment/statistic/counts/stats_merge.{project}.{countType}.log"),
+        temp(
+            "results/logs/experiment/statistic/counts/stats_merge.{project}.{countType}.log"
+        ),
     shell:
         """
         zcat {input} | sort -k1,1 -k3,3 -k2,2 > {output} 2> {log}

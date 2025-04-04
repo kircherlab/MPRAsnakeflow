@@ -43,7 +43,7 @@ wildcard_constraints:
 ##### localrules #####
 localrules:
     all,
-    counts_demultiplex_aggregate,
+    experiment_counts_demultiplex_aggregate,
 
 
 # common workflow
