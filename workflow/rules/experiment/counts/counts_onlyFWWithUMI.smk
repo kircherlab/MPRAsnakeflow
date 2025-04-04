@@ -11,7 +11,7 @@ rule counts_onlyFWUMI_raw_counts:
     Getting the BCs and UMIs from the reads using fixed length.
     """
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         fw_fastq=lambda wc: getFW(wc.project, wc.condition, wc.replicate, wc.type),
         umi_fastq=lambda wc: getUMI(wc.project, wc.condition, wc.replicate, wc.type),

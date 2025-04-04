@@ -17,7 +17,7 @@ rule assignment_check_design:
     Also check if no duplicated headers and no illegal characters in header.
     """
     conda:
-        "../envs/python3.yaml"
+        getCondaEnv("python3.yaml")
     input:
         design=lambda wc: config["assignments"][wc.assignment]["design_file"],
         script=getScript("assignment/check_design_file.py"),
@@ -92,6 +92,8 @@ rule assignment_fastq_split:
 
     Runs only if the design file is correct.
     """
+    conda:
+        getCondaEnv("fastqsplitter.yaml")
     input:
         fastq=lambda wc: getAssignmentRead(wc.assignment, wc.read),
         check="results/assignment/{assignment}/design_check.done",
@@ -102,8 +104,6 @@ rule assignment_fastq_split:
                 split=range(0, getSplitNumber()),
             ),
         ),
-    conda:
-        "../envs/fastqsplitter.yaml"
     log:
         temp("results/logs/assignment/fastq_split.{assignment}.{read}.log"),
     params:
@@ -129,7 +129,7 @@ rule assignment_attach_idx:
     Extract the index sequence and add it to the header.
     """
     conda:
-        "../envs/NGmerge.yaml"
+        getCondaEnv("NGmerge.yaml")
     input:
         read="results/assignment/{assignment}/fastq/splits/{read}.split{split}.fastq.gz",
         BC="results/assignment/{assignment}/fastq/splits/BC.split{split}.fastq.gz",
@@ -175,7 +175,7 @@ rule assignment_merge:
     Extract the index sequence and add it to the header.
     """
     conda:
-        "../envs/NGmerge.yaml"
+        getCondaEnv("NGmerge.yaml")
     input:
         FW="results/assignment/{assignment}/fastq/splits/FW.split{split}.BCattached.fastq.gz",
         REV="results/assignment/{assignment}/fastq/splits/REV.split{split}.BCattached.fastq.gz",
@@ -220,6 +220,8 @@ rule assignment_collectBCs:
     """
     Get the barcodes.
     """
+    conda:
+        getCondaEnv("default.yaml")
     input:
         lambda wc: expand(
             "results/assignment/{{assignment}}/BCs/barcodes_{mapper}.{split}.tsv",
@@ -230,8 +232,6 @@ rule assignment_collectBCs:
         "results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
     params:
         batch_size="--batch-size=%d" % getSplitNumber() if getSplitNumber() > 1 else "",
-    conda:
-        "../envs/default.yaml"
     log:
         temp("results/logs/assignment/collectBCs.{assignment}.log"),
     shell:
@@ -247,14 +247,14 @@ rule assignment_filter:
     Filter the barcodes file based on the config given in the config-file.
     FIXME: Limitation is that oligos cannot have a name ambiguous or other.
     """
+    conda:
+        getCondaEnv("python3.yaml")
     input:
         assignment="results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
         script=getScript("assignment/filterAssignmentTsv.py"),
     output:
         final="results/assignment/{assignment}/assignment_barcodes.{assignment_config}.tsv.gz",
         ambigous="results/assignment/{assignment}/assignment_barcodes_with_ambigous.{assignment_config}.tsv.gz",
-    conda:
-        "../envs/python3.yaml"
     log:
         log=temp("results/logs/assignment/filter.{assignment}.{assignment_config}.log"),
         err=temp("results/logs/assignment/filter.{assignment}.{assignment_config}.err"),

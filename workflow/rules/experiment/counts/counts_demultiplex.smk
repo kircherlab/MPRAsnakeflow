@@ -7,7 +7,7 @@
 
 rule counts_demultiplex_create_index:
     conda:
-        "../../envs/python3.yaml"
+        getCondaEnv("python3.yaml")
     input:
         experiment_file=lambda wc: config["experiments"][wc.project]["experiment_file"],
         script=getScript("count/create_demultiplexed_index.py"),
@@ -36,7 +36,7 @@ checkpoint counts_demultiplex_BAM_umi:
     params:
         outdir=lambda w, output: os.path.split(output[0])[0],
     conda:
-        "../../envs/python27.yaml"
+        getCondaEnv("python27.yaml")
     log:
         temp("results/logs/counts/demultiplex_BAM_umi.{project}.{name}.log"),
     shell:
@@ -80,7 +80,7 @@ rule counts_demultiplex_mergeTrimReads_BAM_umi:
     output:
         "results/experiments/{project}/counts/merged_demultiplex.{condition}_{replicate}_{type}.bam",
     conda:
-        "../../envs/python27.yaml"
+        getCondaEnv("python27.yaml")
     params:
         bam="results/experiments/{project}/counts/demultiplex.{condition}_{replicate}_{type}.bam",
     log:

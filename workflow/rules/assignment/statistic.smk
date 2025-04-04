@@ -8,7 +8,7 @@ rule assignment_statistic_totalCounts:
     Statistic of the total (unfiltered counts).
     """
     conda:
-        "../../envs/python3.yaml"
+        getCondaEnv("python3.yaml")
     input:
         bc="results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
         script=getScript("assignment/statistic_total_counts.py"),
@@ -27,7 +27,7 @@ rule assignment_statistic_assignedCounts:
     Statistic of the assigned counts.
     """
     conda:
-        "../../envs/python3.yaml"
+        getCondaEnv("python3.yaml")
     input:
         bc="results/assignment/{assignment}/assignment_barcodes_with_ambigous.{assignment_config}.tsv.gz",
         script=getScript("assignment/statistic_total_counts.py"),
@@ -46,7 +46,7 @@ rule assignment_statistic_assignment:
     Statistic of the filtered assignment.
     """
     conda:
-        "../../envs/r.yaml"
+        getCondaEnv("r.yaml")
     input:
         bc="results/assignment/{assignment}/assignment_barcodes_with_ambigous.{assignment_config}.tsv.gz",
         script=getScript("assignment/statistic_assignment.R"),

@@ -3,10 +3,19 @@
 ################################
 
 SCRIPTS_DIR = "../scripts"
+ENVS_DIR = "../envs"
+
+
+def getWorkflowFile(dir_name, name):
+    return workflow.source_path("%s/%s" % (dir_name, name))
 
 
 def getScript(name):
-    return workflow.source_path("%s/%s" % (SCRIPTS_DIR, name))
+    return getWorkflowFile(SCRIPTS_DIR, name)
+
+
+def getCondaEnv(name):
+    return getWorkflowFile(ENVS_DIR, name)
 
 
 ##### load config and sample sheets #####

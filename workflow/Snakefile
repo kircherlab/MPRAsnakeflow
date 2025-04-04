@@ -415,12 +415,8 @@ rule all_variants:
 
 # assignment workflow
 include: "rules/assignment.smk"
-# count workflow
-include: "rules/counts.smk"
-# assignimg BCs to oligos
-include: "rules/assigned_counts.smk"
-# all statistics
-include: "rules/statistic.smk"
+# experiment workflow
+include: "rules/experiment.smk"
 # variant subworkflow (creating variant effects)
 include: "rules/variants.smk"
 # generating QC measures report

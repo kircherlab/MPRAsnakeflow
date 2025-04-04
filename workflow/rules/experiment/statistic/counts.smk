@@ -7,15 +7,15 @@ include: "counts_common.smk"
 
 
 # count frequent UMIs per condition, replicate and DNA/RNA
-rule statistic_counts_frequent_umis:
+rule experiment_statistic_counts_frequent_umis:
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         "results/experiments/{project}/counts/{condition}_{replicate}_{type}_filtered_counts.tsv.gz",
     output:
         report(
             "results/experiments/{project}/statistic/counts.freqUMIs.{condition}_{replicate}_{type}.txt",
-            caption="../../report/counts/frequent_umis.rst",
+            caption="../../../report/counts/frequent_umis.rst",
             category="{project}",
             subcategory="UMIs",
             labels={
@@ -26,7 +26,7 @@ rule statistic_counts_frequent_umis:
         ),
     log:
         temp(
-            "results/logs/statistic/counts/frequent_umis.{project}.{condition}.{replicate}.{type}.log"
+            "results/logs/experiment/statistic/counts/frequent_umis.{project}.{condition}.{replicate}.{type}.log"
         ),
     shell:
         """
@@ -40,9 +40,9 @@ rule statistic_counts_frequent_umis:
 ##############################
 
 
-rule statistic_counts_barcode_base_composition:
+rule experiment_statistic_counts_barcode_base_composition:
     conda:
-        "../../envs/python3.yaml"
+        getCondaEnv("python3.yaml")
     input:
         counts="results/experiments/{project}/counts/{condition}_{replicate}_{type}_final_counts.tsv.gz",
         script=getScript("count/nucleotideCountPerPosition.py"),
@@ -52,7 +52,7 @@ rule statistic_counts_barcode_base_composition:
         ),
         stats=report(
             "results/experiments/{project}/statistic/counts/BCNucleotideComposition.{condition}_{replicate}_{type}.tsv.gz",
-            caption="../../report/counts/barcode_base_composition.rst",
+            caption="../../../report/counts/barcode_base_composition.rst",
             category="{project}",
             subcategory="Barcode nucleotides",
             labels={
@@ -66,7 +66,7 @@ rule statistic_counts_barcode_base_composition:
         name="{condition}_{replicate}_{type}",
     log:
         temp(
-            "results/logs/statistic/counts/barcode_base_composition.{project}.{condition}_{replicate}_{type}.log"
+            "results/logs/experiment/statistic/counts/barcode_base_composition.{project}.{condition}_{replicate}_{type}.log"
         ),
     shell:
         """
@@ -85,9 +85,9 @@ rule statistic_counts_barcode_base_composition:
 
 
 # count Reads, Barcodes per UMI, Barcodes and Unique UMIs
-rule statistic_counts_table:
+rule experiment_statistic_counts_table:
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         lambda wc: (
             "results/experiments/{project}/counts/{condition}_{replicate}_{type}_{countType}_counts.tsv.gz"
@@ -104,7 +104,7 @@ rule statistic_counts_table:
         type="{type}",
     log:
         temp(
-            "results/logs/statistic/counts/table.{project}.{condition}_{replicate}_{type}_{countType}.log"
+            "results/logs/experiment/statistic/counts/table.{project}.{condition}_{replicate}_{type}_{countType}.log"
         ),
     shell:
         """
@@ -131,15 +131,15 @@ rule statistic_counts_table:
 
 
 # concat DNA, RNA-counts (rule statistic_counts) for all experiments, and replicates
-rule statistic_counts_stats_merge:
+rule experiment_statistic_counts_stats_merge:
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         lambda wc: getCountStats(wc.project, wc.countType),
     output:
         temp("results/experiments/{project}/statistic/counts/count_{countType}.tsv"),
     log:
-        temp("results/logs/statistic/counts/stats_merge.{project}.{countType}.log"),
+        temp("results/logs/experiment/statistic/counts/stats_merge.{project}.{countType}.log"),
     shell:
         """
         zcat {input} | sort -k1,1 -k3,3 -k2,2 > {output} 2> {log}
@@ -147,9 +147,9 @@ rule statistic_counts_stats_merge:
 
 
 # Statistic of barcodes shared between RNA&DNA per condition and replicate
-rule statistic_counts_BC_in_RNA_DNA:
+rule experiment_statistic_counts_BC_in_RNA_DNA:
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         dna=lambda wc: statistic_counts_BC_in_RNA_DNA_helper(
             project, wc.condition, "DNA", wc.countType
@@ -166,7 +166,7 @@ rule statistic_counts_BC_in_RNA_DNA:
         rep="{replicate}",
     log:
         temp(
-            "results/logs/statistic/counts/BC_in_RNA_DNA.{project}.{condition}_{replicate}_{countType}.log"
+            "results/logs/experiment/statistic/counts/BC_in_RNA_DNA.{project}.{condition}_{replicate}_{countType}.log"
         ),
     shell:
         """
@@ -178,9 +178,9 @@ rule statistic_counts_BC_in_RNA_DNA:
 
 
 # concat shared barcodes (rule statistic_BC_in_RNA_DNA) for all experiments, and replicates
-rule statistic_counts_BC_in_RNA_DNA_merge:
+rule experiment_statistic_counts_BC_in_RNA_DNA_merge:
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         getBCinRNADNAStats,
     output:
@@ -189,7 +189,7 @@ rule statistic_counts_BC_in_RNA_DNA_merge:
         ),
     log:
         temp(
-            "results/logs/statistic/counts/BC_in_RNA_DNA_merge.{project}.{countType}.log"
+            "results/logs/experiment/statistic/counts/BC_in_RNA_DNA_merge.{project}.{countType}.log"
         ),
     shell:
         """
@@ -198,9 +198,9 @@ rule statistic_counts_BC_in_RNA_DNA_merge:
 
 
 # making final count statistics
-rule statistic_counts_final:
+rule experiment_statistic_counts_final:
     conda:
-        "../../envs/r.yaml"
+        getCondaEnv("r.yaml")
     input:
         counts="results/experiments/{project}/statistic/counts/count_{countType}.tsv",
         shared="results/experiments/{project}/statistic/counts/BC_in_RNA_DNA_{countType}.tsv",
@@ -208,7 +208,7 @@ rule statistic_counts_final:
     output:
         stats=report(
             "results/experiments/{project}/statistic/counts.{countType}.tsv",
-            caption="../../report/counts/counts.rst",
+            caption="../../../report/counts/counts.rst",
             category="{project}",
             subcategory="Counts",
             labels={
@@ -216,7 +216,7 @@ rule statistic_counts_final:
             },
         ),
     log:
-        temp("results/logs/statistic/counts/final.{project}.{countType}.log"),
+        temp("results/logs/experiment/statistic/counts/final.{project}.{countType}.log"),
     shell:
         """
         Rscript {input.script} --count {input.counts} --shared {input.shared} --output {output} > {log}

@@ -3,9 +3,9 @@
 ################################
 
 
-rule statistic_correlation_bc_counts:
+rule experiment_statistic_correlation_bc_counts:
     conda:
-        "../../envs/r.yaml"
+        getCondaEnv("r.yaml")
     input:
         files=lambda wc: getMergedCounts(
             wc.project, wc.raw_or_assigned, wc.condition, wc.config
@@ -65,7 +65,7 @@ rule statistic_correlation_bc_counts:
         ]["filter"]["min_dna_counts"],
     log:
         temp(
-            "results/logs/statistic/correlation/correlate_bc_counts.{project}.{condition}.{config}.{raw_or_assigned}.log"
+            "results/logs/experiment/statistic/correlation/correlate_bc_counts.{project}.{condition}.{config}.{raw_or_assigned}.log"
         ),
     shell:
         """
@@ -77,9 +77,9 @@ rule statistic_correlation_bc_counts:
         """
 
 
-rule statistic_correlation_bc_counts_hist:
+rule experiment_statistic_correlation_bc_counts_hist:
     conda:
-        "../../envs/r.yaml"
+        getCondaEnv("r.yaml")
     input:
         files=lambda wc: getMergedCounts(
             wc.project, wc.raw_or_assigned, wc.condition, wc.config
@@ -105,7 +105,7 @@ rule statistic_correlation_bc_counts_hist:
         ]["filter"]["min_dna_counts"],
     log:
         temp(
-            "results/logs/statistic/correlation/correlate_bc_counts_hist.{project}.{condition}.{config}.{raw_or_assigned}.log"
+            "results/logs/experiment/statistic/correlation/correlate_bc_counts_hist.{project}.{condition}.{config}.{raw_or_assigned}.log"
         ),
     shell:
         """
@@ -117,9 +117,9 @@ rule statistic_correlation_bc_counts_hist:
         """
 
 
-rule statistic_correlation_combine_bc_raw:
+rule experiment_statistic_correlation_combine_bc_raw:
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         files=lambda wc: expand(
             "results/experiments/{{project}}/statistic/barcode/counts/{condition}_{{config}}_barcode_correlation.tsv",
@@ -128,7 +128,7 @@ rule statistic_correlation_combine_bc_raw:
     output:
         report(
             "results/experiments/{project}/statistic/statistic_bc_correlation_merged_{config}.tsv",
-            caption="../../report/bc_correlation.rst",
+            caption="../../../report/bc_correlation.rst",
             category="{project}",
             subcategory="Barcode correlation",
             labels={
@@ -137,7 +137,7 @@ rule statistic_correlation_combine_bc_raw:
             },
         ),
     log:
-        "results/logs/statistic/correlation/combine_bc_raw.{project}.{config}.log",
+        "results/logs/experiment/statistic/correlation/combine_bc_raw.{project}.{config}.log",
     shell:
         """
         (
@@ -149,9 +149,9 @@ rule statistic_correlation_combine_bc_raw:
         """
 
 
-rule statistic_correlation_combine_bc_assigned:
+rule experiment_statistic_correlation_combine_bc_assigned:
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         files=lambda wc: expand(
             "results/experiments/{{project}}/statistic/barcode/assigned_counts/{{assignment}}/{condition}_{{config}}_barcode_correlation.tsv",
@@ -160,7 +160,7 @@ rule statistic_correlation_combine_bc_assigned:
     output:
         report(
             "results/experiments/{project}/statistic/statistic_assigned_bc_correlation_merged_{assignment}_{config}.tsv",
-            caption="../../report/bc_correlation_assigned.rst",
+            caption="../../../report/bc_correlation_assigned.rst",
             category="{project}",
             subcategory="Barcode correlation",
             labels={
@@ -170,7 +170,7 @@ rule statistic_correlation_combine_bc_assigned:
         ),
     log:
         temp(
-            "results/logs/statistic/correlation/combine_bc_assigned.{project}.{assignment}_{config}.log"
+            "results/logs/experiment/statistic/correlation/combine_bc_assigned.{project}.{assignment}_{config}.log"
         ),
     shell:
         """
@@ -188,9 +188,9 @@ rule statistic_correlation_combine_bc_assigned:
 #############################
 
 
-rule statistic_correlation_calculate:
+rule experiment_statistic_correlation_calculate:
     conda:
-        "../../envs/r.yaml"
+        getCondaEnv("r.yaml")
     input:
         counts=lambda wc: expand(
             "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts.tsv.gz",
@@ -323,7 +323,7 @@ rule statistic_correlation_calculate:
         ),
     log:
         temp(
-            "results/logs/statistic/correlation/calculate.{project}.{condition}.{config}.{assignment}.log"
+            "results/logs/experiment/statistic/correlation/calculate.{project}.{condition}.{config}.{assignment}.log"
         ),
     shell:
         """
@@ -337,9 +337,9 @@ rule statistic_correlation_calculate:
         """
 
 
-rule statistic_correlation_hist_box_plots:
+rule experiment_statistic_correlation_hist_box_plots:
     conda:
-        "../../envs/r.yaml"
+        getCondaEnv("r.yaml")
     input:
         counts=lambda wc: expand(
             "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts.tsv.gz",
@@ -387,7 +387,7 @@ rule statistic_correlation_hist_box_plots:
         ),
     log:
         temp(
-            "results/logs/statistic/correlation/hist_box_plots.{project}.{condition}.{config}.{assignment}.log"
+            "results/logs/experiment/statistic/correlation/hist_box_plots.{project}.{condition}.{config}.{assignment}.log"
         ),
     shell:
         """
@@ -401,9 +401,9 @@ rule statistic_correlation_hist_box_plots:
         """
 
 
-rule statistic_correlation_combine_oligo:
+rule experiment_statistic_correlation_combine_oligo:
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         correlation=lambda wc: expand(
             "results/experiments/{{project}}/statistic/assigned_counts/{{assignment}}/{{config}}/{condition}_correlation.tsv",
@@ -416,7 +416,7 @@ rule statistic_correlation_combine_oligo:
     output:
         report(
             "results/experiments/{project}/statistic/statistic_oligo_correlation_merged_{assignment}_{config}.tsv",
-            caption="../../report/oligo_correlation.rst",
+            caption="../../../report/oligo_correlation.rst",
             category="{project}",
             subcategory="Oligo correlation",
             labels={
@@ -431,7 +431,7 @@ rule statistic_correlation_combine_oligo:
         ]["bc_threshold"],
     log:
         temp(
-            "results/logs/statistic/correlation/combine_oligo.{project}.{config}.{assignment}.log"
+            "results/logs/experiment/statistic/correlation/combine_oligo.{project}.{config}.{assignment}.log"
         ),
     shell:
         """

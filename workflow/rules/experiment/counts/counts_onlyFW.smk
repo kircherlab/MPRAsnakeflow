@@ -10,7 +10,7 @@ rule counts_onlyFW_raw_counts_by_length:
     Getting the BCs from the reads using fixed length.
     """
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         lambda wc: getFW(wc.project, wc.condition, wc.replicate, wc.type),
     output:
@@ -35,7 +35,7 @@ rule counts_onlyFW_raw_counts_by_cutadapt:
     Getting the BCs from the reads using cutadapt.
     """
     conda:
-        "../../envs/cutadapt.yaml"
+        getCondaEnv("cutadapt.yaml")
     threads: 1
     input:
         lambda wc: getFW(wc.project, wc.condition, wc.replicate, wc.type),

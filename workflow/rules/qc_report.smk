@@ -6,7 +6,7 @@ rule qc_report_assoc:
     This rule generates the QC report for the assignment.
     """
     conda:
-        "../envs/quarto.yaml"
+        getCondaEnv("quarto.yaml")
     input:
         quarto_script=getScript("report/qc_report_assoc.qmd"),
         design_file=lambda wc: config["assignments"][wc.assignment]["design_file"],
@@ -78,7 +78,7 @@ rule qc_report_count:
     This rule generates the QC report for the count data.
     """
     conda:
-        "../envs/quarto.yaml"
+        getCondaEnv("quarto.yaml")
     input:
         quarto_script=getScript("report/qc_report_count.qmd"),
         dna_oligo_coor_min_thre_plot="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_DNA_pairwise_minThreshold.png",
