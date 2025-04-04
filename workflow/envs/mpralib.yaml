@@ -1,0 +1,13 @@
+---
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - python
+  - click
+  - pip
+  - pandas
+  - numpy
+  - biopython
+  - pip:
+      - mpralib==0.6.0

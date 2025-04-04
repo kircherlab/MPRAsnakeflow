@@ -59,11 +59,15 @@ rule all:
     input:
         ## report
         getAssignmentConfig_helper(
-            ["results/assignment/{assignment}/qc_report.{config}.html"]
+            [
+                "results/assignment/{assignment}/qc_report.{config}.html",
+                "results/assignment/{assignment}/qc_metrics.{config}.json",
+            ]
         ),
         getOutputProjectConditionAssignmentConfig_helper(
             [
-                "results/experiments/{project}/qc_report.{condition}.{assignment}.{config}.html"
+                "results/experiments/{project}/qc_report.{condition}.{assignment}.{config}.html",
+                "results/experiments/{project}/qc_metrics.{condition}.{assignment}.{config}.json",
             ]
         ),
         ## assignments

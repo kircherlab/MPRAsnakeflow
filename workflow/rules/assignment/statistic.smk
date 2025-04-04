@@ -59,3 +59,23 @@ rule assignment_statistic_assignment:
         """
         Rscript {input.script} --input {input.bc} --statistic {output.stats} --plot {output.plot} &> {log}
         """
+
+
+rule assignment_statistic_quality_metric:
+    """
+    Quality metrics of the assignment run
+    """
+    conda:
+        getCondaEnv("mpralib.yaml")
+    input:
+        assignment="results/assignment/{assignment}/assignment_barcodes.{assignment_config}.tsv.gz",
+        design="results/assignment/{assignment}/reference/reference.fa",
+        script=getScript("quality_metrics.py"),
+    output:
+        "results/assignment/{assignment}/qc_metrics.{assignment_config}.json",
+    log:
+        "results/logs/assignment/statistic_quality_metric.{assignment}.{assignment_config}.log",
+    shell:
+        """
+        python {input.script} assignment --assignment {input.assignment} --design {input.design} --output {output} &> {log}
+        """
