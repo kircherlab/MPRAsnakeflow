@@ -26,7 +26,7 @@ rule experiment_statistic_quality_metric:
         getCondaEnv("mpralib.yaml")
     input:
         barcode="results/experiments/{project}/reporter_experiment.barcode.{condition}.{assignment}.{config}.all.tsv.gz",
-        assignment=lambda wc: getAssignmentFile(wc.project, wc.assignment),
+        assignment="results/experiments/{project}/assignment/{assignment}.tsv.gz",
         script=getScript("quality_metrics.py"),
     output:
         "results/experiments/{project}/qc_metrics.{condition}.{assignment}.{config}.json",

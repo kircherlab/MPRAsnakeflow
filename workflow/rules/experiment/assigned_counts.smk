@@ -196,6 +196,8 @@ rule experiment_assigned_counts_make_master_tables:
 
 
 rule experiment_assigned_counts_combine_replicates_barcode_output:
+    """
+    Combine replictes of assigned barcode counts into one file."""
     conda:
         getCondaEnv("python3.yaml")
     input:

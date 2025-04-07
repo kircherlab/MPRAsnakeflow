@@ -6,6 +6,9 @@
 
 
 rule experiment_counts_demultiplex_create_index:
+    """
+    Create the demultiplexing index file for the experiment.
+    """
     conda:
         getCondaEnv("python3.yaml")
     input:
@@ -24,6 +27,9 @@ rule experiment_counts_demultiplex_create_index:
 
 
 checkpoint experiment_counts_demultiplex_BAM_umi:
+    """
+    Demultiplexing the data and create demultiplexed bam files per condition.
+    """
     input:
         fw_fastq=lambda wc: getFWWithIndex(wc.project),
         rev_fastq=lambda wc: getRevWithIndex(wc.project),
@@ -67,6 +73,9 @@ checkpoint experiment_counts_demultiplex_BAM_umi:
 
 
 rule experiment_counts_demultiplex_aggregate:
+    """
+    Aggregate the demultiplexed bam files per condition.
+    """
     input:
         lambda wc: counts_aggregate_demultiplex_input(wc.project),
     output:
@@ -74,6 +83,9 @@ rule experiment_counts_demultiplex_aggregate:
 
 
 rule experiment_counts_demultiplex_mergeTrimReads_BAM_umi:
+    """
+    Merge and trim reads in demultiplexed bam files.
+    """
     input:
         demultiplex="results/experiments/{project}/counts/demultiplex.done",
         script=getScript("count/MergeTrimReadsBAM.py"),

@@ -5,6 +5,9 @@
 
 
 rule experiment_statistic_assigned_counts_combine_BC_assignment_stats_helper:
+    """
+    Combine assigned counts statistic per replicate and modality (DNA and RNA not merged)
+    """
     conda:
         getCondaEnv("default.yaml")
     input:
@@ -34,6 +37,9 @@ rule experiment_statistic_assigned_counts_combine_BC_assignment_stats_helper:
 
 
 rule experiment_statistic_assigned_counts_combine_BC_assignment_stats:
+    """
+    Combined assinged counts statistic per condition (DNA and aRNA not merged)
+    """
     conda:
         getCondaEnv("default.yaml")
     input:
@@ -77,6 +83,9 @@ rule experiment_statistic_assigned_counts_combine_BC_assignment_stats:
 
 
 rule experiment_statistic_assigned_counts_combine_stats_dna_rna_merge:
+    """
+    Combine assigned counts statistic per replicate (DNA and RNA merged)
+    """
     conda:
         getCondaEnv("python3.yaml")
     input:
@@ -110,6 +119,9 @@ rule experiment_statistic_assigned_counts_combine_stats_dna_rna_merge:
 
 
 rule experiment_statistic_assigned_counts_combine_stats_dna_rna_merge_all:
+    """
+    Combine assigned counts statistic per condition (DNA and RNA merged)
+    """
     conda:
         getCondaEnv("default.yaml")
     input:

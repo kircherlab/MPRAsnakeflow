@@ -4,6 +4,9 @@
 
 
 rule experiment_statistic_correlation_bc_counts:
+    """
+    Calculate the correlation of the raw counts for each condition across replicates.
+    """
     conda:
         getCondaEnv("r.yaml")
     input:
@@ -78,6 +81,9 @@ rule experiment_statistic_correlation_bc_counts:
 
 
 rule experiment_statistic_correlation_bc_counts_hist:
+    """
+    Generate histogram and boxplots of the raw counts for each condition across replicates.
+    """
     conda:
         getCondaEnv("r.yaml")
     input:
@@ -118,6 +124,9 @@ rule experiment_statistic_correlation_bc_counts_hist:
 
 
 rule experiment_statistic_correlation_combine_bc_raw:
+    """
+    Combine the correlation of the raw counts for each condition across replicates into one table.
+    """
     conda:
         getCondaEnv("default.yaml")
     input:
@@ -150,6 +159,9 @@ rule experiment_statistic_correlation_combine_bc_raw:
 
 
 rule experiment_statistic_correlation_combine_bc_assigned:
+    """
+    Combine the correlation of the assigned counts for each condition across replicates into one table.
+    """
     conda:
         getCondaEnv("default.yaml")
     input:
@@ -189,6 +201,9 @@ rule experiment_statistic_correlation_combine_bc_assigned:
 
 
 rule experiment_statistic_correlation_calculate:
+    """
+    Calculate the correlation of oligos for each condition across replicates.
+    """
     conda:
         getCondaEnv("r.yaml")
     input:
@@ -338,6 +353,9 @@ rule experiment_statistic_correlation_calculate:
 
 
 rule experiment_statistic_correlation_hist_box_plots:
+    """
+    Generate histogram and boxplots of the oligos for each condition across replicates.
+    """
     conda:
         getCondaEnv("r.yaml")
     input:
@@ -402,6 +420,9 @@ rule experiment_statistic_correlation_hist_box_plots:
 
 
 rule experiment_statistic_correlation_combine_oligo:
+    """
+    Combine the correlation of oligos for each condition across replicates into one table.
+    """
     conda:
         getCondaEnv("default.yaml")
     input:

@@ -4,6 +4,9 @@
 
 
 rule experiment_statistic_bc_overlap_run:
+    """
+    Get overlap of counts and barcodes between replicates.
+    """
     conda:
         getCondaEnv("r.yaml")
     input:
@@ -51,6 +54,9 @@ rule experiment_statistic_bc_overlap_run:
 
 
 rule experiment_statistic_bc_overlap_combine_counts:
+    """
+    Combine overlap BC and count statistic into one file (raw counts).
+    """
     conda:
         getCondaEnv("default.yaml")
     input:
@@ -89,6 +95,9 @@ rule experiment_statistic_bc_overlap_combine_counts:
 
 
 rule experiment_statistic_bc_overlap_combine_assigned_counts:
+    """
+    Combine overlap BC and count statistic into one file (assigned counts).
+    """
     conda:
         getCondaEnv("default.yaml")
     input:

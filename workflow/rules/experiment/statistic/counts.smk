@@ -6,8 +6,10 @@ include: "counts_common.smk"
 #################################
 
 
-# count frequent UMIs per condition, replicate and DNA/RNA
 rule experiment_statistic_counts_frequent_umis:
+    """
+    Count the 10 most frequent UMIs per condition, replicate and DNA/RNA.
+    """
     conda:
         getCondaEnv("default.yaml")
     input:
@@ -41,6 +43,9 @@ rule experiment_statistic_counts_frequent_umis:
 
 
 rule experiment_statistic_counts_barcode_base_composition:
+    """
+    Count the nucleotide composition of the barcodes per condition, replicate and DNA/RNA.
+    """
     conda:
         getCondaEnv("python3.yaml")
     input:
@@ -84,8 +89,10 @@ rule experiment_statistic_counts_barcode_base_composition:
 #################################
 
 
-# count Reads, Barcodes per UMI, Barcodes and Unique UMIs
 rule experiment_statistic_counts_table:
+    """
+    Count statistic of barcodes and UMIs per condition, replicate and DNA/RNA.
+    """
     conda:
         getCondaEnv("default.yaml")
     input:
@@ -130,8 +137,10 @@ rule experiment_statistic_counts_table:
         """
 
 
-# concat DNA, RNA-counts (rule statistic_counts) for all experiments, and replicates
 rule experiment_statistic_counts_stats_merge:
+    """
+    Merge the count statistic of all replicates and conditions into one table.
+    """
     conda:
         getCondaEnv("default.yaml")
     input:
@@ -148,8 +157,10 @@ rule experiment_statistic_counts_stats_merge:
         """
 
 
-# Statistic of barcodes shared between RNA&DNA per condition and replicate
 rule experiment_statistic_counts_BC_in_RNA_DNA:
+    """
+    Count the number of barcodes shared between RNA and DNA per condition and replicate.
+    """
     conda:
         getCondaEnv("default.yaml")
     input:
@@ -179,8 +190,10 @@ rule experiment_statistic_counts_BC_in_RNA_DNA:
         """
 
 
-# concat shared barcodes (rule statistic_BC_in_RNA_DNA) for all experiments, and replicates
 rule experiment_statistic_counts_BC_in_RNA_DNA_merge:
+    """
+    Merge the shared barcodes statistic of all replicates and conditions into one table.
+    """
     conda:
         getCondaEnv("default.yaml")
     input:
@@ -199,8 +212,10 @@ rule experiment_statistic_counts_BC_in_RNA_DNA_merge:
         """
 
 
-# making final count statistics
 rule experiment_statistic_counts_final:
+    """
+    Combine the final count statistic of all replicates and conditions into one table.
+    """
     conda:
         getCondaEnv("r.yaml")
     input:
