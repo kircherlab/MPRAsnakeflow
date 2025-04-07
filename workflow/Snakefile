@@ -56,6 +56,9 @@ include: "rules/common.smk"
 
 
 rule all:
+    """
+    General all rule to get all output files for MPRAsnakeflow (default rule).
+    """
     input:
         ## report
         getAssignmentConfig_helper(
@@ -180,6 +183,9 @@ rule all:
 
 
 rule all_qc_report:
+    """
+    All rule to generate QC reports.
+    """
     input:
         getAssignmentConfig_helper(
             ["results/assignment/{assignment}/qc_report.{config}.html"]
@@ -192,6 +198,9 @@ rule all_qc_report:
 
 
 rule all_assignments:
+    """
+    All rule to get all output files for the assignments workflow.
+    """
     input:
         getAssignmentConfig_helper(
             [
@@ -210,6 +219,9 @@ rule all_assignments:
 
 
 rule all_experiments:
+    """
+    All rule to get all output files for the experiment workflow.
+    """
     input:
         # stats BC nucleotide composition
         getOutputProjectConditionReplicateType_helper(
@@ -316,6 +328,10 @@ rule all_experiments:
 
 
 rule all_experiments_counts_stats:
+    """
+    All rule to get count statistics of the experiment workflow.
+    """
+    
     input:
         getOutputProjectConditionReplicateType_helper(
             [
@@ -341,6 +357,9 @@ rule all_experiments_counts_stats:
 
 
 rule all_bc_overlap_statistic:
+    """
+    All rule to get BC overlap statistic of the experiment workflow.
+    """
     input:
         getOutputProjectConfig_helper(
             ["results/experiments/{project}/statistic/bc_overlap.counts.{config}.tsv"],
@@ -355,6 +374,9 @@ rule all_bc_overlap_statistic:
 
 
 rule all_experiments_assignments:
+    """
+    All rule to get assigned counts for experiment workflow.
+    """
     input:
         getOutputProjectConditionAssignmentConfig_helper(
             [
@@ -366,6 +388,9 @@ rule all_experiments_assignments:
 
 
 rule all_experiments_assignments_statistic:
+    """
+    All rule to get assigned counts statistic for experiment workflow.
+    """
     input:
         getOutputProjectConditionAssignmentConfig_helper(
             [
@@ -388,6 +413,9 @@ rule all_experiments_assignments_statistic:
 
 
 rule all_stats_BCNucleotideComposition:
+    """
+    All rule to get BC nucleotide composition of the experiment workflow.
+    """
     input:
         getOutputProjectConditionReplicateType_helper(
             [
@@ -397,6 +425,9 @@ rule all_stats_BCNucleotideComposition:
 
 
 rule all_variants:
+    """
+    All rule to get variant effects of the experiment workflow.
+    """
     input:
         getOutputVariants_helper(
             [
