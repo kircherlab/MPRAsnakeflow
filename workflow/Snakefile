@@ -331,7 +331,6 @@ rule all_experiments_counts_stats:
     """
     All rule to get count statistics of the experiment workflow.
     """
-    
     input:
         getOutputProjectConditionReplicateType_helper(
             [
