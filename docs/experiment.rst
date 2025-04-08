@@ -139,7 +139,7 @@ experiment_counts_filter_counts
   Filter the counts to BCs only of the correct length (defined in the config file)
 experiment_counts_final_counts
   Counting BCs. Discarding PCR duplicates (taking BCxUMI only one time)
-experiment_counts_final_counts_samplerer
+experiment_counts_final_counts_sampler
   Creates full + new distribution DNA files
 experiment_counts_noUMI_create_BAM
   Create a BAM file from FASTQ input, merge FW and REV read and save UMI in XI flag.

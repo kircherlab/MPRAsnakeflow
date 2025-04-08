@@ -96,7 +96,7 @@ set-resources:
   experiment_counts_filter_counts:
     runtime: 120
     slurm_partition: medium
-  experiment_counts_final_counts_samplerer:
+  experiment_counts_final_counts_sampler:
     mem: 20G
     slurm_partition: medium
 

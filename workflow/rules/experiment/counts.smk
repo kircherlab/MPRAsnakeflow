@@ -61,7 +61,7 @@ rule experiment_counts_final_counts:
         """
 
 
-rule experiment_counts_final_counts_samplerer:
+rule experiment_counts_final_counts_sampler:
     """
     Creates full + new distribution DNA files
     """
