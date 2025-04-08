@@ -29,7 +29,7 @@ rule assignment_statistic_assignedCounts:
     conda:
         getCondaEnv("python3.yaml")
     input:
-        bc="results/assignment/{assignment}/assignment_barcodes_with_ambigous.{assignment_config}.tsv.gz",
+        bc="results/assignment/{assignment}/assignment_barcodes_with_ambiguous.{assignment_config}.tsv.gz",
         script=getScript("assignment/statistic_total_counts.py"),
     output:
         "results/assignment/{assignment}/statistic/assigned_counts.{assignment_config}.tsv",
@@ -48,7 +48,7 @@ rule assignment_statistic_assignment:
     conda:
         getCondaEnv("r.yaml")
     input:
-        bc="results/assignment/{assignment}/assignment_barcodes_with_ambigous.{assignment_config}.tsv.gz",
+        bc="results/assignment/{assignment}/assignment_barcodes_with_ambiguous.{assignment_config}.tsv.gz",
         script=getScript("assignment/statistic_assignment.R"),
     output:
         stats="results/assignment/{assignment}/statistic/assignment.{assignment_config}.tsv.gz",

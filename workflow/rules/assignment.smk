@@ -254,7 +254,7 @@ rule assignment_filter:
         script=getScript("assignment/filterAssignmentTsv.py"),
     output:
         final="results/assignment/{assignment}/assignment_barcodes.{assignment_config}.tsv.gz",
-        ambigous="results/assignment/{assignment}/assignment_barcodes_with_ambigous.{assignment_config}.tsv.gz",
+        ambiguous="results/assignment/{assignment}/assignment_barcodes_with_ambiguous.{assignment_config}.tsv.gz",
     log:
         log=temp("results/logs/assignment/filter.{assignment}.{assignment_config}.log"),
         err=temp("results/logs/assignment/filter.{assignment}.{assignment_config}.err"),
@@ -275,7 +275,7 @@ rule assignment_filter:
         awk -v "OFS=\\t" -F"\\t" '{{if (length($1)=={params.bc_length}){{print $0 }}}}' | \
         python {input.script} \
         -m {params.min_support} -f {params.fraction} {params.unknown_other} {params.ambiguous} | \
-        tee >(gzip -c > {output.ambigous}) | \
+        tee >(gzip -c > {output.ambiguous}) | \
         awk -v "OFS=\\t"  -F"\\t" '{{ if (($2 != \"ambiguous\") && ($2 != \"other\")) {{ print $1,$2 }} }}' | \
         gzip -c > {output.final} 2> {log.err};
         gzip -l {output.final} | awk 'NR==2 {{exit($2==0)}}' || {{ echo "Error: Empty barcode file {output.final}. No barcodes detected!" >> {log.err}; exit 1; }}
