@@ -17,4 +17,4 @@ dependencies:
   - pysam
   - scipy
   - pip:
-    - MPRAlib==0.6.0
+    - MPRAlib==0.6.1
