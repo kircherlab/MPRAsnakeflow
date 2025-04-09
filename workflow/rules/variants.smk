@@ -1,7 +1,7 @@
 # --use-pseudo-counts
 rule variants_generateVariantTable:
     conda:
-        "../envs/python3.yaml"
+        getCondaEnv("python3.yaml")
     input:
         variant_definition=lambda wc: getVariants(wc.project)["map"],
         counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}_{replicate}_merged_assigned_counts.tsv.gz",
@@ -23,7 +23,7 @@ rule variants_generateVariantTable:
 
 rule variants_MasterTable:
     conda:
-        "../envs/python3.yaml"
+        getCondaEnv("python3.yaml")
     input:
         variants=lambda wc: expand(
             "results/experiments/{{project}}/variants/{{assignment}}/{{config}}/{{condition}}_{replicate}_variantTable.tsv.gz",
@@ -68,7 +68,7 @@ rule variants_MasterTable:
 
 rule variants_correlate:
     conda:
-        "../envs/python3.yaml"
+        getCondaEnv("python3.yaml")
     input:
         counts=lambda wc: expand(
             "results/experiments/{{project}}/variants/{{assignment}}/{{config}}/{{condition}}_{replicate}_variantTable.tsv.gz",
@@ -106,7 +106,7 @@ rule variants_correlate:
 
 rule variants_combineVariantCorrelationTables:
     conda:
-        "../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         correlation=lambda wc: expand(
             "results/experiments/{{project}}/statistic/variants/{{assignment}}/{{config}}/{condition}/{condition}_correlation_variantTable_minBC{threshold}.tsv.gz",

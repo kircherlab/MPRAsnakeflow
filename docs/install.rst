@@ -9,72 +9,85 @@ Installation should take less than 5 minutes.
 System Requirements
 ===================
 
-CentOS Linux 7 or above
+- CentOS Linux 7 or above
 
-Required packages
+Required Packages
 =================
 
-Package management
+Package Management
 ------------------
 
-.. code-block:: bash
+You will need either `conda` or `apptainer` for managing dependencies:
 
-    conda >24.7.1 or above
+1. **Conda** (version ≥ 24.7.1)
 
-Download here: https://github.com/conda-forge/miniforge
+   .. code-block:: bash
 
-or for running software in containers
+       conda >24.7.1
 
-.. code-block:: bash
+   Download here: https://github.com/conda-forge/miniforge
 
-    apptainer
+2. **Apptainer** (for running software in containers)
 
-Download here: https://apptainer.org/docs/user/latest/quick_start.html#installation
+   .. code-block:: bash
 
-Workflow language
+       apptainer
+
+   Download here: https://apptainer.org/docs/user/latest/quick_start.html#installation
+
+Workflow Language
 -----------------
 
+You will also need `snakemake` (version ≥ 8.24.1):
+
 .. code-block:: bash
 
-    snakemake 8.24.1 or above
+    snakemake 8.24.1
 
 Download here: https://snakemake.readthedocs.io/
 
-
-Clone repository
+Clone Repository
 =================
 
-Download here: https://github.com/kircherlab/MPRAsnakeflow.git
-
-
-Set up snakemake environment with conda
-=============================================
-
-This pipeline uses python2.7 and python ≥3.7 with additional R scripts in a Snakemake pipeline. The ``.yml`` files provided will create the appropriate environments and is completely handled by MPRAsnakeflow. The whole pipeline is set up to run on a Linux system.
-
-Install the the conda environment. The general conda environment is called ``snakemake``.
+Clone the MPRAsnakeflow repository from GitHub:
 
 .. code-block:: bash
 
-    cd MPRAsnakeflow
-    conda create -c conda-forge -c bioconda -n snakemake snakemake
-    
-    # activate snakemake
-    conda activate snakemake
+    git clone https://github.com/kircherlab/MPRAsnakeflow.git
 
-To deactivate the environment, use:
+Set Up Snakemake Environment with Conda
+=======================================
 
-.. code-block:: bash
+This pipeline uses Python 2.7, Python ≥3.7, and additional R scripts in a Snakemake pipeline. The provided `.yml` files will create the appropriate environments, which are completely handled by MPRAsnakeflow. The pipeline is designed to run on a Linux system.
 
-    conda deactivate
+To set up the environment:
 
+1. Install the general conda environment called `snakemake`:
 
+   .. code-block:: bash
 
-Quick test
-============
+       cd MPRAsnakeflow
+       conda create -c conda-forge -c bioconda -n snakemake snakemake
+
+2. Activate the `snakemake` environment:
+
+   .. code-block:: bash
+
+       conda activate snakemake
+
+3. To deactivate the environment, use:
+
+   .. code-block:: bash
+
+       conda deactivate
+
+Quick Test
+==========
+
+To verify the installation, run the following command:
 
 .. code-block:: bash
 
     conda activate snakemake
     snakemake --help
-    
+

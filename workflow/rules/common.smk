@@ -3,10 +3,19 @@
 ################################
 
 SCRIPTS_DIR = "../scripts"
+ENVS_DIR = "../envs"
+
+
+def getWorkflowFile(dir_name, name):
+    return workflow.source_path("%s/%s" % (dir_name, name))
 
 
 def getScript(name):
-    return workflow.source_path("%s/%s" % (SCRIPTS_DIR, name))
+    return getWorkflowFile(SCRIPTS_DIR, name)
+
+
+def getCondaEnv(name):
+    return getWorkflowFile(ENVS_DIR, name)
 
 
 ##### load config and sample sheets #####
@@ -701,7 +710,7 @@ def counts_aggregate_demultiplex_input(project):
             type=["DNA", "RNA"],
         )
         for name in names:
-            with checkpoints.counts_demultiplex_BAM_umi.get(
+            with checkpoints.experiment_counts_demultiplex_BAM_umi.get(
                 project=project, name=name
             ).output[0].open() as f:
                 output += [f.name]

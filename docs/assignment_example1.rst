@@ -9,7 +9,7 @@ Basic assignment workflow
 
 This example runs the assignment workflow on 5'/5' WT MRPA data in the HEPG2 cell line from `Klein J., Agarwal, V., Keith, A., et al. 2019 <https://www.biorxiv.org/content/10.1101/576405v1.full.pdf>`_.
 
-Prerequirements
+Prerequisites
 ======================
 
 This example depends on the following data and software:
@@ -36,7 +36,7 @@ It is necessary to get the ordered oligo array so that each enhancer sequence ca
 Reads
 ----------
 
-There is one set of association sequencing for this data, which contains a forward (CRS-forward), reverse (CRS-reverse), and index (barcode) read for DNA and RNA. These data must be downloaded. All data is publically available on the short read archive (SRA). We will use SRA-toolkit to obtain the data.
+There is one set of association sequencing for this data, which contains a forward (CRS-forward), reverse (CRS-reverse), and index (barcode) read for DNA and RNA. These data must be downloaded. All data is publicly available on the short read archive (SRA). We will use SRA-toolkit to obtain the data.
 
 .. note:: You need 10 GB disk space to download the data!
 
@@ -47,7 +47,7 @@ There is one set of association sequencing for this data, which contains a forwa
     fastq-dump --gzip --split-files SRR10800986
     cd ..
 
-For large files and unstable internet connection we reccommend the comand `prefetch` from SRA tools before running `fastq-dump`. This command is much smarter in warnings when something went wrong.
+For large files and unstable internet connection we recommend the command `prefetch` from SRA tools before running `fastq-dump`. This command is much smarter in warnings when something went wrong.
 
 .. code-block:: bash
 
@@ -136,7 +136,7 @@ You should see a list of rules that will be executed. This is the summary:
     total                                    164
 
 
-When dry-drun does not give any errors we will run the workflow. We use a machine with 30 threads/cores to run the workflow. Therefore :code:`split_number` is set to 30 to parallize the workflow. Also we are using 10 threads for mapping (bwa mem). But snakemake takes care that no more than 30 threads are used.
+When dry-run does not give any errors we will run the workflow. We use a machine with 30 threads/cores to run the workflow. Therefore :code:`split_number` is set to 30 to parallize the workflow. Also we are using 10 threads for mapping (bwa mem). But snakemake takes care that no more than 30 threads are used.
 
 .. code-block:: bash
 
@@ -181,7 +181,7 @@ Results
 
 All needed output files will be in the :code:`results/assignment/assocBasic` folder. The final assignment is in :code:`results/assignment/assocBasic/assignment_barcodes.default.tsv.gz`. 
 
-.. note:: Please note that for the experiment/count workflow you have to remove ambigous BCs. It is possible to retain ambigous BCs in the final file by configuring in the config file. But the default option will remove them from the final file.
+.. note:: Please note that for the experiment/count workflow you have to remove ambiguous BCs. It is possible to retain ambiguous BCs in the final file by configuring in the config file. But the default option will remove them from the final file.
 
 
 Total file tree of the results folder:

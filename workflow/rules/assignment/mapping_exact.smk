@@ -3,7 +3,7 @@ rule assignment_mapping_exact_reference:
     Create reference to map the exact design
     """
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         check="results/assignment/{assignment}/design_check.done",
         ref="results/assignment/{assignment}/reference/reference.fa",
@@ -28,7 +28,7 @@ rule assignment_mapping_exact:
     Map the reads to the reference and sort using exact match.
     """
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         reads="results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
         reference="results/assignment/{assignment}/reference/reference_exact.fa",

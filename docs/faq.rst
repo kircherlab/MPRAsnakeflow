@@ -4,32 +4,46 @@
 Frequently Asked Questions
 ==========================
 
-If you have more question please write us a ticket on `github <https://github.com/kircherlab/MPRAsnakeflow/issues>`_.
-
+If you have more questions, please write us a ticket on `GitHub <https://github.com/kircherlab/MPRAsnakeflow/issues>`_.
 
 Is it possible to differentiate between sense and antisense?
-    Usually not because reads will map to both sequence strands equally. Then assignment of the barcode becomes ambiguous and is discarded. But we have a workaround that will add unique sequence adapters to both ends to the oligos, for the reference fasta and the fastqs. Now all mapping strategies should be able to differentiate between sense and antisense. To enable use the config :code:`strand_sensitive: {enable: true}`.
+------------------------------------------------------------
+Usually not, because reads will map to both sequence strands equally. Then, the assignment of the barcode becomes ambiguous and is discarded. However, we have a workaround that adds unique sequence adapters to both ends of the oligos for the reference FASTA and the FASTQs. Now, all mapping strategies should be able to differentiate between sense and antisense. To enable this, use the config option: :code:`strand_sensitive: {enable: true}`.
 
-The design/reference file check failed, why?
-    The design file has to have:
-    
-    * Unique headers. Each sequence has to have a unique sequence/id starting from :code:`>` to the first whitespace or newline.
-    * No special characters within the headers. This is because mapping tools create a reference dictionary and cannot handle all characters. In addition, most databases (like SRA) have their restricted character set for the header.
-    * Unique sequences. They have to be different in sense and antisense directions. Otherwise, the mapper places the read to both IDs and the barcode gets ambiguous and is discarded. When you allow min/max start/lengths for sequences (e.g. in BWA mapping) be aware that the smallest substring has to be unique across all other (sub) sequences. If you have antisense collisions and want to keep the strand sensitivity you can enable it by using the option :code:`strand_sensitive: {enable: true}` in the config file (see question before).
+The design/reference file check failed. Why?
+--------------------------------------------
+The design file must meet the following requirements:
+
+* **Unique headers**: Each sequence must have a unique sequence ID starting from :code:`>` to the first whitespace or newline.
+* **No special characters in headers**: Mapping tools create a reference dictionary and cannot handle all characters. Additionally, most databases (like SRA) have a restricted character set for headers.
+* **Unique sequences**: Sequences must be different in both sense and antisense directions. Otherwise, the mapper places the read to both IDs, and the barcode becomes ambiguous and is discarded. 
+
+When you allow min/max start/lengths for sequences (e.g., in BWA mapping), ensure that the smallest substring is unique across all other (sub)sequences. If you have antisense collisions and want to keep strand sensitivity, enable it using the option :code:`strand_sensitive: {enable: true}` in the config file (see the previous question).
 
 MPRAsnakeflow is not able to create a Conda environment
-    If you get a message like:
+--------------------------------------------------------
+If you encounter an error like:
 
-        Caused by: json.decoder.JSONDecodeError: Extra data: line 1 column 2785 (char 2784)#
+    Caused by: json.decoder.JSONDecodeError: Extra data: line 1 column 2785 (char 2784)#
 
-    Try to do the following steps:
+Try the following steps:
+
+1. Remove the incomplete metadata:
+
+    .. code-block:: bash
 
         rm -r .snakemake/metadata .snakemake/incomplete
 
-    Afterwards try MPRAsnakeflow again. If the above error still occurs, rerun after deleting the entire :code:`.snakemake` folder.
+2. Retry running MPRAsnakeflow. If the error persists, delete the entire :code:`.snakemake` folder and rerun:
+
+    .. code-block:: bash
+
+        rm -r .snakemake
 
 Can I use STARR-seq with MPRAsnakeflow?
-    No! Not yet ;-)
+---------------------------------------
+No, not yet ;-)
 
-The pipeline is giving an error **"BUG: Out of jobs ready to be started, but not all files built yet."** and won't run. How can I fix this?
-    Please update snakemake, as this error is highly likely to have occurred from snakemake internal issues.
+The pipeline is giving an error **"BUG: Out of jobs ready to be started, but not all files built yet."** How can I fix this?
+----------------------------------------------------------------------------------------------------------------------------
+This error is likely caused by internal issues in Snakemake. Please update Snakemake to the latest version to resolve this issue.

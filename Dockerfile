@@ -1,4 +1,4 @@
-ARG VERSION=0.2.0
+ARG VERSION=0.5.0
 
 FROM condaforge/miniforge3:latest
 LABEL io.github.snakemake.containerized="true"
@@ -154,6 +154,31 @@ COPY workflow/envs/cutadapt.yaml /conda-envs/a3e2fce7f2f6fdbe1aa97232e3def601/en
 RUN mkdir -p /conda-envs/b933cc1aa7c25db04635e7ec0e37f80e
 COPY workflow/envs/quarto.yaml /conda-envs/b933cc1aa7c25db04635e7ec0e37f80e/environment.yaml
 
+# Conda environment:
+#   source: workflow/envs/mpralib.yaml
+#   prefix: /conda-envs/f14db2daf3d94b49e39ea8fded7fe87e
+#   ---
+#   channels:
+#       - bioconda
+#       - conda-forge
+#   dependencies:
+#       - python
+#       - click
+#       - pip
+#       - pandas
+#       - numpy
+#       - biopython
+#       - matplotlib
+#       - scikit-learn
+#       - seaborn
+#       - scipy
+#       - anndata
+#       - pysam
+#       - scipy
+#       - pip:
+#           - mpralib==0.6.0
+RUN mkdir -p /conda-envs/1891509f8d9a8a89487739b14cd6dbef
+COPY workflow/envs/mpralib.yaml /conda-envs/1891509f8d9a8a89487739b14cd6dbef/environment.yaml
 
 
 # Step 2: Generate conda environments
@@ -175,6 +200,7 @@ RUN conda env create --no-default-packages --prefix /conda-envs/cb972f023533b03e
 RUN conda env create --no-default-packages --prefix /conda-envs/a4e1b935cbca52df9b6f192ff86c464c --file /conda-envs/a4e1b935cbca52df9b6f192ff86c464c/environment.yaml
 RUN conda env create --no-default-packages --prefix /conda-envs/b933cc1aa7c25db04635e7ec0e37f80e --file /conda-envs/b933cc1aa7c25db04635e7ec0e37f80e/environment.yaml
 RUN conda env create --no-default-packages --prefix /conda-envs/ae3e37bf43cbb30416a885168e10c552 --file /conda-envs/ae3e37bf43cbb30416a885168e10c552/environment.yaml
+RUN conda env create --no-default-packages --prefix /conda-envs/1891509f8d9a8a89487739b14cd6dbef --file /conda-envs/1891509f8d9a8a89487739b14cd6dbef/environment.yaml
 
 # cleanup when version changed
 ARG VERSION
