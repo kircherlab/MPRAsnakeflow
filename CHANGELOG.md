@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.5.0](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.7...v0.5.0) (2025-04-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* restructure folders and conda env import. Renaming of rules. Old SLURM ressoucres have to be updated
+
+### Features
+
+* IGVF qc metrics report ([3ec5012](https://github.com/kircherlab/MPRAsnakeflow/commit/3ec5012bec438a65da7e5cb15b1d39bfd6b6b0ec))
+* Quality metric json file (for IGVF) and included within QC report ([981baac](https://github.com/kircherlab/MPRAsnakeflow/commit/981baaca6ac62b46c374aef3c146c80a35940071))
+
+
+### Bug Fixes
+
+* mpralib environment file ([070da2a](https://github.com/kircherlab/MPRAsnakeflow/commit/070da2a4944d25ecfd7aee7b4cbbfa5cfec92b73))
+* using MPRAlib v0.6.1 ([4f45075](https://github.com/kircherlab/MPRAsnakeflow/commit/4f4507540f84a1133a1440c30175f47367911d58))
+
+
+### Code Refactoring
+
+* restructure folders and conda env import. Renaming of rules. Old SLURM ressoucres have to be updated ([f21cdca](https://github.com/kircherlab/MPRAsnakeflow/commit/f21cdcaf974f98d97a23c2a520a2d6862dd5c333))
+
 ## [0.4.7](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.6...v0.4.7) (2025-04-03)
 
 
