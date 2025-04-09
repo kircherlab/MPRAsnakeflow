@@ -177,8 +177,8 @@ COPY workflow/envs/quarto.yaml /conda-envs/b933cc1aa7c25db04635e7ec0e37f80e/envi
 #       - scipy
 #       - pip:
 #           - mpralib==0.6.0
-RUN mkdir -p /conda-envs/0b205424db8b1c401629640e0e9402a9
-COPY workflow/envs/mpralib.yaml /conda-envs/0b205424db8b1c401629640e0e9402a9/environment.yaml
+RUN mkdir -p /conda-envs/1891509f8d9a8a89487739b14cd6dbef
+COPY workflow/envs/mpralib.yaml /conda-envs/1891509f8d9a8a89487739b14cd6dbef/environment.yaml
 
 
 # Step 2: Generate conda environments
@@ -200,7 +200,7 @@ RUN conda env create --no-default-packages --prefix /conda-envs/cb972f023533b03e
 RUN conda env create --no-default-packages --prefix /conda-envs/a4e1b935cbca52df9b6f192ff86c464c --file /conda-envs/a4e1b935cbca52df9b6f192ff86c464c/environment.yaml
 RUN conda env create --no-default-packages --prefix /conda-envs/b933cc1aa7c25db04635e7ec0e37f80e --file /conda-envs/b933cc1aa7c25db04635e7ec0e37f80e/environment.yaml
 RUN conda env create --no-default-packages --prefix /conda-envs/ae3e37bf43cbb30416a885168e10c552 --file /conda-envs/ae3e37bf43cbb30416a885168e10c552/environment.yaml
-RUN conda env create --no-default-packages --prefix /conda-envs/0b205424db8b1c401629640e0e9402a9 --file /conda-envs/0b205424db8b1c401629640e0e9402a9/environment.yaml
+RUN conda env create --no-default-packages --prefix /conda-envs/1891509f8d9a8a89487739b14cd6dbef --file /conda-envs/1891509f8d9a8a89487739b14cd6dbef/environment.yaml
 
 # cleanup when version changed
 ARG VERSION

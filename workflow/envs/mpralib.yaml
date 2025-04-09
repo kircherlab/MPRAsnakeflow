@@ -3,18 +3,5 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - 'python>=3.8'
-  - pip
-  - click
-  - pandas
-  - numpy
   - 'conda-forge::biopython>=1.80'
-  - matplotlib
-  - scikit-learn
-  - seaborn
-  - scipy
-  - conda-forge::anndata
-  - pysam
-  - scipy
-  - pip:
-    - MPRAlib==0.6.1
+  - mpralib=0.6.1
