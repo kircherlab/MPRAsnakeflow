@@ -62,6 +62,10 @@ assignment_statistic_assignment:
   threads: 1
   queue: medium
   mem: 40G
+assignment_idx_bam:
+  time: "0-07:50"
+  threads: 3
+  mem: 20G
 ##############
 ### COUNTS ###
 ##############
@@ -86,6 +90,7 @@ counts_noUMI_create_BAM:
   mem: 12G
   queue: medium
 counts_filter_counts:
+  mem: 10G
   time: 0-02:00
   queue: medium
 counts_final_counts_samplerer:
