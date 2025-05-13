@@ -6,7 +6,6 @@
 ### Bug Fixes
 
 * channel order has to be correct for newer samtools ([d0ada2b](https://github.com/kircherlab/MPRAsnakeflow/commit/d0ada2b38170015867f6173e217bf057508e97d4))
-* channel order has to be correct for newer samtools ([e0cef63](https://github.com/kircherlab/MPRAsnakeflow/commit/e0cef63b28a5930e389fd1b5923acf221c6e0b34))
 
 ## [0.5.2](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.1...v0.5.2) (2025-05-13)
 
