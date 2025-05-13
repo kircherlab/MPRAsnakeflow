@@ -6,4 +6,4 @@ dependencies:
   - ngmerge=0.3
   - python
   - click
-  - htslib
+  - htslib==1.21

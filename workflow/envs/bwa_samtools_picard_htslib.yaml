@@ -4,6 +4,6 @@ channels:
   - conda-forge
 dependencies:
   - bwa
-  - samtools
+  - samtools==1.21
   - picard
-  - htslib
+  - htslib==1.21

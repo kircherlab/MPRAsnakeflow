@@ -4,5 +4,5 @@ channels:
   - conda-forge
 dependencies:
   - bbmap
-  - samtools
-  - htslib
+  - samtools==1.21
+  - htslib==1.21
