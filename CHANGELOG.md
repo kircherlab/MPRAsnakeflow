@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.2](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.1...v0.5.2) (2025-05-13)
+
+
+### Bug Fixes
+
+* set htslib and samtools version to 1.21 ([4e8d480](https://github.com/kircherlab/MPRAsnakeflow/commit/4e8d4804d68b15fb64c93a7b17c1636a17cf6d1d))
+* set htslib and samtools version to 1.21 to avoid ncurses lib clashes ([cb59bd4](https://github.com/kircherlab/MPRAsnakeflow/commit/cb59bd435b837b46775b412f883e38c7eec2ff0c))
+
 ## [0.5.1](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.0...v0.5.1) (2025-05-12)
 
 
