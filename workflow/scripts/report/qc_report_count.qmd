@@ -271,7 +271,7 @@ display(Image(f"{workdir}/{counts_per_oligo}"))
 display(Image(f"{workdir}/{counts_per_bc_dna}")) 
 ```
 
-# Number of counts per DNA barcode
+# Number of counts per RNA barcode
 ```{python}
 #| echo: false
 display(Image(f"{workdir}/{counts_per_bc_rna}")) 
