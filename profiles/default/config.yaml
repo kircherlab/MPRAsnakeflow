@@ -139,6 +139,9 @@ set-resources:
   ### Statistic ###
   #################
 
+  experiment_statistic_quality_metric:
+    mem: 10G
+
   ########################
   ### Statistic/counts ###
   ########################
