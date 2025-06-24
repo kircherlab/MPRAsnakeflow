@@ -30,7 +30,7 @@ rule assignment_mapping_exact:
     conda:
         getCondaEnv("default.yaml")
     input:
-        reads="results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
+        reads=lambda wc: getMappingRead(wc.assignment),
         reference="results/assignment/{assignment}/reference/reference_exact.fa",
     output:
         temp("results/assignment/{assignment}/BCs/barcodes_exact.{split}.tsv"),

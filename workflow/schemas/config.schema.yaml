@@ -156,6 +156,19 @@ properties:
               type: string
             minItems: 1
             uniqueItems: true
+          adapters:
+            type: object
+            properties:
+              3prime:
+                type: array
+                items:
+                  type: string
+                  pattern: ^[ATCG]+$
+              5prime:
+                type: array
+                items:
+                  type: string
+                  pattern: ^[ATCG]+$
           NGmerge:
             type: object
             properties:

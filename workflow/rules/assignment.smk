@@ -211,6 +211,72 @@ rule assignment_merge:
         """
 
 
+rule assignment_3prime_remove:
+    """
+    Remove 3' adapter sequence from the reads.
+    """
+    conda:
+        getCondaEnv("cutadapt.yaml")
+    threads: 1
+    input:
+        reads="results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
+    output:
+        trimmed_reads=temp(
+            "results/assignment/{assignment}/fastq/merge_split{split}.3prime.fastq.gz"
+        ),
+    params:
+        adapters=lambda wc: " ".join(
+            [
+                "-a %s" % adapter
+                for adapter in config["assignments"][wc.assignment]["adapters"][
+                    "3prime"
+                ]
+            ]
+        ),
+    log:
+        temp("results/logs/assignment/3prime_remove.{assignment}.{split}.log"),
+    shell:
+        """
+        cutadapt --cores {threads} {params.adapters} \
+        -o {output.trimmed_reads} <(zcat {input.reads}) &> {log}
+        """
+
+
+rule assignment_5prime_remove:
+    """
+    Remove 5' adapter sequence from the reads.
+    """
+    conda:
+        getCondaEnv("cutadapt.yaml")
+    threads: 1
+    input:
+        reads=lambda wc: (
+            "results/assignment/{assignment}/fastq/merge_split{split}.3prime.fastq.gz"
+            if has3PrimeAdapters(wc.assignment)
+            else "results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz"
+        ),
+    output:
+        trimmed_reads=temp(
+            "results/assignment/{assignment}/fastq/merge_split{split}.5prime.fastq.gz"
+        ),
+    params:
+        adapters=lambda wc: " ".join(
+            [
+                "-g %s" % adapter
+                for adapter in config["assignments"][wc.assignment]["adapters"][
+                    "5prime"
+                ]
+            ]
+        ),
+    log:
+        temp("results/logs/assignment/5prime_remove.{assignment}.{split}.log"),
+    shell:
+        """
+        cutadapt --cores {threads} {params.adapters} \
+        -o {output.trimmed_reads} <(zcat {input.reads}) &> {log}
+        """
+
+
 include: "assignment/mapping_exact.smk"
 include: "assignment/mapping_bwa.smk"
 include: "assignment/mapping_bbmap.smk"
