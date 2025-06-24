@@ -74,6 +74,14 @@ For each assignment you want to process, you must give it a name like :code:`exa
     List of reverse-read files in gzipped fastq format. The full or relative path to the files should be used. The same order in FW, BC, and REV is important.
 :BC:
     List of index-read files in gzipped fastq format. The full or relative path to the files should be used. The same order in FW, BC, and REV is important.
+:adapters:
+    (Optional) List of adapter sequences to trim after merging the reads. Can be specified with:
+
+    :3prime:
+        (Optional) List of adapter sequence at the 3' end that should be removed.
+    :5prime:
+        (Optional) List of adapter sequence at the 5' end that should be removed.
+
 :NGmerge:
     (Optional) Options for NGmerge. NGmerge is used to merge FW and REV reads. The following options are possible (we recommend using the default values):
 

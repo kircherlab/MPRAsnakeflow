@@ -31,7 +31,7 @@ rule assignment_mapping_bwa:
         getCondaEnv("bwa_samtools_picard_htslib.yaml")
     threads: 1
     input:
-        reads="results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
+        reads=lambda wc: getMappingRead(wc.assignment),
         reference="results/assignment/{assignment}/reference/reference.fa",
         bwa_index=expand(
             "results/assignment/{{assignment}}/reference/reference.fa.{ext}",
