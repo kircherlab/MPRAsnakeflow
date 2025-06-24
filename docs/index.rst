@@ -145,6 +145,7 @@ Indices and Tables
     assignment_example1
     count_example1
     combined_example1
+    4_examples/plasmid_example
 
 .. toctree::
     :caption: Tips & Tricks
