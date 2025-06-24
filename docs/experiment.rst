@@ -105,40 +105,98 @@ Usefull arguments:
 Rules
 ---------
 
-Rules run by snakemake in the assignment utility. Some rules will be run only if certain options used and are marked below.
+Rules run by snakemake in the experiment workflow. Some rules will be run only if certain options
 
-create_BAM or create_BAM_noUMI (if no UMI sequence)
-  creates a bamfile of barcode and UMI sequences
-
-raw_counts
-  creates a table of counts for each barcode (where UMIs, if present, are deduplicated)
-  
-filter_counts
-  Remove barcodes that are not the appropriate length
-
-final_counts
-  Record overrepresended UMIs and final count table
-
-dna_rna_merge_counts or dna_rna_mpranalyze_merge
-  Merge RNA/DNA count matrices per barcode
-
-final_merge (MPRAnalyze option only)
-  Merge all DNA/RNA counts into one file
-  
-final_label (MPRAnalyze option only)
-  Label the barcodes 
-  
-generate_mpranalyze_inputs (MPRAnalyze option only)
-  Generate inputs for MPRAnalyze, counts tables and annotation tables for rna/dna 
-  
-dna_rna_merge
-  Merge each DNA and RNA file label with sequence and insert and normalize
-  
-calc_correlations
-  Calculate correlations between Replicates
-  
-make_master_tables
-  Create tables of each CRS normalized across replicates
+experiment_assigned_counts_assignBarcodes 
+  Assign RNA and DNA barcodes seperately to make the statistic for assigned
+experiment_assigned_counts_combine_replicates
+  Combine replicates of master table by summing counts up and using also the average.
+experiment_assigned_counts_combine_replicates_barcode_output
+  Combine replictes of assigned barcode counts into one file."""
+experiment_counts_umi_create_BAM
+  Create a BAM file from FASTQ input, merge FW and REV read and save UMI in XI flag.
+experiment_assigned_counts_copy_final_all_files
+  Will copy final files to the main folder so that it is creal which files to use.
+experiment_assigned_counts_copy_final_thresh_files
+  Will copy final files to the main folder so that it is creal which files to use.
+experiment_assigned_counts_dna_rna_merge
+  Assign merged RNA/DNA barcodes. Filter BC depending on the min_counts option.
+experiment_assigned_counts_filterAssignment
+  Use only unique assignments and do sampling if needed.
+experiment_assigned_counts_make_master_tables
+  Final master table with all replicates combined. With and without threshold.
+experiment_counts_demultiplex_BAM_umi
+  Demultiplexing the data and create demultiplexed bam files per condition.
+experiment_counts_demultiplex_aggregate
+  Aggregate the demultiplexed bam files per condition.
+experiment_counts_demultiplex_create_index
+  Create the demultiplexing index file for the experiment.
+experiment_counts_demultiplex_mergeTrimReads_BAM_umi
+  Merge and trim reads in demultiplexed bam files.
+experiment_counts_dna_rna_merge_counts
+  Merge DNA and RNA counts together. Is done in two ways. First no not allow zeros in DNA or RNA BCs (RNA and DNA min_counts not zero). Second with zeros, so a BC can be defined only in the DNA or RNA (RNA or DNA min_counts zero)
+experiment_counts_filter_counts
+  Filter the counts to BCs only of the correct length (defined in the config file)
+experiment_counts_final_counts
+  Counting BCs. Discarding PCR duplicates (taking BCxUMI only one time)
+experiment_counts_final_counts_sampler
+  Creates full + new distribution DNA files
+experiment_counts_noUMI_create_BAM
+  Create a BAM file from FASTQ input, merge FW and REV read and save UMI in XI flag.
+experiment_counts_noUMI_raw_counts
+  Counting BCsxUMIs from the BAM files.
+experiment_counts_onlyFWUMI_raw_counts
+  Getting the BCs and UMIs from the reads using fixed length.
+experiment_counts_onlyFW_raw_counts_by_cutadapt
+  Getting the BCs from the reads using cutadapt.
+experiment_counts_onlyFW_raw_counts_by_length
+  Getting the BCs from the reads using fixed length.
+experiment_counts_umi_raw_counts
+  Counting BCsxUMIs from the BAM files.
+experiment_statistic_assigned_counts_combine_BC_assignment_stats
+  Combined assinged counts statistic per condition (DNA and aRNA not merged)
+experiment_statistic_assigned_counts_combine_BC_assignment_stats_helper
+  Combine assigned counts statistic per replicate and modality (DNA and RNA not merged)
+experiment_statistic_assigned_counts_combine_stats_dna_rna_merge
+  Combine assigned counts statistic per replicate (DNA and RNA merged)
+experiment_statistic_assigned_counts_combine_stats_dna_rna_merge_all
+  Combine assigned counts statistic per condition (DNA and RNA merged)
+experiment_statistic_bc_overlap_combine_assigned_counts
+  Combine overlap BC and count statistic into one file (assigned counts).
+experiment_statistic_bc_overlap_combine_counts
+  Combine overlap BC and count statistic into one file (raw counts).
+experiment_statistic_bc_overlap_run
+  Get overlap of counts and barcodes between replicates.
+experiment_statistic_correlation_bc_counts
+  Calculate the correlation of the raw counts for each condition across replicates.
+experiment_statistic_correlation_bc_counts_hist
+  Generate histogram and boxplots of the raw counts for each condition across replicates.
+experiment_statistic_correlation_calculate
+  Calculate the correlation of oligos for each condition across replicates.
+experiment_statistic_correlation_combine_bc_assigned
+  Combine the correlation of the assigned counts for each condition across replicates into one table.
+experiment_statistic_correlation_combine_bc_raw
+  Combine the correlation of the raw counts for each condition across replicates into one table.
+experiment_statistic_correlation_combine_oligo
+  Combine the correlation of oligos for each condition across replicates into one table.
+experiment_statistic_correlation_hist_box_plots
+  Generate histogram and boxplots of the oligos for each condition across replicates.
+experiment_statistic_counts_BC_in_RNA_DNA
+  Count the number of barcodes shared between RNA and DNA per condition and replicate.
+experiment_statistic_counts_BC_in_RNA_DNA_merge
+  Merge the shared barcodes statistic of all replicates and conditions into one table.
+experiment_statistic_counts_barcode_base_composition
+  Count the nucleotide composition of the barcodes per condition, replicate and DNA/RNA.
+experiment_statistic_counts_final
+  Combine the final count statistic of all replicates and conditions into one table.
+experiment_statistic_counts_frequent_umis
+  Count the 10 most frequent UMIs per condition, replicate and DNA/RNA.
+experiment_statistic_counts_stats_merge
+  Merge the count statistic of all replicates and conditions into one table.
+experiment_statistic_counts_table
+  Count statistic of barcodes and UMIs per condition, replicate and DNA/RNA.
+experiment_statistic_quality_metric
+  Quality metrics of the assignment run
 
   
 Output

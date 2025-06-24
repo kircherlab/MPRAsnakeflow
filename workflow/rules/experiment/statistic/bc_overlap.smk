@@ -3,9 +3,12 @@
 ###################################
 
 
-rule statistic_bc_overlap_run:
+rule experiment_statistic_bc_overlap_run:
+    """
+    Get overlap of counts and barcodes between replicates.
+    """
     conda:
-        "../../envs/r.yaml"
+        getCondaEnv("r.yaml")
     input:
         files=lambda wc: expand(
             getFinalCounts(
@@ -39,7 +42,7 @@ rule statistic_bc_overlap_run:
         ),
     log:
         temp(
-            "results/logs/statistic/bc_overlap/run.{project}.{condition}.{type}.{config}.{raw_or_assigned}.log"
+            "results/logs/experiment/statistic/bc_overlap/run.{project}.{condition}.{type}.{config}.{raw_or_assigned}.log"
         ),
     shell:
         """
@@ -50,9 +53,12 @@ rule statistic_bc_overlap_run:
         """
 
 
-rule statistic_bc_overlap_combine_counts:
+rule experiment_statistic_bc_overlap_combine_counts:
+    """
+    Combine overlap BC and count statistic into one file (raw counts).
+    """
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         statistic=lambda wc: expand(
             "results/experiments/{{project}}/statistic/bc_overlap/counts/overlapBCandCounts.{condition}_{type}.{config}.tsv",
@@ -63,7 +69,7 @@ rule statistic_bc_overlap_combine_counts:
     output:
         report(
             "results/experiments/{project}/statistic/bc_overlap.counts.{config}.tsv",
-            caption="../../report/bc_overlap.rst",
+            caption="../../../report/bc_overlap.rst",
             category="{project}",
             subcategory="Barcodes",
             labels={
@@ -73,7 +79,9 @@ rule statistic_bc_overlap_combine_counts:
             },
         ),
     log:
-        temp("results/logs/statistic/bc_overlap/combine_counts.{project}.{config}.log"),
+        temp(
+            "results/logs/experiment/statistic/bc_overlap/combine_counts.{project}.{config}.log"
+        ),
     shell:
         """
         set +o pipefail;
@@ -86,9 +94,12 @@ rule statistic_bc_overlap_combine_counts:
         """
 
 
-rule statistic_bc_overlap_combine_assigned_counts:
+rule experiment_statistic_bc_overlap_combine_assigned_counts:
+    """
+    Combine overlap BC and count statistic into one file (assigned counts).
+    """
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         statistic=lambda wc: expand(
             "results/experiments/{{project}}/statistic/bc_overlap/assigned_counts/{{assignment}}/overlapBCandCounts.{condition}_{type}.{{config}}.tsv",
@@ -98,7 +109,7 @@ rule statistic_bc_overlap_combine_assigned_counts:
     output:
         report(
             "results/experiments/{project}/statistic/bc_overlap.assigned_counts.{config}.{assignment}.tsv",
-            caption="../../report/bc_overlap_assignment.rst",
+            caption="../../../report/bc_overlap_assignment.rst",
             category="{project}",
             subcategory="Barcodes",
             labels={
@@ -109,7 +120,7 @@ rule statistic_bc_overlap_combine_assigned_counts:
         ),
     log:
         temp(
-            "results/logs/statistic/bc_overlap/combine_assigned_counts.{project}.{config}.{assignment}.log"
+            "results/logs/experiment/statistic/bc_overlap/combine_assigned_counts.{project}.{config}.{assignment}.log"
         ),
     shell:
         """

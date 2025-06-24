@@ -277,7 +277,7 @@
         <mxCell id="ftRczP798_NXrZC8GDmf-66" value="All observed barcodes&lt;br&gt;barcodes_incl_other.sorted.tsv.gz" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.document2;whiteSpace=wrap;size=0.25;fontFamily=Helvetica;fillColor=none;" parent="ftRczP798_NXrZC8GDmf-70" vertex="1">
           <mxGeometry x="256" y="69" width="200" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="ftRczP798_NXrZC8GDmf-67" value="Mapping of barcodes&lt;br&gt;filtered: assignment_barcodes.{assignment_config}.tsv.gz&lt;div&gt;all:assignment_barcodes_with_ambigous.{assignment_config}.tsv.gz&amp;nbsp;&lt;/div&gt;" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.document2;whiteSpace=wrap;size=0.25;fontFamily=Helvetica;fillColor=none;" parent="ftRczP798_NXrZC8GDmf-70" vertex="1">
+        <mxCell id="ftRczP798_NXrZC8GDmf-67" value="Mapping of barcodes&lt;br&gt;filtered: assignment_barcodes.{assignment_config}.tsv.gz&lt;div&gt;all:assignment_barcodes_with_ambiguous.{assignment_config}.tsv.gz&amp;nbsp;&lt;/div&gt;" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.document2;whiteSpace=wrap;size=0.25;fontFamily=Helvetica;fillColor=none;" parent="ftRczP798_NXrZC8GDmf-70" vertex="1">
           <mxGeometry x="46" y="132" width="410" height="102" as="geometry" />
         </mxCell>
         <mxCell id="0Ggyt1odNBfqqmtyiPcW-59" value="QC report&lt;br&gt;qc_report.{assignment_config}.html" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.document2;whiteSpace=wrap;size=0.25;fontFamily=Helvetica;fillColor=none;" vertex="1" parent="ftRczP798_NXrZC8GDmf-70">

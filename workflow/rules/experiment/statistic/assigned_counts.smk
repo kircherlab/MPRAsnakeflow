@@ -4,9 +4,12 @@
 ####################################################
 
 
-rule statistic_assigned_counts_combine_BC_assignment_stats_helper:
+rule experiment_statistic_assigned_counts_combine_BC_assignment_stats_helper:
+    """
+    Combine assigned counts statistic per replicate and modality (DNA and RNA not merged)
+    """
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         stats=lambda wc: expand(
             "results/experiments/{{project}}/statistic/assigned_counts/{{assignment}}/{{condition}}_{replicate}_{type}_{{config}}.statistic.tsv.gz",
@@ -19,7 +22,7 @@ rule statistic_assigned_counts_combine_BC_assignment_stats_helper:
         ),
     log:
         temp(
-            "results/logs/statistic/assigned_counts/combine_BC_assignment_stats_helper.{project}.{condition}.{config}.{assignment}.log"
+            "results/logs/experiment/statistic/assigned_counts/combine_BC_assignment_stats_helper.{project}.{condition}.{config}.{assignment}.log"
         ),
     shell:
         """
@@ -33,9 +36,12 @@ rule statistic_assigned_counts_combine_BC_assignment_stats_helper:
         """
 
 
-rule statistic_assigned_counts_combine_BC_assignment_stats:
+rule experiment_statistic_assigned_counts_combine_BC_assignment_stats:
+    """
+    Combined assinged counts statistic per condition (DNA and aRNA not merged)
+    """
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         stats=lambda wc: expand(
             "results/experiments/{{project}}/statistic/assigned_counts/{{assignment}}/helper.{condition}.{{config}}.statistic.tsv.gz",
@@ -44,7 +50,7 @@ rule statistic_assigned_counts_combine_BC_assignment_stats:
     output:
         report(
             "results/experiments/{project}/statistic/statistic_assigned_counts_single_{assignment}_{config}.tsv",
-            caption="../../report/assigned_counts_beforeMerge.rst",
+            caption="../../../report/assigned_counts_beforeMerge.rst",
             category="{project}",
             subcategory="Assignment",
             labels={
@@ -56,7 +62,7 @@ rule statistic_assigned_counts_combine_BC_assignment_stats:
         ),
     log:
         temp(
-            "results/logs/statistic/assigned_counts/combine_BC_assignment_stats.{project}.{assignment}_{config}.log"
+            "results/logs/experiment/statistic/assigned_counts/combine_BC_assignment_stats.{project}.{assignment}_{config}.log"
         ),
     shell:
         """
@@ -76,9 +82,12 @@ rule statistic_assigned_counts_combine_BC_assignment_stats:
 ###################################################
 
 
-rule statistic_assigned_counts_combine_stats_dna_rna_merge:
+rule experiment_statistic_assigned_counts_combine_stats_dna_rna_merge:
+    """
+    Combine assigned counts statistic per replicate (DNA and RNA merged)
+    """
     conda:
-        "../../envs/python3.yaml"
+        getCondaEnv("python3.yaml")
     input:
         files=lambda wc: expand(
             "results/experiments/{{project}}/statistic/assigned_counts/{{assignment}}/{{config}}/{{condition}}_{replicate}_merged_assigned_counts.statistic.tsv.gz",
@@ -98,7 +107,7 @@ rule statistic_assigned_counts_combine_stats_dna_rna_merge:
         ),
     log:
         temp(
-            "results/logs/statistic/assigned_counts/combine_stats_dna_rna_merge.{project}.{condition}.{config}.{assignment}.log"
+            "results/logs/experiment/statistic/assigned_counts/combine_stats_dna_rna_merge.{project}.{condition}.{config}.{assignment}.log"
         ),
     shell:
         """
@@ -109,9 +118,12 @@ rule statistic_assigned_counts_combine_stats_dna_rna_merge:
         """
 
 
-rule statistic_assigned_counts_combine_stats_dna_rna_merge_all:
+rule experiment_statistic_assigned_counts_combine_stats_dna_rna_merge_all:
+    """
+    Combine assigned counts statistic per condition (DNA and RNA merged)
+    """
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         files=lambda wc: expand(
             "results/experiments/{{project}}/statistic/assigned_counts/{{assignment}}/{{config}}/combined/{condition}_merged_assigned_counts.statistic.tsv.gz",
@@ -120,7 +132,7 @@ rule statistic_assigned_counts_combine_stats_dna_rna_merge_all:
     output:
         report(
             "results/experiments/{project}/statistic/statistic_assigned_counts_merged_{assignment}_{config}.tsv",
-            caption="../../report/assigned_counts_afterMerge.rst",
+            caption="../../../report/assigned_counts_afterMerge.rst",
             category="{project}",
             subcategory="Assignment",
             labels={
@@ -132,7 +144,7 @@ rule statistic_assigned_counts_combine_stats_dna_rna_merge_all:
         ),
     log:
         temp(
-            "results/logs/statistic/assigned_counts/combine_stats_dna_rna_merge_all.{project}.{config}.{assignment}.log"
+            "results/logs/experiment/statistic/assigned_counts/combine_stats_dna_rna_merge_all.{project}.{config}.{assignment}.log"
         ),
     shell:
         """

@@ -5,12 +5,12 @@
 ### START COUNTING ####
 
 
-rule counts_onlyFW_raw_counts_by_length:
+rule experiment_counts_onlyFW_raw_counts_by_length:
     """
     Getting the BCs from the reads using fixed length.
     """
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         lambda wc: getFW(wc.project, wc.condition, wc.replicate, wc.type),
     output:
@@ -19,7 +19,7 @@ rule counts_onlyFW_raw_counts_by_length:
         bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
     log:
         temp(
-            "results/logs/counts/onlyFW/onlyFW_raw_counts_by_length.{project}.{condition}.{replicate}.{type}.log"
+            "results/logs/experiment/counts/onlyFW/onlyFW_raw_counts_by_length.{project}.{condition}.{replicate}.{type}.log"
         ),
     shell:
         """
@@ -30,12 +30,12 @@ rule counts_onlyFW_raw_counts_by_length:
         """
 
 
-rule counts_onlyFW_raw_counts_by_cutadapt:
+rule experiment_counts_onlyFW_raw_counts_by_cutadapt:
     """
     Getting the BCs from the reads using cutadapt.
     """
     conda:
-        "../../envs/cutadapt.yaml"
+        getCondaEnv("cutadapt.yaml")
     threads: 1
     input:
         lambda wc: getFW(wc.project, wc.condition, wc.replicate, wc.type),
@@ -45,7 +45,7 @@ rule counts_onlyFW_raw_counts_by_cutadapt:
         adapter=lambda wc: config["experiments"][wc.project]["adapter"],
     log:
         temp(
-            "results/logs/counts/onlyFW/onlyFW_raw_counts_by_cutadapt.{project}.{condition}.{replicate}.{type}.log"
+            "results/logs/experiment/counts/onlyFW/onlyFW_raw_counts_by_cutadapt.{project}.{condition}.{replicate}.{type}.log"
         ),
     shell:
         """

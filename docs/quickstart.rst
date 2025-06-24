@@ -1,60 +1,63 @@
 .. _Getting started:
 
-
 =====================
-Getting started
+Getting Started
 =====================
 
-We highly recommend as first start the MPRAsnakeflow :ref:`Tutorial` or the :ref:`Assignment example` and :ref:`Count example` examples. Here we provide a quick overview what you need to start the workflow.
+We highly recommend starting with the MPRAsnakeflow :ref:`Tutorial` or the :ref:`Assignment example` and :ref:`Count example` examples. Below, we provide a quick overview of what you need to start the workflow.
 
-MPRAsnakeflow exoists of two subworkflows, :ref:`Assignment` and :ref:`Experiment`. This quickstart shows the configuration for both and you have to leave out the respective part for if you only want to run one of them.
+MPRAsnakeflow consists of two subworkflows: :ref:`Assignment` and :ref:`Experiment`. This quickstart shows the configuration for both. If you only want to run one of them, leave out the respective part.
 
-1. **Experiment workflow only:** Create an :code:`experiment.csv` in the format below, including the header. 
-   `DNA_BC_F` or `RNA_BC_F` is the name of the gzipped fastq of the forward read of the DNA or RNA from the defined condition and replicate.
-   `DNA_UMI` or `RNA_UMI` is the corresponding index read with UMIs (excluding sample barcodes), and 
-   `DNA_BC_R` or `RNA_BC_R` of the reverse read.
-   
-   Multiple fastq files can be used for each column by separating them with :code:`;`.
+1. **Experiment Workflow Only:** Create an :code:`experiment.csv` file in the format below, including the header. 
+   - `DNA_BC_F` or `RNA_BC_F`: The name of the gzipped FASTQ file of the forward read of the DNA or RNA from the defined condition and replicate.
+   - `DNA_UMI` or `RNA_UMI`: The corresponding index read with UMIs (excluding sample barcodes).
+   - `DNA_BC_R` or `RNA_BC_R`: The reverse read.
 
-   Right now a UMI has to be used. If you want to use MPRAsnakeflow without a UMI please switch to MPRAflow or contact us.
+   Multiple FASTQ files can be used for each column by separating them with :code:`;`.
 
-   Here is an example of an :code:`experiment.csv` file and it can be downloaded :download:`experiment.csv <../resources/example_experiment.csv>`:
+   **Note:** Currently, a UMI is required. If you want to use MPRAsnakeflow without a UMI, please switch to MPRAflow or contact us.
 
-  .. csv-table:: experiment.csv
-    :file: ../resources/example_experiment.csv
-    :widths: 5, 2, 25, 25, 25, 25, 25, 25
-    :header-rows: 1
+   Here is an example of an :code:`experiment.csv` file, which can be downloaded here: :download:`experiment.csv <../resources/example_experiment.csv>`.
 
-2. **Experiment workflow only:** If you would like each designed sequence to be coloured based on different user-specified categories, such as `positive control`, `negative control`, `shuffled control`, and `putative enhancer`. To assess the overall quality, you can create a ``label.tsv`` in the format below that maps the name to the category as shown here:
+   .. csv-table:: experiment.csv
+      :file: ../resources/example_experiment.csv
+      :widths: 5, 2, 25, 25, 25, 25, 25, 25
+      :header-rows: 1
 
-  .. code-block:: text
+2. **Experiment Workflow Only:** If you would like each designed sequence to be colored based on different user-specified categories (e.g., `positive control`, `negative control`, `shuffled control`, `putative enhancer`), you can create a :code:`label.tsv` file in the format below. This file maps the name to the category to assess the overall quality:
 
-     oligo_name_1 label1
-     oligo_name_2 label1
-     oligo_name_3 label2
+   .. code-block:: text
 
-  The `oligo_name_X` must exactly match the `header` in the design FASTA file.
+      oligo_name_1 label1
+      oligo_name_2 label1
+      oligo_name_3 label2
 
-3. Set up the config file
+   The `oligo_name_X` must exactly match the `header` in the design FASTA file.
 
-The config file is the heart of MPRAsnakflow. Here different runs can be configured. We recommend using one config file per MPRA experiment or MPRA project. But in theory, many different experiments can be configured in only one file. It is divided into :code:`version` (used MPRAsnakeflow version), :code:`assignments` (assigment workflow), and :code:`experiments` (count workflow).
+3. **Set Up the Config File:**
 
-See :ref:`Config` for more details about the config file. Here is an example running only the count experiments and using a provided assignment file.
+   The config file is the heart of MPRAsnakeflow. Here, different runs can be configured. We recommend using one config file per MPRA experiment or MPRA project. However, in theory, many different experiments can be configured in a single file. The config file is divided into:
+   - :code:`version`: Specifies the MPRAsnakeflow version used.
+   - :code:`assignments`: Configures the assignment workflow.
+   - :code:`experiments`: Configures the count workflow.
 
-.. include:: ../config/example_config.yaml
-   :code: yaml
+   See :ref:`Config` for more details about the config file. Below is an example of running only the count experiments and using a provided assignment file:
 
-4. Run MPRAsnakeflow
+   .. include:: ../config/example_config.yaml
+      :code: yaml
 
-  .. code-block:: bash
+4. **Run MPRAsnakeflow:**
 
-     conda activate snakemake
-     snakemake --software-deployment-method conda --configfile config/example_config.yaml -p --cores 4
+   Use the following command to run the workflow:
 
-  .. note:: This will run in local mode using 4 cores. Please submit this command to your cluster's queue if you would like to run a highly parallelized version.
+   .. code-block:: bash
 
-  Be sure that the files, :code:`experiment.csv` and the :code:`example_config.yaml` are correct. All fastq files for the count/experiment part must be in the same folder given by the :code:`data_folder` option. Please specify your barcode length and umi-length (if available) with :code:`bc_length` and :code:`umi_length`.
+      conda activate snakemake
+      snakemake --software-deployment-method conda --configfile config/example_config.yaml -p --cores 4
 
-  The assignment files generated by the workflow, are named: :code:`assignment_barcodes.<config>.tsv.gz` and can be found in the :code:`results/assignment/<assignment>/` folder.
+   .. note:: This will run in local mode using 4 cores. Please submit this command to your cluster's queue if you would like to run a highly parallelized version.
 
-  The count files generated by the experiment workflow, are named: :code:`<condition>_<replicate>_merged_assigned_counts.tsv.gz` and can be found in the :code:`results/experiments/<project>/assigned_counts/<assignment>/<config>/` folder.
+   Ensure that the files :code:`experiment.csv` and :code:`example_config.yaml` are correct. All FASTQ files for the count/experiment part must be in the same folder specified by the :code:`data_folder` option. Please specify your barcode length and UMI length (if available) with :code:`bc_length` and :code:`umi_length`.
+
+   - The assignment files generated by the workflow are named :code:`assignment_barcodes.<config>.tsv.gz` and can be found in the :code:`results/assignment/<assignment>/` folder.
+   - The count files generated by the experiment workflow are named :code:`<condition>_<replicate>_merged_assigned_counts.tsv.gz` and can be found in the :code:`results/experiments/<project>/assigned_counts/<assignment>/<config>/` folder.

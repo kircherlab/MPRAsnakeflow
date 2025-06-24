@@ -6,12 +6,12 @@
 ### Create_BAM_umi without demultiplexing ###
 
 
-rule counts_onlyFWUMI_raw_counts:
+rule experiment_counts_onlyFWUMI_raw_counts:
     """
     Getting the BCs and UMIs from the reads using fixed length.
     """
     conda:
-        "../../envs/default.yaml"
+        getCondaEnv("default.yaml")
     input:
         fw_fastq=lambda wc: getFW(wc.project, wc.condition, wc.replicate, wc.type),
         umi_fastq=lambda wc: getUMI(wc.project, wc.condition, wc.replicate, wc.type),
@@ -21,7 +21,7 @@ rule counts_onlyFWUMI_raw_counts:
         umi_length=lambda wc: config["experiments"][wc.project]["umi_length"],
     log:
         temp(
-            "results/logs/counts/onlyFW/onlyFWUMI_raw_counts_by_length.{project}.{condition}.{replicate}.{type}.log"
+            "results/logs/experiment/counts/onlyFW/onlyFWUMI_raw_counts_by_length.{project}.{condition}.{replicate}.{type}.log"
         ),
     shell:
         """
