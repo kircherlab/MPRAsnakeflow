@@ -13,7 +13,8 @@ Fastq Files
 -----------
 - 2-3 Fastq files from library association sequencing
 - Candidate regulatory sequence (CRS) sequencing, forward and reverse read (paired-end)
-- (optional) Index read with barcode. The barcode (BC) can also be present at the beginning of the forward read followed by a linker.
+- (Optional) Index read with barcode (see read structure figure, Panel A). The barcode (BC) can also be present at the beginning of the forward read followed by a linker (Panel B).
+- (Optional) Adapter trimming from the single end read that should contains the sequenced oligo (provided by a single forward read or merged between forward and reverse reads). It is highly recommended that final processed read has the same length as the designed oligos and contain only oligo information.
 
 Design File
 -----------
