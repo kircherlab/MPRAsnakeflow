@@ -74,7 +74,7 @@ def getMappingRead(assignment):
     """
     Return the final reads for mapping after joining, maybe after adapter removal.
     """
-    if has5PrimeAdapters(asssignment):
+    if has5PrimeAdapters(assignment):
         return (
             "results/assignment/{assignment}/fastq/merge_split{split}.5prime.fastq.gz"
         )
