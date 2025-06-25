@@ -3,9 +3,9 @@
 .. role:: bash(code)
    :language: bash
 
-================================
-Plasmid based experiment example
-================================
+===========================
+ENCODE data (Plasmid based)
+===========================
 
 This example runs the assignment and experiment workflow on data from Ryan Tewhey's lab, available via the ENCODE portal. We use the A549 experiment data published in the article `Gosai SJ, Castro RI, Fuentes N et al. Machine-guided design of cell-type-targeting cis-regulatory elements. Nature. 2024. <https://doi.org/10.1038/s41586-024-08070-z>`_. 
 
@@ -307,11 +307,11 @@ You should see a list of rules that will be executed. Here is the summary:
     total                                                                        307
 
 
-When dry-run does not give any errors we will run the workflow. We use a machine with 30 threads/cores to run the workflow. Therefore :code:`split_number` is set to 30 to parallelize the workflow. Also we are using 10 threads for mapping (bbmap). But snakemake takes care that no more than 30 threads are used.
+When dry-run does not give any errors we will run the workflow. We use a machine with 30 threads/cores to run the workflow and 60GB memory. Therefore :code:`split_number` is set to 30 to parallelize the workflow. Also we are using 10 threads for mapping (bbmap). But snakemake takes care that no more than 30 threads are used.
 
 .. code-block:: bash
 
-    snakemake -c 30 --sdm conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile config.yaml -q --set-threads assignment_mapping_bbmap=10 --resources mem_mb=50000
+    snakemake -c 30 --sdm conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile config.yaml -q --set-threads assignment_mapping_bbmap=10 --resources mem_mb=60000
 
 
 .. note:: Please modify your code when running in a cluster environment. We have an example SLURM profile within the MPRAsnakeflow repository under :code:`profiles/default/config.yaml`. You can use it in snakemake with :code:`--workflow-profile $PIPELINE/profiles/default`. But adapt your before the :code:`slurm_partition`
