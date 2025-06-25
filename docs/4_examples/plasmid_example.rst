@@ -174,7 +174,7 @@ Create config files
 
     cat << 'EOF' >  config.yaml
     ---
-    version: "0.6.0"
+    version: "0.5.4"
     assignments:
         ENCFF074MMOAssignment:
             bc_length: 20

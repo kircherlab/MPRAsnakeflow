@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.4](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.3...v0.5.4) (2025-06-25)
+
+
+### Features
+
+* 5' and 3' adapter removal option using cutadapt ([#207](https://github.com/kircherlab/MPRAsnakeflow/issues/207)) ([a36c023](https://github.com/kircherlab/MPRAsnakeflow/commit/a36c0239e5015e2868e9fe729758a8d18eb357ad))
+
+
+### Bug Fixes
+
+* qname (read name) length cannot be longer than 255 characters ([#206](https://github.com/kircherlab/MPRAsnakeflow/issues/206)) ([46fe287](https://github.com/kircherlab/MPRAsnakeflow/commit/46fe287815777ca88a0e08607a205aba0bd7251e))
+
 ## [0.5.3](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.2...v0.5.3) (2025-05-13)
 
 
