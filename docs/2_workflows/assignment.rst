@@ -4,7 +4,7 @@
 Assignment
 =====================
 
-.. image:: MPRAsnakeflow_assignment_overview.png
+.. image:: ../MPRAsnakeflow_assignment_overview.png
 
 Input Files
 ===============
@@ -40,22 +40,22 @@ Multiple mapping strategies are implemented to find the corresponding CRS sequen
 
 Example of an assignment file using bbmap and the standard filtering (we recommend using bbmap as the default):
 
-.. literalinclude:: ../config/example_assignment_bbmap.yaml
+.. literalinclude:: ../../config/example_assignment_bbmap.yaml
    :language: yaml
 
 Example of an assignment file using bwa and the standard filtering:
 
-.. literalinclude:: ../config/example_assignment_bwa.yaml
+.. literalinclude:: ../../config/example_assignment_bwa.yaml
    :language: yaml
 
 Example of an assignment file using exact matches with non-default filtering of barcodes:
 
-.. literalinclude:: ../config/example_assignment_exact_lazy.yaml
+.. literalinclude:: ../../config/example_assignment_exact_lazy.yaml
    :language: yaml
 
 Example of an assignment file using exact matches and read 1 with BC, linker, and oligo (no separate BC index read):
 
-.. literalinclude:: ../config/example_assignment_exact_linker.yaml
+.. literalinclude:: ../../config/example_assignment_exact_linker.yaml
    :language: yaml
 
 If you want to use the strand sensitivity option (e.g., testing enhancers in both directions), you can add the following to the config file: :code:`strand_sensitive: {enable: true}`. Otherwise, MPRAsnakeflow will give you an error because it cannot handle the same sequences in both sense and antisense directions. This is an issue with the mappers because they do not consider the strand and will always call your read ambiguous due to multiple matches.

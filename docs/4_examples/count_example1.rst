@@ -127,7 +127,7 @@ Now we have everything ready to run the count workflow of MPRAsnakeflow. Run the
 
 First, configure the config file and save it to the :code:`count_basic` folder. The config file is a simple text file with the following content:
 
-.. literalinclude:: ../resources/count_basic/config.yml
+.. literalinclude:: ../../resources/count_basic/config.yml
    :language: yaml
 
 Perform a dry-run using Snakemake's :code:`-n` option:

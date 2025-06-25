@@ -98,7 +98,7 @@ Now we have everything at hand to run the count MPRAsnakeflow pipeline. We will 
 
 First we have to configure the config file and save it to the :code:`assoc_basic` folder. The config file is a simple text file with the following content:
 
-.. literalinclude:: ../resources/assoc_basic/config.yml
+.. literalinclude:: ../../resources/assoc_basic/config.yml
    :language: yaml
 
 

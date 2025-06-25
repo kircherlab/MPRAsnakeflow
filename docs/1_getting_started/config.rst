@@ -4,13 +4,13 @@
 Config File
 =====================
 
-The config file is a YAML file that contains the configuration. Different runs can be configured. We recommend using one config file per MPRA experiment or MPRA project. However, in theory, many different experiments can be configured in a single file. It is divided into :code:`version` (version of MPRAsnakeflow used), :code:`assignments` (assignment workflow), and :code:`experiments` (count workflow). This is a full example file with default configurations: :download:`config/example_config.yaml <../config/example_config.yaml>`.
+The config file is a YAML file that contains the configuration. Different runs can be configured. We recommend using one config file per MPRA experiment or MPRA project. However, in theory, many different experiments can be configured in a single file. It is divided into :code:`version` (version of MPRAsnakeflow used), :code:`assignments` (assignment workflow), and :code:`experiments` (count workflow). This is a full example file with default configurations: :download:`config/example_config.yaml <../../config/example_config.yaml>`.
 
-.. literalinclude:: ../config/example_config.yaml
+.. literalinclude:: ../../config/example_config.yaml
     :language: yaml
     :linenos:
 
-Note that the config file is controlled by a JSON schema. This means that the config file is validated against the schema. If the config file is not valid, the program will exit with an error message. The schema is located in :download:`workflow/schemas/config.schema.yaml <../workflow/schemas/config.schema.yaml>`.
+Note that the config file is controlled by a JSON schema. This means that the config file is validated against the schema. If the config file is not valid, the program will exit with an error message. The schema is located in :download:`workflow/schemas/config.schema.yaml <../../workflow/schemas/config.schema.yaml>`.
 
 ----------------
 Version Settings
@@ -18,7 +18,7 @@ Version Settings
 
 Set the version of the MPRAsnakeflow this configuration is used for. This is important for future updates. The version is used to check if the config file is compatible with the current version of the workflow. If the version is not the same, the workflow will exit with an error message.
 
-.. literalinclude:: ../workflow/schemas/config.schema.yaml
+.. literalinclude:: ../../workflow/schemas/config.schema.yaml
     :language: yaml
     :start-after: start_version
     :end-before: start_assignments
@@ -32,7 +32,7 @@ Assignment Workflow
 
 The assignment workflow is configured in the :code:`assignments` section. The following settings are possible:
 
-.. literalinclude:: ../workflow/schemas/config.schema.yaml
+.. literalinclude:: ../../workflow/schemas/config.schema.yaml
    :language: yaml
    :start-after: start_assignments
    :end-before: start_experiments
@@ -125,7 +125,7 @@ Experiment workflow (including counts)
 
 The experiment workflow is configured in the :code:`experiments` section. Each experiment run (contains one experiment file with all replicates of an experiment). The following settings are possible:
 
-.. literalinclude:: ../workflow/schemas/config.schema.yaml
+.. literalinclude:: ../../workflow/schemas/config.schema.yaml
    :language: yaml
    :start-after: start_experiments
    :end-before: end_experiments
@@ -232,9 +232,9 @@ Here we have 4 different options:
 Forward, reverse, and UMI read
 ------------------------------
 
-Experiment file has a header with :code:`Condition`, :code:`Replicate`, :code:`DNA_BC_F`, :code:`DNA_UMI`, :code:`DNA_BC_R`, :code:`RNA_BC_F`, :code:`RNA_UMI`, and :code:`RNA_BC_R`. Condition together with replicate have to be a uniqe name. Both field entries are not allowed to have :code:`_` and :code:`.`. Multiple file names are allowd seperating them via :code:`;`. An example experiment file can be found here: :download:`resources/example_experiment.csv <../resources/example_experiment.csv>`.
+Experiment file has a header with :code:`Condition`, :code:`Replicate`, :code:`DNA_BC_F`, :code:`DNA_UMI`, :code:`DNA_BC_R`, :code:`RNA_BC_F`, :code:`RNA_UMI`, and :code:`RNA_BC_R`. Condition together with replicate have to be a uniqe name. Both field entries are not allowed to have :code:`_` and :code:`.`. Multiple file names are allowd seperating them via :code:`;`. An example experiment file can be found here: :download:`resources/example_experiment.csv <../../resources/example_experiment.csv>`.
 
-.. literalinclude:: ../resources/example_experiment.csv
+.. literalinclude:: ../../resources/example_experiment.csv
    :language: text
 
 ------------------------

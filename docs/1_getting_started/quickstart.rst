@@ -17,10 +17,10 @@ MPRAsnakeflow consists of two subworkflows: :ref:`Assignment` and :ref:`Experime
 
    **Note:** Currently, a UMI is required. If you want to use MPRAsnakeflow without a UMI, please switch to MPRAflow or contact us.
 
-   Here is an example of an :code:`experiment.csv` file, which can be downloaded here: :download:`experiment.csv <../resources/example_experiment.csv>`.
+   Here is an example of an :code:`experiment.csv` file, which can be downloaded here: :download:`experiment.csv <../../resources/example_experiment.csv>`.
 
    .. csv-table:: experiment.csv
-      :file: ../resources/example_experiment.csv
+      :file: ../../resources/example_experiment.csv
       :widths: 5, 2, 25, 25, 25, 25, 25, 25
       :header-rows: 1
 
@@ -43,7 +43,7 @@ MPRAsnakeflow consists of two subworkflows: :ref:`Assignment` and :ref:`Experime
 
    See :ref:`Config` for more details about the config file. Below is an example of running only the count experiments and using a provided assignment file:
 
-   .. include:: ../config/example_config.yaml
+   .. include:: ../../config/example_config.yaml
       :code: yaml
 
 4. **Run MPRAsnakeflow:**

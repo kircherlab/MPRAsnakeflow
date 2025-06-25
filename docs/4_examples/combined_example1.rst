@@ -81,7 +81,7 @@ Now we have everything at hand to run the combined MPRAsnakeflow pipeline. We wi
 
 First, configure the config file:
 
-.. literalinclude:: ../resources/combined_basic/config.yml
+.. literalinclude:: ../../resources/combined_basic/config.yml
    :language: yaml
 
 Perform a dry-run using Snakemake's :code:`-n` option. The MPRAsnakeflow command is:

@@ -8,6 +8,6 @@ We created Jupyter notebooks to help you get familiar with the workflow and unde
 
 From the tutorial README.md:
 
-.. include:: tutorial/README.md
+.. include:: README.md
     :parser: myst_parser.sphinx_
 
