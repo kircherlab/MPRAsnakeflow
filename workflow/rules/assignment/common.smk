@@ -26,6 +26,33 @@ def hasLinkerLength(assignment):
     return "linker_length" in config["assignments"][assignment]
 
 
+def hasAdapters(assignment):
+    """
+    Return True if the assignment contains a 3 or 5 adapter for removal.
+    """
+    return has3PrimeAdapters(assignment) or has5PrimeAdapters(assignment)
+
+
+def has3PrimeAdapters(assignment):
+    """
+    Return True if the assignment contains a 3' adapter for removal.
+    """
+    return (
+        "adapters" in config["assignments"][assignment]
+        and "3prime" in config["assignments"][assignment]["adapters"]
+    )
+
+
+def has5PrimeAdapters(assignment):
+    """
+    Return True if the assignment contains a 5' adapter for removal.
+    """
+    return (
+        "adapters" in config["assignments"][assignment]
+        and "5prime" in config["assignments"][assignment]["adapters"]
+    )
+
+
 def getAssignmentRead(assignment, read):
     """
     Return the correct assignment read.
@@ -41,3 +68,19 @@ def getAssignmentRead(assignment, read):
             "Wrong assignment configuration. Cannot find corerct combinations of reads for assignment %s"
             % assignment
         )
+
+
+def getMappingRead(assignment):
+    """
+    Return the final reads for mapping after joining, maybe after adapter removal.
+    """
+    if has5PrimeAdapters(assignment):
+        return (
+            "results/assignment/{assignment}/fastq/merge_split{split}.5prime.fastq.gz"
+        )
+    elif has3PrimeAdapters(assignment):
+        return (
+            "results/assignment/{assignment}/fastq/merge_split{split}.3prime.fastq.gz"
+        )
+    else:
+        return "results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz"
