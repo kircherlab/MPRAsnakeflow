@@ -113,10 +113,10 @@ Indices and Tables
     :maxdepth: 1
     :hidden:
 
-    quickstart
-    install
-    config
-    cluster
+    1_getting_started/quickstart
+    1_getting_started/install
+    1_getting_started/config
+    1_getting_started/cluster
 
 .. toctree::
     :caption: MPRAsnakeflow Workflows
@@ -124,9 +124,9 @@ Indices and Tables
     :maxdepth: 1
     :hidden:
 
-    overview
-    assignment
-    experiment
+    2_workflows/overview
+    2_workflows/assignment
+    2_workflows/experiment
 
 .. toctree::
     :caption: MPRAsnakeflow Tutorials
@@ -134,7 +134,7 @@ Indices and Tables
     :maxdepth: 1
     :hidden:
 
-    tutorial
+    3_tutorial/tutorial
 
 .. toctree::
     :caption: MPRAsnakeflow Examples
@@ -142,9 +142,10 @@ Indices and Tables
     :maxdepth: 2
     :hidden:
 
-    assignment_example1
-    count_example1
-    combined_example1
+    4_examples/assignment_example1
+    4_examples/count_example1
+    4_examples/combined_example1
+    4_examples/plasmid_example
 
 .. toctree::
     :caption: Tips & Tricks
@@ -152,7 +153,7 @@ Indices and Tables
     :maxdepth: 1
     :hidden:
 
-    faq
+    5_tips/faq
 
 .. toctree::
    :caption: Project Info
@@ -160,8 +161,8 @@ Indices and Tables
    :maxdepth: 1
    :hidden:
 
-   contributing
-   authors
-   history
-   license
-   todo_list
+   6_info/contributing
+   6_info/authors
+   6_info/history
+   6_info/license
+   6_info/todo_list

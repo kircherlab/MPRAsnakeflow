@@ -1,0 +1,18 @@
+[flake8]
+select =
+    E9,
+    F6,
+    F7,
+    W4,
+    W8
+exclude =
+    .git,
+    __pycache__,
+    docs/source/conf.py,
+    old,
+    build,
+    dist
+max-complexity = 10
+max-line-length = 127
+show-source = true
+statistics = True

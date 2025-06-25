@@ -28,7 +28,7 @@ rule assignment_mapping_bbmap:
     resources:
         mem="4G",
     input:
-        reads="results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
+        reads=lambda wc: getMappingRead(wc.assignment),
         check="results/assignment/{assignment}/design_check.done",
         reference="results/assignment/{assignment}/reference/reference.fa",
     output:

@@ -16,6 +16,9 @@ set-threads:
   assignment_collect: 30
   assignment_collectBCs: 20
   assignment_merge: 10
+  assignment_hybridFWRead_get_reads_by_cutadapt: 10
+  assignment_3prime_remove: 2
+  assignment_5prime_remove: 2
 set-resources:
   assigned_counts_combined_replicates_barcode_output:
     runtime: 60
@@ -138,6 +141,9 @@ set-resources:
   #################
   ### Statistic ###
   #################
+
+  experiment_statistic_quality_metric:
+    mem: 10G
 
   ########################
   ### Statistic/counts ###
