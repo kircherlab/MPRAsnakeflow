@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.5](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.4...v0.5.5) (2025-09-17)
+
+
+### Bug Fixes
+
+* removed hard-coded barcode length (20) in hybrid reads (assignment workflow) ([#213](https://github.com/kircherlab/MPRAsnakeflow/issues/213)) ([1d89232](https://github.com/kircherlab/MPRAsnakeflow/commit/1d892329ee25f427206ca1435df7ea7c9185ef9b))
+
 ## [0.5.4](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.3...v0.5.4) (2025-06-25)
 
 
