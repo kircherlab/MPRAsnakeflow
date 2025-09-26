@@ -96,7 +96,7 @@ rule assignment_mapping_bwa_getBCs:
 
 
 # TODO: additional config parameter: additional alignment tool: bwa_finest has additional filterin options: identity_threshold=0.98, mismatches in alignment threshold, expected alignment length (if true expected_alignment_length required), verbose = True will tell what was recovered and what not
-rule assignment_getBCs_additional_filter:
+rule assignment_mapping_bwa_getBCs_additional_filter:
     """
     Get the barcodes with a python script to rescue alignments with 0 mapping quality according to bwa.
     """
@@ -113,11 +113,8 @@ rule assignment_getBCs_additional_filter:
         mismatches_threshold=lambda wc: config["assignments"][wc.assignment][
             "alignment_tool"
         ]["configs"]["mismatches_threshold"],
-        use_expected_alignment_length=lambda wc: config["assignments"][wc.assignment][
-            "alignment_tool"
-        ]["configs"]["use_expected_alignment_length"],
-        expected_alignment_length=lambda wc: config["assignments"][wc.assignment][
-            "alignment_tool"
+        expected_alignment_length=lambda wc: "--expected_alignment_length %d" % config["assignments"][wc.assignment][
+            "alignment_tool" if "expected_alignment_length" in config["assignments"][wc.assignment]["alignment_tool"]["configs"] else ""
         ]["configs"]["expected_alignment_length"],
         verbose=lambda wc: config["assignments"][wc.assignment][
             "alignment_tool"
@@ -133,7 +130,7 @@ rule assignment_getBCs_additional_filter:
         """
         python {input.script} \
         --identity_threshold {params.identity_threshold} --mismatches_threshold {params.mismatches_threshold} \
-        --use_expected_alignment_length {params.use_expected_alignment_length} --expected_alignment_length {params.expected_alignment_length} \
+        {params.expected_alignment_length} \
         --min_mapping_quality {params.min_mapping_quality} --bamfile {input.bam} --verbose {params.verbose} --output {output} 2> {log} && sort -k1,1 -k2,2 -k3,3 -o {output} {output}
         """
 
