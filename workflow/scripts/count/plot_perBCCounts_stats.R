@@ -73,7 +73,7 @@ num_replicates <- length(replicates)
 data <- data.frame(File = files, Replicate = replicates)
 data$Condition <- cond
 
-readData <- function(file, mindnacounts, minrnacounts) {
+read_data <- function(file, mindnacounts, minrnacounts) {
   data <- read.table(file,
     as.is = TRUE,
     sep = "\t", comment.char = "", header = FALSE, stringsAsFactors = FALSE
@@ -90,7 +90,7 @@ plots_dna <- list()
 plots_rna <- list()
 
 for (n in 1:(data %>% nrow())) {
-  counts <- readData(as.character(data[n, ]$File), opt$mindnacounts, opt$minrnacounts)
+  counts <- read_data(as.character(data[n, ]$File), opt$mindnacounts, opt$minrnacounts)
   intercept_median <- median(counts$DNA)
   intercept_mean <- mean(counts$DNA)
   plots_dna[[n]] <- ggplot(counts, aes(x = DNA)) +
