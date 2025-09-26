@@ -105,7 +105,6 @@ rule assignment_mapping_bwa_getBCs_additional_filter:
         script=getScript("assignment/filter_bc_from_bam.py"),
     output:
         "results/assignment/{assignment}/BCs/barcodes_bwa-additional-filtering.{split}.tsv",
-
     params:
         identity_threshold=lambda wc: config["assignments"][wc.assignment][
             "alignment_tool"
@@ -113,12 +112,18 @@ rule assignment_mapping_bwa_getBCs_additional_filter:
         mismatches_threshold=lambda wc: config["assignments"][wc.assignment][
             "alignment_tool"
         ]["configs"]["mismatches_threshold"],
-        expected_alignment_length=lambda wc: "--expected_alignment_length %d" % config["assignments"][wc.assignment][
-            "alignment_tool" if "expected_alignment_length" in config["assignments"][wc.assignment]["alignment_tool"]["configs"] else ""
+        expected_alignment_length=lambda wc: "--expected_alignment_length %d"
+        % config["assignments"][wc.assignment][
+            (
+                "alignment_tool"
+                if "expected_alignment_length"
+                in config["assignments"][wc.assignment]["alignment_tool"]["configs"]
+                else ""
+            )
         ]["configs"]["expected_alignment_length"],
-        verbose=lambda wc: config["assignments"][wc.assignment][
-            "alignment_tool"
-        ]["configs"]["verbose"],
+        verbose=lambda wc: config["assignments"][wc.assignment]["alignment_tool"][
+            "configs"
+        ]["verbose"],
         min_mapping_quality=lambda wc: config["assignments"][wc.assignment][
             "alignment_tool"
         ]["configs"]["min_mapping_quality"],
