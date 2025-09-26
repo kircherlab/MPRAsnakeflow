@@ -6,7 +6,7 @@ rule qc_report_assoc:
     This rule generates the QC report for the assignment.
     """
     conda:
-        "../envs/quarto.yaml"
+        getCondaEnv("quarto.yaml")
     input:
         quarto_script=getScript("report/qc_report_assoc.qmd"),
         design_file=lambda wc: config["assignments"][wc.assignment]["design_file"],
@@ -14,6 +14,7 @@ rule qc_report_assoc:
         statistic_filter="results/assignment/{assignment}/statistic/assigned_counts.{assignment_config}.tsv",
         statistic_all="results/assignment/{assignment}/statistic/total_counts.tsv",
         plot="results/assignment/{assignment}/statistic/assignment.{assignment_config}.png",
+        qc_metrics="results/assignment/{assignment}/qc_metrics.{assignment_config}.json",
     output:
         assi_file="results/assignment/{assignment}/qc_report.{assignment_config}.html",
         quarto_file=temp(
@@ -21,6 +22,12 @@ rule qc_report_assoc:
         ),
     params:
         bc_length=lambda wc: config["assignments"][wc.assignment]["bc_length"],
+        fraction=lambda wc: config["assignments"][wc.assignment]["configs"][
+            wc.assignment_config
+        ]["fraction"],
+        min_support=lambda wc: config["assignments"][wc.assignment]["configs"][
+            wc.assignment_config
+        ]["min_support"],
         fw=lambda wc: (
             ";".join(config["assignments"][wc.assignment]["FW"])
             if isinstance(config["assignments"][wc.assignment]["FW"], list)
@@ -51,6 +58,8 @@ rule qc_report_assoc:
             quarto render `basename {output.quarto_file}` --output `basename {output.assi_file}` \
             -P "assignment:{wildcards.assignment}" \
             -P "bc_length:{params.bc_length}" \
+            -P "fraction:{params.fraction}" \
+            -P "min_support:{params.min_support}" \
             -P "fw:{params.fw}" \
             -P "rev:{params.rev}" \
             -P "bc:{params.bc}" \
@@ -60,7 +69,8 @@ rule qc_report_assoc:
             -P "configs:{wildcards.assignment_config}" \
             -P "plot_file:{input.plot}" \
             -P "statistic_filter_file:{input.statistic_filter}" \
-            -P "statistic_all_file:{input.statistic_all}"
+            -P "statistic_all_file:{input.statistic_all}" \
+            -P "qc_metrics_file:{input.qc_metrics}"
         ) &> {log}
         """
 
@@ -70,7 +80,7 @@ rule qc_report_count:
     This rule generates the QC report for the count data.
     """
     conda:
-        "../envs/quarto.yaml"
+        getCondaEnv("quarto.yaml")
     input:
         quarto_script=getScript("report/qc_report_count.qmd"),
         dna_oligo_coor_min_thre_plot="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_DNA_pairwise_minThreshold.png",
@@ -90,6 +100,7 @@ rule qc_report_count:
         activity_thresh="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_group_barcodesPerInsert_box_minThreshold.png",
         dna_over_rna="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_dna_vs_rna.png",
         dna_over_rna_thresh="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}_dna_vs_rna_minThreshold.png",
+        qc_metrics="results/experiments/{project}/qc_metrics.{condition}.{assignment}.{config}.json",
     output:
         count_file="results/experiments/{project}/qc_report.{condition}.{assignment}.{config}.html",
         quarto_file=temp(
@@ -131,6 +142,7 @@ rule qc_report_count:
             -P "statistics_all_oligo_cor_all:{input.statistics_all_oligo_cor_all}" \
             -P "statistics_all_oligo_cor_thresh:{input.statistics_all_oligo_cor_thresh}" \
             -P "thresh:{params.thresh}" \
+            -P "qc_metrics_file:{input.qc_metrics}" \
             -P "workdir:{params.workdir}"
         ) &> {log}
         """

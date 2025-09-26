@@ -1,5 +1,85 @@
 # Changelog
 
+## [0.5.5](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.4...v0.5.5) (2025-09-17)
+
+
+### Bug Fixes
+
+* removed hard-coded barcode length (20) in hybrid reads (assignment workflow) ([#213](https://github.com/kircherlab/MPRAsnakeflow/issues/213)) ([1d89232](https://github.com/kircherlab/MPRAsnakeflow/commit/1d892329ee25f427206ca1435df7ea7c9185ef9b))
+
+## [0.5.4](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.3...v0.5.4) (2025-06-25)
+
+
+### Features
+
+* 5' and 3' adapter removal option using cutadapt ([#207](https://github.com/kircherlab/MPRAsnakeflow/issues/207)) ([a36c023](https://github.com/kircherlab/MPRAsnakeflow/commit/a36c0239e5015e2868e9fe729758a8d18eb357ad))
+
+
+### Bug Fixes
+
+* qname (read name) length cannot be longer than 255 characters ([#206](https://github.com/kircherlab/MPRAsnakeflow/issues/206)) ([46fe287](https://github.com/kircherlab/MPRAsnakeflow/commit/46fe287815777ca88a0e08607a205aba0bd7251e))
+
+## [0.5.3](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.2...v0.5.3) (2025-05-13)
+
+
+### Bug Fixes
+
+* channel order has to be correct for newer samtools ([d0ada2b](https://github.com/kircherlab/MPRAsnakeflow/commit/d0ada2b38170015867f6173e217bf057508e97d4))
+
+## [0.5.2](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.1...v0.5.2) (2025-05-13)
+
+
+### Bug Fixes
+
+* set htslib and samtools version to 1.21 to avoid ncurses lib clashes ([cb59bd4](https://github.com/kircherlab/MPRAsnakeflow/commit/cb59bd435b837b46775b412f883e38c7eec2ff0c))
+
+## [0.5.1](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.0...v0.5.1) (2025-05-12)
+
+
+### Bug Fixes
+
+* missed config version upgrades ([df5391a](https://github.com/kircherlab/MPRAsnakeflow/commit/df5391aae45086ae592fa462dc7c0c9a83f14da0))
+
+## [0.5.0](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.7...v0.5.0) (2025-04-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* restructure folders and conda env import. Renaming of rules. Old SLURM ressoucres have to be updated
+
+### Features
+
+* IGVF qc metrics report ([3ec5012](https://github.com/kircherlab/MPRAsnakeflow/commit/3ec5012bec438a65da7e5cb15b1d39bfd6b6b0ec))
+* Quality metric json file (for IGVF) and included within QC report ([981baac](https://github.com/kircherlab/MPRAsnakeflow/commit/981baaca6ac62b46c374aef3c146c80a35940071))
+
+
+### Bug Fixes
+
+* mpralib environment file ([070da2a](https://github.com/kircherlab/MPRAsnakeflow/commit/070da2a4944d25ecfd7aee7b4cbbfa5cfec92b73))
+* using MPRAlib v0.6.1 ([4f45075](https://github.com/kircherlab/MPRAsnakeflow/commit/4f4507540f84a1133a1440c30175f47367911d58))
+
+
+### Code Refactoring
+
+* restructure folders and conda env import. Renaming of rules. Old SLURM ressoucres have to be updated ([f21cdca](https://github.com/kircherlab/MPRAsnakeflow/commit/f21cdcaf974f98d97a23c2a520a2d6862dd5c333))
+
+## [0.4.7](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.6...v0.4.7) (2025-04-03)
+
+
+### Bug Fixes
+
+* assignment barcode counting ([9584802](https://github.com/kircherlab/MPRAsnakeflow/commit/95848023860f9b43e9c5a2e594c0fb9d3eda4205))
+* merge.label.py does not return pseudocounts in barcode file ([#187](https://github.com/kircherlab/MPRAsnakeflow/issues/187)) ([023110a](https://github.com/kircherlab/MPRAsnakeflow/commit/023110a5368704e0efb464dbaef1a1d5fdcf6c86))
+* report also barcodes that are lower than the min barcodes. ([90f1b14](https://github.com/kircherlab/MPRAsnakeflow/commit/90f1b14d04737723fa5852c809c44e497b2e2d3b)), closes [#185](https://github.com/kircherlab/MPRAsnakeflow/issues/185)
+* issues on some environments while plotting with statistic_assignment.R ([#186](https://github.com/kircherlab/MPRAsnakeflow/pull/186))
+
+## [0.4.6](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.5...v0.4.6) (2025-02-26)
+
+
+### Bug Fixes
+
+* revert v0.4.5. The fix was already implemented within the common.smk file ([7997440](https://github.com/kircherlab/MPRAsnakeflow/commit/799744050b540d96545ac72bc2280e8e37a2b61e))
+
 ## [0.4.5](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.4.4...v0.4.5) (2025-02-24)
 
 

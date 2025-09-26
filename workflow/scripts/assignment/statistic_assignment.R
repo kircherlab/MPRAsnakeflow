@@ -78,4 +78,6 @@ p <- ggplot(bcs, aes(n)) +
   ) +
   theme_bw()
 
-ggsave(opt$plot, p, type = "cairo", dpi = 300)
+png(opt$plot, width = 7*300, height = 7*300, res = 300)
+print(p)
+dev.off()

@@ -3,7 +3,7 @@
 #     Create a ref for bbmap
 #     """
 #     conda:
-#         "../../envs/bbmap_samtools_picard_htslib.yaml"
+#         getCondaEnv("bbmap_samtools_picard_htslib.yaml")
 #     input:
 #         reference="results/assignment/{assignment}/reference/reference.fa",
 #         check="results/assignment/{assignment}/design_check.done",
@@ -23,12 +23,12 @@ rule assignment_mapping_bbmap:
     Map the reads to the reference and sort unsing bwa mem
     """
     conda:
-        "../../envs/bbmap_samtools_htslib.yaml"
+        getCondaEnv("bbmap_samtools_htslib.yaml")
     threads: 1
     resources:
         mem="4G",
     input:
-        reads="results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
+        reads=lambda wc: getMappingRead(wc.assignment),
         check="results/assignment/{assignment}/design_check.done",
         reference="results/assignment/{assignment}/reference/reference.fa",
     output:
@@ -63,7 +63,7 @@ rule assignment_mapping_bbmap_getBCs:
     - alignment_score = $13;
     """
     conda:
-        "../../envs/bbmap_samtools_htslib.yaml"
+        getCondaEnv("bbmap_samtools_htslib.yaml")
     input:
         "results/assignment/{assignment}/bbmap/merge_split{split}.mapped.bam",
     output:

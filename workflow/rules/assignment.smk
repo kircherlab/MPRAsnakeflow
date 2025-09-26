@@ -17,7 +17,7 @@ rule assignment_check_design:
     Also check if no duplicated headers and no illegal characters in header.
     """
     conda:
-        "../envs/python3.yaml"
+        getCondaEnv("python3.yaml")
     input:
         design=lambda wc: config["assignments"][wc.assignment]["design_file"],
         script=getScript("assignment/check_design_file.py"),
@@ -92,6 +92,8 @@ rule assignment_fastq_split:
 
     Runs only if the design file is correct.
     """
+    conda:
+        getCondaEnv("fastqsplitter.yaml")
     input:
         fastq=lambda wc: getAssignmentRead(wc.assignment, wc.read),
         check="results/assignment/{assignment}/design_check.done",
@@ -102,8 +104,6 @@ rule assignment_fastq_split:
                 split=range(0, getSplitNumber()),
             ),
         ),
-    conda:
-        "../envs/fastqsplitter.yaml"
     log:
         temp("results/logs/assignment/fastq_split.{assignment}.{read}.log"),
     params:
@@ -129,7 +129,7 @@ rule assignment_attach_idx:
     Extract the index sequence and add it to the header.
     """
     conda:
-        "../envs/NGmerge.yaml"
+        getCondaEnv("NGmerge.yaml")
     input:
         read="results/assignment/{assignment}/fastq/splits/{read}.split{split}.fastq.gz",
         BC="results/assignment/{assignment}/fastq/splits/BC.split{split}.fastq.gz",
@@ -175,7 +175,7 @@ rule assignment_merge:
     Extract the index sequence and add it to the header.
     """
     conda:
-        "../envs/NGmerge.yaml"
+        getCondaEnv("NGmerge.yaml")
     input:
         FW="results/assignment/{assignment}/fastq/splits/FW.split{split}.BCattached.fastq.gz",
         REV="results/assignment/{assignment}/fastq/splits/REV.split{split}.BCattached.fastq.gz",
@@ -211,6 +211,72 @@ rule assignment_merge:
         """
 
 
+rule assignment_3prime_remove:
+    """
+    Remove 3' adapter sequence from the reads.
+    """
+    conda:
+        getCondaEnv("cutadapt.yaml")
+    threads: 1
+    input:
+        reads="results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
+    output:
+        trimmed_reads=temp(
+            "results/assignment/{assignment}/fastq/merge_split{split}.3prime.fastq.gz"
+        ),
+    params:
+        adapters=lambda wc: " ".join(
+            [
+                "-a %s" % adapter
+                for adapter in config["assignments"][wc.assignment]["adapters"][
+                    "3prime"
+                ]
+            ]
+        ),
+    log:
+        temp("results/logs/assignment/3prime_remove.{assignment}.{split}.log"),
+    shell:
+        """
+        cutadapt --cores {threads} {params.adapters} \
+        -o {output.trimmed_reads} <(zcat {input.reads}) &> {log}
+        """
+
+
+rule assignment_5prime_remove:
+    """
+    Remove 5' adapter sequence from the reads.
+    """
+    conda:
+        getCondaEnv("cutadapt.yaml")
+    threads: 1
+    input:
+        reads=lambda wc: (
+            "results/assignment/{assignment}/fastq/merge_split{split}.3prime.fastq.gz"
+            if has3PrimeAdapters(wc.assignment)
+            else "results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz"
+        ),
+    output:
+        trimmed_reads=temp(
+            "results/assignment/{assignment}/fastq/merge_split{split}.5prime.fastq.gz"
+        ),
+    params:
+        adapters=lambda wc: " ".join(
+            [
+                "-g %s" % adapter
+                for adapter in config["assignments"][wc.assignment]["adapters"][
+                    "5prime"
+                ]
+            ]
+        ),
+    log:
+        temp("results/logs/assignment/5prime_remove.{assignment}.{split}.log"),
+    shell:
+        """
+        cutadapt --cores {threads} {params.adapters} \
+        -o {output.trimmed_reads} <(zcat {input.reads}) &> {log}
+        """
+
+
 include: "assignment/mapping_exact.smk"
 include: "assignment/mapping_bwa.smk"
 include: "assignment/mapping_bbmap.smk"
@@ -220,6 +286,8 @@ rule assignment_collectBCs:
     """
     Get the barcodes.
     """
+    conda:
+        getCondaEnv("default.yaml")
     input:
         lambda wc: expand(
             "results/assignment/{{assignment}}/BCs/barcodes_{mapper}.{split}.tsv",
@@ -230,8 +298,6 @@ rule assignment_collectBCs:
         "results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
     params:
         batch_size="--batch-size=%d" % getSplitNumber() if getSplitNumber() > 1 else "",
-    conda:
-        "../envs/default.yaml"
     log:
         temp("results/logs/assignment/collectBCs.{assignment}.log"),
     shell:
@@ -247,14 +313,14 @@ rule assignment_filter:
     Filter the barcodes file based on the config given in the config-file.
     FIXME: Limitation is that oligos cannot have a name ambiguous or other.
     """
+    conda:
+        getCondaEnv("python3.yaml")
     input:
         assignment="results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
         script=getScript("assignment/filterAssignmentTsv.py"),
     output:
         final="results/assignment/{assignment}/assignment_barcodes.{assignment_config}.tsv.gz",
-        ambigous="results/assignment/{assignment}/assignment_barcodes_with_ambigous.{assignment_config}.tsv.gz",
-    conda:
-        "../envs/python3.yaml"
+        ambiguous="results/assignment/{assignment}/assignment_barcodes_with_ambiguous.{assignment_config}.tsv.gz",
     log:
         log=temp("results/logs/assignment/filter.{assignment}.{assignment_config}.log"),
         err=temp("results/logs/assignment/filter.{assignment}.{assignment_config}.err"),
@@ -275,7 +341,7 @@ rule assignment_filter:
         awk -v "OFS=\\t" -F"\\t" '{{if (length($1)=={params.bc_length}){{print $0 }}}}' | \
         python {input.script} \
         -m {params.min_support} -f {params.fraction} {params.unknown_other} {params.ambiguous} | \
-        tee >(gzip -c > {output.ambigous}) | \
+        tee >(gzip -c > {output.ambiguous}) | \
         awk -v "OFS=\\t"  -F"\\t" '{{ if (($2 != \"ambiguous\") && ($2 != \"other\")) {{ print $1,$2 }} }}' | \
         gzip -c > {output.final} 2> {log.err};
         gzip -l {output.final} | awk 'NR==2 {{exit($2==0)}}' || {{ echo "Error: Empty barcode file {output.final}. No barcodes detected!" >> {log.err}; exit 1; }}

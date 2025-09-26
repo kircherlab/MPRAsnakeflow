@@ -22,6 +22,7 @@ jupyter: python3
 # Imports
 from IPython.display import display, Image, Markdown
 import pandas as pd
+import json
 ```
 
 ```{python}
@@ -81,6 +82,28 @@ The data has a good Spearman correlations across replicates using a barcode thre
 :::
 '''))
 
+```
+
+# Overall quality metrics
+
+<details>
+    <summary>Table explanation</summary>
+
+- **median rna read count:** Median of RNA read count for oligos that passed filtering to determine sufficient coverage in terms of read count. Value is the median of all replicates.
+- **median barcodes passing filtering:** Median number of barcodes across tested sequences that passed filtering to determine if there was sufficient barcode to oligo coverage. Value is the median of all replicates.
+- **pearson correlation:** The correlation of log2 RNA/DNA ratios across tested sequences as a measure of replicable activity signal. Value is the median of replicate comparisons using only oligos with >= `{python} thresh` barcodes.
+- **fraction oligos passing:** Fraction of tested sequences that passed filtering of the mappable sequences to determine if the designed library was sufficiently recovered. Value is the median of all replicates and using only oligos with >= `{python} thresh` barcodes.
+
+</details>
+
+```{python}
+#| echo: false
+with open(f"{workdir}/{qc_metrics_file}", 'r') as file:
+    qc_data = json.load(file)
+df_qc = pd.DataFrame([qc_data])
+df_qc.columns = df_qc.columns.str.replace("_", " ", regex=False)
+#df_qc.columns = ['Value']
+df_qc.style.hide(axis="index").format(precision=2)
 ```
 
 # DNA over RNA counts
@@ -248,7 +271,7 @@ display(Image(f"{workdir}/{counts_per_oligo}"))
 display(Image(f"{workdir}/{counts_per_bc_dna}")) 
 ```
 
-# Number of counts per DNA barcode
+# Number of counts per RNA barcode
 ```{python}
 #| echo: false
 display(Image(f"{workdir}/{counts_per_bc_rna}")) 

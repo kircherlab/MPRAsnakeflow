@@ -3,7 +3,7 @@ rule assignment_mapping_bwa_ref:
     Create mapping reference for BWA from design file.
     """
     conda:
-        "../../envs/bwa_samtools_picard_htslib.yaml"
+        getCondaEnv("bwa_samtools_picard_htslib.yaml")
     input:
         ref="results/assignment/{assignment}/reference/reference.fa",
         check="results/assignment/{assignment}/design_check.done",
@@ -28,10 +28,10 @@ rule assignment_mapping_bwa:
     Map the reads to the reference and sort unsing bwa mem
     """
     conda:
-        "../../envs/bwa_samtools_picard_htslib.yaml"
+        getCondaEnv("bwa_samtools_picard_htslib.yaml")
     threads: 1
     input:
-        reads="results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
+        reads=lambda wc: getMappingRead(wc.assignment),
         reference="results/assignment/{assignment}/reference/reference.fa",
         bwa_index=expand(
             "results/assignment/{{assignment}}/reference/reference.fa.{ext}",
@@ -54,7 +54,7 @@ rule assignment_mapping_bwa_getBCs:
     Get the barcodes.
     """
     conda:
-        "../../envs/bwa_samtools_picard_htslib.yaml"
+        getCondaEnv("bwa_samtools_picard_htslib.yaml")
     input:
         "results/assignment/{assignment}/bwa/merge_split{split}.mapped.bam",
     output:
@@ -143,7 +143,7 @@ rule assignment_collect:
     Collect mapped reads.
     """
     conda:
-        "../../envs/bwa_samtools_picard_htslib.yaml"
+        getCondaEnv("bwa_samtools_picard_htslib.yaml")
     threads: 1
     input:
         bams=lambda wc: expand(
@@ -166,7 +166,7 @@ rule assignment_idx_bam:
     Index the BAM file
     """
     conda:
-        "../../envs/bwa_samtools_picard_htslib.yaml"
+        getCondaEnv("bwa_samtools_picard_htslib.yaml")
     input:
         "results/assignment/{assignment}/aligned_merged_reads.bam",
     output:
@@ -184,7 +184,7 @@ rule assignment_flagstat:
     Run samtools flagstat
     """
     conda:
-        "../../envs/bwa_samtools_picard_htslib.yaml"
+        getCondaEnv("bwa_samtools_picard_htslib.yaml")
     input:
         bam="results/assignment/{assignment}/aligned_merged_reads.bam",
         idx="results/assignment/{assignment}/aligned_merged_reads.bam.bai",

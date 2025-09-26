@@ -22,13 +22,15 @@ jupyter: python3
 #| echo: false
 # Imports
 from IPython.display import display, Image, Markdown
+import pandas as pd
+import json
 ```
 
 
 # Overview
 The Assignment QC (Quality Control) Report is a comprehensive document designed to evaluate and
 ensure the quality of data or processes involved in a specific assignment. This report is generated
-for the `{python} assignment` assignment with settings defined in the config `{python} configs`. The barcode length for this experiment is `{python} bc_length` base pairs.
+for the `{python} assignment` assignment with settings defined in the config `{python} configs`. The barcode length for this experiment is `{python} bc_length` bases.
 
 - **Forward:** `{python} fw`
 - **Reverse:** `{python} rev`
@@ -49,6 +51,27 @@ with open(f"{workdir}/{design_file_checked}") as f:
 ```
 
 
+# Overall quality metrics
+
+<details>
+    <summary>Table explanation</summary>
+
+- **median assigned barcodes:** Median number of barcodes assigned to tested sequences in mapping as a quality control measure for the assignment step, whether there is sufficient barcode to oligo coverage.
+- **fraction assigned oligos:** Fraction of assigned tested sequences in mapping to determine if the library during the assignment step was sufficiently recovered.
+
+</details>
+
+```{python}
+#| echo: false
+with open(f"{workdir}/{qc_metrics_file}", 'r') as file:
+    qc_data = json.load(file)
+df_qc = pd.DataFrame([qc_data])
+df_qc.columns = df_qc.columns.str.replace("_", " ", regex=False)
+#df_qc.columns = ['Value']
+df_qc.style.hide(axis="index").format(precision=2)
+```
+
+
 # BC distribution over oligos
 ```{python}
 #| echo: false
@@ -57,6 +80,16 @@ display(Image(f"{workdir}/{plot_file}"))
 
 
 # Counts of barcodes and oligos
+
+<details>
+    <summary>Table explanation</summary>
+
+- **BCs** are the different observed barcodes in the sequencing data (not the overall barcode count/number of BC reads).
+- Differences in row `BCs` between `Raw data` and `Filtered data` are due to barcodes that do not match the length of `{python} bc_length` bases defined in the `{python} configs` config of the config file.
+- **Other BCs** are those barcodes where no oligo could be assigned due to mapping (e.g., due to MAPQ filter or due to multiple matches).
+- **Ambiguous BCs** are those that map to a designed oligo but failed the minimum required barcodes per oligo of `{python} min_support` and/or the minimum required fraction of `{python} fraction` assigned to one unique oligo.
+    
+</details>
 
 ```{python}
 #| echo: false

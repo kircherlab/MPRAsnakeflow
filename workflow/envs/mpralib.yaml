@@ -1,0 +1,7 @@
+---
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - 'conda-forge::biopython>=1.80'
+  - mpralib=0.6.1

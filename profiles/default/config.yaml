@@ -16,6 +16,9 @@ set-threads:
   assignment_collect: 30
   assignment_collectBCs: 20
   assignment_merge: 10
+  assignment_hybridFWRead_get_reads_by_cutadapt: 10
+  assignment_3prime_remove: 2
+  assignment_5prime_remove: 2
 set-resources:
   assigned_counts_combined_replicates_barcode_output:
     runtime: 60
@@ -73,30 +76,30 @@ set-resources:
   ##############
   ### COUNTS ###
   ##############
-  counts_demultiplex_BAM_umi:
+  experiment_counts_demultiplex_BAM_umi:
     runtime: 5760
     mem: 22G
     slurm_partition: medium
-  counts_demultiplex_mergeTrimReads_BAM_umi:
+  experiment_counts_demultiplex_mergeTrimReads_BAM_umi:
     runtime: 5760
     mem: 12G
     slurm_partition: medium
-  counts_umi_create_BAM:
+  experiment_counts_umi_create_BAM:
     runtime: 5760
     mem: 12G
     slurm_partition: medium
-  counts_umi_raw_counts:
+  experiment_counts_umi_raw_counts:
     runtime: 1320
     mem: 6G
     slurm_partition: medium
-  counts_noUMI_create_BAM:
+  experiment_counts_noUMI_create_BAM:
     runtime: 5760
     mem: 12G
     slurm_partition: medium
-  counts_filter_counts:
+  experiment_counts_filter_counts:
     runtime: 120
     slurm_partition: medium
-  counts_final_counts_samplerer:
+  experiment_counts_final_counts_sampler:
     mem: 20G
     slurm_partition: medium
 
@@ -104,7 +107,7 @@ set-resources:
   ### (ASSIGNED) COUNTS ###
   #########################
 
-  counts_dna_rna_merge_counts:
+  experiment_counts_dna_rna_merge_counts:
     runtime: 1140
     slurm_partition: medium
 
@@ -112,25 +115,25 @@ set-resources:
   ### ASSIGNED COUNTS ###
   #######################
 
-  assigned_counts_dna_rna_merge:
+  experiment_assigned_counts_dna_rna_merge:
     runtime: 5760
     mem: 20G
     slurm_partition: medium
 
-  assigned_counts_assignBarcodes:
+  experiment_assigned_counts_assignBarcodes:
     runtime: 5760
     slurm_partition: medium
     mem: 20G
 
-  assigned_counts_createAssignmentPickleFile:
+  experiment_assigned_counts_createAssignmentPickleFile:
     mem: 10G
 
-  assigned_counts_filterAssignment:
+  experiment_assigned_counts_filterAssignment:
     runtime: 60
     slurm_partition: medium
     mem: 15G
 
-  assigned_counts_combine_replicates_barcode_output:
+  experiment_assigned_counts_combine_replicates_barcode_output:
     runtime: 60
     mem: 30G
     slurm_partition: medium
@@ -139,19 +142,22 @@ set-resources:
   ### Statistic ###
   #################
 
+  experiment_statistic_quality_metric:
+    mem: 10G
+
   ########################
   ### Statistic/counts ###
   ########################
 
-  statistic_counts_frequent_umis:
+  experiment_statistic_counts_frequent_umis:
     runtime: 480
     slurm_partition: medium
 
-  statistic_counts_barcode_base_composition:
+  experiment_statistic_counts_barcode_base_composition:
     runtime: 1440
     slurm_partition: medium
     mem: 20G
-  statistic_counts_table:
+  experiment_statistic_counts_table:
     runtime: 240
     slurm_partition: medium
 
@@ -159,24 +165,24 @@ set-resources:
   ### Statistic/correlation ###
   #############################
 
-  statistic_correlation_bc_counts_hist:
+  experiment_statistic_correlation_bc_counts_hist:
     runtime: 120
     mem: 10G
     slurm_partition: medium
 
-  statistic_correlation_bc_counts:
+  experiment_statistic_correlation_bc_counts:
     runtime: 120
     mem: 20G
     slurm_partition: medium
-  statistic_correlation_bc_hist:
+  experiment_statistic_correlation_bc_hist:
     runtime: 1320
     mem: 10G
     slurm_partition: medium
-  statistic_correlation_calculate:
+  experiment_statistic_correlation_calculate:
     runtime: 120
     mem: 10G
     slurm_partition: medium
-  statistic_correlation_hist_box_plots:
+  experiment_statistic_correlation_hist_box_plots:
     runtime: 120
     mem: 10G
     slurm_partition: medium
@@ -185,7 +191,7 @@ set-resources:
   ### Statistic/bc_overlap ###
   ############################
 
-  statistic_bc_overlap_run:
+  experiment_statistic_bc_overlap_run:
     runtime: 300
     mem: 25G
     slurm_partition: medium
