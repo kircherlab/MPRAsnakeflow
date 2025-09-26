@@ -91,6 +91,26 @@ properties:
                     configs:
                       type: object
                       properties:
+                        sequence_length:
+                          type: object
+                          properties:
+                            min:
+                              type: integer
+                            max:
+                              type: integer
+                          required:
+                            - min
+                            - max
+                        alignment_start:
+                          type: object
+                          properties:
+                            min:
+                              type: integer
+                            max:
+                              type: integer
+                          required:
+                            - min
+                            - max
                         min_mapping_quality:
                           type: integer
                           minimum: 0
@@ -110,6 +130,10 @@ properties:
                           description: print which alignments were rescured and which could not be rescued
                           type: boolean
                           default: true
+                      required:
+                        - sequence_length
+                        - alignment_start
+                        - min_mapping_quality
                   required:
                     - configs
               - if:
