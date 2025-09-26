@@ -134,7 +134,7 @@ rule assignment_getBCs_additional_filter:
         python {input.script} \
         --identity_threshold {params.identity_threshold} --mismatches_threshold {params.mismatches_threshold} \
         --use_expected_alignment_length {params.use_expected_alignment_length} --expected_alignment_length {params.expected_alignment_length} \
-        --min_mapping_quality {params.min_mapping_quality}--bamfile {input.bam} --verbose {params.verbose} --output {output} 2> {log} && sort -k1,1 -k2,2 -k3,3 -o {output} {output}
+        --min_mapping_quality {params.min_mapping_quality} --bamfile {input.bam} --verbose {params.verbose} --output {output} 2> {log} && sort -k1,1 -k2,2 -k3,3 -o {output} {output}
         """
 
 
