@@ -112,15 +112,12 @@ rule assignment_mapping_bwa_getBCs_additional_filter:
         mismatches_threshold=lambda wc: config["assignments"][wc.assignment][
             "alignment_tool"
         ]["configs"]["mismatches_threshold"],
-        expected_alignment_length=lambda wc: "--expected_alignment_length %d"
-        % config["assignments"][wc.assignment][
-            (
-                "alignment_tool"
-                if "expected_alignment_length"
-                in config["assignments"][wc.assignment]["alignment_tool"]["configs"]
-                else ""
-            )
-        ]["configs"]["expected_alignment_length"],
+        expected_alignment_length=lambda wc: (
+            f"--expected_alignment_length {config["assignments"][wc.assignment]["alignment_tool"]["configs"]["expected_alignment_length"]}"
+            if "expected_alignment_length"
+            in config["assignments"][wc.assignment]["alignment_tool"]["configs"]
+            else ""
+        ),
         verbose=lambda wc: config["assignments"][wc.assignment]["alignment_tool"][
             "configs"
         ]["verbose"],
