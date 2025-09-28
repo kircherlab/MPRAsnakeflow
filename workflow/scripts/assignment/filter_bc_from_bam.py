@@ -4,10 +4,6 @@ import pandas
 import sys
 import click
 
-# TODO: What about length filter?
-# TODO: Sorting the dataframe by barcode, reference_name, and additional information (like sort -k1,1 -k2,2 -k3,3)
-# TODO: pipable: damit samtools view -flags 1792 klappt
-
 
 @click.command()
 @click.option(
@@ -74,33 +70,6 @@ def main(
     identity_threshold, mismatches_threshold, expected_alignment_length, min_mapping_quality, bamfile, verbose, output_path
 ):
     # helpful functions
-    def determine_MD_NM(differences, sequence, alnLength):
-        NM = 0
-        MD = ""
-        lpos = -1
-        for refPos, seqPos, edit in differences:
-            if type(edit[1]) != type("T"):
-                NM += edit[1]
-                if edit[0] == "INS":
-                    pass
-                else:
-                    if lpos + 1 <= refPos:
-                        MD += "%d^%s" % (refPos - (lpos + 1), edit[2])
-                        lpos = refPos - 1 + edit[1]
-                    else:
-                        MD += "^%s" % (edit[2])
-                        lpos += edit[1]
-            else:
-                if lpos + 1 <= refPos:
-                    MD += "%d%s" % (refPos - (lpos + 1), edit[1])
-                else:
-                    MD += "%s" % (edit[1])
-                lpos = refPos + len(edit[1]) - 1
-                NM += len(edit[1])
-        if lpos + 1 <= alnLength:
-            MD += "%d" % (alnLength - (lpos + 1))
-        return MD, NM
-
     def aln_length(cigarlist):
         tlength = 0
         for operation, length in cigarlist:
@@ -110,6 +79,7 @@ def main(
 
     def expected_length_filter(read, expected_length):
         """Filter reads that are of an expected length (AS tag is used because match gives 1 => if AS >= expected_length, then read is of expected length and quality)"""
+        # AS: alignment score
         if read.get_tag("AS") >= expected_length:
             return True
         return False
@@ -118,8 +88,10 @@ def main(
         """Compute sequence identity form a read using cigar string, MD tag, and NM tag"""
         try:
             cigar = read.cigarstring
-            MD = read.get_tag("MD")
-            NM = read.get_tag("NM")
+            # MD: Mismatching positions/bases
+            MD = read.get_tag('MD')
+            # NM: Edit distance
+            NM = read.get_tag('NM')
             alnLength = aln_length(read.cigartuples)
         except KeyError:
             sys.stderr.write("Error: No MD or NM tag found")
@@ -163,6 +135,7 @@ def main(
 
     def get_barcode(read):
         """The barcode is stored in XI tag:XI:Z:<barcode>,YI:I:<unknown>"""
+        # NOTE: XI and YI is from the -C option of BWA which adds the space seperated comment from the fastq files
         # check if it does not include "N"
         try:
             barcode = read.get_tag("XI").split(",")[0]
@@ -187,7 +160,9 @@ def main(
         reference_name = read.reference_name
         position = read.reference_start  # 0-based
         cigarstring = read.cigarstring
+        # NM: Edit distance
         nm = read.get_tag("NM")
+        # MD: Mismatching positions/bases
         md = read.get_tag("MD")
         if case == "normal":
             mapping_quality = read.mapping_quality
@@ -205,6 +180,7 @@ def main(
             position = int(xa_info.split(",")[1])
             cigarstring = xa_info.split(",")[2]
             nm = int(xa_info.split(",")[3])
+            # MD: Mismatching positions/bases
             md = read.get_tag("MD")
             mapping_quality = 1
             if nm != 0:
@@ -229,7 +205,6 @@ def main(
     high_quality_alignment = 0
     high_mapping_quality_low_identity = 0
     low_quality_alignment = 0
-    show_example = True
     print("start reading bam file ...")
     with open(output_path, "w") as output_file:
         for read in input_file:
@@ -264,6 +239,7 @@ def main(
 
                 low_quality_alignment += 1
                 if read.flag == 0:  # check if it is a best alignment
+                    # AS: alignment score; XS: alternative alignment score
                     if read.get_tag("AS") > read.get_tag("XS"):
                         change_quality_count += 1
                         output_file.write(prepare_table_information(read, case="fix_mapping_quality") + "\n")
@@ -271,8 +247,10 @@ def main(
                 # rescue reads with reversed read (flag == 16) with AS == XS and check if only on other alignment on forward strand is given
                 if read.flag == 16:
                     reversed_read_count += 1
+                    # AS: alignment score; XS: alternative alignment score
                     if read.get_tag("AS") == read.get_tag("XS"):
                         try:
+                            # XA: alternative alignment
                             read.get_tag("XA")
                         except:
                             sys.stderr.write(
@@ -303,30 +281,45 @@ def main(
                         % (read.query_name, identity_threshold, aln_length(read.cigartuples))
                     )
                     high_mapping_quality_low_identity += 1
-                # TODO: Should I trust the aligner or should I stick to the threshold?
                 if not expected_length_filter(read, expected_alignment_length):
                     sys.stderr.write(
                         "WARNING: read (%s) has mapping quality >=1 according to the aligner but does not match the expected alignment length (%s) and has an alignment length of %s\n"
                         % (read.query_name, expected_alignment_length, aln_length(read.cigartuples))
                     )
                 high_quality_alignment += 1
-                # TODO: Ask Martin why he said this it possible rescure
-                # # check if reversed read has AS = XS
-                # if read.flag == 16:
-                #   high_quali_reversed_read_count += 1
-                #   if read.get_tag("AS") == read.get_tag("XS"):
-                #     high_quality_same_as_xs += 1
-                #     try:
-                #       read.get_tag("XA")
-                #     except:
-                #       sys.stderr.write("WARNING: read (%s) can not be rescued because XA tag is not given\n"%(read.query_name))
-                #       count_no_second_alignment += 1
-                #       output_file.write(prepare_table_information(read, case="failed") + "\n")
-                #       continue
+                # check if reversed read has AS = XS and if so take the alignment on the forward strand
+                if read.flag == 16:
+                    high_quali_reversed_read_count += 1
+                    if read.get_tag("AS") == read.get_tag("XS"):
+                        high_quality_same_as_xs += 1
+                        try:
+                            read.get_tag("XA")
+                        except:
+                            sys.stderr.write(
+                                "WARNING: read (%s) can not be rescued because XA tag is not given\n" % (read.query_name)
+                            )
+                            count_no_second_alignment += 1
+                            output_file.write(prepare_table_information(read, case="failed") + "\n")
+                            continue
+                        # rescue the perfect match on the forward strand if one is found
+                        # check if only one alignment on forward strand is given
+                        forward_matches, reverse_matches = get_number_of_matches_per_strand(read)
+                        if forward_matches == 1:  # best alignment found on forward strand
+                            # change alignment to forward strand with the information from XA tag
+                            output_file.write(prepare_table_information(read, case="rescue") + "\n")
+                            rescued_read_count += 1
+                        elif forward_matches > 1:
+                            not_rescuable_count += 1
+                            # Throw warning that the read can not be rescued
+                            sys.stderr.write(
+                                "WARNING: read (%s) can not be rescued because more than one alignment on forward strand is given\n"
+                                % (read.query_name)
+                            )
+                            output_file.write(prepare_table_information(read, case="failed") + "\n")
                 output_file.write(prepare_table_information(read, case="normal") + "\n")
         if verbose:
             print("------ List of alignment counts ------", file=sys.stderr)
-            print("Number of processed Alignemnts: ", count, file=sys.stderr)
+            print("Number of processed Alignments: ", count, file=sys.stderr)
             print("Number of high mapping quality according to aligner: ", high_quality_alignment, file=sys.stderr)
             print("Number of low mapping quality according to aligner: ", low_quality_alignment, file=sys.stderr)
             print("Alignments above the user defined identity threshold: ", high_identity_count, file=sys.stderr)
