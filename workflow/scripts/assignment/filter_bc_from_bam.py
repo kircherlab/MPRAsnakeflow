@@ -77,7 +77,7 @@ def main(
                 tlength += length
         return tlength
 
-    def expected_length_filter(read, expected_length):
+    def expected_length_filter(read, expected_length: int) -> bool:
         """Filter reads that are of an expected length (AS tag is used because match gives 1 => if AS >= expected_length, then read is of expected length and quality)"""
         # AS: alignment score
         if read.get_tag("AS") >= expected_length:
