@@ -20,6 +20,15 @@ You can find an extensive documentation [here](https://mprasnakeflow.readthedocs
 
 We have [tutorial](https://github.com/kircherlab/MPRAsnakeflow_tutorial) created in jupyter notebooks to run MPRAsnakeflow locally or within colab.
 
+## Citation
+
+If you use MPRAsnakeflow in your work please cite out recent preprint:
+
+**Uniform processing and analysis of IGVF massively parallel reporter assay data with MPRAsnakeflow**  
+Jonathan D. Rosen, Arjun Devadas Vasanthakumari, Kilian Salomon, Nikola de Lange, Pyaree Mohan Dash, Pia Keukeleire, Ali Hassan, Alejandro Barrera, Martin Kircher, Michael I. Love, Max Schubach  
+*bioRxiv* (2025). [2025.09.25.678548](https://doi.org/10.1101/2025.09.25.678548)
+
+
 ## Usage
 
 If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of this (original) repository and, if available, its DOI (see above). Here is a very short description of the usage. Please look at the [documentation](https://mprasnakeflow.readthedocs.io) for more comprehensive usage. 
