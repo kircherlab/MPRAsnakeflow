@@ -3,6 +3,7 @@ import pysam
 import pandas
 import sys
 import click
+from typing import Optional
 
 
 @click.command()
@@ -67,41 +68,41 @@ import click
     help="Specify path to output file (.tsv).",
 )
 def main(
-    identity_threshold, mismatches_threshold, expected_alignment_length, min_mapping_quality, bamfile, verbose, output_path
+    identity_threshold: float, mismatches_threshold: int, expected_alignment_length: Optional[int], min_mapping_quality: int, bamfile: str, verbose: bool, output_path: str
 ):
     # helpful functions
-    def aln_length(cigarlist):
+    def aln_length(cigarlist) -> int:
         tlength = 0
         for operation, length in cigarlist:
             if operation == 0 or operation == 2 or operation == 3 or operation >= 6:
                 tlength += length
         return tlength
 
-    def expected_length_filter(read, expected_length: int) -> bool:
+    def expected_length_filter(read: pysam.AlignedSegment, expected_length: int) -> bool:
         """Filter reads that are of an expected length (AS tag is used because match gives 1 => if AS >= expected_length, then read is of expected length and quality)"""
         # AS: alignment score
-        if read.get_tag("AS") >= expected_length:
+        if int(read.get_tag("AS")) >= expected_length:
             return True
         return False
 
-    def calculate_sequence_identity(read) -> tuple[float, int]:
+    def calculate_sequence_identity(read: pysam.AlignedSegment) -> tuple[float, int]:
         """Compute sequence identity form a read using cigar string, MD tag, and NM tag"""
         try:
             cigar = read.cigarstring
             # MD: Mismatching positions/bases
             MD = read.get_tag('MD')
             # NM: Edit distance
-            NM = read.get_tag('NM')
+            NM = int(read.get_tag('NM'))
             alnLength = aln_length(read.cigartuples)
         except KeyError:
             sys.stderr.write("Error: No MD or NM tag found")
             return -1, -1
         return (alnLength - NM) / alnLength, NM
 
-    def get_number_of_matches_per_strand(read):
+    def get_number_of_matches_per_strand(read: pysam.AlignedSegment) -> tuple[int, int]:
         """Get number of matches per forward and reverse strand assuming read has XA tag"""
         # split ";" on right side of XA tag
-        xa_tag = read.get_tag("XA").rstrip(";")
+        xa_tag = str(read.get_tag("XA")).rstrip(";")
         xa_list = xa_tag.split(";")
         forward_matches = 0
         reverse_matches = 0
@@ -115,9 +116,9 @@ def main(
                 sys.exit()
         return forward_matches, reverse_matches
 
-    def get_XA_information(read):
+    def get_XA_information(read: pysam.AlignedSegment) -> Optional[str]:
         """Select the XA information from the alternative alignment on the positive strand"""
-        prepare_xa = read.get_tag("XA").split(",")  # oligo name might include ";"
+        prepare_xa = str(read.get_tag("XA")).split(",")  # oligo name might include ";"
         reference_name = prepare_xa[0]
         next_elem = prepare_xa[1:]  # remove first name
         while len(next_elem) > 0:
@@ -133,20 +134,20 @@ def main(
             next_elem = prepare_xa[1:]  # remove first name
         return None
 
-    def get_barcode(read):
+    def get_barcode(read: pysam.AlignedSegment) -> str:
         """The barcode is stored in XI tag:XI:Z:<barcode>,YI:I:<unknown>"""
         # NOTE: XI and YI is from the -C option of BWA which adds the space seperated comment from the fastq files
         # check if it does not include "N"
         try:
-            barcode = read.get_tag("XI").split(",")[0]
+            barcode = str(read.get_tag("XI")).split(",")[0]
         except:
             return "failed"
         if "N" in barcode.upper():
-            sys.stderr.write("Error: Barcode of {read.query_name}")
+            sys.stderr.write(f"Error: Barcode of {read.query_name}")
             return "failed"
         return barcode
 
-    def prepare_table_information(read, case="normal"):
+    def prepare_table_information(read: pysam.AlignedSegment, case: str ="normal") -> str:
         """Prepares the information of the association:
         @case:
           - normal: the information from the alignment are taken
@@ -240,7 +241,7 @@ def main(
                 low_quality_alignment += 1
                 if read.flag == 0:  # check if it is a best alignment
                     # AS: alignment score; XS: alternative alignment score
-                    if read.get_tag("AS") > read.get_tag("XS"):
+                    if int(read.get_tag("AS")) > int(read.get_tag("XS")):
                         change_quality_count += 1
                         output_file.write(prepare_table_information(read, case="fix_mapping_quality") + "\n")
 
