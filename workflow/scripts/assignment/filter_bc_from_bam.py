@@ -281,11 +281,12 @@ def main(
                         % (read.query_name, identity_threshold, aln_length(read.cigartuples))
                     )
                     high_mapping_quality_low_identity += 1
-                if not expected_length_filter(read, expected_alignment_length):
-                    sys.stderr.write(
-                        "WARNING: read (%s) has mapping quality >=1 according to the aligner but does not match the expected alignment length (%s) and has an alignment length of %s\n"
-                        % (read.query_name, expected_alignment_length, aln_length(read.cigartuples))
-                    )
+                if expected_alignment_length:
+                    if not expected_length_filter(read, expected_alignment_length):
+                        sys.stderr.write(
+                            "WARNING: read (%s) has mapping quality >=1 according to the aligner but does not match the expected alignment length (%s) and has an alignment length of %s\n"
+                            % (read.query_name, expected_alignment_length, aln_length(read.cigartuples))
+                        )
                 high_quality_alignment += 1
                 # check if reversed read has AS = XS and if so take the alignment on the forward strand
                 if read.flag == 16:
