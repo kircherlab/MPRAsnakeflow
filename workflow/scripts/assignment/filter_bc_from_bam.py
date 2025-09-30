@@ -126,14 +126,18 @@ def main(
         xa_list = xa_tag.split(";")
         forward_matches = 0
         reverse_matches = 0
-        for xa in xa_list:
-            if "+" in xa.split(",")[-3]:  # because oligo name might include ";"
-                forward_matches += 1
-            elif "-" in xa.split(",")[-3]:
-                reverse_matches += 1
-            else:
-                sys.stderr.write("Error: XA tag does not contain strand information")
-                sys.exit()
+        try:
+            for xa in xa_list:
+                if "+" in xa.split(",")[-3]:  # because oligo name might include ";"
+                    forward_matches += 1
+                elif "-" in xa.split(",")[-3]:
+                    reverse_matches += 1
+                else:
+                    sys.stderr.write("Error: XA tag does not contain strand information")
+                    sys.exit()
+        except:
+            sys.stderr.write(f"{read}")
+            sys.exit()
         return forward_matches, reverse_matches
 
     def get_XA_information(read: pysam.AlignedSegment) -> Optional[str]:
