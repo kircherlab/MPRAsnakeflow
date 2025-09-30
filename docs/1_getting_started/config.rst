@@ -45,20 +45,26 @@ For each assignment you want to process, you must give it a name like :code:`exa
     :split_number:
         To parallelize mapping for assignment, the reads are split into :code:`split_number` files. For example, setting it to 300 means that the reads are split into 300 files, and each file is mapped in parallel. This is only useful when using a cluster. When running the workflow on a single machine, the default value should be used. The default is set to :code:`1`. (For technical reasons, when multiple assignments are defined, all will be set to the maximum defined in the config.)
     :tool:
-        Alignment tool that is used. Currently, :code:`bbmap`, :code:`bwa`, and :code:`exact` are supported. Default is :code:`bbmap`.
+        Alignment tool that is used. Currently, :code:`bbmap`, :code:`bwa`, :code:`bwa-additional-filtering`, and :code:`exact` are supported. Default is :code:`bbmap`.
     :configs:
         Configurations of the alignment tool selected.
 
-        :sequence_length (bwa):
-            Defines the :code:`min` and :code:`max` of a :code:`sequence_length` specification. :code:`sequence_length` is the length of a sequence alignment to an oligo in the design file. Because there can be insertions and deletions, we recommend varying it slightly around the exact length (e.g., ±5). This option enables designs with multiple sequence lengths.
-        :alignment_start (bwa):
-            Defines the :code:`min` and :code:`max` of the start of the alignment in an oligo. When using adapters, you must set the length of the adapter. Otherwise, 1 will be the choice for most cases. We also recommend varying this value slightly because the start might not be exact after the adapter (e.g., ±1).
-        :min_mapping_quality (bwa, bbmap):
-            (Optional) Defines the minimum mapping quality (MAPQ) of the alignment to an oligo. MAPQs differ between bbmap and bwa. For bwa: When using oligos with only 1bp difference, it is recommended to set it to 1. BBMap is better here, and we can use, for example, 30 or 35. For regions with larger edit distances, 30 or 40 might be a good choice. Default is :code:`30` (use bbmap). 
         :sequence_length (exact, bbmap):
             Defines the :code:`sequence_length`, which is the length of a sequence alignment to an oligo in the design file. Only one length design is supported.
         :alignment_start (exact, bbmap):
             Defines the start of the alignment in an oligo. When using adapters, you must set the length of the adapter. Otherwise, 1 will be the choice for most cases.
+        :sequence_length (bwa, bwa-additional-filtering):
+            Defines the :code:`min` and :code:`max` of a :code:`sequence_length` specification. :code:`sequence_length` is the length of a sequence alignment to an oligo in the design file. Because there can be insertions and deletions, we recommend varying it slightly around the exact length (e.g., ±5). This option enables designs with multiple sequence lengths.
+        :alignment_start (bwa, bwa-additional-filtering):
+            Defines the :code:`min` and :code:`max` of the start of the alignment in an oligo. When using adapters, you must set the length of the adapter. Otherwise, 1 will be the choice for most cases. We also recommend varying this value slightly because the start might not be exact after the adapter (e.g., ±1).
+        :min_mapping_quality (bwa, bwa-additional-filtering, bbmap):
+            (Optional) Defines the minimum mapping quality (MAPQ) of the alignment to an oligo. MAPQs differ between bbmap and bwa. For bwa: When using oligos with only 1bp difference, it is recommended to set it to 1. BBMap is better here, and we can use, for example, 30 or 35. For regions with larger edit distances, 30 or 40 might be a good choice. Default is :code:`30` (use bbmap). 
+        :identity_threshold (bwa-additional-filtering):
+            (Optional) Identity threshold is used to choose which alignments are worth trying to rescue. Default is :code:`0.98`.
+        :mismatches_threshold (bwa-additional-filtering):
+            (Optional) Threshold of mismatches we investigate if we should try to rescue. Default is :code:`3`.
+        :verbose (bwa-additional-filtering):
+            (Optional) Print which alignments were rescured and which could not be rescued. Default is :code:`false`.
 
 :bc_length:
     Length of the barcode. Must match the length of :code:`BC`.

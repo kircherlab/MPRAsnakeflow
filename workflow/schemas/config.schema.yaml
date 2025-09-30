@@ -126,7 +126,7 @@ properties:
                         verbose:
                           description: print which alignments were rescured and which could not be rescued
                           type: boolean
-                          default: true
+                          default: false
                       required:
                         - sequence_length
                         - alignment_start
