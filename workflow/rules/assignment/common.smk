@@ -57,9 +57,7 @@ def hasOnlyForwardRead(assignment):
     """
     Return True if the assignment contains only a forward read.
     """
-    return (
-        "REV" not in config["assignments"][assignment]
-    )
+    return "REV" not in config["assignments"][assignment]
 
 
 def getAssignmentRead(assignment, read):
@@ -92,12 +90,9 @@ def getMappingRead(assignment: str) -> str:
             "results/assignment/{assignment}/fastq/merge_split{split}.3prime.fastq.gz"
         )
     elif hasOnlyForwardRead(assignment):
-        return (
-            "results/assignment/{assignment}/fastq/splits/FW.split{split}.BCattached.fastq.gz"
-        )
+        return "results/assignment/{assignment}/fastq/splits/FW.split{split}.BCattached.fastq.gz"
     else:
         return "results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz"
-
 
 
 def getAdapterRemovalReads(assignment: str, five_prime: bool) -> str:
@@ -109,8 +104,6 @@ def getAdapterRemovalReads(assignment: str, five_prime: bool) -> str:
             "results/assignment/{assignment}/fastq/merge_split{split}.3prime.fastq.gz"
         )
     elif hasOnlyForwardRead(assignment):
-        return (
-            "results/assignment/{assignment}/fastq/splits/FW.split{split}.BCattached.fastq.gz"
-        )
+        return "results/assignment/{assignment}/fastq/splits/FW.split{split}.BCattached.fastq.gz"
     else:
         return "results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz"
