@@ -47,7 +47,7 @@ class Mode(Enum):
     "--expected_alignment_length",
     "-a",
     ("expected_alignment_length"),
-    required=False,
+    required=True,
     type=int,
     help="Provide the threshold for the expected alignment length (default=265).",
 )
@@ -88,7 +88,7 @@ class Mode(Enum):
 def main(
     identity_threshold: float,
     mismatches_threshold: int,
-    expected_alignment_length: Optional[int],
+    expected_alignment_length: int,
     min_mapping_quality: int,
     bamfile: str,
     verbose: bool,
@@ -244,10 +244,9 @@ def main(
             if read.mapping_quality < min_mapping_quality:
 
                 # filter for expected sequence length only if mapping quality is low
-                if expected_alignment_length:
-                    if not expected_length_filter(read, expected_alignment_length):
-                        output_file.write(prepare_table_information(read, case=Mode.FAILED) + "\n")
-                        continue
+                if not expected_length_filter(read, expected_alignment_length):
+                    output_file.write(prepare_table_information(read, case=Mode.FAILED) + "\n")
+                    continue
 
                 # check if read has low identity but high alignment score
                 if not sequence_identity >= identity_threshold:
@@ -306,16 +305,15 @@ def main(
                         )
                     )
                     high_mapping_quality_low_identity += 1
-                if expected_alignment_length:
-                    if not expected_length_filter(read, expected_alignment_length):
-                        sys.stderr.write(
-                            "WARNING: read (%s) has mapping quality >=1 according to the aligner but does not match the expected alignment length (%s) and has an alignment length of %s\n"
-                            % (
-                                read.query_name,
-                                expected_alignment_length,
-                                aln_length(read.cigartuples) if read.cigartuples is not None else "unknown",
-                            )
+                if not expected_length_filter(read, expected_alignment_length):
+                    sys.stderr.write(
+                        "WARNING: read (%s) has mapping quality >=1 according to the aligner but does not match the expected alignment length (%s) and has an alignment length of %s\n"
+                        % (
+                            read.query_name,
+                            expected_alignment_length,
+                            aln_length(read.cigartuples) if read.cigartuples is not None else "unknown",
                         )
+                    )
                 high_quality_alignment += 1
                 # check if reversed read has AS = XS and if so take the alignment on the forward strand
                 if read.flag == 16:

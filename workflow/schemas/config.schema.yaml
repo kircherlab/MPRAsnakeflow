@@ -123,9 +123,6 @@ properties:
                           description: Threshold of mismatches we investigate if we should try to rescue.
                           type: integer
                           default: 3
-                        expected_alignment_length:
-                          description: Highly dependent on the length of the designed sequences.
-                          type: integer
                         verbose:
                           description: print which alignments were rescured and which could not be rescued
                           type: boolean

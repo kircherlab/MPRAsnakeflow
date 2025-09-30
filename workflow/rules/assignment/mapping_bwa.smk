@@ -112,12 +112,9 @@ rule assignment_mapping_bwa_getBCs_additional_filter:
         mismatches_threshold=lambda wc: config["assignments"][wc.assignment][
             "alignment_tool"
         ]["configs"]["mismatches_threshold"],
-        expected_alignment_length=lambda wc: (
-            f"--expected_alignment_length {config["assignments"][wc.assignment]["alignment_tool"]["configs"]["expected_alignment_length"]}"
-            if "expected_alignment_length"
-            in config["assignments"][wc.assignment]["alignment_tool"]["configs"]
-            else ""
-        ),
+        expected_alignment_length=lambda wc: config["assignments"][wc.assignment][
+            "alignment_tool"
+        ]["configs"]["sequence_length"]["min"],
         verbose=lambda wc: config["assignments"][wc.assignment]["alignment_tool"][
             "configs"
         ]["verbose"],
@@ -132,7 +129,7 @@ rule assignment_mapping_bwa_getBCs_additional_filter:
         """
         python {input.script} \
         --identity_threshold {params.identity_threshold} --mismatches_threshold {params.mismatches_threshold} \
-        {params.expected_alignment_length} \
+        --expected_alignment_length {params.expected_alignment_length} \
         --min_mapping_quality {params.min_mapping_quality} --bamfile {input.bam} --verbose {params.verbose} --output {output} 2> {log} && sort -k1,1 -k2,2 -k3,3 -o {output} {output}
         """
 
