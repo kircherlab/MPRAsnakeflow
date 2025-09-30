@@ -3,7 +3,24 @@ import pysam
 import pandas
 import sys
 import click
-from typing import Optional
+from typing import Optional, List, Tuple
+from enum import Enum, auto
+
+
+class Mode(Enum):
+    """
+    Enumeration representing different processing modes for barcode assignment from BAM files.
+
+    Attributes:
+        FAILED: Indicates a failed processing mode.
+        RESCUE: Indicates a rescue mode for recovering barcodes.
+        FIX_MAPPING_QUALITY: Indicates a mode for fixing mapping quality issues.
+        NORMAL: Indicates the normal processing mode.
+    """
+    FAILED = auto()
+    RESCUE = auto()
+    FIX_MAPPING_QUALITY = auto()
+    NORMAL = auto()
 
 
 @click.command()
@@ -68,10 +85,16 @@ from typing import Optional
     help="Specify path to output file (.tsv).",
 )
 def main(
-    identity_threshold: float, mismatches_threshold: int, expected_alignment_length: Optional[int], min_mapping_quality: int, bamfile: str, verbose: bool, output_path: str
+    identity_threshold: float,
+    mismatches_threshold: int,
+    expected_alignment_length: Optional[int],
+    min_mapping_quality: int,
+    bamfile: str,
+    verbose: bool,
+    output_path: str,
 ):
     # helpful functions
-    def aln_length(cigarlist) -> int:
+    def aln_length(cigarlist: List[Tuple[int, int]]) -> int:
         tlength = 0
         for operation, length in cigarlist:
             if operation == 0 or operation == 2 or operation == 3 or operation >= 6:
@@ -87,17 +110,14 @@ def main(
 
     def calculate_sequence_identity(read: pysam.AlignedSegment) -> tuple[float, int]:
         """Compute sequence identity form a read using cigar string, MD tag, and NM tag"""
-        try:
-            cigar = read.cigarstring
-            # MD: Mismatching positions/bases
-            MD = read.get_tag('MD')
+        if read.has_tag("NM") and read.cigartuples is not None:
             # NM: Edit distance
-            NM = int(read.get_tag('NM'))
+            NM = int(read.get_tag("NM"))
             alnLength = aln_length(read.cigartuples)
-        except KeyError:
-            sys.stderr.write("Error: No MD or NM tag found")
+            return (alnLength - NM) / alnLength, NM
+        else:
+            sys.stderr.write("Error: No NM tag found")
             return -1, -1
-        return (alnLength - NM) / alnLength, NM
 
     def get_number_of_matches_per_strand(read: pysam.AlignedSegment) -> tuple[int, int]:
         """Get number of matches per forward and reverse strand assuming read has XA tag"""
@@ -134,20 +154,20 @@ def main(
             next_elem = prepare_xa[1:]  # remove first name
         return None
 
-    def get_barcode(read: pysam.AlignedSegment) -> str:
+    def get_barcode(read: pysam.AlignedSegment) -> Optional[str]:
         """The barcode is stored in XI tag:XI:Z:<barcode>,YI:I:<unknown>"""
         # NOTE: XI and YI is from the -C option of BWA which adds the space seperated comment from the fastq files
         # check if it does not include "N"
         try:
             barcode = str(read.get_tag("XI")).split(",")[0]
         except:
-            return "failed"
+            return None
         if "N" in barcode.upper():
             sys.stderr.write(f"Error: Barcode of {read.query_name}")
-            return "failed"
+            return None
         return barcode
 
-    def prepare_table_information(read: pysam.AlignedSegment, case: str ="normal") -> str:
+    def prepare_table_information(read: pysam.AlignedSegment, case: Mode = Mode.NORMAL) -> str:
         """Prepares the information of the association:
         @case:
           - normal: the information from the alignment are taken
@@ -223,12 +243,12 @@ def main(
                 # filter for expected sequence length only if mapping quality is low
                 if expected_alignment_length:
                     if not expected_length_filter(read, expected_alignment_length):
-                        output_file.write(prepare_table_information(read, case="failed") + "\n")
+                        output_file.write(prepare_table_information(read, case=Mode.FAILED) + "\n")
                         continue
 
                 # check if read has low identity but high alignment score
                 if not sequence_identity >= identity_threshold:
-                    output_file.write(prepare_table_information(read, case="failed") + "\n")
+                    output_file.write(prepare_table_information(read, case=Mode.FAILED) + "\n")
                     continue
                 # high alignment identity => potentially interesting alignments
                 high_identity_count += 1
@@ -236,35 +256,32 @@ def main(
                 if num_mismatches > mismatches_threshold:  # throw warning
                     high_mismatches_count += 1
                     sys.stderr.write("WARNING: number of missmatches from %s is %d\n" % (read.query_name, num_mismatches))
-                    output_file.write(prepare_table_information(read, case="failed") + "\n")
+                    output_file.write(prepare_table_information(read, case=Mode.FAILED) + "\n")
 
                 low_quality_alignment += 1
                 if read.flag == 0:  # check if it is a best alignment
                     # AS: alignment score; XS: alternative alignment score
                     if int(read.get_tag("AS")) > int(read.get_tag("XS")):
                         change_quality_count += 1
-                        output_file.write(prepare_table_information(read, case="fix_mapping_quality") + "\n")
+                        output_file.write(prepare_table_information(read, case=Mode.FIX_MAPPING_QUALITY) + "\n")
 
                 # rescue reads with reversed read (flag == 16) with AS == XS and check if only on other alignment on forward strand is given
                 if read.flag == 16:
                     reversed_read_count += 1
                     # AS: alignment score; XS: alternative alignment score
                     if read.get_tag("AS") == read.get_tag("XS"):
-                        try:
-                            # XA: alternative alignment
-                            read.get_tag("XA")
-                        except:
+                        if not read.has_tag("XA"):
                             sys.stderr.write(
                                 "WARNING: read (%s) can not be rescued because XA tag is not given\n" % (read.query_name)
                             )
                             count_no_second_alignment += 1
-                            output_file.write(prepare_table_information(read, case="failed") + "\n")
+                            output_file.write(prepare_table_information(read, case=Mode.FAILED) + "\n")
                             continue
                         # check if only one alignment on forward strand is given
                         forward_matches, reverse_matches = get_number_of_matches_per_strand(read)
                         if forward_matches == 1:  # best alignment found on forward strand
                             # change alignment to forward strand with the information from XA tag
-                            output_file.write(prepare_table_information(read, case="rescue") + "\n")
+                            output_file.write(prepare_table_information(read, case=Mode.RESCUE) + "\n")
                             rescued_read_count += 1
                         elif forward_matches > 1:
                             not_rescuable_count += 1
@@ -273,20 +290,28 @@ def main(
                                 "WARNING: read (%s) can not be rescued because more than one alignment on forward strand is given\n"
                                 % (read.query_name)
                             )
-                            output_file.write(prepare_table_information(read, case="failed") + "\n")
+                            output_file.write(prepare_table_information(read, case=Mode.FAILED) + "\n")
 
             else:  # mapping quality >= 1 (threshold)
                 if not sequence_identity >= identity_threshold:
                     sys.stderr.write(
                         "WARNING: read (%s) has mapping quality >=1 according to the aligner but the alignment does not match the identity threshold of %s and has an alignment length of %s\n"
-                        % (read.query_name, identity_threshold, aln_length(read.cigartuples))
+                        % (
+                            read.query_name,
+                            identity_threshold,
+                            aln_length(read.cigartuples) if read.cigartuples is not None else "unknown",
+                        )
                     )
                     high_mapping_quality_low_identity += 1
                 if expected_alignment_length:
                     if not expected_length_filter(read, expected_alignment_length):
                         sys.stderr.write(
                             "WARNING: read (%s) has mapping quality >=1 according to the aligner but does not match the expected alignment length (%s) and has an alignment length of %s\n"
-                            % (read.query_name, expected_alignment_length, aln_length(read.cigartuples))
+                            % (
+                                read.query_name,
+                                expected_alignment_length,
+                                aln_length(read.cigartuples) if read.cigartuples is not None else "unknown",
+                            )
                         )
                 high_quality_alignment += 1
                 # check if reversed read has AS = XS and if so take the alignment on the forward strand
@@ -294,21 +319,19 @@ def main(
                     high_quali_reversed_read_count += 1
                     if read.get_tag("AS") == read.get_tag("XS"):
                         high_quality_same_as_xs += 1
-                        try:
-                            read.get_tag("XA")
-                        except:
+                        if not read.has_tag("XA"):
                             sys.stderr.write(
                                 "WARNING: read (%s) can not be rescued because XA tag is not given\n" % (read.query_name)
                             )
                             count_no_second_alignment += 1
-                            output_file.write(prepare_table_information(read, case="failed") + "\n")
+                            output_file.write(prepare_table_information(read, case=Mode.FAILED) + "\n")
                             continue
                         # rescue the perfect match on the forward strand if one is found
                         # check if only one alignment on forward strand is given
                         forward_matches, reverse_matches = get_number_of_matches_per_strand(read)
                         if forward_matches == 1:  # best alignment found on forward strand
                             # change alignment to forward strand with the information from XA tag
-                            output_file.write(prepare_table_information(read, case="rescue") + "\n")
+                            output_file.write(prepare_table_information(read, case=Mode.RESCUE) + "\n")
                             rescued_read_count += 1
                         elif forward_matches > 1:
                             not_rescuable_count += 1
@@ -317,8 +340,8 @@ def main(
                                 "WARNING: read (%s) can not be rescued because more than one alignment on forward strand is given\n"
                                 % (read.query_name)
                             )
-                            output_file.write(prepare_table_information(read, case="failed") + "\n")
-                output_file.write(prepare_table_information(read, case="normal") + "\n")
+                            output_file.write(prepare_table_information(read, case=Mode.FAILED) + "\n")
+                output_file.write(prepare_table_information(read, case=Mode.NORMAL) + "\n")
         if verbose:
             print("------ List of alignment counts ------", file=sys.stderr)
             print("Number of processed Alignments: ", count, file=sys.stderr)
