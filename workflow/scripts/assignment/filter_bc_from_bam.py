@@ -17,6 +17,7 @@ class Mode(Enum):
         FIX_MAPPING_QUALITY: Indicates a mode for fixing mapping quality issues.
         NORMAL: Indicates the normal processing mode.
     """
+
     FAILED = auto()
     RESCUE = auto()
     FIX_MAPPING_QUALITY = auto()
