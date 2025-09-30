@@ -176,7 +176,7 @@ def main(
           - failed: we write barcode without found assignment to the file ({barcode}\tother\tNA)
         """
         barcode = get_barcode(read)
-        if case == "failed":
+        if case == Mode.FAILED:
             return f"{barcode}\tother\tNA"
         reference_name = read.reference_name
         position = read.reference_start  # 0-based
@@ -185,13 +185,13 @@ def main(
         nm = read.get_tag("NM")
         # MD: Mismatching positions/bases
         md = read.get_tag("MD")
-        if case == "normal":
+        if case == Mode.NORMAL:
             mapping_quality = read.mapping_quality
 
-        elif case == "fix_mapping_quality":
+        elif case == Mode.FIX_MAPPING_QUALITY:
             mapping_quality = 1
 
-        elif case == "rescue":
+        elif case == Mode.RESCUE:
             # if NM is 0, then we can rescue the alignment from XA tag
             xa_info = get_XA_information(read)
             if xa_info is None:
