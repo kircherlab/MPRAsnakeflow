@@ -71,7 +71,7 @@ For each assignment you want to process, you must give it a name like :code:`exa
 :FW:
     List of forward-read files in gzipped fastq format. The full or relative path to the files should be used. The same order in FW, BC, and REV is important.
 :REV:
-    List of reverse-read files in gzipped fastq format. The full or relative path to the files should be used. The same order in FW, BC, and REV is important.
+    (Optional) List of reverse-read files in gzipped fastq format. Files have to overlap the FW read by at least 10 bp (see :code:`NGmerge` and :code:`min_dovetailed_overlap`). The full or relative path to the files should be used. The same order in FW, BC, and REV is important.
 :BC:
     List of index-read files in gzipped fastq format. The full or relative path to the files should be used. The same order in FW, BC, and REV is important.
 :adapters:

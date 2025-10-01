@@ -244,7 +244,6 @@ properties:
               - BC
         required:
           - FW
-          - REV
           - bc_length
           - design_file
           - configs
