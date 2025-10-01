@@ -257,7 +257,7 @@ def main(
 
                 if num_mismatches > mismatches_threshold:  # throw warning
                     high_mismatches_count += 1
-                    sys.stderr.write("WARNING: number of missmatches from %s is %d\n" % (read.query_name, num_mismatches))
+                    sys.stderr.write("WARNING: number of mismatches from %s is %d\n" % (read.query_name, num_mismatches))
                     output_file.write(prepare_table_information(read, case=Mode.FAILED) + "\n")
 
                 low_quality_alignment += 1
