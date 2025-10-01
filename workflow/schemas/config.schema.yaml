@@ -40,6 +40,7 @@ properties:
                   - exact
                   - bwa
                   - bbmap
+                  - bwa-additional-filtering
                 default: bbmap
             allOf:
               - if:
@@ -75,6 +76,57 @@ properties:
                           required:
                             - min
                             - max
+                      required:
+                        - sequence_length
+                        - alignment_start
+                        - min_mapping_quality
+                  required:
+                    - configs
+              - if:
+                  properties:
+                    tool:
+                      const: bwa-additional-filtering
+                then:
+                  properties:
+                    configs:
+                      type: object
+                      properties:
+                        sequence_length:
+                          type: object
+                          properties:
+                            min:
+                              type: integer
+                            max:
+                              type: integer
+                          required:
+                            - min
+                            - max
+                        alignment_start:
+                          type: object
+                          properties:
+                            min:
+                              type: integer
+                            max:
+                              type: integer
+                          required:
+                            - min
+                            - max
+                        min_mapping_quality:
+                          type: integer
+                          minimum: 0
+                          default: 1
+                        identity_threshold:
+                          description: Identity threshold is used to choose which alignments are worth trying to rescue.
+                          type: number
+                          default: 0.98
+                        mismatches_threshold:
+                          description: Threshold of mismatches we investigate if we should try to rescue.
+                          type: integer
+                          default: 3
+                        verbose:
+                          description: print which alignments were rescured and which could not be rescued
+                          type: boolean
+                          default: false
                       required:
                         - sequence_length
                         - alignment_start

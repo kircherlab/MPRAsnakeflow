@@ -404,7 +404,7 @@ write_correlation <- function(correlations, name) {
 read_data <- function(file, mindnacounts, minrnacounts, scaling) {
   data <- read.table(file,
     as.is = TRUE,
-    sep = "\t", header = FALSE, stringsAsFactors = FALSE
+    sep = "\t", header = FALSE, comment.char = "", stringsAsFactors = FALSE
   )
   colnames(data) <- c("Barcode", "DNA", "RNA")
 
