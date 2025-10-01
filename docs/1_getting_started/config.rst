@@ -64,7 +64,7 @@ For each assignment you want to process, you must give it a name like :code:`exa
         :mismatches_threshold (bwa-additional-filtering):
             (Optional) Threshold of mismatches we investigate if we should try to rescue. Default is :code:`3`.
         :verbose (bwa-additional-filtering):
-            (Optional) Print which alignments were rescured and which could not be rescued. Default is :code:`false`.
+            (Optional) Print which alignments were rescued and which could not be rescued. Default is :code:`false`.
 
 :bc_length:
     Length of the barcode. Must match the length of :code:`BC`.
