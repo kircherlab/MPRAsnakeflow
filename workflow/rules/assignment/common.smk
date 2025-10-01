@@ -97,7 +97,7 @@ def getMappingRead(assignment: str) -> str:
 
 def getAdapterRemovalReads(assignment: str, five_prime: bool) -> str:
     """
-    Return the final reads for mapping after joining, maybe after adapter removal.
+    Return the reads to be used for adapter removal for the given assignment.
     """
     if five_prime and has3PrimeAdapters(assignment):
         return (
