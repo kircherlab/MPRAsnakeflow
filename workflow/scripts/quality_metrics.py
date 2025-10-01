@@ -80,7 +80,9 @@ def experiment(barcode_file, assignment_file, bc_threshold, output_file):
     output["fraction_oligos_passing"] = round(fraction_oligos_passing(mpra_oligo_data, assigned_oligos), 4)
 
     # output
-    json_string = json.dumps(output, indent=4)
+    #json_string = json.dumps(output, indent=4)
+    json_string = json.dumps(output, indent=4, default=lambda o: o.item() if isinstance(o, np.generic) else str(o))
+
     click.echo(json_string)
 
     if output_file:
