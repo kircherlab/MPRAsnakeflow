@@ -30,7 +30,7 @@ def read_sequence_files(
             seq_bc = reverse_complement(seq_bc)
             qual_bc = str(qual_bc)[::-1]
         seqid = "%s XI:Z:%s,YI:Z:%s" % (seqid_read, seq_bc, qual_bc)
-        if len(seqid) > 255:
+        if len(seqid) >= 255:
             """255 character limit for QNAME exceeded, No BC"""
             seqid = "%s XI:Z:%s,YI:Z:%s" % (seqid_read, "N", "I")
 

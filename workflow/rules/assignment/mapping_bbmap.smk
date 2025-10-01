@@ -42,7 +42,7 @@ rule assignment_mapping_bbmap:
         temp("results/logs/assignment/mapping.bbmap.{assignment}.{split}.log"),
     shell:
         """
-        bbmap.sh -eoom -Xmx{resources.mem} -t={threads} \
+        bbmap.sh -eoom -Xmx{resources.mem} -t={threads} nullifybrokenquality \
         in={input.reads} ref={input.reference} nodisk out={output.bam} &> {log};
         samtools sort -l 0 -@ {threads} {output.bam} > {output.sorted_bam} 2>> {log};
         """
