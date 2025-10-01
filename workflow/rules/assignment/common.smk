@@ -89,10 +89,8 @@ def getMappingRead(assignment: str) -> str:
         return (
             "results/assignment/{assignment}/fastq/merge_split{split}.3prime.fastq.gz"
         )
-    elif hasOnlyForwardRead(assignment):
-        return "results/assignment/{assignment}/fastq/splits/FW.split{split}.BCattached.fastq.gz"
     else:
-        return "results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz"
+        return getStartRead(assignment)
 
 
 def getAdapterRemovalReads(assignment: str, five_prime: bool) -> str:
@@ -103,7 +101,15 @@ def getAdapterRemovalReads(assignment: str, five_prime: bool) -> str:
         return (
             "results/assignment/{assignment}/fastq/merge_split{split}.3prime.fastq.gz"
         )
-    elif hasOnlyForwardRead(assignment):
+    else:
+        return getStartRead(assignment)
+
+
+def getStartRead(assignment: str) -> str:
+    """
+    Return the start read for the assignment. Can be a joined read or only the forward read.
+    """
+    if hasOnlyForwardRead(assignment):
         return "results/assignment/{assignment}/fastq/splits/FW.split{split}.BCattached.fastq.gz"
     else:
         return "results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz"
