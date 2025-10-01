@@ -41,7 +41,7 @@ class Mode(Enum):
     required=False,
     default=3,
     type=int,
-    help="Provide threshold for the number of missmatches without warning (default=3).",
+    help="Provide threshold for the number of mismatches without warning (default=3).",
 )
 @click.option(
     "--expected_alignment_length",
