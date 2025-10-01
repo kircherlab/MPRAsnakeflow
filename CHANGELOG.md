@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.6](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.5...v0.5.6) (2025-10-01)
+
+
+### Features
+
+* bwa additional filtering ([#216](https://github.com/kircherlab/MPRAsnakeflow/issues/216)) ([9c81cfd](https://github.com/kircherlab/MPRAsnakeflow/commit/9c81cfd19ef35be4cfc8ef837b192dcc9b5b2ada))
+
 ## [0.5.5](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.4...v0.5.5) (2025-09-17)
 
 
