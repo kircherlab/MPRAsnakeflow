@@ -6,6 +6,7 @@
 ### Features
 
 * bwa additional filtering ([#216](https://github.com/kircherlab/MPRAsnakeflow/issues/216)) ([9c81cfd](https://github.com/kircherlab/MPRAsnakeflow/commit/9c81cfd19ef35be4cfc8ef837b192dcc9b5b2ada))
+* assignment workflow: allow single end reads (FW only) ([#218](https://github.com/kircherlab/MPRAsnakeflow/issues/218)) ([9c81cfd](https://github.com/kircherlab/MPRAsnakeflow/commit/e19621e3303e64a48bcb2904d76046fa396cf7a7))
 
 ## [0.5.5](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.4...v0.5.5) (2025-09-17)
 
