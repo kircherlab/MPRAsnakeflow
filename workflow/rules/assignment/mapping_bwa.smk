@@ -95,7 +95,6 @@ rule assignment_mapping_bwa_getBCs:
         """
 
 
-# TODO: additional config parameter: additional alignment tool: bwa_finest has additional filterin options: identity_threshold=0.98, mismatches in alignment threshold, expected alignment length (if true expected_alignment_length required), verbose = True will tell what was recovered and what not
 rule assignment_mapping_bwa_getBCs_additional_filter:
     """
     Get the barcodes with a python script to rescue alignments with 0 mapping quality according to bwa.
@@ -122,9 +121,9 @@ rule assignment_mapping_bwa_getBCs_additional_filter:
             "alignment_tool"
         ]["configs"]["min_mapping_quality"],
     conda:
-        "../../envs/python3.yaml"
+        getCondaEnv("python3.yaml")
     log:
-        "results/logs/assignment/bwa_finest.{assignment}.{split}.log",
+        "results/logs/assignment/mapping.bwa.getBCs_additional_filter.{assignment}.{split}.log",
     shell:
         """
         python {input.script} \
