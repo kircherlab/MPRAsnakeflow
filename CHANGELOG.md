@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.7](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.6...v0.5.7) (2025-10-06)
+
+
+### Bug Fixes
+
+* max 255 read length allowed ([#224](https://github.com/kircherlab/MPRAsnakeflow/issues/224)) ([81029df](https://github.com/kircherlab/MPRAsnakeflow/commit/81029dfc27c7ebfef6de02b84d8b83568727af13)), closes [#205](https://github.com/kircherlab/MPRAsnakeflow/issues/205)
+
 ## [0.5.6](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.5...v0.5.6) (2025-10-01)
 
 
