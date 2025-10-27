@@ -101,7 +101,9 @@ def cli(input_file, start, length, fast_search, sequence_check, attach_sequence,
     illegal_characters_headers = [i for i in ids if pattern.fullmatch(i) is None]
     if len(illegal_characters_headers) > 0:
         click.echo(
-            f"{len(illegal_characters_headers)} headers contain illegal characters. Only this expression is allowed: ^[0-9A-Za-z!#$%&+./:;?@^_|~-][0-9A-Za-z!#$%&*+./:;=?@^_|~-]*$",
+            f"{len(illegal_characters_headers)} headers contain illegal characters. "
+            "Headers must start with an alphanumeric character or one of the following special characters: !#$%&+./:;?@^_|~-. "
+            "Subsequent characters may also include * and =.",
             err=True,
         )
         click.echo(
