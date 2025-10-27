@@ -55,7 +55,7 @@ def check_version(pattern, version, config_version):
             )
 
 
-if not config.get("skip_version_check", False):
+if not config["skip_version_check"]:
     check_version(pattern_development_version, version, config["version"])
     check_version(pattern_major_version, version, config["version"])
 
