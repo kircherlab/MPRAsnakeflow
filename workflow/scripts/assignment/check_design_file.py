@@ -90,6 +90,11 @@ def cli(input_file, start, length, fast_search, sequence_check, attach_sequence,
 
     # check for illegal characters
     click.echo("Searching for illegal characters in header...")
+    # Header validation regex:
+    # - The first character must be one of: 0-9, A-Z, a-z, or ! # $ % & + . / : ; ? @ ^ _ | ~ -
+    #   (notably, '*' and '=' are NOT allowed as the first character)
+    # - Subsequent characters may include all of the above, plus '*' and '='
+    # - This prevents headers from starting with '*' or '=', which may be reserved or problematic in downstream tools.
     pattern = re.compile(
         r'^[0-9A-Za-z!#$%&+./:;?@^_|~-][0-9A-Za-z!#$%&*+./:;=?@^_|~-]*$'
     )
