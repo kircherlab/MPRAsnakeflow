@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.8](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.7...v0.5.8) (2025-10-27)
+
+
+### Bug Fixes
+
+* fixed various small bugs in mapping_bbmap.smk, attachBCToFastQ.py, quality_metrics.py ([#220](https://github.com/kircherlab/MPRAsnakeflow/issues/220)) ([90380be](https://github.com/kircherlab/MPRAsnakeflow/commit/90380be4e3777d34d8ad164e66f5272ebb3d9f86))
+* issues in assignment check ([#230](https://github.com/kircherlab/MPRAsnakeflow/issues/230)) ([f25b74f](https://github.com/kircherlab/MPRAsnakeflow/commit/f25b74f488452e6fddcf67975f15e98cfa8b0d15)), closes [#217](https://github.com/kircherlab/MPRAsnakeflow/issues/217) [#221](https://github.com/kircherlab/MPRAsnakeflow/issues/221)
+* workaround for default values in schema files when using remote exec ([#228](https://github.com/kircherlab/MPRAsnakeflow/issues/228)) ([261bcb3](https://github.com/kircherlab/MPRAsnakeflow/commit/261bcb33b85189cc3f3c8559d4c2514d4741c0c3))
+
 ## [0.5.7](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.6...v0.5.7) (2025-10-06)
 
 
