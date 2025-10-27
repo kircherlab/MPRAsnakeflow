@@ -27,12 +27,10 @@ from snakemake_interface_executor_plugins.settings import ExecMode
 
 # Use the global 'workflow' variable directly as recommended by Snakemake
 if workflow.remote_exec:
-    print(workflow.exec_mode)
     old_exec_mode = workflow.exec_mode
     workflow.workflow_settings.exec_mode = ExecMode.DEFAULT
     validate(config, schema="../schemas/config.schema.yaml")
     workflow.workflow_settings.exec_mode = old_exec_mode
-    print(workflow.exec_mode)
 else:
     validate(config, schema="../schemas/config.schema.yaml")
 
