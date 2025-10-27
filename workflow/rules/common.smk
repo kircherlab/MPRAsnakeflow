@@ -21,11 +21,10 @@ def getCondaEnv(name):
 ##### load config and sample sheets #####
 from snakemake.utils import validate
 import pandas as pd
-import inspect
+# import inspect  # No longer needed
 from snakemake_interface_executor_plugins.settings import ExecMode
 
-frame = inspect.currentframe().f_back
-workflow = frame.f_globals.get("workflow")
+# Use the global 'workflow' variable directly as recommended by Snakemake
 if workflow.remote_exec:
     print(workflow.exec_mode)
     old_exec_mode = workflow.exec_mode
