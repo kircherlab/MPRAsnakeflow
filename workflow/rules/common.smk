@@ -22,7 +22,6 @@ def getCondaEnv(name):
 from snakemake.utils import validate
 import pandas as pd
 
-# import inspect  # No longer needed
 from snakemake_interface_executor_plugins.settings import ExecMode
 
 # Use the global 'workflow' variable directly as recommended by Snakemake
