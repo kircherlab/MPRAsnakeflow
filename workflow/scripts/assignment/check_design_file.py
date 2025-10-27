@@ -93,10 +93,14 @@ def cli(input_file, start, length, fast_search, sequence_check, attach_sequence,
     pattern = re.compile(
         r'^[0-9A-Za-z!#$%&+./:;?@^_|~-][0-9A-Za-z!#$%&*+./:;=?@^_|~-]*$'
     )
-    illegal_characters = sum(1 for i in ids if pattern.fullmatch(i) is None)
-    if illegal_characters > 0:
+    illegal_characters_headers = [i for i in ids if pattern.fullmatch(i) is None]
+    if len(illegal_characters_headers) > 0:
         click.echo(
-            f"{illegal_characters} headers contain illegal characters ('[',']').",
+            f"{len(illegal_characters_headers)} headers contain illegal characters. Only this expression is allowed: ^[0-9A-Za-z!#$%&+./:;?@^_|~-][0-9A-Za-z!#$%&*+./:;=?@^_|~-]*$",
+            err=True,
+        )
+        click.echo(
+            f"The following headers contain illegal characters:\n" + "\n".join(illegal_characters_headers),
             err=True,
         )
         exit(1)
