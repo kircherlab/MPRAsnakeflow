@@ -10,6 +10,7 @@ Also checks for duplicated headers in the design file.
 import pyfastx
 import click
 import numpy as np
+import re
 
 
 # options
@@ -72,9 +73,9 @@ def cli(input_file, start, length, fast_search, sequence_check, attach_sequence,
     # attach sequence
     with open(output, "w") as fasta_file:
         for name, seq in pyfastx.Fasta(input_file, build_index=False):
-            new_sequence = seq
+            new_sequence = seq.upper()
             if attach_sequence:
-                new_sequence = attach_sequence[0] + new_sequence + attach_sequence[1]
+                new_sequence = attach_sequence[0].upper() + new_sequence + attach_sequence[1].upper()
             fasta_file.write(f">{name}\n{new_sequence}\n")
 
     # read fasta file
@@ -89,7 +90,10 @@ def cli(input_file, start, length, fast_search, sequence_check, attach_sequence,
 
     # check for illegal characters
     click.echo("Searching for illegal characters in header...")
-    illegal_characters = np.array([True if "[" in i or "]" in i else False for i in set(ids)], dtype=bool).sum()
+    pattern = re.compile(
+        r'^[0-9A-Za-z!#$%&+./:;?@^_|~-][0-9A-Za-z!#$%&*+./:;=?@^_|~-]*$'
+    )
+    illegal_characters = sum(1 for i in ids if pattern.fullmatch(i) is None)
     if illegal_characters > 0:
         click.echo(
             f"{illegal_characters} headers contain illegal characters ('[',']').",
@@ -144,7 +148,7 @@ def cli(input_file, start, length, fast_search, sequence_check, attach_sequence,
 
         # unique names
         forward_collitions = [list(i) for i in set(tuple(i) for i in forward_collitions)]
-        antisense_collition = [list(i) for i in set(tuple(i) for i in antisense_collition)]
+        antisense_collitions = [list(i) for i in set(tuple(i) for i in antisense_collitions)]
 
         if (len(forward_collitions) > 0) or (len(antisense_collitions) > 0):
             click.echo(
