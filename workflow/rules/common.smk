@@ -22,7 +22,16 @@ def getCondaEnv(name):
 from snakemake.utils import validate
 import pandas as pd
 
-validate(config, schema="../schemas/config.schema.yaml")
+from snakemake_interface_executor_plugins.settings import ExecMode
+
+# Use the global 'workflow' variable directly as recommended by Snakemake
+if workflow.remote_exec:
+    old_exec_mode = workflow.exec_mode
+    workflow.workflow_settings.exec_mode = ExecMode.DEFAULT
+    validate(config, schema="../schemas/config.schema.yaml")
+    workflow.workflow_settings.exec_mode = old_exec_mode
+else:
+    validate(config, schema="../schemas/config.schema.yaml")
 
 # load sample sheets
 experiments = {}
