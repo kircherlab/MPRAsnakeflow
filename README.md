@@ -1,8 +1,14 @@
 # Snakemake workflow: MPRAsnakeflow
 
 [![Documentation Status](https://readthedocs.org/projects/mprasnakeflow/badge/?version=latest)](https://mprasnakeflow.readthedocs.io/latest/?badge=latest)
+![GitHub Release](https://img.shields.io/github/v/release/kircherlab/MPRAsnakeflow)
+[![DOI](https://zenodo.org/badge/347005871.svg)](https://doi.org/10.5281/zenodo.18163777)
+![GitHub License](https://img.shields.io/github/license/kircherlab/MPRAsnakeflow)
 [![Snakemake](https://img.shields.io/badge/snakemake-≥8.24.1-brightgreen.svg)](https://snakemake.github.io/)
 [![Tests](https://github.com/kircherlab/MPRAsnakeflow/actions/workflows/main.yml/badge.svg)](https://github.com/kircherlab/MPRAsnakeflow/actions/workflows/main.yml)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/kircherlab/MPRAsnakeflow)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/kircherlab/MPRAsnakeflow)
+
 
 This pipeline processes sequencing data from Massively Parallel Reporter Assays (MPRA) to create count tables for candidate sequences tested in the experiment.
 
