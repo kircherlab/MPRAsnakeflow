@@ -719,9 +719,13 @@ def counts_aggregate_demultiplex_input(project):
             type=["DNA", "RNA"],
         )
         for name in names:
-            with checkpoints.experiment_counts_demultiplex_BAM_umi.get(
-                project=project, name=name
-            ).output[0].open() as f:
+            with (
+                checkpoints.experiment_counts_demultiplex_BAM_umi.get(
+                    project=project, name=name
+                )
+                .output[0]
+                .open() as f
+            ):
                 output += [f.name]
     return output
 
