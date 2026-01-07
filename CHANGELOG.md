@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.9](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.8...v0.5.9) (2026-01-07)
+
+
+### Bug Fixes
+
+* Adding Zenodo DOI to Readme ([#231](https://github.com/kircherlab/MPRAsnakeflow/issues/231)) ([a3847a9](https://github.com/kircherlab/MPRAsnakeflow/commit/a3847a9bc074aa4d97322f0213d75a7a22d11450))
+
 ## [0.5.8](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.7...v0.5.8) (2025-10-27)
 
 
