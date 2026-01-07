@@ -24,11 +24,11 @@ jobs:
   Formatting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Formatting
-        uses: super-linter/super-linter@v6
+        uses: super-linter/super-linter@v8
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: master
