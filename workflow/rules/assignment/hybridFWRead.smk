@@ -29,7 +29,7 @@ rule assignment_hybridFWRead_get_reads_by_length:
         """
         zcat {input.fastq} | \
         awk '{{if (NR%4==2 || NR%4==0){{
-                print substr($0,1,20) > "{output.BC_tmp}"; print substr($0,{params.insert_start}) > "{output.FW_tmp}"
+                print substr($0,1,{params.bc_length}) > "{output.BC_tmp}"; print substr($0,{params.insert_start}) > "{output.FW_tmp}"
             }} else {{
                 print $0 > "{output.BC_tmp}"; print $0 > "{output.FW_tmp}"
             }}}}';

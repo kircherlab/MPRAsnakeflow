@@ -62,25 +62,26 @@ def experiment(barcode_file, assignment_file, bc_threshold, output_file):
     mpra_oligo_data = MPRABarcodeData.from_file(barcode_file).oligo_data
 
     # median_barcodes_passing_filtering
-    output["median_barcodes_passing_filtering"] = median_barcodes_passing_filtering(mpra_oligo_data)
+    output["median_barcodes_passing_filtering"] = int(median_barcodes_passing_filtering(mpra_oligo_data))
 
     # median_rna_read_count
-    output["median_rna_read_count"] = median_rna_read_count(mpra_oligo_data)
+    output["median_rna_read_count"] = int(median_rna_read_count(mpra_oligo_data))
 
     # now with threshold
     mpra_oligo_data.barcode_threshold = bc_threshold
 
     # pearson_correlation
-    output["pearson_correlation"] = pearson_correlation(mpra_oligo_data).round(4)
+    output["pearson_correlation"] = float(pearson_correlation(mpra_oligo_data).round(4))
 
     # fraction_oligos_passing
     assignment_df = pd.read_csv(assignment_file, sep="\t", header=None)
     assignment_grouped = assignment_df.groupby(1).size()
     assigned_oligos = len(assignment_grouped)
-    output["fraction_oligos_passing"] = round(fraction_oligos_passing(mpra_oligo_data, assigned_oligos), 4)
+    output["fraction_oligos_passing"] = float(round(fraction_oligos_passing(mpra_oligo_data, assigned_oligos), 4))
 
     # output
-    json_string = json.dumps(output, indent=4)
+    json_string = json.dumps(output, indent=4, default=lambda o: o.item() if isinstance(o, np.generic) else str(o))
+
     click.echo(json_string)
 
     if output_file:

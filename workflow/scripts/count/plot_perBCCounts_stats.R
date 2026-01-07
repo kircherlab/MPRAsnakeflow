@@ -73,9 +73,10 @@ num_replicates <- length(replicates)
 data <- data.frame(File = files, Replicate = replicates)
 data$Condition <- cond
 
-readData <- function(file, mindnacounts, minrnacounts) {
-  data <- read.table(file, as.is = T,
-    sep = "\t", header = F, stringsAsFactors = F
+read_data <- function(file, mindnacounts, minrnacounts) {
+  data <- read.table(file,
+    as.is = TRUE,
+    sep = "\t", comment.char = "", header = FALSE, stringsAsFactors = FALSE
   )
   colnames(data) <- c("Barcode", "DNA", "RNA")
 
@@ -89,27 +90,27 @@ plots_dna <- list()
 plots_rna <- list()
 
 for (n in 1:(data %>% nrow())) {
-  counts <- readData(as.character(data[n, ]$File), opt$mindnacounts, opt$minrnacounts)
+  counts <- read_data(as.character(data[n, ]$File), opt$mindnacounts, opt$minrnacounts)
   intercept_median <- median(counts$DNA)
   intercept_mean <- mean(counts$DNA)
   plots_dna[[n]] <- ggplot(counts, aes(x = DNA)) +
-    geom_histogram(bins=100) +
+    geom_histogram(bins = 100) +
     geom_vline(xintercept = intercept_median, colour = "red") +
     geom_vline(xintercept = intercept_mean, colour = "blue") +
-    xlim(0,100) +
+    xlim(0, 100) +
     ggtitle(paste("replicate", data[n, ]$Replicate, sep = " "))
   intercept_median <- median(counts$RNA)
   intercept_mean <- mean(counts$RNA)
   plots_rna[[n]] <- ggplot(counts, aes(x = RNA)) +
-    geom_histogram(bins=100) +
+    geom_histogram(bins = 100) +
     geom_vline(xintercept = intercept_median, colour = "red") +
     geom_vline(xintercept = intercept_mean, colour = "blue") +
-    xlim(0,100) +
-    ggtitle(paste("replicate", data[n, ]$Replicate, sep = " ")) 
+    xlim(0, 100) +
+    ggtitle(paste("replicate", data[n, ]$Replicate, sep = " "))
 }
 
 hist_plot <- do.call("plot_grid", c(plots_rna))
-ggsave(sprintf("%s_RNA_perBarcode.png", outdir), hist_plot, dpi=300, type="cairo")
+ggsave(sprintf("%s_RNA_perBarcode.png", outdir), hist_plot, dpi = 300, type = "cairo")
 
 hist_plot <- do.call("plot_grid", c(plots_dna))
-ggsave(sprintf("%s_DNA_perBarcode.png", outdir), hist_plot, dpi=300, type="cairo")
+ggsave(sprintf("%s_DNA_perBarcode.png", outdir), hist_plot, dpi = 300, type = "cairo")

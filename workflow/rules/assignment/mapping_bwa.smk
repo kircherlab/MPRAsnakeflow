@@ -86,12 +86,50 @@ rule assignment_mapping_bwa_getBCs:
             split(a[3],a,",");
             if (a[1] !~ /N/) {{
                 if (($5 >= {params.mapping_quality_min}) && ($4 >= {params.alignment_start_min}) && ($4 <= {params.alignment_start_max}) && (length($10) >= {params.sequence_length_min}) && (length($10) <= {params.sequence_length_max})) {{
-                    print a[1],$3,$4";"$6";"$12";"$13";"$5 
+                    print a[1],$3,$4";"$6";"$12";"$13";"$5
                 }} else {{
-                    print a[1],"other","NA" 
+                    print a[1],"other","NA"
                 }}
             }}
         }}' | sort -k1,1 -k2,2 -k3,3 -S 7G > {output} 2> {log}
+        """
+
+
+rule assignment_mapping_bwa_getBCs_additional_filter:
+    """
+    Get the barcodes with a python script to rescue alignments with 0 mapping quality according to bwa.
+    """
+    input:
+        bam="results/assignment/{assignment}/bwa/merge_split{split}.mapped.bam",
+        script=getScript("assignment/filter_bc_from_bam.py"),
+    output:
+        "results/assignment/{assignment}/BCs/barcodes_bwa-additional-filtering.{split}.tsv",
+    params:
+        identity_threshold=lambda wc: config["assignments"][wc.assignment][
+            "alignment_tool"
+        ]["configs"]["identity_threshold"],
+        mismatches_threshold=lambda wc: config["assignments"][wc.assignment][
+            "alignment_tool"
+        ]["configs"]["mismatches_threshold"],
+        expected_alignment_length=lambda wc: config["assignments"][wc.assignment][
+            "alignment_tool"
+        ]["configs"]["sequence_length"]["min"],
+        verbose=lambda wc: config["assignments"][wc.assignment]["alignment_tool"][
+            "configs"
+        ]["verbose"],
+        min_mapping_quality=lambda wc: config["assignments"][wc.assignment][
+            "alignment_tool"
+        ]["configs"]["min_mapping_quality"],
+    conda:
+        getCondaEnv("python3.yaml")
+    log:
+        "results/logs/assignment/mapping.bwa.getBCs_additional_filter.{assignment}.{split}.log",
+    shell:
+        """
+        python {input.script} \
+        --identity_threshold {params.identity_threshold} --mismatches_threshold {params.mismatches_threshold} \
+        --expected_alignment_length {params.expected_alignment_length} \
+        --min_mapping_quality {params.min_mapping_quality} --bamfile {input.bam} --verbose {params.verbose} --output {output} 2> {log} && sort -k1,1 -k2,2 -k3,3 -o {output} {output}
         """
 
 

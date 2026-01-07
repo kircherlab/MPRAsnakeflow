@@ -22,7 +22,16 @@ def getCondaEnv(name):
 from snakemake.utils import validate
 import pandas as pd
 
-validate(config, schema="../schemas/config.schema.yaml")
+from snakemake_interface_executor_plugins.settings import ExecMode
+
+# Use the global 'workflow' variable directly as recommended by Snakemake
+if workflow.remote_exec:
+    old_exec_mode = workflow.exec_mode
+    workflow.workflow_settings.exec_mode = ExecMode.DEFAULT
+    validate(config, schema="../schemas/config.schema.yaml")
+    workflow.workflow_settings.exec_mode = old_exec_mode
+else:
+    validate(config, schema="../schemas/config.schema.yaml")
 
 # load sample sheets
 experiments = {}
@@ -710,9 +719,13 @@ def counts_aggregate_demultiplex_input(project):
             type=["DNA", "RNA"],
         )
         for name in names:
-            with checkpoints.experiment_counts_demultiplex_BAM_umi.get(
-                project=project, name=name
-            ).output[0].open() as f:
+            with (
+                checkpoints.experiment_counts_demultiplex_BAM_umi.get(
+                    project=project, name=name
+                )
+                .output[0]
+                .open() as f
+            ):
                 output += [f.name]
     return output
 

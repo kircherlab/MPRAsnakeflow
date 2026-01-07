@@ -109,7 +109,7 @@ get_overlap_stats <- function(data1, data2, condition, r1, r2) {
 }
 
 read_data <- function(file) {
-  data <- read.table(file, sep = "\t", as.is = T, header = F, stringsAsFactors = F)
+  data <- read.table(file, sep = "\t", comment.char = "", as.is = TRUE, header = FALSE, stringsAsFactors = FALSE)
   colnames(data) <- c("Barcode", "Counts")
   return(data)
 }

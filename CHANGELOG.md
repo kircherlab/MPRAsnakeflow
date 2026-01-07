@@ -1,5 +1,55 @@
 # Changelog
 
+## [0.5.9](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.8...v0.5.9) (2026-01-07)
+
+
+### Bug Fixes
+
+* Adding Zenodo DOI to Readme ([#231](https://github.com/kircherlab/MPRAsnakeflow/issues/231)) ([a3847a9](https://github.com/kircherlab/MPRAsnakeflow/commit/a3847a9bc074aa4d97322f0213d75a7a22d11450))
+
+## [0.5.8](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.7...v0.5.8) (2025-10-27)
+
+
+### Bug Fixes
+
+* fixed various small bugs in mapping_bbmap.smk, attachBCToFastQ.py, quality_metrics.py ([#220](https://github.com/kircherlab/MPRAsnakeflow/issues/220)) ([90380be](https://github.com/kircherlab/MPRAsnakeflow/commit/90380be4e3777d34d8ad164e66f5272ebb3d9f86))
+* issues in assignment check ([#230](https://github.com/kircherlab/MPRAsnakeflow/issues/230)) ([f25b74f](https://github.com/kircherlab/MPRAsnakeflow/commit/f25b74f488452e6fddcf67975f15e98cfa8b0d15)), closes [#217](https://github.com/kircherlab/MPRAsnakeflow/issues/217) [#221](https://github.com/kircherlab/MPRAsnakeflow/issues/221)
+* workaround for default values in schema files when using remote exec ([#228](https://github.com/kircherlab/MPRAsnakeflow/issues/228)) ([261bcb3](https://github.com/kircherlab/MPRAsnakeflow/commit/261bcb33b85189cc3f3c8559d4c2514d4741c0c3))
+
+## [0.5.7](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.6...v0.5.7) (2025-10-06)
+
+
+### Bug Fixes
+
+* max 255 read length allowed ([#224](https://github.com/kircherlab/MPRAsnakeflow/issues/224)) ([81029df](https://github.com/kircherlab/MPRAsnakeflow/commit/81029dfc27c7ebfef6de02b84d8b83568727af13)), closes [#205](https://github.com/kircherlab/MPRAsnakeflow/issues/205)
+
+## [0.5.6](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.5...v0.5.6) (2025-10-01)
+
+
+### Features
+
+* bwa additional filtering ([#216](https://github.com/kircherlab/MPRAsnakeflow/issues/216)) ([9c81cfd](https://github.com/kircherlab/MPRAsnakeflow/commit/9c81cfd19ef35be4cfc8ef837b192dcc9b5b2ada))
+* assignment workflow: allow single end reads (FW only) ([#218](https://github.com/kircherlab/MPRAsnakeflow/issues/218)) ([9c81cfd](https://github.com/kircherlab/MPRAsnakeflow/commit/e19621e3303e64a48bcb2904d76046fa396cf7a7))
+
+## [0.5.5](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.4...v0.5.5) (2025-09-17)
+
+
+### Bug Fixes
+
+* removed hard-coded barcode length (20) in hybrid reads (assignment workflow) ([#213](https://github.com/kircherlab/MPRAsnakeflow/issues/213)) ([1d89232](https://github.com/kircherlab/MPRAsnakeflow/commit/1d892329ee25f427206ca1435df7ea7c9185ef9b))
+
+## [0.5.4](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.3...v0.5.4) (2025-06-25)
+
+
+### Features
+
+* 5' and 3' adapter removal option using cutadapt ([#207](https://github.com/kircherlab/MPRAsnakeflow/issues/207)) ([a36c023](https://github.com/kircherlab/MPRAsnakeflow/commit/a36c0239e5015e2868e9fe729758a8d18eb357ad))
+
+
+### Bug Fixes
+
+* qname (read name) length cannot be longer than 255 characters ([#206](https://github.com/kircherlab/MPRAsnakeflow/issues/206)) ([46fe287](https://github.com/kircherlab/MPRAsnakeflow/commit/46fe287815777ca88a0e08607a205aba0bd7251e))
+
 ## [0.5.3](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.5.2...v0.5.3) (2025-05-13)
 
 

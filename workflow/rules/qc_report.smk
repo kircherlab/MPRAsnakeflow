@@ -34,9 +34,13 @@ rule qc_report_assoc:
             else config["assignments"][wc.assignment]["FW"]
         ),
         rev=lambda wc: (
-            ";".join(config["assignments"][wc.assignment]["REV"])
-            if isinstance(config["assignments"][wc.assignment]["REV"], list)
-            else config["assignments"][wc.assignment]["REV"]
+            (
+                ";".join(config["assignments"][wc.assignment]["REV"])
+                if isinstance(config["assignments"][wc.assignment]["REV"], list)
+                else config["assignments"][wc.assignment]["REV"]
+            )
+            if "REV" in config["assignments"][wc.assignment]
+            else "NA"
         ),
         bc=lambda wc: [
             (

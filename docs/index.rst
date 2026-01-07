@@ -4,11 +4,42 @@
 MPRAsnakeflow's Documentation
 ====================================
 
+.. image:: https://img.shields.io/badge/GitHub-repository-brightgreen?logo=github
+    :alt: GitHub Repository
+    :target: https://github.com/kircherlab/MPRAsnakeflow
+
+.. image:: https://img.shields.io/github/v/release/kircherlab/MPRAsnakeflow
+    :alt: Latest Release
+    :target: https://github.com/kircherlab/MPRAsnakeflow/releases/latest
+
+.. image:: https://zenodo.org/badge/347005871.svg
+    :alt: DOI
+    :target: https://doi.org/10.5281/zenodo.18163777
+
+.. image:: https://img.shields.io/github/license/kircherlab/MPRAsnakeflow
+    :alt: License
+    :target: https://github.com/kircherlab/MPRAsnakeflow/blob/master/LICENSE
+
 .. image:: https://img.shields.io/badge/snakemake-≥8.24.1-brightgreen.svg
+    :alt: Snakemake
     :target: https://snakemake.github.io/
 
 .. image:: https://img.shields.io/badge/conda->24.7.1-brightgreen.svg
+    :alt: Conda
     :target: https://github.com/conda-forge/miniforge
+
+.. image:: https://github.com/kircherlab/MPRAsnakeflow/actions/workflows/main.yml/badge.svg
+    :alt: Tests
+    :target: https://github.com/kircherlab/MPRAsnakeflow/actions/workflows/main.yml
+
+.. image:: https://img.shields.io/github/issues/kircherlab/MPRAsnakeflow
+    :alt: GitHub Issues
+    :target: https://github.com/kircherlab/MPRAsnakeflow/issues
+
+.. image:: https://img.shields.io/github/issues-pr/kircherlab/MPRAsnakeflow
+    :alt: GitHub Pull Requests
+    :target: https://github.com/kircherlab/MPRAsnakeflow/pulls
+
 
 **Welcome!**
 
@@ -18,7 +49,18 @@ MPRAsnakeflow is built on top of `Snakemake <https://snakemake.readthedocs.io/>`
 
 Authors
 -------
-- Max Schubach (`@visze <https://github.com/visze>`_) | `Computational Genome Biology Group <https://kircherlab.bihealth.org>`_ | Berlin Institute of Health at Charité - Universitätsklinikum Berlin 
+- Max Schubach (`@visze <https://github.com/visze>`_) | `Computational Genome Biology Group <https://kircherlab.bihealth.org>`_ | Berlin Institute of Health at Charité - Universitätsklinikum Berlin
+
+Citation
+---------
+
+If you use MPRAsnakeflow in your work, please cite our recent preprint:
+
+.. epigraph::
+
+    **Uniform processing and analysis of IGVF massively parallel reporter assay data with MPRAsnakeflow**  
+    Jonathan D. Rosen, Arjun Devadas Vasanthakumari, Kilian Salomon, Nikola de Lange, Pyaree Mohan Dash, Pia Keukeleire, Ali Hassan, Alejandro Barrera, Martin Kircher, Michael I. Love, Max Schubach  
+    *bioRxiv* (2025). `2025.09.25.678548 <https://doi.org/10.1101/2025.09.25.678548>`_
 
 Usage
 -----

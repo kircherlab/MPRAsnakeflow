@@ -31,7 +31,8 @@ rule assignment_check_design:
             config["assignments"][wc.assignment]["alignment_tool"]["configs"][
                 "alignment_start"
             ]["max"]
-            if config["assignments"][wc.assignment]["alignment_tool"]["tool"] == "bwa"
+            if config["assignments"][wc.assignment]["alignment_tool"]["tool"]
+            in ["bwa", "bwa-additional-filtering"]
             else config["assignments"][wc.assignment]["alignment_tool"]["configs"][
                 "alignment_start"
             ]
@@ -40,7 +41,8 @@ rule assignment_check_design:
             config["assignments"][wc.assignment]["alignment_tool"]["configs"][
                 "sequence_length"
             ]["min"]
-            if config["assignments"][wc.assignment]["alignment_tool"]["tool"] == "bwa"
+            if config["assignments"][wc.assignment]["alignment_tool"]["tool"]
+            in ["bwa", "bwa-additional-filtering"]
             else config["assignments"][wc.assignment]["alignment_tool"]["configs"][
                 "sequence_length"
             ]
@@ -219,7 +221,7 @@ rule assignment_3prime_remove:
         getCondaEnv("cutadapt.yaml")
     threads: 1
     input:
-        reads="results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz",
+        reads=lambda wc: getAdapterRemovalReads(wc.assignment, five_prime=False),
     output:
         trimmed_reads=temp(
             "results/assignment/{assignment}/fastq/merge_split{split}.3prime.fastq.gz"
@@ -250,11 +252,7 @@ rule assignment_5prime_remove:
         getCondaEnv("cutadapt.yaml")
     threads: 1
     input:
-        reads=lambda wc: (
-            "results/assignment/{assignment}/fastq/merge_split{split}.3prime.fastq.gz"
-            if has3PrimeAdapters(wc.assignment)
-            else "results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz"
-        ),
+        reads=lambda wc: getAdapterRemovalReads(wc.assignment, five_prime=True),
     output:
         trimmed_reads=temp(
             "results/assignment/{assignment}/fastq/merge_split{split}.5prime.fastq.gz"

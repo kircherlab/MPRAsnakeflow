@@ -89,6 +89,7 @@ if ("label" %in% names(opt)) {
     opt$label,
     sep = "\t",
     header = TRUE,
+    comment.char = "",
     stringsAsFactors = FALSE
   ))
   colnames(label_f) <- c("oligo_name", "label")
@@ -307,6 +308,7 @@ read_data <- function(file) {
     as.is = TRUE,
     sep = "\t",
     header = TRUE,
+    comment.char = "",
     stringsAsFactors = FALSE
   ) %>%
     filter(oligo_name != "no_BC") %>%
