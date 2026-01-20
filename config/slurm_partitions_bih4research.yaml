@@ -20,7 +20,7 @@ partitions:
     max_runtime: 10080  # 7 days
     max_mem_mb: 200000  # 200 GB
     max_cpus_per_task: 32
-  
+
   long:
     max_runtime: 20160  # 14 days
     max_mem_mb: 200000  # 200 GB
