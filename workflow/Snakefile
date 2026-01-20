@@ -1,14 +1,19 @@
 ##########################
+#### Version ####
+##########################
+from packaging import version
+
+f = open(workflow.source_path("../version.txt"))
+__version__ = version.parse(f.read().strip())
+
+print(f"\033[95mRunning MPRAsnakeflow version {__version__.public}\033[0m")
+
+##########################
 #### containerization ####
 ##########################
 
-f = open(workflow.source_path("../version.txt"))
-version = f.read().strip()
 
-print(f"\033[95mRunning MPRAsnakeflow version {version}\033[0m")
-
-
-containerized: f"docker://visze/mprasnakeflow:{version}"
+containerized: f"docker://visze/mprasnakeflow:{__version__.base_version}"
 
 
 #################

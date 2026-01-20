@@ -22,14 +22,20 @@ def getCondaEnv(name):
 from snakemake.utils import validate
 import pandas as pd
 
-from snakemake_interface_executor_plugins.settings import ExecMode
+# Workaround: validate() is broken from Snakemake 9.5.1 to snakemake 9.14.7 in remote jobs
+if version.parse(snakemake.__version__) >= version.parse("9.5.1") and version.parse(
+    snakemake.__version__
+) <= version.parse("9.14.7"):
+    from snakemake_interface_executor_plugins.settings import ExecMode
 
-# Use the global 'workflow' variable directly as recommended by Snakemake
-if workflow.remote_exec:
-    old_exec_mode = workflow.exec_mode
-    workflow.workflow_settings.exec_mode = ExecMode.DEFAULT
-    validate(config, schema="../schemas/config.schema.yaml")
-    workflow.workflow_settings.exec_mode = old_exec_mode
+    # Use the global 'workflow' variable directly as recommended by Snakemake
+    if workflow.remote_exec:
+        old_exec_mode = workflow.exec_mode
+        workflow.workflow_settings.exec_mode = ExecMode.DEFAULT
+        validate(config, schema="../schemas/config.schema.yaml")
+        workflow.workflow_settings.exec_mode = old_exec_mode
+    else:
+        validate(config, schema="../schemas/config.schema.yaml")
 else:
     validate(config, schema="../schemas/config.schema.yaml")
 
@@ -43,30 +49,24 @@ if "experiments" in config:
 
 # validate version of config with MPRAsnakeflow version
 
-import re
 
-# Regular expression to match the first two digits with the dot in the middle
-pattern_major_version = r"^(\d+)"
-pattern_development_version = r"^(0(\.\d+)?)"
-
-
-def check_version(pattern, version, config_version):
-    # Search for the pattern in the string
-    match_version = re.search(pattern, version)
-
-    match_config = re.search(pattern, config_version)
-
-    # Check if a match is found and print the result
-    if match_version and match_config:
-        if match_version.group(1) != match_config.group(1):
-            raise ValueError(
-                f"\033[38;2;255;165;0mVersion mismatch: MPRAsnakeflow version is {version}, but config version is {config_version}\033[0m"
-            )
+def check_version(config_version_str: version.Version):
+    version_check_fail = False
+    if __version__.major == 0 and config_version.major == 0:
+        # for major version 0, only check minor version
+        if __version__.minor != config_version.minor:
+            version_check_fail = True
+    else:
+        if __version__.major != config_version.major:
+            version_check_fail = True
+    if version_check_fail:
+        raise ValueError(
+            f"\033[38;2;255;165;0mVersion mismatch: MPRAsnakeflow version is {__version__.public}, but config version is {config_version.public}\033[0m"
+        )
 
 
 if not config["skip_version_check"]:
-    check_version(pattern_development_version, version, config["version"])
-    check_version(pattern_major_version, version, config["version"])
+    check_version(version.parse(config["version"]))
 
 
 # modify config based on certain rules
