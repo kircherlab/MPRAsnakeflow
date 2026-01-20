@@ -213,52 +213,31 @@ rule assignment_merge:
         """
 
 
-rule assignment_3prime_remove:
+rule assignment_adapter_remove:
     """
-    Remove 3' adapter sequence from the reads.
-    """
-    conda:
-        getCondaEnv("cutadapt.yaml")
-    threads: 1
-    input:
-        reads=lambda wc: getAdapterRemovalReads(wc.assignment, five_prime=False),
-    output:
-        trimmed_reads=temp(
-            "results/assignment/{assignment}/fastq/merge_split{split}.3prime.fastq.gz"
-        ),
-    params:
-        adapters=lambda wc: getCutadaptAdapters(
-            config["assignments"][wc.assignment]["adapters"]["3prime"],
-            five_prime=False,
-        ),
-    log:
-        temp("results/logs/assignment/3prime_remove.{assignment}.{split}.log"),
-    shell:
-        """
-        cutadapt --cores {threads} {params.adapters} \
-        -o {output.trimmed_reads} <(zcat {input.reads}) &> {log}
-        """
-
-
-rule assignment_5prime_remove:
-    """
-    Remove 5' adapter sequence from the reads.
+    Remove adapter sequence from the reads (3' or 5').
+    Uses cutadapt to trim adapters based on the primer direction.
     """
     conda:
         getCondaEnv("cutadapt.yaml")
     threads: 1
     input:
-        reads=lambda wc: getAdapterRemovalReads(wc.assignment, five_prime=True),
+        reads=lambda wc: getAdapterRemovalReads(
+            wc.assignment, five_prime=(wc.prime_side == "5prime")
+        ),
     output:
         trimmed_reads=temp(
-            "results/assignment/{assignment}/fastq/merge_split{split}.5prime.fastq.gz"
+            "results/assignment/{assignment}/fastq/merge_split{split}.{prime_side}.fastq.gz"
         ),
+    wildcard_constraints:
+        prime_side=r"(3prime)|(5prime)",
     params:
         adapters=lambda wc: getCutadaptAdapters(
-            config["assignments"][wc.assignment]["adapters"]["5prime"], five_prime=True
+            config["assignments"][wc.assignment]["adapters"][wc.prime_side],
+            five_prime=(wc.prime_side == "5prime"),
         ),
     log:
-        temp("results/logs/assignment/5prime_remove.{assignment}.{split}.log"),
+        temp("results/logs/assignment/adapter_remove.{assignment}.{split}.{prime_side}.log"),
     shell:
         """
         cutadapt --cores {threads} {params.adapters} \
