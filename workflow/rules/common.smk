@@ -50,7 +50,7 @@ if "experiments" in config:
 # validate version of config with MPRAsnakeflow version
 
 
-def check_version(config_version_str: version.Version):
+def check_version(config_version: version.Version):
     version_check_fail = False
     if __version__.major == 0 and config_version.major == 0:
         # for major version 0, only check minor version
