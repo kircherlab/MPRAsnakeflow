@@ -237,7 +237,9 @@ rule assignment_adapter_remove:
             five_prime=(wc.prime_side == "5prime"),
         ),
     log:
-        temp("results/logs/assignment/adapter_remove.{assignment}.{split}.{prime_side}.log"),
+        temp(
+            "results/logs/assignment/adapter_remove.{assignment}.{split}.{prime_side}.log"
+        ),
     shell:
         """
         cutadapt --cores {threads} {params.adapters} \

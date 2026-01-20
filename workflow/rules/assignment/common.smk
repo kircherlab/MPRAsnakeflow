@@ -37,6 +37,10 @@ def has3PrimeAdapters(assignment):
     """
     Return True if the assignment contains a 3' adapter for removal.
     """
+    print(
+        "adapters" in config["assignments"][assignment]
+        and "3prime" in config["assignments"][assignment]["adapters"]
+    )
     return (
         "adapters" in config["assignments"][assignment]
         and "3prime" in config["assignments"][assignment]["adapters"]
