@@ -212,15 +212,25 @@ properties:
             type: object
             properties:
               3prime:
-                type: array
-                items:
-                  type: string
-                  pattern: ^[ATCG]+$
+                oneOf:
+                  - type: array
+                    items:
+                      type: string
+                      pattern: ^[ATCG]+$
+                    minItems: 1
+                    uniqueItems: true
+                  - type: integer
+                    minimum: 1
               5prime:
-                type: array
-                items:
-                  type: string
-                  pattern: ^[ATCG]+$
+                oneOf:
+                  - type: array
+                    items:
+                      type: string
+                      pattern: ^[ATCG]+$
+                    minItems: 1
+                    uniqueItems: true
+                  - type: integer
+                    minimum: 1
           NGmerge:
             type: object
             properties:

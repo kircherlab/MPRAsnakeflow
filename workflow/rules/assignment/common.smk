@@ -113,3 +113,18 @@ def getStartRead(assignment: str) -> str:
         return "results/assignment/{assignment}/fastq/splits/FW.split{split}.BCattached.fastq.gz"
     else:
         return "results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz"
+
+
+def getCutadaptAdapters(adapters_config: list[str] | int, five_prime: bool) -> str:
+    """
+    Return the cutadapt adapters for the given assignment as a string.
+    """
+    if isinstance(adapters_config, int):
+        return "-u %d" % adapters_config if five_prime else "-u -%d" % adapters_config
+    else:
+        return " ".join(
+            [
+                "-g %s" % adapter if five_prime else "-a %s" % adapter
+                for adapter in adapters_config
+            ]
+        )

@@ -227,13 +227,9 @@ rule assignment_3prime_remove:
             "results/assignment/{assignment}/fastq/merge_split{split}.3prime.fastq.gz"
         ),
     params:
-        adapters=lambda wc: " ".join(
-            [
-                "-a %s" % adapter
-                for adapter in config["assignments"][wc.assignment]["adapters"][
-                    "3prime"
-                ]
-            ]
+        adapters=lambda wc: getCutadaptAdapters(
+            config["assignments"][wc.assignment]["adapters"]["3prime"],
+            five_prime=False,
         ),
     log:
         temp("results/logs/assignment/3prime_remove.{assignment}.{split}.log"),
@@ -258,13 +254,8 @@ rule assignment_5prime_remove:
             "results/assignment/{assignment}/fastq/merge_split{split}.5prime.fastq.gz"
         ),
     params:
-        adapters=lambda wc: " ".join(
-            [
-                "-g %s" % adapter
-                for adapter in config["assignments"][wc.assignment]["adapters"][
-                    "5prime"
-                ]
-            ]
+        adapters=lambda wc: getCutadaptAdapters(
+            config["assignments"][wc.assignment]["adapters"]["5prime"], five_prime=True
         ),
     log:
         temp("results/logs/assignment/5prime_remove.{assignment}.{split}.log"),
