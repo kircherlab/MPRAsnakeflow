@@ -74,16 +74,24 @@ def getMappingRead(assignment: str) -> str:
         return "results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz"
 
 
-def getCutadaptAdapters(adapters_config: list[str] | int, five_prime: bool) -> str:
-    """
-    Return the cutadapt adapters for the given assignment as a string.
-    """
-    if isinstance(adapters_config, int):
-        return "-u %d" % adapters_config if five_prime else "-u -%d" % adapters_config
+def getAssignmentCutadaptAdapters(assignment, read):
+    if (
+        "adapters" in config["assignments"][assignment]
+        and read in config["assignments"][assignment]["adapters"]
+    ):
+        adapters_config = config["assignments"][assignment]["adapters"][read]
+        if isinstance(adapters_config is list) and isinstance(adapters_config[0], int):
+            return " ".join(["-u %d" % u for u in adapters_config])
+        else:
+            return " ".join(
+                [
+                    (
+                        "-g %s" % adapter[0]
+                        if adapter[1] == "5prime"
+                        else "-a %s" % adapter[0]
+                    )
+                    for adapter in adapters_config
+                ]
+            )
     else:
-        return " ".join(
-            [
-                "-g %s" % adapter if five_prime else "-a %s" % adapter
-                for adapter in adapters_config
-            ]
-        )
+        return ""

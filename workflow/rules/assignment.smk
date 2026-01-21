@@ -104,9 +104,7 @@ rule assignment_adapter_remove:
     wildcard_constraints:
         read=r"(FWD)|(REV)|(BC)",
     params:
-        adapters=lambda wc: getCutadaptAdapters(
-            config["assignments"][wc.assignment]["adapters"][wc.read],
-        ),
+        adapters=lambda wc: getAssignmentCutadaptAdapters(wc.assignment, wc.read),
     log:
         temp("results/logs/assignment/adapter_remove.{assignment}.{read}.log"),
     shell:
