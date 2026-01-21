@@ -245,6 +245,21 @@ def hasReplicates(project, condition=None):
     return True
 
 
+def getReplicatesOfConditionType(project, condition, rna_or_dna):
+    exp = getExperiments(project)
+
+    replicates = getReplicatesOfCondition(project, condition)
+
+    if f"{rna_or_dna}_BC_F" in exp.columns:
+
+        exp_filter = exp[exp.Condition == condition]
+
+        if len(replicates) > 1 and exp_filter[f"{rna_or_dna}_BC_F"].nunique() == 1:
+            return [replicates[0]]
+
+    return replicates
+
+
 def getConfigs(project):
     return list(config["experiments"][project]["configs"].keys())
 

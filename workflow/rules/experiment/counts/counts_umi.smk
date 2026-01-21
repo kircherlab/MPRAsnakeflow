@@ -11,10 +11,10 @@ rule experiment_counts_umi_create_BAM:
     Create a BAM file from FASTQ input, merge FW and REV read and save UMI in XI flag.
     """
     input:
-        fw_fastq=lambda wc: getFW(
+        fw_fastq=lambda wc: getFWD(
             wc.project, wc.condition, wc.replicate, wc.type, check_trimming=True
         ),
-        rev_fastq=lambda wc: getRev(
+        rev_fastq=lambda wc: getREV(
             wc.project, wc.condition, wc.replicate, wc.type, check_trimming=True
         ),
         umi_fastq=lambda wc: getUMI(

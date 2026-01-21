@@ -7,7 +7,7 @@ The output is a tabular file that matched barcodes with oligos.
 
 
 include: "assignment/common.smk"
-include: "assignment/hybridFWRead.smk"
+include: "assignment/hybridFWDRead.smk"
 include: "assignment/statistic.smk"
 
 
@@ -87,6 +87,33 @@ rule assignment_check_design:
         """
 
 
+rule assignment_adapter_remove:
+    """
+    Remove adapter sequence from the reads (3' or 5').
+    Uses cutadapt to trim adapters based on the primer direction.
+    """
+    conda:
+        getCondaEnv("cutadapt.yaml")
+    threads: 1
+    input:
+        reads=lambda wc: config["assignments"][wc.assignment][wc.read],
+    output:
+        trimmed_reads=temp(
+            "results/assignment/{assignment}/fastq/{read}.trimmed.fastq.gz"
+        ),
+    wildcard_constraints:
+        read=r"(FWD)|(REV)|(BC)",
+    params:
+        adapters=lambda wc: getAssignmentCutadaptAdapters(wc.assignment, wc.read),
+    log:
+        temp("results/logs/assignment/adapter_remove.{assignment}.{read}.log"),
+    shell:
+        """
+        cutadapt --cores {threads} {params.adapters} \
+        -o {output.trimmed_reads} <(zcat {input.reads}) &> {log}
+        """
+
+
 rule assignment_fastq_split:
     """
     Split the fastq files into n files for parallelisation.
@@ -153,7 +180,7 @@ rule assignment_attach_idx:
                 config["assignments"][wc.assignment]["strand_sensitive"][
                     "forward_adapter"
                 ]
-                if wc.read == "FW"
+                if wc.read == "FWD"
                 else reverse_complement(
                     config["assignments"][wc.assignment]["strand_sensitive"][
                         "reverse_adapter"
@@ -179,7 +206,7 @@ rule assignment_merge:
     conda:
         getCondaEnv("NGmerge.yaml")
     input:
-        FW="results/assignment/{assignment}/fastq/splits/FW.split{split}.BCattached.fastq.gz",
+        FWD="results/assignment/{assignment}/fastq/splits/FWD.split{split}.BCattached.fastq.gz",
         REV="results/assignment/{assignment}/fastq/splits/REV.split{split}.BCattached.fastq.gz",
     output:
         un=temp("results/assignment/{assignment}/fastq/merge_split{split}.un.fastq.gz"),
@@ -201,7 +228,7 @@ rule assignment_merge:
     shell:
         """
         NGmerge \
-        -1 {input.FW} \
+        -1 {input.FWD} \
         -2 {input.REV} \
         -m {params.min_overlap} -p {params.frac_mismatches_allowed} \
         -d \
@@ -210,68 +237,6 @@ rule assignment_merge:
         -o  {output.join} \
         -i -f {output.un} \
         -l >(gzip -c - > {log})
-        """
-
-
-rule assignment_3prime_remove:
-    """
-    Remove 3' adapter sequence from the reads.
-    """
-    conda:
-        getCondaEnv("cutadapt.yaml")
-    threads: 1
-    input:
-        reads=lambda wc: getAdapterRemovalReads(wc.assignment, five_prime=False),
-    output:
-        trimmed_reads=temp(
-            "results/assignment/{assignment}/fastq/merge_split{split}.3prime.fastq.gz"
-        ),
-    params:
-        adapters=lambda wc: " ".join(
-            [
-                "-a %s" % adapter
-                for adapter in config["assignments"][wc.assignment]["adapters"][
-                    "3prime"
-                ]
-            ]
-        ),
-    log:
-        temp("results/logs/assignment/3prime_remove.{assignment}.{split}.log"),
-    shell:
-        """
-        cutadapt --cores {threads} {params.adapters} \
-        -o {output.trimmed_reads} <(zcat {input.reads}) &> {log}
-        """
-
-
-rule assignment_5prime_remove:
-    """
-    Remove 5' adapter sequence from the reads.
-    """
-    conda:
-        getCondaEnv("cutadapt.yaml")
-    threads: 1
-    input:
-        reads=lambda wc: getAdapterRemovalReads(wc.assignment, five_prime=True),
-    output:
-        trimmed_reads=temp(
-            "results/assignment/{assignment}/fastq/merge_split{split}.5prime.fastq.gz"
-        ),
-    params:
-        adapters=lambda wc: " ".join(
-            [
-                "-g %s" % adapter
-                for adapter in config["assignments"][wc.assignment]["adapters"][
-                    "5prime"
-                ]
-            ]
-        ),
-    log:
-        temp("results/logs/assignment/5prime_remove.{assignment}.{split}.log"),
-    shell:
-        """
-        cutadapt --cores {threads} {params.adapters} \
-        -o {output.trimmed_reads} <(zcat {input.reads}) &> {log}
         """
 
 

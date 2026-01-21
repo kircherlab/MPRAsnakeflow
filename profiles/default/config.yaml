@@ -2,7 +2,6 @@
 configfile: config/example_config.yaml
 software-deployment-method: conda
 default-resources:
-  slurm_partition: debug
   mem: 2G
   runtime: 60
 # error: "logs/%x_%j_%N.err"
@@ -16,62 +15,48 @@ set-threads:
   assignment_collect: 30
   assignment_collectBCs: 20
   assignment_merge: 10
-  assignment_hybridFWRead_get_reads_by_cutadapt: 10
-  assignment_3prime_remove: 2
-  assignment_5prime_remove: 2
+  assignment_hybridFWDRead_get_reads_by_cutadapt: 10
+  assignment_adapter_remove: 2
 set-resources:
   assigned_counts_combined_replicates_barcode_output:
     runtime: 60
   assignment_check_design:
     runtime: 240
-    slurm_partition: medium
-  assignment_hybridFWRead_get_reads_by_length:
+  assignment_hybridFWDRead_get_reads_by_length:
     runtime: 1140
     mem: 2G
-    slurm_partition: medium
-  assignment_hybridFWRead_get_reads_by_cutadapt:
+  assignment_hybridFWDRead_get_reads_by_cutadapt:
     runtime: 1200
     mem: 4G
-    slurm_partition: medium
   assignment_merge:
     runtime: 480
-    slurm_partition: medium
   assignment_fastq_split:
     runtime: 1440
     mem: 10G
-    slurm_partition: medium
   assignment_mapping_bwa:
     cpus_per_task: 30
     runtime: 120
     mem: 10G
-    slurm_partition: medium
   assignment_mapping_bbmap:
     runtime: 240
     mem: 10G
-    slurm_partition: medium
   assignment_collect:
     runtime: 2160
     mem: 10G
-    slurm_partition: medium
   assignment_collectBCs:
     runtime: 3120
     mem: 10G
-    slurm_partition: medium
   assignment_mapping_exact:
     runtime: 60
     mem: 10G
-    slurm_partition: debug
   assignment_statistic_totalCounts:
     runtime: 60
-    slurm_partition: medium
     mem: 60G
   assignment_statistic_assignedCounts:
     runtime: 60
-    slurm_partition: medium
     mem: 10G
   assignment_statistic_assignment:
     runtime: 60
-    slurm_partition: medium
     mem: 40G
   ##############
   ### COUNTS ###
@@ -79,29 +64,22 @@ set-resources:
   experiment_counts_demultiplex_BAM_umi:
     runtime: 5760
     mem: 22G
-    slurm_partition: medium
   experiment_counts_demultiplex_mergeTrimReads_BAM_umi:
     runtime: 5760
     mem: 12G
-    slurm_partition: medium
   experiment_counts_umi_create_BAM:
     runtime: 5760
     mem: 12G
-    slurm_partition: medium
   experiment_counts_umi_raw_counts:
     runtime: 1320
     mem: 6G
-    slurm_partition: medium
   experiment_counts_noUMI_create_BAM:
     runtime: 5760
     mem: 12G
-    slurm_partition: medium
   experiment_counts_filter_counts:
     runtime: 120
-    slurm_partition: medium
   experiment_counts_final_counts_sampler:
     mem: 20G
-    slurm_partition: medium
 
   #########################
   ### (ASSIGNED) COUNTS ###
@@ -109,7 +87,6 @@ set-resources:
 
   experiment_counts_dna_rna_merge_counts:
     runtime: 1140
-    slurm_partition: medium
 
   #######################
   ### ASSIGNED COUNTS ###
@@ -118,11 +95,9 @@ set-resources:
   experiment_assigned_counts_dna_rna_merge:
     runtime: 5760
     mem: 20G
-    slurm_partition: medium
 
   experiment_assigned_counts_assignBarcodes:
     runtime: 5760
-    slurm_partition: medium
     mem: 20G
 
   experiment_assigned_counts_createAssignmentPickleFile:
@@ -130,13 +105,11 @@ set-resources:
 
   experiment_assigned_counts_filterAssignment:
     runtime: 60
-    slurm_partition: medium
     mem: 15G
 
   experiment_assigned_counts_combine_replicates_barcode_output:
     runtime: 60
     mem: 30G
-    slurm_partition: medium
 
   #################
   ### Statistic ###
@@ -151,15 +124,11 @@ set-resources:
 
   experiment_statistic_counts_frequent_umis:
     runtime: 480
-    slurm_partition: medium
-
   experiment_statistic_counts_barcode_base_composition:
     runtime: 1440
-    slurm_partition: medium
     mem: 20G
   experiment_statistic_counts_table:
     runtime: 240
-    slurm_partition: medium
 
   #############################
   ### Statistic/correlation ###
@@ -168,24 +137,19 @@ set-resources:
   experiment_statistic_correlation_bc_counts_hist:
     runtime: 120
     mem: 10G
-    slurm_partition: medium
 
   experiment_statistic_correlation_bc_counts:
     runtime: 120
     mem: 20G
-    slurm_partition: medium
   experiment_statistic_correlation_bc_hist:
     runtime: 1320
     mem: 10G
-    slurm_partition: medium
   experiment_statistic_correlation_calculate:
     runtime: 120
     mem: 10G
-    slurm_partition: medium
   experiment_statistic_correlation_hist_box_plots:
     runtime: 120
     mem: 10G
-    slurm_partition: medium
 
   ############################
   ### Statistic/bc_overlap ###
@@ -194,4 +158,3 @@ set-resources:
   experiment_statistic_bc_overlap_run:
     runtime: 300
     mem: 25G
-    slurm_partition: medium

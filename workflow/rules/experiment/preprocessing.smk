@@ -18,9 +18,7 @@ rule experiment_preprocess_trim_reads:
     wildcard_constraints:
         read_type=r"(FWD)|(REV)|(UMI)",
     params:
-        adapters=lambda wc: getExperimentCutadaptAdapters(
-            config["experiments"][wc.project]["adapters"][wc.read_type]
-        ),
+        adapters=lambda wc: getExperimentCutadaptAdapters(wc.project, wc.read_type),
     log:
         temp(
             "results/logs/experiment/preprocess/trim_reads.{read_type}.{project}.{condition}.{replicate}.{type}.log"

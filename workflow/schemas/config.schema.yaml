@@ -190,7 +190,7 @@ properties:
           linker:
             type: string
             pattern: ^[ATCGNatcgn]+$
-          FW:
+          FWD:
             type: array
             items:
               type: string
@@ -211,16 +211,75 @@ properties:
           adapters:
             type: object
             properties:
-              3prime:
-                type: array
-                items:
-                  type: string
-                  pattern: ^[ATCG]+$
-              5prime:
-                type: array
-                items:
-                  type: string
-                  pattern: ^[ATCG]+$
+              BC:
+                oneOf:
+                  - type: object
+                    properties:
+                      five_prime:
+                        type: array
+                        items:
+                          type: string
+                          pattern: ^[ATCGNatcgn]+$
+                        minItems: 1
+                        uniqueItems: true
+                      three_prime:
+                        type: array
+                        items:
+                          type: string
+                          pattern: ^[ATCGNatcgn]+$
+                        minItems: 1
+                        uniqueItems: true
+                  - type: array
+                    items:
+                      type: integer
+                    minItems: 1
+                    uniqueItems: true
+              FWD:
+                oneOf:
+                  - type: object
+                    properties:
+                      five_prime:
+                        type: array
+                        items:
+                          type: string
+                          pattern: ^[ATCGNatcgn]+$
+                        minItems: 1
+                        uniqueItems: true
+                      three_prime:
+                        type: array
+                        items:
+                          type: string
+                          pattern: ^[ATCGNatcgn]+$
+                        minItems: 1
+                        uniqueItems: true
+                  - type: array
+                    items:
+                      type: integer
+                    minItems: 1
+                    uniqueItems: true
+              REV:
+                oneOf:
+                  - type: object
+                    properties:
+                      five_prime:
+                        type: array
+                        items:
+                          type: string
+                          pattern: ^[ATCGNatcgn]+$
+                        minItems: 1
+                        uniqueItems: true
+                      three_prime:
+                        type: array
+                        items:
+                          type: string
+                          pattern: ^[ATCGNatcgn]+$
+                        minItems: 1
+                        uniqueItems: true
+                  - type: array
+                    items:
+                      type: integer
+                    minItems: 1
+                    uniqueItems: true
           NGmerge:
             type: object
             properties:
@@ -295,7 +354,7 @@ properties:
           - required:
               - BC
         required:
-          - FW
+          - FWD
           - bc_length
           - design_file
           - configs
@@ -314,65 +373,92 @@ properties:
           bc_length:
             type: integer
             minimum: 1
+          bc_extraction:
+            type: string
+            enum:
+              - start
+              - end
+            default: start
           umi_length:
             type: integer
             minimum: 1
+          umi_extraction:
+            type: string
+            enum:
+              - start
+              - end
+            default: start
           adapters:
             type: object
             properties:
               UMI:
                 oneOf:
-                  - type: array
-                    items:
-                      - type: string
-                        pattern: ^[ATCGNatcgn]+$
-                      - type : string
-                        enum:
-                          - 3prime
-                          - 5prime
-                    minItems: 1
-                    uniqueItems: true
+                  - type: object
+                    properties:
+                      five_prime:
+                        type: array
+                        items:
+                          type: string
+                          pattern: ^[ATCGNatcgn]+$
+                        minItems: 1
+                        uniqueItems: true
+                      three_prime:
+                        type: array
+                        items:
+                          type: string
+                          pattern: ^[ATCGNatcgn]+$
+                        minItems: 1
+                        uniqueItems: true
                   - type: array
                     items:
                       type: integer
                     minItems: 1
-                    maxItems: 2
                     uniqueItems: true
               FWD:
                 oneOf:
-                  - type: array
-                    items:
-                      - type: string
-                        pattern: ^[ATCGNatcgn]+$
-                      - type : string
-                        enum:
-                          - 3prime
-                          - 5prime
-                    minItems: 1
-                    uniqueItems: true
+                  - type: object
+                    properties:
+                      five_prime:
+                        type: array
+                        items:
+                          type: string
+                          pattern: ^[ATCGNatcgn]+$
+                        minItems: 1
+                        uniqueItems: true
+                      three_prime:
+                        type: array
+                        items:
+                          type: string
+                          pattern: ^[ATCGNatcgn]+$
+                        minItems: 1
+                        uniqueItems: true
                   - type: array
                     items:
                       type: integer
                     minItems: 1
-                    maxItems: 2
                     uniqueItems: true
               REV:
                 oneOf:
-                  - type: array
-                    items:
-                      - type: string
-                        pattern: ^[ATCGNatcgn]+$
-                      - type : string
-                        enum:
-                          - 3prime
-                          - 5prime
-                    minItems: 1
-                    uniqueItems: true
+                  - type: object
+                    properties:
+                      five_prime:
+                        type: array
+                        items:
+                          type: string
+                          pattern: ^[ATCGNatcgn]+$
+                        minItems: 1
+                        uniqueItems: true
+                      three_prime:
+                        type: array
+                        items:
+                          type: string
+                          pattern: ^[ATCGNatcgn]+$
+                        minItems: 1
+                        uniqueItems: true
                   - type: array
                     items:
                       type: integer
                     minItems: 1
-                    maxItems: 2
                     uniqueItems: true
           data_folder:
             type: string

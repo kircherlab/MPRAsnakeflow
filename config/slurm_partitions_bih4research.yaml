@@ -1,0 +1,42 @@
+---
+partitions:
+  standard:
+    max_runtime: 720  # 12 hours
+    max_mem_mb: 64000  # 64 GB
+    max_cpus_per_task: 24
+    max_nodes: 1
+
+  debug:
+    max_runtime: 60  # 1 hour
+    max_mem_mb: 200000  # 200 GB
+    max_cpus_per_task: 32
+
+  short:
+    max_runtime: 240  # 4 hours
+    max_mem_mb: 200000  # 200 GB
+    max_cpus_per_task: 32
+
+  medium:
+    max_runtime: 10080  # 7 days
+    max_mem_mb: 200000  # 200 GB
+    max_cpus_per_task: 32
+
+  long:
+    max_runtime: 20160  # 14 days
+    max_mem_mb: 200000  # 200 GB
+    max_cpus_per_task: 32
+    max_nodes: 1
+
+  highmem:
+    max_runtime: 20160  # 14 days
+    max_mem_mb: 512000  # 512 GB
+    max_cpus_per_task: 48
+    max_nodes: 1
+
+  gpu:
+    max_runtime: 20160  # 14 days
+    max_mem_mb: 128000  # 128 GB
+    max_cpus_per_task: 32
+    max_gpu: 8
+    available_gpu_models: ["tesla", "a40"]
+    max_cpus_per_gpu: 8

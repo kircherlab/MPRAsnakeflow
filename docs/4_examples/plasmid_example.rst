@@ -189,7 +189,7 @@ Create config files
                 configs:
                     sequence_length: 200
                     alignment_start: 1
-            FW:
+            FWD:
                 - data/oligo_barcode/ENCFF235LUE.fastq.gz
                 - data/oligo_barcode/ENCFF708MPZ.fastq.gz
                 - data/oligo_barcode/ENCFF381TUK.fastq.gz
@@ -251,7 +251,7 @@ You should see a list of rules that will be executed. Here is the summary:
     job                                                                        count
     -----------------------------------------------------------------------  -------
     all  1
-    assignment_3prime_remove                                                      30
+    assignment_adapter_remove                                                     30
     assignment_attach_idx                                                         60
     assignment_check_design                                                        1
     assignment_collect                                                             1
@@ -279,7 +279,7 @@ You should see a list of rules that will be executed. Here is the summary:
     experiment_counts_dna_rna_merge_counts                                        10
     experiment_counts_filter_counts                                                6
     experiment_counts_final_counts                                                 6
-    experiment_counts_onlyFW_raw_counts_by_length                                  6
+    experiment_counts_onlyFWD_raw_counts                                            6
     experiment_statistic_assigned_counts_combine_BC_assignment_stats               1
     experiment_statistic_assigned_counts_combine_BC_assignment_stats_helper        1
     experiment_statistic_assigned_counts_combine_stats_dna_rna_merge               1

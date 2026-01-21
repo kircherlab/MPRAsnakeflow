@@ -14,7 +14,7 @@ assignments:
         alignment_start: # start of an alignment in the reference/design_file. Here using 15 bp adapters. Can be different when using adapter free approaches
           min: 1 # integer
           max: 3 # integer
-    FW:
+    FWD:
       - resources/Assignment_BasiC/R1.fastq.gz
     BC:
       - resources/Assignment_BasiC/R2.fastq.gz

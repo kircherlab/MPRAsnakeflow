@@ -31,8 +31,8 @@ checkpoint experiment_counts_demultiplex_BAM_umi:
     Demultiplexing the data and create demultiplexed bam files per condition.
     """
     input:
-        fw_fastq=lambda wc: getFWWithIndex(wc.project),
-        rev_fastq=lambda wc: getRevWithIndex(wc.project),
+        fw_fastq=lambda wc: getFWDWithIndex(wc.project),
+        rev_fastq=lambda wc: getREVWithIndex(wc.project),
         umi_fastq=lambda wc: getUMIWithIndex(wc.project),
         index_fastq=lambda wc: getIndexWithIndex(wc.project),
         index_list="results/experiments/{project}/counts/demultiplex_index.tsv",

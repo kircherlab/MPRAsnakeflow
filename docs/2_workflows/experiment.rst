@@ -145,11 +145,9 @@ experiment_counts_noUMI_create_BAM
   Create a BAM file from FASTQ input, merge FW and REV read and save UMI in XI flag.
 experiment_counts_noUMI_raw_counts
   Counting BCsxUMIs from the BAM files.
-experiment_counts_onlyFWUMI_raw_counts
+experiment_counts_onlyFWDUMI_raw_counts
   Getting the BCs and UMIs from the reads using fixed length.
-experiment_counts_onlyFW_raw_counts_by_cutadapt
-  Getting the BCs from the reads using cutadapt.
-experiment_counts_onlyFW_raw_counts_by_length
+experiment_counts_onlyFWD_raw_counts
   Getting the BCs from the reads using fixed length.
 experiment_counts_umi_raw_counts
   Counting BCsxUMIs from the BAM files.
@@ -217,23 +215,22 @@ File tree
       |-Condition
         |-allreps.tsv
         |-average_allreps.tsv
-        |-HepG2_1_2_correlation.txt
-        |-HepG2_1_2_DNA_pairwise.png
-        |-HepG2_1_2_Ratio_pairwise.png
-        |-HepG2_1_2_RNA_pairwise.png
-        |-HepG2_barcodesPerInsert.png
-            |-Reps
-                |-HepG2_1_counts.tsv
-                |-HepG2_1_counts.tsv.gz
-                |-HepG2_1_DNA_counts_full.tsv
-                |-HepG2_1_DNA_counts_full_samplingN.tsv
-                |-HepG2_1_DNA_raw_counts.tsv.gz  
-                |-HepG2_1_RNA_filtered_counts.tsv.gz
-                |-HepG2_1_DNA_filtered_counts.tsv.gz
-                |-HepG2_1_RNA_counts.tsv
-                |-HepG2_1_RNA_raw_counts.tsv.gz
+    |-HepG2.1.2.correlation.txt
+    |-HepG2.1.2.DNA_pairwise.png
+    |-HepG2.1.2.Ratio_pairwise.png
+    |-HepG2.1.2.RNA_pairwise.png
+    |-HepG2.barcodesPerInsert.png
+        |-Reps
+            |-HepG2.1.counts.tsv
+            |-HepG2.1.counts.tsv.gz
+            |-HepG2.1.DNA_counts_full.tsv
+            |-HepG2.1.DNA_counts_full_samplingN.tsv
+            |-HepG2.1.DNA_raw_counts.tsv.gz  
+            |-HepG2.1.RNA_filtered_counts.tsv.gz
+            |-HepG2.1.DNA_filtered_counts.tsv.gz
+            |-HepG2.1.RNA_counts.tsv
+            |-HepG2.1.RNA_raw_counts.tsv.gz
 
-.. todo:: This is not the correct file tree for the experiment workflow
 
 Files for each Condition
 ------------------------
@@ -241,40 +238,40 @@ allreps.tsv
   TSV of normalized DNA and RNA count, ratio, log2ratio, and number of observed barcodes for each condition, replicate, of every CRS
 average_allreps.tsv
   mean ratio, log2 ratio, and observed barcodes per condidition normalized for all replicates
-HepG2_1_2_correlation.txt
+HepG2.1.2.correlation.txt
   correlation values for a condition and 2 replicates (ie: HepG2 replicate 1 vs replicate 2)
-HepG2_1_2_DNA_pairwise.png
+HepG2.1.2.DNA_pairwise.png
   Correlation plot of DNA counts condition vs two reps (ie: HepG2 replicate 1 vs replicate 2)
-HepG2_1_2_Ratio_pairwise.png
+HepG2.1.2.Ratio_pairwise.png
   Correlation plot of normalized log2(RNA/DNA) condition vs two reps (ie: HepG2 replicate 1 vs replicate 2)
-HepG2_1_2_RNA_pairwise.png
+HepG2.1.2.RNA_pairwise.png
   Correlation plot of RNA counts condition vs two reps (ie: HepG2 replicate 1 vs replicate 2)
-HepG2_barcodesPerInsert.png
+HepG2.barcodesPerInsert.png
   Histogram of number of barcodes detected per CRS
-HepG2_group_barcodesPerInsert_box.png
+HepG2.group_barcodesPerInsert_box.png
   Boxplot of CRS normalized per insert, grouped by labels
 
 .. todo:: These are not the correct files for each condition in the experiment workflow
 
 Files for each replicate in each condition
 -------------------------------------------
-HepG2_1_counts.tsv  
+HepG2.1.counts.tsv  
   mean ratio, log2 ratio, and observed barcodes per condidition for each replicate
-HepG2_1_counts.tsv.gz
+HepG2.1.counts.tsv.gz
   table of barcodes with DNA counts and RNA counts
-HepG2_1_DNA_counts_full.tsv              
+HepG2.1.DNA_counts_full.tsv              
   table of barcodes with DNA counts
-HepG2_1_DNA_counts_full_samplingN.tsv              
+HepG2.1.DNA_counts_full_samplingN.tsv              
   table of barcodes with DNA counts with adjusted sampling.
-HepG2_1_DNA_raw_counts.tsv.gz  
+HepG2.1.DNA_raw_counts.tsv.gz  
   table of barcodes, UMI, and DNA counts raw
-HepG2_1_DNA_filtered_counts.tsv.gz  
+HepG2.1.DNA_filtered_counts.tsv.gz  
   table of barcodes, UMI, and DNA counts raw, filtered for barcodes of correct length
-HepG2_1_RNA_counts.tsv
+HepG2.1.RNA_counts.tsv
   table of barcodes with RNA counts
-HepG2_1_RNA_raw_counts.tsv.gz
+HepG2.1.RNA_raw_counts.tsv.gz
   table of barcodes, UMI, and RNA counts raw
-HepG2_1_RNA_filtered_counts.tsv.gz
+HepG2.1.RNA_filtered_counts.tsv.gz
   table of barcodes, UMI, and DNA counts raw, filtered for barcodes of correct length
 
 .. todo:: These are not the correct files for the experiment workflow

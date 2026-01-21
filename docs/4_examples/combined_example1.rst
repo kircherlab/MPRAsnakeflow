@@ -175,109 +175,109 @@ Total file tree of the results folder:
             ├── assigned_counts
             │   └── fromWorkflow
             │       ├── default
-            │       │   ├── HEPG2_1_merged_assigned_counts.tsv.gz
-            │       │   ├── HEPG2_2_merged_assigned_counts.tsv.gz
-            │       │   ├── HEPG2_3_merged_assigned_counts.tsv.gz
+            │       │   ├── HEPG2.1.merged_assigned_counts.tsv.gz
+            │       │   ├── HEPG2.2.merged_assigned_counts.tsv.gz
+            │       │   ├── HEPG2.3.merged_assigned_counts.tsv.gz
             │       │   ├── HEPG2_allreps_merged.tsv.gz
             │       │   └── HEPG2_allreps_minThreshold_merged.tsv.gz
-            │       ├── HEPG2_1_DNA_final_counts.config.default.tsv.gz
-            │       ├── HEPG2_1.merged.config.default.tsv.gz
-            │       ├── HEPG2_1_RNA_final_counts.config.default.tsv.gz
-            │       ├── HEPG2_2_DNA_final_counts.config.default.tsv.gz
-            │       ├── HEPG2_2.merged.config.default.tsv.gz
-            │       ├── HEPG2_2_RNA_final_counts.config.default.tsv.gz
-            │       ├── HEPG2_3_DNA_final_counts.config.default.tsv.gz
-            │       ├── HEPG2_3.merged.config.default.tsv.gz
-            │       └── HEPG2_3_RNA_final_counts.config.default.tsv.gz
+            │       ├── HEPG2.1.DNA_final_counts.config.default.tsv.gz
+            │       ├── HEPG2.1.merged.config.default.tsv.gz
+            │       ├── HEPG2.1.RNA_final_counts.config.default.tsv.gz
+            │       ├── HEPG2.2.DNA_final_counts.config.default.tsv.gz
+            │       ├── HEPG2.2.merged.config.default.tsv.gz
+            │       ├── HEPG2.2.RNA_final_counts.config.default.tsv.gz
+            │       ├── HEPG2.3.DNA_final_counts.config.default.tsv.gz
+            │       ├── HEPG2.3.merged.config.default.tsv.gz
+            │       └── HEPG2.3.RNA_final_counts.config.default.tsv.gz
             ├── assignment
             │   └── fromWorkflow.tsv.gz
             ├── counts
-            │   ├── HEPG2_1_DNA.bam
-            │   ├── HEPG2_1_DNA_filtered_counts.tsv.gz
-            │   ├── HEPG2_1_DNA_final_counts.tsv.gz
-            │   ├── HEPG2_1_DNA_raw_counts.tsv.gz
-            │   ├── HEPG2_1.merged.config.default.tsv.gz
-            │   ├── HEPG2_1_RNA.bam
-            │   ├── HEPG2_1_RNA_filtered_counts.tsv.gz
-            │   ├── HEPG2_1_RNA_final_counts.tsv.gz
-            │   ├── HEPG2_1_RNA_raw_counts.tsv.gz
-            │   ├── HEPG2_2_DNA.bam
-            │   ├── HEPG2_2_DNA_filtered_counts.tsv.gz
-            │   ├── HEPG2_2_DNA_final_counts.tsv.gz
-            │   ├── HEPG2_2_DNA_raw_counts.tsv.gz
-            │   ├── HEPG2_2.merged.config.default.tsv.gz
-            │   ├── HEPG2_2_RNA.bam
-            │   ├── HEPG2_2_RNA_filtered_counts.tsv.gz
-            │   ├── HEPG2_2_RNA_final_counts.tsv.gz
-            │   ├── HEPG2_2_RNA_raw_counts.tsv.gz
-            │   ├── HEPG2_3_DNA.bam
-            │   ├── HEPG2_3_DNA_filtered_counts.tsv.gz
-            │   ├── HEPG2_3_DNA_final_counts.tsv.gz
-            │   ├── HEPG2_3_DNA_raw_counts.tsv.gz
-            │   ├── HEPG2_3.merged.config.default.tsv.gz
-            │   ├── HEPG2_3_RNA.bam
-            │   ├── HEPG2_3_RNA_filtered_counts.tsv.gz
-            │   ├── HEPG2_3_RNA_final_counts.tsv.gz
-            │   └── HEPG2_3_RNA_raw_counts.tsv.gz
+            │   ├── HEPG2.1.DNA.bam
+            │   ├── HEPG2.1.DNA_filtered_counts.tsv.gz
+            │   ├── HEPG2.1.DNA_final_counts.tsv.gz
+            │   ├── HEPG2.1.DNA_raw_counts.tsv.gz
+            │   ├── HEPG2.1.merged.config.default.tsv.gz
+            │   ├── HEPG2.1.RNA.bam
+            │   ├── HEPG2.1.RNA_filtered_counts.tsv.gz
+            │   ├── HEPG2.1.RNA_final_counts.tsv.gz
+            │   ├── HEPG2.1.RNA_raw_counts.tsv.gz
+            │   ├── HEPG2.2.DNA.bam
+            │   ├── HEPG2.2.DNA_filtered_counts.tsv.gz
+            │   ├── HEPG2.2.DNA_final_counts.tsv.gz
+            │   ├── HEPG2.2.DNA_raw_counts.tsv.gz
+            │   ├── HEPG2.2.merged.config.default.tsv.gz
+            │   ├── HEPG2.2.RNA.bam
+            │   ├── HEPG2.2.RNA_filtered_counts.tsv.gz
+            │   ├── HEPG2.2.RNA_final_counts.tsv.gz
+            │   ├── HEPG2.2.RNA_raw_counts.tsv.gz
+            │   ├── HEPG2.3.DNA.bam
+            │   ├── HEPG2.3.DNA_filtered_counts.tsv.gz
+            │   ├── HEPG2.3.DNA_final_counts.tsv.gz
+            │   ├── HEPG2.3.DNA_raw_counts.tsv.gz
+            │   ├── HEPG2.3.merged.config.default.tsv.gz
+            │   ├── HEPG2.3.RNA.bam
+            │   ├── HEPG2.3.RNA_filtered_counts.tsv.gz
+            │   ├── HEPG2.3.RNA_final_counts.tsv.gz
+            │   └── HEPG2.3.RNA_raw_counts.tsv.gz
             └── statistic
                 ├── assigned_counts
                 │   └── fromWorkflow
                 │       ├── default
                 │       │   ├── combined
-                │       │   │   └── HEPG2_merged_assigned_counts.statistic.tsv.gz
-                │       │   ├── HEPG2_1_merged_assigned_counts.statistic.tsv.gz
-                │       │   ├── HEPG2_2_merged_assigned_counts.statistic.tsv.gz
-                │       │   ├── HEPG2_3_merged_assigned_counts.statistic.tsv.gz
+                │       │   │   └── HEPG2.merged_assigned_counts.statistic.tsv.gz
+                │       │   ├── HEPG2.1.merged_assigned_counts.statistic.tsv.gz
+                │       │   ├── HEPG2.2.merged_assigned_counts.statistic.tsv.gz
+                │       │   ├── HEPG2.3.merged_assigned_counts.statistic.tsv.gz
                 │       │   ├── HEPG2_average_allreps_merged.tsv.gz
-                │       │   ├── HEPG2_barcodesPerInsert.png
-                │       │   ├── HEPG2_correlation_minThreshold.tsv
-                │       │   ├── HEPG2_correlation.tsv
-                │       │   ├── HEPG2_DNA_pairwise_minThreshold.png
-                │       │   ├── HEPG2_DNA_pairwise.png
-                │       │   ├── HEPG2_group_barcodesPerInsert_box_minThreshold.png
-                │       │   ├── HEPG2_group_barcodesPerInsert_box.png
-                │       │   ├── HEPG2_Ratio_pairwise_minThreshold.png
-                │       │   ├── HEPG2_Ratio_pairwise.png
-                │       │   ├── HEPG2_RNA_pairwise_minThreshold.png
-                │       │   └── HEPG2_RNA_pairwise.png
-                │       ├── HEPG2_1_DNA_default.statistic.tsv.gz
-                │       ├── HEPG2_1_RNA_default.statistic.tsv.gz
-                │       ├── HEPG2_2_DNA_default.statistic.tsv.gz
-                │       ├── HEPG2_2_RNA_default.statistic.tsv.gz
-                │       ├── HEPG2_3_DNA_default.statistic.tsv.gz
-                │       └── HEPG2_3_RNA_default.statistic.tsv.gz
+                │       │   ├── HEPG2.barcodesPerInsert.png
+                │       │   ├── HEPG2.correlation_minThreshold.tsv
+                │       │   ├── HEPG2.correlation.tsv
+                │       │   ├── HEPG2.DNA.pairwise_minThreshold.png
+                │       │   ├── HEPG2.DNA.pairwise.png
+                │       │   ├── HEPG2.group_barcodesPerInsert_box_minThreshold.png
+                │       │   ├── HEPG2.group_barcodesPerInsert_box.png
+                │       │   ├── HEPG2.Ratio.pairwise_minThreshold.png
+                │       │   ├── HEPG2.Ratio.pairwise.png
+                │       │   ├── HEPG2.RNA.pairwise_minThreshold.png
+                │       │   └── HEPG2.RNA.pairwise.png
+                │       ├── HEPG2.1.DNA.default.statistic.tsv.gz
+                │       ├── HEPG2.1.RNA.default.statistic.tsv.gz
+                │       ├── HEPG2.2.DNA.default.statistic.tsv.gz
+                │       ├── HEPG2.2.RNA.default.statistic.tsv.gz
+                │       ├── HEPG2.3.DNA.default.statistic.tsv.gz
+                │       └── HEPG2.3.RNA.default.statistic.tsv.gz
                 ├── barcode
                 │   ├── assigned_counts
                 │   │   └── fromWorkflow
-                │   │       ├── HEPG2_default_barcode_correlation.tsv
-                │   │       ├── HEPG2_default_barcode_DNA_pairwise.png
-                │   │       ├── HEPG2_default_barcode_Ratio_pairwise.png
-                │   │       ├── HEPG2_default_barcode_RNA_pairwise.png
-                │   │       ├── HEPG2_default_DNA_perBarcode.png
-                │   │       └── HEPG2_default_RNA_perBarcode.png
+                │   │       ├── HEPG2.default.barcode_correlation.tsv
+                │   │       ├── HEPG2.default.barcode_DNA_pairwise.png
+                │   │       ├── HEPG2.default.barcode_Ratio_pairwise.png
+                │   │       ├── HEPG2.default.barcode_RNA_pairwise.png
+                │   │       ├── HEPG2.default.DNA_perBarcode.png
+                │   │       └── HEPG2.default.RNA_perBarcode.png
                 │   └── counts
-                │       ├── HEPG2_default_barcode_correlation.tsv
-                │       ├── HEPG2_default_barcode_DNA_pairwise.png
-                │       ├── HEPG2_default_barcode_Ratio_pairwise.png
-                │       ├── HEPG2_default_barcode_RNA_pairwise.png
-                │       ├── HEPG2_default_DNA_perBarcode.png
-                │       └── HEPG2_default_RNA_perBarcode.png
+                │       ├── HEPG2.default.barcode_correlation.tsv
+                │       ├── HEPG2.default.barcode_DNA_pairwise.png
+                │       ├── HEPG2.default.barcode_Ratio_pairwise.png
+                │       ├── HEPG2.default.barcode_RNA_pairwise.png
+                │       ├── HEPG2.default.DNA_perBarcode.png
+                │       └── HEPG2.default.RNA_perBarcode.png
                 ├── bc_overlap.assigned_counts.default.fromWorkflow.tsv
                 ├── bc_overlap.counts.default.tsv
                 ├── counts
-                │   ├── BCNucleotideComposition.HEPG2_1_DNA.tsv.gz
-                │   ├── BCNucleotideComposition.HEPG2_1_RNA.tsv.gz
-                │   ├── BCNucleotideComposition.HEPG2_2_DNA.tsv.gz
-                │   ├── BCNucleotideComposition.HEPG2_2_RNA.tsv.gz
-                │   ├── BCNucleotideComposition.HEPG2_3_DNA.tsv.gz
-                │   └── BCNucleotideComposition.HEPG2_3_RNA.tsv.gz
+                │   ├── BCNucleotideComposition.HEPG2.1.DNA.tsv.gz
+                │   ├── BCNucleotideComposition.HEPG2.1.RNA.tsv.gz
+                │   ├── BCNucleotideComposition.HEPG2.2.DNA.tsv.gz
+                │   ├── BCNucleotideComposition.HEPG2.2.RNA.tsv.gz
+                │   ├── BCNucleotideComposition.HEPG2.3.DNA.tsv.gz
+                │   └── BCNucleotideComposition.HEPG2.3.RNA.tsv.gz
                 ├── counts.filtered.tsv
-                ├── counts.freqUMIs.HEPG2_1_DNA.txt
-                ├── counts.freqUMIs.HEPG2_1_RNA.txt
-                ├── counts.freqUMIs.HEPG2_2_DNA.txt
-                ├── counts.freqUMIs.HEPG2_2_RNA.txt
-                ├── counts.freqUMIs.HEPG2_3_DNA.txt
-                ├── counts.freqUMIs.HEPG2_3_RNA.txt
+                ├── counts.freqUMIs.HEPG2.1.DNA.txt
+                ├── counts.freqUMIs.HEPG2.1.RNA.txt
+                ├── counts.freqUMIs.HEPG2.2.DNA.txt
+                ├── counts.freqUMIs.HEPG2.2.RNA.txt
+                ├── counts.freqUMIs.HEPG2.3.DNA.txt
+                ├── counts.freqUMIs.HEPG2.3.RNA.txt
                 ├── counts.raw.tsv
                 ├── statistic_assigned_bc_correlation_merged_fromWorkflow_default.tsv
                 ├── statistic_assigned_counts_merged_fromWorkflow_default.tsv

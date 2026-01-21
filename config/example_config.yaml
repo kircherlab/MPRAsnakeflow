@@ -9,7 +9,7 @@ assignments:
       configs:
         sequence_length: 171 # sequence length of design excluding adapters.
         alignment_start: 1 # start of the alignment in the reference/design_file
-    FW:
+    FWD:
       - resources/assoc_basic/data/SRR10800986_1.fastq.gz
     BC:
       - resources/assoc_basic/data/SRR10800986_2.fastq.gz
