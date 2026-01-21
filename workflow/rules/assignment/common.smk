@@ -80,7 +80,9 @@ def getAssignmentCutadaptAdapters(assignment, read):
         and read in config["assignments"][assignment]["adapters"]
     ):
         adapters_config = config["assignments"][assignment]["adapters"][read]
-        if isinstance(adapters_config is list) and isinstance(adapters_config[0], int):
+        print(adapters_config)
+        print(isinstance(adapters_config, list))
+        if isinstance(adapters_config, list) and isinstance(adapters_config[0], int):
             return " ".join(["-u %d" % u for u in adapters_config])
         else:
             return " ".join(
