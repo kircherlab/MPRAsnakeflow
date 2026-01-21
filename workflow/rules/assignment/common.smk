@@ -75,6 +75,7 @@ def getMappingRead(assignment: str) -> str:
 
 
 def getAssignmentCutadaptAdapters(assignment, read):
+    output = []
     if (
         "adapters" in config["assignments"][assignment]
         and read in config["assignments"][assignment]["adapters"]
@@ -82,18 +83,17 @@ def getAssignmentCutadaptAdapters(assignment, read):
         adapters_config = config["assignments"][assignment]["adapters"][read]
         print(adapters_config)
         print(isinstance(adapters_config, list))
+        print(isinstance(adapters_config[0], int))
         if isinstance(adapters_config, list) and isinstance(adapters_config[0], int):
-            return " ".join(["-u %d" % u for u in adapters_config])
+            output = ["-u %d" % u for u in adapters_config]
         else:
-            return " ".join(
-                [
-                    (
-                        "-g %s" % adapter[0]
-                        if adapter[1] == "5prime"
-                        else "-a %s" % adapter[0]
-                    )
-                    for adapter in adapters_config
-                ]
-            )
-    else:
-        return ""
+
+            if "three_prime" in adapters_config:
+                for adapter in adapters_config["three_prime"]:
+                    output.append("-a %s" % adapter)
+            if "five_prime" in adapters_config:
+                for adapter in adapters_config["five_prime"]:
+                    output.append("-g %s" % adapter)
+
+            return " ".join(output)
+    return " ".join(output)
