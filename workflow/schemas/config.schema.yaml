@@ -213,20 +213,22 @@ properties:
             properties:
               BC:
                 oneOf:
-                  - type: array
-                    items:
-                      type: array
-                      items:
-                        - type: string
-                          pattern: ^[ATCGNatcgn]+$
-                        - type: string
-                          enum:
-                            - 3prime
-                            - 5prime
-                      minItems: 2
-                      maxItems: 2
-                    minItems: 1
-                    uniqueItems: true
+                  - type: object
+                    properties:
+                      five_prime:
+                        type: array
+                        items:
+                            type: string
+                            pattern: ^[ATCGNatcgn]+$
+                        minItems: 1
+                        uniqueItems: true
+                      three_prime:
+                        type: array
+                        items:
+                            type: string
+                            pattern: ^[ATCGNatcgn]+$
+                        minItems: 1
+                        uniqueItems: true
                   - type: array
                     items:
                       type: integer
@@ -257,20 +259,22 @@ properties:
                     uniqueItems: true
               REV:
                 oneOf:
-                  - type: array
-                    items:
-                      type: array
-                      items:
-                        - type: string
-                          pattern: ^[ATCGNatcgn]+$
-                        - type: string
-                          enum:
-                            - 3prime
-                            - 5prime
-                      minItems: 2
-                      maxItems: 2
-                    minItems: 1
-                    uniqueItems: true
+                  - type: object
+                    properties:
+                      five_prime:
+                        type: array
+                        items:
+                            type: string
+                            pattern: ^[ATCGNatcgn]+$
+                        minItems: 1
+                        uniqueItems: true
+                      three_prime:
+                        type: array
+                        items:
+                            type: string
+                            pattern: ^[ATCGNatcgn]+$
+                        minItems: 1
+                        uniqueItems: true
                   - type: array
                     items:
                       type: integer
