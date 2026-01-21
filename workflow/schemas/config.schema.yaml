@@ -230,23 +230,16 @@ properties:
                     maxItems: 2
                     uniqueItems: true
               FWD:
-                oneOf:
-                  - type: array
-                    items:
-                      - type: string
-                        pattern: ^[ATCGNatcgn]+$
-                      - type : string
-                        enum:
-                          - 3prime
-                          - 5prime
-                    minItems: 1
-                    uniqueItems: true
-                  - type: array
-                    items:
-                      type: integer
-                    minItems: 1
-                    maxItems: 2
-                    uniqueItems: true
+                type: array
+                items:
+                  - type: string
+                    pattern: ^[ATCGNatcgn]+$
+                  - type : string
+                    enum:
+                      - 3prime
+                      - 5prime
+                minItems: 1
+                uniqueItems: true
               REV:
                 oneOf:
                   - type: array
