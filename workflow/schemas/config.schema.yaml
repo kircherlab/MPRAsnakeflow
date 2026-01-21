@@ -239,14 +239,14 @@ properties:
                       five_prime:
                         type: array
                         items:
-                          - type: string
+                            type: string
                             pattern: ^[ATCGNatcgn]+$
                         minItems: 1
                         uniqueItems: true
-                    three_prime:
+                      three_prime:
                         type: array
                         items:
-                          - type: string
+                            type: string
                             pattern: ^[ATCGNatcgn]+$
                         minItems: 1
                         uniqueItems: true
