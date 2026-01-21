@@ -232,6 +232,8 @@ File tree
             |-HepG2.1.DNA_filtered_counts.tsv.gz
             |-HepG2.1.RNA_counts.tsv
             |-HepG2.1.RNA_raw_counts.tsv.gz
+
+
 Files for each Condition
 ------------------------
 allreps.tsv

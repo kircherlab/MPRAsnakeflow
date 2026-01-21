@@ -218,15 +218,15 @@ properties:
                       five_prime:
                         type: array
                         items:
-                            type: string
-                            pattern: ^[ATCGNatcgn]+$
+                          type: string
+                          pattern: ^[ATCGNatcgn]+$
                         minItems: 1
                         uniqueItems: true
                       three_prime:
                         type: array
                         items:
-                            type: string
-                            pattern: ^[ATCGNatcgn]+$
+                          type: string
+                          pattern: ^[ATCGNatcgn]+$
                         minItems: 1
                         uniqueItems: true
                   - type: array
@@ -241,15 +241,15 @@ properties:
                       five_prime:
                         type: array
                         items:
-                            type: string
-                            pattern: ^[ATCGNatcgn]+$
+                          type: string
+                          pattern: ^[ATCGNatcgn]+$
                         minItems: 1
                         uniqueItems: true
                       three_prime:
                         type: array
                         items:
-                            type: string
-                            pattern: ^[ATCGNatcgn]+$
+                          type: string
+                          pattern: ^[ATCGNatcgn]+$
                         minItems: 1
                         uniqueItems: true
                   - type: array
@@ -264,15 +264,15 @@ properties:
                       five_prime:
                         type: array
                         items:
-                            type: string
-                            pattern: ^[ATCGNatcgn]+$
+                          type: string
+                          pattern: ^[ATCGNatcgn]+$
                         minItems: 1
                         uniqueItems: true
                       three_prime:
                         type: array
                         items:
-                            type: string
-                            pattern: ^[ATCGNatcgn]+$
+                          type: string
+                          pattern: ^[ATCGNatcgn]+$
                         minItems: 1
                         uniqueItems: true
                   - type: array
