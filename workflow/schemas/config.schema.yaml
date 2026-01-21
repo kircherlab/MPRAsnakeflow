@@ -190,7 +190,7 @@ properties:
           linker:
             type: string
             pattern: ^[ATCGNatcgn]+$
-          FW:
+          FWD:
             type: array
             items:
               type: string
@@ -211,26 +211,60 @@ properties:
           adapters:
             type: object
             properties:
-              3prime:
+              BC:
                 oneOf:
                   - type: array
                     items:
-                      type: string
-                      pattern: ^[ATCG]+$
+                      - type: string
+                        pattern: ^[ATCGNatcgn]+$
+                      - type : string
+                        enum:
+                          - 3prime
+                          - 5prime
                     minItems: 1
                     uniqueItems: true
-                  - type: integer
-                    minimum: 1
-              5prime:
+                  - type: array
+                    items:
+                      type: integer
+                    minItems: 1
+                    maxItems: 2
+                    uniqueItems: true
+              FWD:
                 oneOf:
                   - type: array
                     items:
-                      type: string
-                      pattern: ^[ATCG]+$
+                      - type: string
+                        pattern: ^[ATCGNatcgn]+$
+                      - type : string
+                        enum:
+                          - 3prime
+                          - 5prime
                     minItems: 1
                     uniqueItems: true
-                  - type: integer
-                    minimum: 1
+                  - type: array
+                    items:
+                      type: integer
+                    minItems: 1
+                    maxItems: 2
+                    uniqueItems: true
+              REV:
+                oneOf:
+                  - type: array
+                    items:
+                      - type: string
+                        pattern: ^[ATCGNatcgn]+$
+                      - type : string
+                        enum:
+                          - 3prime
+                          - 5prime
+                    minItems: 1
+                    uniqueItems: true
+                  - type: array
+                    items:
+                      type: integer
+                    minItems: 1
+                    maxItems: 2
+                    uniqueItems: true
           NGmerge:
             type: object
             properties:
@@ -305,7 +339,7 @@ properties:
           - required:
               - BC
         required:
-          - FW
+          - FWD
           - bc_length
           - design_file
           - configs

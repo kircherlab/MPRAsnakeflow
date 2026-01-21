@@ -34,8 +34,8 @@ Possible rules to tweak:
 
 :Assignment:
 
-    :assignment_hybridFWRead_get_reads_by_cutadapt:
-        Only needed when using the linker option in the config. You can add more threads using :code:`--set-threads assignment_hybridFWRead_get_reads_by_cutadapt=4`. Default is always 1 thread.
+    :assignment_hybridFWDRead_get_reads_by_cutadapt:
+        Only needed when using the linker option in the config. You can add more threads using :code:`--set-threads assignment_hybridFWDRead_get_reads_by_cutadapt=4`. Default is always 1 thread.
 
     :assignment_mapping_bbmap:
         Only needed when using bbmap for mapping. Memory and threads can be optimized, e.g., via :code:`--set-threads assignment_mapping_bbmap=30 --set-resources assignment_mapping_bbmap:mem_mb=10000`. Default is 1 thread and 4GB memory, but we recommend using 30 threads and 10GB if available.
@@ -48,8 +48,8 @@ Possible rules to tweak:
 
 :Experiment:
 
-    :counts_onlyFW_raw_counts_by_cutadapt:
-        Only needed when you have only FW reads and use the adapter option. Threads can be optimized, e.g., via :code:`--set-threads experiment_counts_onlyFW_raw_counts_by_cutadapt=30`. Default is 1 thread.
+    :counts_onlyFWD_raw_counts_by_cutadapt:
+        Only needed when you have only FWD reads and use the adapter option. Threads can be optimized, e.g., via :code:`--set-threads experiment_counts_onlyFWD_raw_counts_by_cutadapt=30`. Default is 1 thread.
 
 Running on an HPC using SLURM
 -----------------------------

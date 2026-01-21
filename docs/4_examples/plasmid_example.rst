@@ -189,7 +189,7 @@ Create config files
                 configs:
                     sequence_length: 200
                     alignment_start: 1
-            FW:
+            FWD:
                 - data/oligo_barcode/ENCFF235LUE.fastq.gz
                 - data/oligo_barcode/ENCFF708MPZ.fastq.gz
                 - data/oligo_barcode/ENCFF381TUK.fastq.gz

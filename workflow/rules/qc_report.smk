@@ -28,10 +28,10 @@ rule qc_report_assoc:
         min_support=lambda wc: config["assignments"][wc.assignment]["configs"][
             wc.assignment_config
         ]["min_support"],
-        fw=lambda wc: (
-            ";".join(config["assignments"][wc.assignment]["FW"])
-            if isinstance(config["assignments"][wc.assignment]["FW"], list)
-            else config["assignments"][wc.assignment]["FW"]
+        fwd=lambda wc: (
+            ";".join(config["assignments"][wc.assignment]["FWD"])
+            if isinstance(config["assignments"][wc.assignment]["FWD"], list)
+            else config["assignments"][wc.assignment]["FWD"]
         ),
         rev=lambda wc: (
             (
@@ -64,7 +64,7 @@ rule qc_report_assoc:
             -P "bc_length:{params.bc_length}" \
             -P "fraction:{params.fraction}" \
             -P "min_support:{params.min_support}" \
-            -P "fw:{params.fw}" \
+            -P "fwd:{params.fwd}" \
             -P "rev:{params.rev}" \
             -P "bc:{params.bc}" \
             -P "workdir:{params.workdir}" \

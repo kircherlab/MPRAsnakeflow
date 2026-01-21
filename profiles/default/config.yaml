@@ -15,17 +15,17 @@ set-threads:
   assignment_collect: 30
   assignment_collectBCs: 20
   assignment_merge: 10
-  assignment_hybridFWRead_get_reads_by_cutadapt: 10
+  assignment_hybridFWDRead_get_reads_by_cutadapt: 10
   assignment_adapter_remove: 2
 set-resources:
   assigned_counts_combined_replicates_barcode_output:
     runtime: 60
   assignment_check_design:
     runtime: 240
-  assignment_hybridFWRead_get_reads_by_length:
+  assignment_hybridFWDRead_get_reads_by_length:
     runtime: 1140
     mem: 2G
-  assignment_hybridFWRead_get_reads_by_cutadapt:
+  assignment_hybridFWDRead_get_reads_by_cutadapt:
     runtime: 1200
     mem: 4G
   assignment_merge:

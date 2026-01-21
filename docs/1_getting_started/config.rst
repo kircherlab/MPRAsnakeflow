@@ -74,7 +74,7 @@ For each assignment you want to process, you must give it a name like :code:`exa
     (Optional) Length of the linker. Only needed if you don't have a barcode read and the barcode is in the forward read with the structure: BC+Linker+Insert. The fixed length is used for the linker after a fixed length of BC. The recommended option is :code:`linker` by defining the exact linker sequence and using cutadapt for trimming.
 :linker:
     (Optional) Length of the linker. Only needed if you don't have a barcode read and the barcode is in the forward read with the structure: BC+Linker+Insert. Uses cutadapt to trim the linker to get the barcode as well as the start of the insert.
-:FW:
+:FWD:
     List of forward-read files in gzipped fastq format. The full or relative path to the files should be used. The same order in FW, BC, and REV is important.
 :REV:
     (Optional) List of reverse-read files in gzipped fastq format. Files have to overlap the FW read by at least 10 bp (see :code:`NGmerge` and :code:`min_dovetailed_overlap`). The full or relative path to the files should be used. The same order in FW, BC, and REV is important.
