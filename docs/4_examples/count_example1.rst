@@ -148,7 +148,8 @@ If the dry-run does not give any errors, run the workflow using 30 threads:
 
 Results
 -------
-All output files will be in the :code:`results/experiments/countBasic` folder. A nice overview (QC report) is shown in ::code:`results/experiments/countBasic/qc_report.default.html`. This HTML report contains information about statistics tables and plots.
+
+All output files will be in the :code:`results/experiments/countBasic` folder. A nice overview (QC report) is shown in ::code:`results/experiments/countBasic/qc_report.default.html`. This HTML report contains information about statistics tables and plots. You can find an example qc report here: `Example assignment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/count_example1.qc_report.default.html>`_.
 
 Total file tree of the results folder:
 

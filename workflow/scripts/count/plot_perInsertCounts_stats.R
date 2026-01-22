@@ -176,11 +176,11 @@ plot_group_bc_per_insert <- function(data) {
   return(bp)
 }
 
-ggsave(sprintf("%s_dna_vs_rna.png", outdir),
+ggsave(sprintf("%s.dna_vs_rna.png", outdir),
   plot_median_dna_rna_cor(all),
   width = 10, height = 10
 )
-ggsave(sprintf("%s_dna_vs_rna_minThreshold.png", outdir),
+ggsave(sprintf("%s.dna_vs_rna_minThreshold.png", outdir),
   plot_median_dna_rna_cor(all %>% filter(n_bc >= thresh)),
   width = 10, height = 10
 )
@@ -221,12 +221,12 @@ for (n in 1:(data %>% nrow())) {
 }
 
 hist_plot <- do.call("plot_grid", c(hist_plot_list))
-ggsave(sprintf("%s_barcodesPerInsert.png", outdir), hist_plot, dpi = 300, type = "cairo")
+ggsave(sprintf("%s.barcodesPerInsert.png", outdir), hist_plot, dpi = 300, type = "cairo")
 
 
 
 box_plot_insert <- do.call("plot_grid", c(box_plot_insert_list))
-ggsave(sprintf("%s_group_barcodesPerInsert_box.png", outdir),
+ggsave(sprintf("%s.group_barcodesPerInsert_box.png", outdir),
   box_plot_insert,
   dpi = 300, type = "cairo"
 )
@@ -234,7 +234,7 @@ ggsave(sprintf("%s_group_barcodesPerInsert_box.png", outdir),
 box_plot_insert_thresh <-
   do.call("plot_grid", c(box_plot_insert_thresh_list))
 ggsave(
-  sprintf("%s_group_barcodesPerInsert_box_minThreshold.png", outdir),
+  sprintf("%s.group_barcodesPerInsert_box_minThreshold.png", outdir),
   box_plot_insert_thresh,
   dpi = 300, type = "cairo"
 )

@@ -90,50 +90,74 @@ Perform a dry-run using Snakemake's :code:`-n` option. The MPRAsnakeflow command
 
     cd combined_basic
     conda activate mprasnakeflow
-    snakemake -c 1 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/combined_basic/config.yml -n -q
+    snakemake -c 30 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/combined_basic/config.yml -n -q --set-threads assignment_mapping_bbmap=10  --resources mem_mb=60000
 
 You should see a list of rules that will be executed. This is the summary:
 
 .. code-block:: text
 
-    Job stats:
-    job                                                             count    min threads    max threads
-    ------------------------------------------------------------  -------  -------------  -------------
-    all                                                                 1              1              1
-    assigned_counts_assignBarcodes                                      6              1              1
-    assigned_counts_dna_rna_merge                                       3              1              1
-    assigned_counts_filterAssignment                                    1              1              1
-    assigned_counts_make_master_tables                                  1              1              1
-    assignment_bwa_ref                                                  1              1              1
-    assignment_fastq_split                                              3              1              1
-    assignment_filter                                                   1              1              1
-    assignment_flagstat                                                 1              1              1
-    assignment_mapping_bwa_getBCs                                       1              1              1
-    assignment_idx_bam                                                  1              1              1
-    assignment_mapping                                                  1             10             10
-    assignment_merge                                                   30              1              1
-    assignment_statistic_assignedCounts                                 1              1              1
-    assignment_statistic_assignment                                     1              1              1
-    assignment_statistic_totalCounts                                    1              1              1
-    counts_create_BAM_umi                                               6              1              1
-    counts_dna_rna_merge_counts                                         6              1              1
-    counts_filter_counts                                                6              1              1
-    counts_final_counts_umi                                             6              1              1
-    counts_raw_counts_umi                                               6              1              1
-    statistic_counts_frequent_umis                                      6              1              1
-    total                                                             136              1             10
+Job stats:                                                                                                                                                                                                     job                                                                        count
+-----------------------------------------------------------------------  -------
+all                                                                            1
+assignment_attach_idx                                                         60
+assignment_check_design                                                        1
+assignment_collect                                                             1
+assignment_collectBCs                                                          1
+assignment_fastq_split                                                         3
+assignment_filter                                                              1
+assignment_flagstat                                                            1
+assignment_idx_bam                                                             1
+assignment_mapping_bbmap                                                      30
+assignment_mapping_bbmap_getBCs                                               30
+assignment_merge                                                              30                                             experiment_assigned_counts_combine_replicates_barcode_output                   1
+experiment_assigned_counts_copy_final_all_files                                1
+experiment_assigned_counts_copy_final_thresh_files                             1
+experiment_assigned_counts_dna_rna_merge                                       3
+experiment_assigned_counts_filterAssignment                                    1
+experiment_assigned_counts_make_master_tables                                  1
+experiment_counts_dna_rna_merge_counts                                         6
+experiment_counts_filter_counts                                                6
+experiment_counts_final_counts                                                 6
+experiment_counts_umi_create_BAM                                               6
+experiment_counts_umi_raw_counts                                               6
+experiment_statistic_assigned_counts_combine_BC_assignment_stats               1
+experiment_statistic_assigned_counts_combine_BC_assignment_stats_helper        1
+experiment_statistic_assigned_counts_combine_stats_dna_rna_merge               1
+experiment_statistic_assigned_counts_combine_stats_dna_rna_merge_all           1
+experiment_statistic_bc_overlap_combine_assigned_counts                        1
+experiment_statistic_bc_overlap_combine_counts                                 1
+experiment_statistic_bc_overlap_run                                            4
+experiment_statistic_correlation_bc_counts                                     2
+experiment_statistic_correlation_bc_counts_hist                                2
+experiment_statistic_correlation_calculate                                     1
+experiment_statistic_correlation_combine_bc_assigned                           1
+experiment_statistic_correlation_combine_bc_raw                                1
+experiment_statistic_correlation_combine_oligo                                 1
+experiment_statistic_correlation_hist_box_plots                                1
+experiment_statistic_counts_BC_in_RNA_DNA                                      6
+experiment_statistic_counts_BC_in_RNA_DNA_merge                                2
+experiment_statistic_counts_barcode_base_composition                           6
+experiment_statistic_counts_final                                              2
+experiment_statistic_counts_frequent_umis                                      6
+experiment_statistic_counts_stats_merge                                        2
+experiment_statistic_counts_table                                             12
+experiment_statistic_quality_metric                                            1
+qc_report_assoc                                                                1
+qc_report_count                                                                1
+total                                                                        268
 
-When the dry-run does not give any errors, run the workflow. We use a machine with 30 threads/cores to run the workflow. Therefore, :code:`split_number` is set to 30 to parallelize the workflow. Also, we are using 10 threads for mapping (bwa mem). Snakemake ensures that no more than 30 threads are used.
+
+
+When the dry-run does not give any errors, run the workflow. We use a machine with 30 threads/cores to run the workflow. Therefore, :code:`split_number` is set to 30 to parallelize the workflow. Also, we are using 10 threads for mapping (BBMap). Snakemake ensures that no more than 30 threads are used.
 
 .. code-block:: bash
 
-    snakemake -c 30 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/combined_basic/config.yml
-
-.. note:: Please modify your code when running in a cluster environment. We have an example SLURM config file here: :code:`config/sbatch.yml`.
+    snakemake -c 30 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/combined_basic/config.yml --set-threads assignment_mapping_bbmap=10  --resources mem_mb=60000
 
 Results
 -------
-All needed output files will be in the :code:`results/assignment/assocBasic` folder for assignment results. The folder :code:`results/experiments/countBasic` contains the count results.
+
+All needed output files will be in the :code:`results/assignment/assocBasic` folder for assignment results. The folder :code:`results/experiments/countBasic` contains the count results. A nice overview (QC report) is shown in ::code:`results/experiments/countBasic/qc_report.default.html`. This HTML report contains information about statistics tables and plots. You can find an example qc report here: `Example assignment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/combined_example1.qc_report.default.html>`_.
 
 To generate a final report, use the following command:
 
