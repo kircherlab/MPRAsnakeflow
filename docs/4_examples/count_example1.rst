@@ -142,21 +142,13 @@ If the dry-run does not give any errors, run the workflow using 30 threads:
 
 .. code-block:: bash
 
-    snakemake -c 30 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/count_basic/config.yml
+    snakemake -c 30 --use-conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/count_basic/config.yml 
 
 .. note:: Please modify your code when running in a cluster environment. We have an example SLURM config file here: :code:`config/sbatch.yml`.
 
 Results
 -------
-All output files will be in the :code:`results/experiments/countBasic` folder.
-
-To generate a final report, use the following command:
-
-.. code-block:: bash
-
-    snakemake --config config.yml --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --report report.html
-
-This HTML report contains information about the Snakemake run and integrates statistics tables and plots.
+All output files will be in the :code:`results/experiments/countBasic` folder. A nice overview (QC report) is shown in ::code:`results/experiments/countBasic/qc_report.default.html`. This HTML report contains information about statistics tables and plots.
 
 Total file tree of the results folder:
 

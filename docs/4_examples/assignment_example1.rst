@@ -108,7 +108,7 @@ First we do a try run using snakemake :code:`-n` option. The MPRAsnakeflow comma
 
     cd assoc_basic
     conda activate mprasnakeflow
-    snakemake -c 1 --sdm conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/assoc_basic/config.yml -n -q --set-threads assignment_mapping_bwa=10
+    snakemake -c 1 --sdm conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/assoc_basic/config.yml -n -q --set-threads assignment_mapping_bbmap=10  --resources mem_mb=60000
 
 You should see a list of rules that will be executed. This is the summary:
 
@@ -119,50 +119,53 @@ You should see a list of rules that will be executed. This is the summary:
     -----------------------------------  -------
     all                                        1
     assignment_attach_idx                     60
-    assignment_bwa_ref                         1
     assignment_check_design                    1
     assignment_collect                         1
     assignment_collectBCs                      1
     assignment_fastq_split                     3
     assignment_filter                          1
     assignment_flagstat                        1
-    assignment_mapping_bwa_getBCs              30
     assignment_idx_bam                         1
-    assignment_mapping_bwa                    30
+    assignment_mapping_bbmap                  30
+    assignment_mapping_bbmap_getBCs           30
     assignment_merge                          30
     assignment_statistic_assignedCounts        1
     assignment_statistic_assignment            1
+    assignment_statistic_quality_metric        1
     assignment_statistic_totalCounts           1
-    total                                    164
+    qc_report_assoc                            1
+    total                                    165
 
 
-When dry-run does not give any errors we will run the workflow. We use a machine with 30 threads/cores to run the workflow. Therefore :code:`split_number` is set to 30 to parallize the workflow. Also we are using 10 threads for mapping (bwa mem). But snakemake takes care that no more than 30 threads are used.
+When dry-run does not give any errors we will run the workflow. We use a machine with 30 threads/cores to run the workflow. Therefore :code:`split_number` is set to 30 to parallize the workflow. Also we are using 10 threads for mapping (BBMap). But snakemake takes care that no more than 30 threads are used.
 
 .. code-block:: bash
 
-    snakemake -c 30 --sdm conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/assoc_basic/config.yml -n -q --set-threads assignment_mapping_bwa=10
+    snakemake -c 30 --sdm conda --snakefile /home/user/MPRAsnakeflow/workflow/Snakefile --configfile /home/user/MPRAsnakeflow/resources/assoc_basic/config.yml -n -q --set-threads assignment_mapping_bbmap=10  --resources mem_mb=60000
 
 
 .. note:: Please modify your code when running in a cluster environment. We have an example SLURM config file here :code:`config/sbatch.yml`.
 
-If everything works fine the 15 rules showed above will run:
+If everything works fine the 17 rules showed above will run:
 
 all
    The overall all rule. Here is defined what final output files are expected.
-assignment_attach_idx
-    Extract the index sequence and add it to the header.
-assignment_bwa_ref
-   Create mapping reference for BWA from design file.
+assignment_check_design
+   Check the design file for correctness.
 assignment_fastq_split
    Split the fastq files into n files for parallelisation. N is given by split_read in the configuration file.
+assignment_attach_idx
+    Extract the index sequence and add it to the header.
 assignment_merge
    Merge the FW,REV and BC fastq files into one. Extract the index sequence from the middle and end of an Illumina run. Separates reads for Paired End runs. Merge/Adapter trim reads stored in BAM.
-assignment_mapping_bwa
-   Map the reads to the reference.
-assignment_idx_bam
-   Index the BAM file
+assignment_mapping_bbmap
+   Map the reads to the reference using BBMap.
+assignment_mapping_bbmap_getBCs
+   Get the barcodes from the mapped reads.
 assignment_collect
     Collect mapped reads into one BAM.
+assignment_idx_bam
+   Index the BAM file
 assignment_collectBCs
     Get the barcodes.
 assignment_flagstat
@@ -175,40 +178,40 @@ assignment_statistic_assignedCounts
    Statistic of filtered the assigned counts. Result is here :code:`results/assignment/assocBasic/statistic/assigned_counts.default.tsv` (default)
 assignment_statistic_assignment
    Statistic of the filtered assignment.  Result is here :code:`results/assignment/assocBasic/statistic/assignment.default.tsv.gz` and a plot here :code:`results/assignment/assocBasic/statistic/assignment.default.png`.
+assignment_statistic_quality_metric
+    Create quality metrics in JSON format. Result is here :code:`results/assignment/assocBasic/qc_metrics.default.json`.
+qc_report_assoc
+    Create a QC report in HTML format. Result is here :code:`results/assignment/assocBasic/qc_report.default.html`.
 
 Results
 -----------------
 
-All needed output files will be in the :code:`results/assignment/assocBasic` folder. The final assignment is in :code:`results/assignment/assocBasic/assignment_barcodes.default.tsv.gz`. 
-
-.. note:: Please note that for the experiment/count workflow you have to remove ambiguous BCs. It is possible to retain ambiguous BCs in the final file by configuring in the config file. But the default option will remove them from the final file.
+All needed output files will be in the :code:`results/assignment/assocBasic` folder. The final assignment is in :code:`results/assignment/assocBasic/assignment_barcodes.default.tsv.gz`. A nice overview (QC report) is shown in ::code:`results/assignment/assocBasic/qc_report.default.html`. This HTML report contains information about statistics tables and plots. You can find an example qc report here: `Example assignment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/SRR10800986.qc_report.default.html>`_.
 
 
 Total file tree of the results folder:
 
 .. code-block:: text
    
-    results/
+    results
     ├── assignment
     │   └── assocBasic
     │       ├── aligned_merged_reads.bam
     │       ├── aligned_merged_reads.bam.bai
     │       ├── assignment_barcodes.default.tsv.gz
+    │       ├── assignment_barcodes_with_ambiguous.default.tsv.gz
     │       ├── barcodes_incl_other.tsv.gz
+    │       ├── design_check.done
+    │       ├── design_check.err
+    │       ├── qc_metrics.default.json
+    │       ├── qc_report.default.html
     │       ├── reference
-    │       │   ├── reference.fa
-    │       │   ├── reference.fa.amb
-    │       │   ├── reference.fa.ann
-    │       │   ├── reference.fa.bwt
-    │       │   ├── reference.fa.dict
-    │       │   ├── reference.fa.fai
-    │       │   ├── reference.fa.pac
-    │       │   └── reference.fa.sa
+    │       │   └── reference.fa
     │       └── statistic
-    │           ├── assigned_counts.default.tsv.gz
+    │           ├── assigned_counts.default.tsv
     │           ├── assignment
     │           │   └── bam_stats.txt
     │           ├── assignment.default.png
     │           ├── assignment.default.tsv.gz
-    │           └── total_counts.tsv.gz
+    │           └── total_counts.tsv
     └── logs
