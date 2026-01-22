@@ -32,7 +32,7 @@ The Assignment QC (Quality Control) Report is a comprehensive document designed 
 ensure the quality of data or processes involved in a specific assignment. This report is generated
 for the `{python} assignment` assignment with settings defined in the config `{python} configs`. The barcode length for this experiment is `{python} bc_length` bases.
 
-- **Forward:** `{python} fw`
+- **Forward:** `{python} fwd`
 - **Reverse:** `{python} rev`
 - **Barcode:** `{python} bc`
 - **Design File:** `{python} design_file`
