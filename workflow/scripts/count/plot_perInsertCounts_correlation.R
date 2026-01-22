@@ -201,7 +201,7 @@ plot_correlations_ratio <- function(data, condition, r1, r2, name) {
       y = 4.5,
       label = sprintf(
         "   r = %.2f",
-        cor(data$ratio_log2.x, res$ratio_log2.y, method = "pearson")
+        cor(data$ratio_log2.x, data$ratio_log2.y, method = "pearson")
       ),
       size = 10
     ) +
@@ -401,11 +401,11 @@ if (data %>% nrow() > 1 && nrow(all) > 1) {
     res <-
       res %>% filter(n_bc.x >= thresh, n_bc.y >= thresh)
     plots_cor_min_thresh_dna[[i]] <-
-      plot_correlations_dna(res, cond, r1, r2, "pairwise_minThreshold")
+      plot_correlations_dna(res, cond, r1, r2, "pairwise.minThreshold")
     plots_cor_min_thresh_rna[[i]] <-
-      plot_correlations_rna(res, cond, r1, r2, "pairwise_minThreshold")
+      plot_correlations_rna(res, cond, r1, r2, "pairwise.minThreshold")
     plots_cor_min_thresh_ratio[[i]] <-
-      plot_correlations_ratio(res, cond, r1, r2, "pairwise_minThreshold")
+      plot_correlations_ratio(res, cond, r1, r2, "pairwise.minThreshold")
 
     stats_cor_min_thresh <- stats_cor_min_thresh %>%
       bind_rows(
@@ -416,43 +416,43 @@ if (data %>% nrow() > 1 && nrow(all) > 1) {
           cond,
           r1,
           r2,
-          "correlation_minThreshold"
+          "correlation.minThreshold"
         )
       )
   }
 
   write_correlation_plots(
     plots_correlations_dna,
-    sprintf("%s_DNA_pairwise.png", outdir)
+    sprintf("%s.DNA.pairwise.png", outdir)
   )
   write_correlation_plots(
     plots_correlations_rna,
-    sprintf("%s_RNA_pairwise.png", outdir)
+    sprintf("%s.RNA.pairwise.png", outdir)
   )
   write_correlation_plots(
     plots_correlations_ratio,
-    sprintf("%s_Ratio_pairwise.png", outdir)
+    sprintf("%s.Ratio.pairwise.png", outdir)
   )
   write_correlation_plots(
     plots_cor_min_thresh_dna,
-    sprintf("%s_DNA_pairwise_minThreshold.png", outdir)
+    sprintf("%s.DNA.pairwise.minThreshold.png", outdir)
   )
   write_correlation_plots(
     plots_cor_min_thresh_rna,
-    sprintf("%s_RNA_pairwise_minThreshold.png", outdir)
+    sprintf("%s.RNA.pairwise.minThreshold.png", outdir)
   )
   write_correlation_plots(
     plots_cor_min_thresh_ratio,
-    sprintf("%s_Ratio_pairwise_minThreshold.png", outdir)
+    sprintf("%s.Ratio.pairwise.minThreshold.png", outdir)
   )
 
   write_correlation(
     stats_correlations,
-    sprintf("%s_correlation.tsv", outdir)
+    sprintf("%s.correlation.tsv", outdir)
   )
   write_correlation(
     stats_cor_min_thresh,
-    sprintf("%s_correlation_minThreshold.tsv", outdir)
+    sprintf("%s.correlation.minThreshold.tsv", outdir)
   )
 }
 
