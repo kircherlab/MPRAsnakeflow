@@ -157,7 +157,7 @@ When the dry-run does not give any errors, run the workflow. We use a machine wi
 Results
 -------
 
-All needed output files will be in the :code:`results/assignment/assocBasic` folder for assignment results. The folder :code:`results/experiments/countBasic` contains the count results. A nice overview (QC report) is shown in ::code:`results/experiments/countBasic/qc_report.default.html`. This HTML report contains information about statistics tables and plots. You can find an example qc report here: `Example assignment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/combined_example1.qc_report.default.html>`_.
+All needed output files will be in the :code:`results/assignment/assocBasic` folder for assignment results. The folder :code:`results/experiments/countBasic` contains the count results. A nice overview (QC report) is shown in ::code:`results/experiments/countBasic/qc_report.default.html`. This HTML report contains information about statistics tables and plots. You can find an example qc report here: `Example assignment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/combined_example1.assignment.qc_report.default.html>`_ and here `Example Experiment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/combined_example1.count.qc_report.default.html>`_.
 
 To generate a final report, use the following command:
 
