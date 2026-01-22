@@ -110,7 +110,7 @@ for (n in 1:(data %>% nrow())) {
 }
 
 hist_plot <- do.call("plot_grid", c(plots_rna))
-ggsave(sprintf("%s_RNA_perBarcode.png", outdir), hist_plot, dpi = 300, type = "cairo")
+ggsave(sprintf("%s.RNA.perBarcode.png", outdir), hist_plot, dpi = 300, type = "cairo")
 
 hist_plot <- do.call("plot_grid", c(plots_dna))
-ggsave(sprintf("%s_DNA_perBarcode.png", outdir), hist_plot, dpi = 300, type = "cairo")
+ggsave(sprintf("%s.DNA.perBarcode.png", outdir), hist_plot, dpi = 300, type = "cairo")

@@ -489,9 +489,9 @@ if (data %>% nrow() > 1) {
   }
 
   print("write correlation stats")
-  write_correlation(stats_correlations, sprintf("%s_barcode_correlation.tsv", outdir))
+  write_correlation(stats_correlations, sprintf("%s.barcode.correlation.tsv", outdir))
   print("write correlation plots")
-  write_correlation_plots(plots_correlations_dna, sprintf("%s_barcode_DNA_pairwise.png", outdir))
-  write_correlation_plots(plots_correlations_rna, sprintf("%s_barcode_RNA_pairwise.png", outdir))
-  write_correlation_plots(plots_correlations_ratio, sprintf("%s_barcode_Ratio_pairwise.png", outdir))
+  write_correlation_plots(plots_correlations_dna, sprintf("%s.barcode.DNA.pairwise.png", outdir))
+  write_correlation_plots(plots_correlations_rna, sprintf("%s.barcode.RNA.pairwise.png", outdir))
+  write_correlation_plots(plots_correlations_ratio, sprintf("%s.barcode.Ratio.pairwise.png", outdir))
 }
