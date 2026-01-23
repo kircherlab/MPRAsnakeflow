@@ -7,6 +7,7 @@ The output is a tabular file that matched barcodes with oligos.
 
 
 include: "assignment/common.smk"
+include: "assignment/preprocessing.smk"
 include: "assignment/hybridFWDRead.smk"
 include: "assignment/statistic.smk"
 
@@ -84,33 +85,6 @@ rule assignment_check_design:
         --start {params.start} --length {params.length} \
         {params.fast_check} --sequence-check {params.sequence_collitions} \
         {params.attach_sequence} > {log.log} 2> {log.err};
-        """
-
-
-rule assignment_adapter_remove:
-    """
-    Remove adapter sequence from the reads (3' or 5').
-    Uses cutadapt to trim adapters based on the primer direction.
-    """
-    conda:
-        getCondaEnv("cutadapt.yaml")
-    threads: 1
-    input:
-        reads=lambda wc: config["assignments"][wc.assignment][wc.read],
-    output:
-        trimmed_reads=temp(
-            "results/assignment/{assignment}/fastq/{read}.trimmed.fastq.gz"
-        ),
-    wildcard_constraints:
-        read=r"(FWD)|(REV)|(BC)",
-    params:
-        adapters=lambda wc: getAssignmentCutadaptAdapters(wc.assignment, wc.read),
-    log:
-        temp("results/logs/assignment/adapter_remove.{assignment}.{read}.log"),
-    shell:
-        """
-        cutadapt --cores {threads} {params.adapters} \
-        -o {output.trimmed_reads} <(zcat {input.reads}) &> {log}
         """
 
 
