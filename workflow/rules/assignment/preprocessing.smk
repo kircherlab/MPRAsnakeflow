@@ -17,7 +17,7 @@ rule assignment_preprocessingadapter_remove:
     params:
         adapters=lambda wc: getAssignmentCutadaptAdapters(wc.assignment, wc.read),
     log:
-            "results/logs/assignment/preprocessing/adapter_remove.{assignment}.{read}.log"
+        "results/logs/assignment/preprocessing/adapter_remove.{assignment}.{read}.log",
     shell:
         """
         cutadapt --cores {threads} {params.adapters} \
