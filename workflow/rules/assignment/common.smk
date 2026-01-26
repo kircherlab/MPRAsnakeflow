@@ -33,7 +33,7 @@ def hasOnlyForwardRead(assignment):
     return "REV" not in config["assignments"][assignment]
 
 
-def useAssignmentAdapterTrimming(assignment, read):
+def useAssignmentAdapterTrimming(assignment: str, read: str) -> bool:
     """
     Return True if adapter trimming should be used for the given read in the assignment.
     """
@@ -43,20 +43,20 @@ def useAssignmentAdapterTrimming(assignment, read):
     )
 
 
-def getAssignmentRead(assignment, read):
+def getAssignmentRead(assignment: str, read: str) -> list[str]:
     """
     Return the correct assignment read.
     """
     if hasBCRead(assignment) or read == "REV":
         return (
-            "results/assignment/{assignment}/fastq/{read}.trimmed.fastq.gz"
+            ["results/assignment/{assignment}/fastq/{read}.trimmed.fastq.gz"]
             if useAssignmentAdapterTrimming(assignment, read)
             else config["assignments"][assignment][read]
         )
     elif hasLinker(assignment):
-        return "results/assignment/{assignment}/fastq/{read}.byCutadapt.fastq.gz"
+        return ["results/assignment/{assignment}/fastq/{read}.byCutadapt.fastq.gz"]
     elif hasLinkerLength(assignment):
-        return "results/assignment/{assignment}/fastq/{read}.byLength.fastq.gz"
+        return ["results/assignment/{assignment}/fastq/{read}.byLength.fastq.gz"]
     else:
         raise RuntimeError(
             "Wrong assignment configuration. Cannot find corerct combinations of reads for assignment %s"
@@ -74,7 +74,7 @@ def getMappingRead(assignment: str) -> str:
         return "results/assignment/{assignment}/fastq/merge_split{split}.join.fastq.gz"
 
 
-def getAssignmentCutadaptAdapters(assignment, read):
+def getAssignmentCutadaptAdapters(assignment: str, read: str) -> str:
     output = []
     if (
         "adapters" in config["assignments"][assignment]
