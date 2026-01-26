@@ -149,7 +149,6 @@ plot_correlations_dna <- function(data, condition, r1, r2, name) {
     ) +
     geom_abline(intercept = 0, slope = 1) +
     theme_classic(base_size = 30)
-  return(rna_p)
 }
 plot_correlations_rna <- function(data, condition, r1, r2, name) {
   rna_p <-
@@ -186,7 +185,6 @@ plot_correlations_rna <- function(data, condition, r1, r2, name) {
     ) +
     geom_abline(intercept = 0, slope = 1) +
     theme_classic(base_size = 30)
-  return(rna_p)
 }
 plot_correlations_ratio <- function(data, condition, r1, r2, name) {
   ratio_p <- ggplot(data, aes(ratio_log2.x, ratio_log2.y)) +
@@ -216,11 +214,10 @@ plot_correlations_ratio <- function(data, condition, r1, r2, name) {
     ) +
     geom_abline(intercept = 0, slope = 1) +
     theme_classic(base_size = 30)
-  return(ratio_p)
 }
 
 correlate <- function(x, y, method) {
-  return(sprintf("%.5f", cor(x, y, method = method)))
+  sprintf("%.5f", cor(x, y, method = method))
 }
 
 get_correlation_stats <-
@@ -276,7 +273,6 @@ get_correlation_stats <-
       NormSymmetry = norm,
       stringsAsFactors = FALSE
     )
-    return(outs)
   }
 
 write_correlation_plots <- function(plots, name) {
@@ -317,7 +313,6 @@ read_data <- function(file) {
       rna_normalized_log2 = log2(rna_normalized),
       ratio_log2 = log2(ratio)
     )
-  return(data)
 }
 
 

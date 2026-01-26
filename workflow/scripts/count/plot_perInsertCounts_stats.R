@@ -102,7 +102,6 @@ read_data <- function(file) {
       dna_normalized_log2 = log2(dna_normalized),
       rna_normalized_log2 = log2(rna_normalized),
     )
-  return(data)
 }
 
 
@@ -148,7 +147,6 @@ plot_median_dna_rna_cor <- function(data) {
       plot.title = element_text(size = 20),
     ) +
     guides(fill = "none")
-  return(p)
 }
 
 plot_group_bc_per_insert <- function(data) {
@@ -173,7 +171,6 @@ plot_group_bc_per_insert <- function(data) {
       legend.text = element_text(size = 15)
     ) +
     guides(fill = "none")
-  return(bp)
 }
 
 ggsave(sprintf("%s.dna_vs_rna.png", outdir),
