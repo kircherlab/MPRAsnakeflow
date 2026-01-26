@@ -164,7 +164,7 @@ The folder should look like this:
 MPRAsnakeflow
 =================================
 
-We will run assignmenta nd count workflow together. But it is of course possible to run them seperately using different config files. Then you have to use the assignment `fromFile` not `fromConfig`. But first we need to define the config file and the experiment CSV file to map DNA/RNA counts to the correct replicate.
+We will run assignment and count workflow together. But it is of course possible to run them seperately using different config files. Then you have to use the assignment `fromFile` not `fromConfig`. But first we need to define the config file and the experiment CSV file to map DNA/RNA counts to the correct replicate.
 
 
 Create config files
@@ -181,7 +181,7 @@ Create config files
             BC_rev_comp: false
             linker: TCTAGAGGTTCGTCGACGCGATCGCAGGAGCCGCAGTG
             adapters:
-                3prime:
+                three_prime:
                     - CGTCAAGCGGCCAGTT
             alignment_tool:
                 split_number: 30
@@ -227,7 +227,7 @@ And the :code:`experiment.csv` file to map the DNA/RNA counts to the correct rep
     A549,3,ENCFF448RQK.fastq.gz;ENCFF019RUN.fastq.gz;ENCFF850RIY.fastq.gz;ENCFF966RRE.fastq.gz;ENCFF168OJL.fastq.gz;ENCFF891CIZ.fastq.gz;ENCFF696HJK.fastq.gz;ENCFF491IXU.fastq.gz;ENCFF944CEQ.fastq.gz;ENCFF564JPU.fastq.gz,ENCFF501AHK.fastq.gz
     A549,4,ENCFF448RQK.fastq.gz;ENCFF019RUN.fastq.gz;ENCFF850RIY.fastq.gz;ENCFF966RRE.fastq.gz;ENCFF168OJL.fastq.gz;ENCFF891CIZ.fastq.gz;ENCFF696HJK.fastq.gz;ENCFF491IXU.fastq.gz;ENCFF944CEQ.fastq.gz;ENCFF564JPU.fastq.gz,ENCFF371LCK.fastq.gz
     A549,5,ENCFF448RQK.fastq.gz;ENCFF019RUN.fastq.gz;ENCFF850RIY.fastq.gz;ENCFF966RRE.fastq.gz;ENCFF168OJL.fastq.gz;ENCFF891CIZ.fastq.gz;ENCFF696HJK.fastq.gz;ENCFF491IXU.fastq.gz;ENCFF944CEQ.fastq.gz;ENCFF564JPU.fastq.gz,ENCFF061UCM.fastq.gz
-        EOF
+    EOF
 
 Run snakemake
 -------------

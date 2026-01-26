@@ -188,6 +188,7 @@ Indices and Tables
     4_examples/count_example1
     4_examples/combined_example1
     4_examples/plasmid_example
+    4_examples/complex_readstructure_example
 
 .. toctree::
     :caption: Tips & Tricks
