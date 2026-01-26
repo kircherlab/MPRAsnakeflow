@@ -399,7 +399,6 @@ write_correlation <- function(correlations, name) {
 #'   \item{Ratio_log2}{The log2 transformation of Ratio.}
 #'
 #' @import dplyr
-#' @importFrom magrittr |>
 #' @export
 read_data <- function(file, mindnacounts, minrnacounts, scaling) {
   data <- read.table(file,
