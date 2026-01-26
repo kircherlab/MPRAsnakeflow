@@ -236,7 +236,64 @@ You should see a list of rules that will be executed. Here is the summary:
 
 .. code-block:: text
 
-    TODO
+    Job stats:
+    job                                                                        count
+    -----------------------------------------------------------------------  -------
+    all                                                                            1
+    assignment_attach_idx                                                         60
+    assignment_check_design                                                        1
+    assignment_collect                                                             1
+    assignment_collectBCs                                                          1
+    assignment_fastq_split                                                         3
+    assignment_filter                                                              1
+    assignment_flagstat                                                            1
+    assignment_hybridFWDRead_get_reads_by_length                                   1
+    assignment_idx_bam                                                             1
+    assignment_mapping_bbmap                                                      30
+    assignment_mapping_bbmap_getBCs                                               30
+    assignment_merge                                                              30
+    assignment_preprocessingadapter_remove                                         1
+    assignment_statistic_assignedCounts                                            1
+    assignment_statistic_assignment                                                1
+    assignment_statistic_quality_metric                                            1
+    assignment_statistic_totalCounts                                               1
+    experiment_assigned_counts_assignBarcodes                                      6
+    experiment_assigned_counts_combine_replicates                                  2
+    experiment_assigned_counts_combine_replicates_barcode_output                   1
+    experiment_assigned_counts_copy_final_all_files                                1
+    experiment_assigned_counts_copy_final_thresh_files                             1
+    experiment_assigned_counts_dna_rna_merge                                       3
+    experiment_assigned_counts_filterAssignment                                    1
+    experiment_assigned_counts_make_master_tables                                  1
+    experiment_counts_dna_rna_merge_counts                                         6
+    experiment_counts_filter_counts                                                6
+    experiment_counts_final_counts                                                 6
+    experiment_counts_onlyFWD_raw_counts                                           6
+    experiment_statistic_assigned_counts_combine_BC_assignment_stats               1
+    experiment_statistic_assigned_counts_combine_BC_assignment_stats_helper        1
+    experiment_statistic_assigned_counts_combine_stats_dna_rna_merge               1
+    experiment_statistic_assigned_counts_combine_stats_dna_rna_merge_all           1
+    experiment_statistic_bc_overlap_combine_assigned_counts                        1
+    experiment_statistic_bc_overlap_combine_counts                                 1
+    experiment_statistic_bc_overlap_run                                            4
+    experiment_statistic_correlation_bc_counts                                     2
+    experiment_statistic_correlation_bc_counts_hist                                2
+    experiment_statistic_correlation_calculate                                     1
+    experiment_statistic_correlation_combine_bc_assigned                           1
+    experiment_statistic_correlation_combine_bc_raw                                1
+    experiment_statistic_correlation_combine_oligo                                 1
+    experiment_statistic_correlation_hist_box_plots                                1
+    experiment_statistic_counts_BC_in_RNA_DNA                                      6
+    experiment_statistic_counts_BC_in_RNA_DNA_merge                                2
+    experiment_statistic_counts_barcode_base_composition                           6
+    experiment_statistic_counts_final                                              2
+    experiment_statistic_counts_frequent_umis                                      6
+    experiment_statistic_counts_stats_merge                                        2
+    experiment_statistic_counts_table                                             12
+    experiment_statistic_quality_metric                                            1
+    qc_report_assoc                                                                1
+    qc_report_count                                                                1
+    total                                                                        264
 
 
 When dry-run does not give any errors we will run the workflow. We use a machine with 30 threads/cores to run the workflow and 60GB memory. Therefore :code:`split_number` is set to 30 to parallelize the workflow. Also we are using 10 threads for mapping (bbmap). But snakemake takes care that no more than 30 threads are used.
