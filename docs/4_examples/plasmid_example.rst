@@ -164,7 +164,7 @@ The folder should look like this:
 MPRAsnakeflow
 =================================
 
-We will run assignment and count workflow together. But it is of course possible to run them seperately using different config files. Then you have to use the assignment `fromFile` not `fromConfig`. But first we need to define the config file and the experiment CSV file to map DNA/RNA counts to the correct replicate.
+We will run assignment and count workflow together. But it is of course possible to run them separately using different config files. Then you have to use the assignment `fromFile` not `fromConfig`. But first we need to define the config file and the experiment CSV file to map DNA/RNA counts to the correct replicate.
 
 
 Create config files
@@ -181,8 +181,9 @@ Create config files
             BC_rev_comp: false
             linker: TCTAGAGGTTCGTCGACGCGATCGCAGGAGCCGCAGTG
             adapters:
-                three_prime:
-                    - CGTCAAGCGGCCAGTT
+                REV:
+                    five_prime:
+                        - CGTCAAGCGGCCAGTT
             alignment_tool:
                 split_number: 30
                 tool: bbmap
@@ -322,4 +323,4 @@ Results
 For the assignment all output files will be in the :code:`results/assignment/ENCFF074MMOAssignment` folder. The final assignment is in :code:`results/assignment/ENCFF074MMOAssignment/assignment_barcodes.default.tsv.gz`. Also you should have a look at the qc report: :code:`results/assignment/ENCFF074MMOAssignment/qc_report.default.html`. You can find an example qc report here: `Example assignment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/plasmid_assignment.qc_report.default.html>`_.
 
 
-For the experiment all output files will be in the :code:`results/experiment/ENCFF074MMOExperiment` folder. The final count files is :code:`results/experiment/ENCFF074MMOExperiment/reporter_experiment.barcode.A549.ENCFF074MMOAssignment.default.all.tsv.gz` for the barcode file and :code:`results/experiment/ENCFF074MMOExperiment/reporter_experiment.oligo.A549.ENCFF074MMOAssignment.default.all.tsv.gz` for the aggregated oligo files. Also you should have a look at the qc report: :code:`results/experiment/ENCFF074MMOExperiment/qc_report.A549.ENCFF074MMOAssignment.default.html`. You can find an example qc report here: `Example experiment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/plasmid_experiment.qc_report.A549.ENCFF074MMOAssignment.default.html>`_.
+For the experiment all output files will be in the :code:`results/experiments/ENCFF074MMOExperiment` folder. The final count files is :code:`results/experiments/ENCFF074MMOExperiment/reporter_experiment.barcode.A549.ENCFF074MMOAssignment.default.all.tsv.gz` for the barcode file and :code:`results/experiments/ENCFF074MMOExperiment/reporter_experiment.oligo.A549.ENCFF074MMOAssignment.default.all.tsv.gz` for the aggregated oligo files. Also you should have a look at the qc report: :code:`results/experiments/ENCFF074MMOExperiment/qc_report.A549.ENCFF074MMOAssignment.default.html`. You can find an example qc report here: `Example experiment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/plasmid_experiment.qc_report.A549.ENCFF074MMOAssignment.default.html>`_.

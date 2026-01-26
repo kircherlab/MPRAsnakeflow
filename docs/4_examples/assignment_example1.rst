@@ -183,7 +183,7 @@ qc_report_assoc
 Results
 -------
 
-All needed output files will be in the :code:`results/assignment/assocBasic` folder. The final assignment is in :code:`results/assignment/assocBasic/assignment_barcodes.default.tsv.gz`. A nice overview (QC report) is shown in ::code:`results/assignment/assocBasic/qc_report.default.html`. This HTML report contains information about statistics tables and plots. You can find an example qc report here: `Example assignment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/SRR10800986.qc_report.default.html>`_.
+All needed output files will be in the :code:`results/assignment/assocBasic` folder. The final assignment is in :code:`results/assignment/assocBasic/assignment_barcodes.default.tsv.gz`. A nice overview (QC report) is shown in :code:`results/assignment/assocBasic/qc_report.default.html`. This HTML report contains information about statistics tables and plots. You can find an example qc report here: `Example assignment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/SRR10800986.qc_report.default.html>`_.
 
 
 Total file tree of the results folder:

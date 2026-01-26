@@ -11,8 +11,6 @@ rule experiment_preprocessing_trim_reads:
         ),
     output:
         trimmed_reads="results/experiments/{project}/fastq/{read_type}.trimmed.{condition}.{replicate}.{type}.fastq.gz",
-    params:
-        adapter=lambda wc: config["experiments"][wc.project]["adapters"],
     wildcard_constraints:
         read_type=r"(FWD)|(REV)|(UMI)",
     params:

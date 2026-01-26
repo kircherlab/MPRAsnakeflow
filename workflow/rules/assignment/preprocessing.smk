@@ -1,4 +1,4 @@
-rule assignment_preprocessingadapter_remove:
+rule assignment_preprocessing_adapter_remove:
     """
     Remove adapter sequence from the reads (3' or 5').
     Uses cutadapt to trim adapters based on the primer direction.
