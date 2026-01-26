@@ -78,12 +78,12 @@ data$Condition <- cond
 
 
 get_overlap_stats <- function(data1, data2, condition, r1, r2) {
-  s_data1 <- data1 %>% summarize(size = n(), count = sum(Counts))
+  s_data1 <- data1 |> summarize(size = n(), count = sum(Counts))
   print(s_data1)
-  s_data2 <- data2 %>% summarize(size = n(), count = sum(Counts))
+  s_data2 <- data2 |> summarize(size = n(), count = sum(Counts))
   print(s_data2)
-  data <- data1 %>% inner_join(data2, by = c("Barcode"))
-  s_data <- data %>% summarize(size = n(), count1 = sum(Counts.x), count2 = sum(Counts.y))
+  data <- data1 |> inner_join(data2, by = c("Barcode"))
+  s_data <- data |> summarize(size = n(), count1 = sum(Counts.x), count2 = sum(Counts.y))
   print(s_data)
   print(s_data$count1)
   print(s_data$count1[1])
@@ -119,7 +119,7 @@ write_output <- function(correlations, name) {
 }
 
 # pairwise comparison only if more than one replicate
-if (data %>% nrow() > 1) {
+if (data |> nrow() > 1) {
   # make pairwise combinations
   selected <- combn(data$Replicate, 2)
   print("sel")
@@ -131,13 +131,13 @@ if (data %>% nrow() > 1) {
     print(selected[, i])
     r1 <- selected[1, i]
     r2 <- selected[2, i]
-    data1 <- read_data(as.character((data %>% filter(Replicate == r1))$File))
+    data1 <- read_data(as.character((data |> filter(Replicate == r1))$File))
     print("Read data 1")
-    data2 <- read_data(as.character((data %>% filter(Replicate == r2))$File))
+    data2 <- read_data(as.character((data |> filter(Replicate == r2))$File))
     print("Read data 2")
 
     overlap_stats_new <- get_overlap_stats(data1, data2, cond, r1, r2)
-    overlap_stats <- overlap_stats %>% bind_rows(overlap_stats_new)
+    overlap_stats <- overlap_stats |> bind_rows(overlap_stats_new)
   }
   overlap_stats$Mean_Lincoln_Peterson_estimator <- mean(overlap_stats$Lincoln_Peterson_estimator)
   write_output(overlap_stats, outfile)

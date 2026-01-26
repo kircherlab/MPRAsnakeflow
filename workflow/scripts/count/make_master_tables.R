@@ -76,12 +76,12 @@ for (i in seq_len(length(files))) {
   table <- as.data.frame(read.table(file, header = TRUE, sep = "\t", comment.char = ""), stringsAsFactors = FALSE)
   table$replicate <- rep
 
-  master_table <- master_table %>% bind_rows(table)
+  master_table <- master_table |> bind_rows(table)
 }
 
-master_table <- master_table %>%
-  group_by(replicate) %>%
-  filter(!oligo_name %in% c("no_BC")) %>%
+master_table <- master_table |>
+  group_by(replicate) |>
+  filter(!oligo_name %in% c("no_BC")) |>
   mutate(
     dna_normalized = round(dna_normalized, precision),
     rna_normalized = round(rna_normalized, precision),
@@ -89,13 +89,13 @@ master_table <- master_table %>%
     log2FoldChange = round(log2FoldChange, precision)
   )
 
-master_table_filtered <- master_table %>%
+master_table_filtered <- master_table |>
   filter(n_bc >= thresh)
 # TODO use this? Maybe not because it normalizes across all replicates
-# master_table_filtered %>% mutate(ratio = ratio / median(ratio))
+# master_table_filtered |> mutate(ratio = ratio / median(ratio))
 
 # TODO use this? Maybe not because it normalizes across all replicates
-# master_table %>% mutate(ratio = ratio / median(ratio))
+# master_table |> mutate(ratio = ratio / median(ratio))
 
 write_file <- function(file, table) {
   gz <- gzfile(file, "w")
@@ -108,21 +108,21 @@ write_file <- function(file, table) {
 
 write_file(
   outfile,
-  master_table_filtered %>%
+  master_table_filtered |>
     select(replicate, oligo_name, dna_counts, rna_counts, dna_normalized, rna_normalized, log2FoldChange, n_bc)
 )
 
 if ("output-all" %in% names(opt)) {
   write_file(
     opt$`output-all`,
-    master_table %>%
+    master_table |>
       select(replicate, oligo_name, dna_counts, rna_counts, dna_normalized, rna_normalized, log2FoldChange, n_bc)
   )
 }
 
 ## MAKE AVERAGED ACROSS REPLICATES
 make_average_across_replicates <- function(table, name) {
-  avg <- table %>% summarize(
+  avg <- table |> summarize(
     mean_ratio = mean(ratio),
     mean_log2FoldChange = mean(log2FoldChange),
     mean_n_bc = mean(n_bc)
@@ -132,7 +132,7 @@ make_average_across_replicates <- function(table, name) {
   return(avg)
 }
 
-all_avg <- make_average_across_replicates(master_table, "None") %>%
+all_avg <- make_average_across_replicates(master_table, "None") |>
   bind_rows(make_average_across_replicates(master_table_filtered, paste0("n_bc >= ", thresh)))
 
 write_file(avg_outfile, all_avg)

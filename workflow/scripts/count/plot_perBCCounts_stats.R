@@ -80,7 +80,7 @@ read_data <- function(file, mindnacounts, minrnacounts) {
   )
   colnames(data) <- c("Barcode", "DNA", "RNA")
 
-  data <- data %>% filter(DNA >= mindnacounts, RNA >= minrnacounts)
+  data <- data |> filter(DNA >= mindnacounts, RNA >= minrnacounts)
   return(data)
 }
 
@@ -89,7 +89,7 @@ print("hist")
 plots_dna <- list()
 plots_rna <- list()
 
-for (n in 1:(data %>% nrow())) {
+for (n in 1:(data |> nrow())) {
   counts <- read_data(as.character(data[n, ]$File), opt$mindnacounts, opt$minrnacounts)
   intercept_median <- median(counts$DNA)
   intercept_mean <- mean(counts$DNA)

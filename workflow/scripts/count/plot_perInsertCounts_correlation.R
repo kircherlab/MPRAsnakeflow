@@ -253,9 +253,9 @@ get_correlation_stats <-
       ReplicateB = r2,
       number_Oligos_ReplicateA = n_oligos_r1,
       number_Oligos_ReplicateB = n_oligos_r2,
-      number_Oligos_Joined = data %>% nrow(),
-      fraction_Oligos_ReplicateA = (data %>% nrow() / n_oligos_r1),
-      fraction_Oligos_ReplicateB = (data %>% nrow() / n_oligos_r2),
+      number_Oligos_Joined = data |> nrow(),
+      fraction_Oligos_ReplicateA = (data |> nrow() / n_oligos_r1),
+      fraction_Oligos_ReplicateB = (data |> nrow() / n_oligos_r2),
       DNA_spearman = correlate(data$dna_normalized.x, data$dna_normalized.y, "spearman"),
       RNA_spearman = correlate(data$rna_normalized.x, data$rna_normalized.y, "spearman"),
       Ratio_spearman = correlate(data$ratio.x, data$ratio.y, "spearman"),
@@ -310,8 +310,8 @@ read_data <- function(file) {
     header = TRUE,
     comment.char = "",
     stringsAsFactors = FALSE
-  ) %>%
-    filter(oligo_name != "no_BC") %>%
+  ) |>
+    filter(oligo_name != "no_BC") |>
     mutate(
       dna_normalized_log2 = log2(dna_normalized),
       rna_normalized_log2 = log2(rna_normalized),
@@ -324,19 +324,19 @@ read_data <- function(file) {
 print("Read data")
 all <- data.frame()
 
-for (n in 1:(data %>% nrow())) {
+for (n in 1:(data |> nrow())) {
   print(data[n, ]$File)
   print(data)
   assigned_counts <- read_data(as.character(data[n, ]$File))
   if (nrow(assigned_counts) > 0) { # can be 0 when no BCs are assigned
     assigned_counts["replicate"] <- toString(data[n, ]$Replicate)
-    all <- all %>% bind_rows(assigned_counts)
+    all <- all |> bind_rows(assigned_counts)
   }
 }
 
 if (use_labels) {
-  all <- all %>%
-    left_join(label_f, by = c("oligo_name")) %>%
+  all <- all |>
+    left_join(label_f, by = c("oligo_name")) |>
     mutate(label = replace_na(label, "NA"))
 } else {
   if (nrow(all) > 0) { # can be 0 when no BCs are assigned
@@ -344,7 +344,7 @@ if (use_labels) {
   }
 }
 
-if (data %>% nrow() > 1 && nrow(all) > 1) {
+if (data |> nrow() > 1 && nrow(all) > 1) {
   print("Pairwise comparisons")
   # make pairwise combinations
   selected <- combn(data$Replicate, 2)
@@ -362,20 +362,20 @@ if (data %>% nrow() > 1 && nrow(all) > 1) {
     print(selected[, i])
     r1 <- selected[1, i]
     r2 <- selected[2, i]
-    data1 <- all %>% filter(replicate == r1)
-    data2 <- all %>% filter(replicate == r2)
+    data1 <- all |> filter(replicate == r1)
+    data2 <- all |> filter(replicate == r2)
 
-    n_oligos_r1 <- data1 %>% nrow()
-    n_oligos_r2 <- data2 %>% nrow()
+    n_oligos_r1 <- data1 |> nrow()
+    n_oligos_r2 <- data2 |> nrow()
 
-    n_oligos_r1_thres <- data1 %>%
-      filter(n_bc >= thresh) %>%
+    n_oligos_r1_thres <- data1 |>
+      filter(n_bc >= thresh) |>
       nrow()
-    n_oligos_r2_thres <- data2 %>%
-      filter(n_bc >= thresh) %>%
+    n_oligos_r2_thres <- data2 |>
+      filter(n_bc >= thresh) |>
       nrow()
 
-    res <- data1 %>% inner_join(data2, by = c("oligo_name"))
+    res <- data1 |> inner_join(data2, by = c("oligo_name"))
 
     plots_correlations_dna[[i]] <-
       plot_correlations_dna(res, cond, r1, r2, "pairwise")
@@ -384,7 +384,7 @@ if (data %>% nrow() > 1 && nrow(all) > 1) {
     plots_correlations_ratio[[i]] <-
       plot_correlations_ratio(res, cond, r1, r2, "pairwise")
 
-    stats_correlations <- stats_correlations %>%
+    stats_correlations <- stats_correlations |>
       bind_rows(
         get_correlation_stats(
           res,
@@ -399,7 +399,7 @@ if (data %>% nrow() > 1 && nrow(all) > 1) {
 
     # Min Threshold
     res <-
-      res %>% filter(n_bc.x >= thresh, n_bc.y >= thresh)
+      res |> filter(n_bc.x >= thresh, n_bc.y >= thresh)
     plots_cor_min_thresh_dna[[i]] <-
       plot_correlations_dna(res, cond, r1, r2, "pairwise.minThreshold")
     plots_cor_min_thresh_rna[[i]] <-
@@ -407,7 +407,7 @@ if (data %>% nrow() > 1 && nrow(all) > 1) {
     plots_cor_min_thresh_ratio[[i]] <-
       plot_correlations_ratio(res, cond, r1, r2, "pairwise.minThreshold")
 
-    stats_cor_min_thresh <- stats_cor_min_thresh %>%
+    stats_cor_min_thresh <- stats_cor_min_thresh |>
       bind_rows(
         get_correlation_stats(
           res,
