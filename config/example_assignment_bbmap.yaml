@@ -9,7 +9,7 @@ assignments:
       configs:
         min_mapping_quality: 30 # 30 is default for bbmap
         sequence_length: 171 # sequence length of design excluding adapters.
-        alignment_start: 1 # start of an alignment in the reference/design_file. Here using 15 bp adapters. Can be different when using adapter free approaches
+        alignment_start: 1 # start of an alignment in the reference/design_file.
     FWD:
       - resources/Assignment_BasiC/R1.fastq.gz
     BC:
