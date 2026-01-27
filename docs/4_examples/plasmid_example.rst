@@ -174,7 +174,7 @@ Create config files
 
     cat << 'EOF' >  config.yaml
     ---
-    version: "0.5.4"
+    version: "0.6.0"
     assignments:
         ENCFF074MMOAssignment:
             bc_length: 20
@@ -183,7 +183,7 @@ Create config files
             adapters:
                 REV:
                     five_prime:
-                        - CGTCAAGCGGCCAGTT
+                        - AACTGGCCGCTTGACG
             alignment_tool:
                 split_number: 30
                 tool: bbmap

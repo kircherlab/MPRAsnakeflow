@@ -52,9 +52,9 @@ rule assignment_hybridFWDRead_get_reads_by_cutadapt:
         getCondaEnv("cutadapt.yaml")
     threads: 1
     input:
-        lambda wc: lambda wc: (
+        lambda wc: (
             "results/assignment/{assignment}/fastq/FWD.trimmed.fastq.gz"
-            if useAssignmentAdapterTrimming("FWD")
+            if useAssignmentAdapterTrimming(wc.assignment, "FWD")
             else config["assignments"][wc.assignment]["FWD"]
         ),
     output:
