@@ -105,13 +105,11 @@ get_overlap_stats <- function(data1, data2, condition, r1, r2) {
     Lincoln_Peterson_estimator = round(s_data1$size * (s_data2$size / s_data$size)),
     stringsAsFactors = FALSE
   )
-  return(outs)
 }
 
 read_data <- function(file) {
   data <- read.table(file, sep = "\t", comment.char = "", as.is = TRUE, header = FALSE, stringsAsFactors = FALSE)
   colnames(data) <- c("Barcode", "Counts")
-  return(data)
 }
 
 write_output <- function(correlations, name) {

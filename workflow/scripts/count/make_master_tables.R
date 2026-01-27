@@ -69,7 +69,7 @@ precision <- 4
 
 ## MAKE MASTER TABLE
 master_table <- data.frame()
-for (i in seq_len(length(files))) {
+for (i in seq_along(files)) {
   file <- files[i]
   rep <- replicates[i]
 
@@ -128,8 +128,6 @@ make_average_across_replicates <- function(table, name) {
     mean_n_bc = mean(n_bc)
   )
   avg$BC_filter <- name
-
-  return(avg)
 }
 
 all_avg <- make_average_across_replicates(master_table, "None") |>

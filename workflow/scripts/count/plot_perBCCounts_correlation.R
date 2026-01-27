@@ -147,8 +147,6 @@ plot_correlations_dna <- function(data, plot_data, condition, r1, r2, name) {
     ) +
     geom_abline(intercept = 0, slope = 1) +
     theme_classic(base_size = 30)
-
-  return(dna_p)
 }
 
 #' Plot Correlations of RNA Counts
@@ -189,7 +187,6 @@ plot_correlations_rna <- function(data, plot_data, condition, r1, r2, name) {
     ) +
     geom_abline(intercept = 0, slope = 1) +
     theme_classic(base_size = 30)
-  return(rna_p)
 }
 
 #' Plot Correlations Ratio
@@ -230,7 +227,6 @@ plot_correlations_ratio <- function(data, plot_data, condition, r1, r2, name) {
     ) +
     geom_abline(intercept = 0, slope = 1) +
     theme_classic(base_size = 30)
-  return(ratio_p)
 }
 
 #' Correlate Two Vectors
@@ -248,7 +244,7 @@ plot_correlations_ratio <- function(data, plot_data, condition, r1, r2, name) {
 #' correlate(x, y, method = "pearson")
 #' @export
 correlate <- function(x, y, method) {
-  return(sprintf("%.5f", cor(x, y, method = method)))
+  sprintf("%.5f", cor(x, y, method = method))
 }
 
 #' Calculate Correlation Statistics for Barcode Counts
@@ -325,7 +321,6 @@ get_correlation_stats <- function(data, n_bc_r1, n_bc_r2, condition, r1, r2, nam
     Ratio_log2_pearson = correlate(data$Ratio_log2.x, data$Ratio_log2.y, "pearson"),
     NormSymmetry = norm, stringsAsFactors = FALSE
   )
-  return(outs)
 }
 
 
@@ -419,7 +414,6 @@ read_data <- function(file, mindnacounts, minrnacounts, scaling) {
       RNA_normalized_log2 = log2(RNA_normalized),
       Ratio_log2 = log2(Ratio)
     )
-  return(data)
 }
 
 # This script performs pairwise correlation analysis on barcode count data from multiple replicates.

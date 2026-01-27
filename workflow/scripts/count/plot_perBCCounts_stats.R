@@ -81,7 +81,6 @@ read_data <- function(file, mindnacounts, minrnacounts) {
   colnames(data) <- c("Barcode", "DNA", "RNA")
 
   data <- data |> filter(DNA >= mindnacounts, RNA >= minrnacounts)
-  return(data)
 }
 
 print("hist")
