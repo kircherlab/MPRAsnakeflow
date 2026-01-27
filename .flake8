@@ -8,6 +8,8 @@ select =
 exclude =
     .git,
     __pycache__,
+    workflow/scripts/report/qc_report_count.qmd,
+    workflow/scripts/report/qc_report_assoc.qmd,
     docs/source/conf.py,
     old,
     build,

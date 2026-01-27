@@ -248,11 +248,10 @@ You should see a list of rules that will be executed. Here is the summary:
 
 .. code-block:: text
 
-    Job stats:                                                                      
+    Job stats:
     job                                                                        count
     -----------------------------------------------------------------------  -------
-    all  1
-    assignment_adapter_remove                                                     30
+    all                                                                            1
     assignment_attach_idx                                                         60
     assignment_check_design                                                        1
     assignment_collect                                                             1
@@ -260,11 +259,12 @@ You should see a list of rules that will be executed. Here is the summary:
     assignment_fastq_split                                                         3
     assignment_filter                                                              1
     assignment_flagstat                                                            1
-    assignment_hybridFWRead_get_reads_by_cutadapt                                  1
+    assignment_hybridFWDRead_get_reads_by_cutadapt                                 1
     assignment_idx_bam                                                             1
     assignment_mapping_bbmap                                                      30
     assignment_mapping_bbmap_getBCs                                               30
     assignment_merge                                                              30
+    assignment_preprocessing_adapter_remove                                        1
     assignment_statistic_assignedCounts                                            1
     assignment_statistic_assignment                                                1
     assignment_statistic_quality_metric                                            1
@@ -280,7 +280,7 @@ You should see a list of rules that will be executed. Here is the summary:
     experiment_counts_dna_rna_merge_counts                                        10
     experiment_counts_filter_counts                                                6
     experiment_counts_final_counts                                                 6
-    experiment_counts_onlyFWD_raw_counts                                            6
+    experiment_counts_onlyFWD_raw_counts                                           6
     experiment_statistic_assigned_counts_combine_BC_assignment_stats               1
     experiment_statistic_assigned_counts_combine_BC_assignment_stats_helper        1
     experiment_statistic_assigned_counts_combine_stats_dna_rna_merge               1
@@ -305,7 +305,7 @@ You should see a list of rules that will be executed. Here is the summary:
     experiment_statistic_quality_metric                                            1
     qc_report_assoc                                                                1
     qc_report_count                                                                1
-    total                                                                        307
+    total                                                                        278
 
 
 When dry-run does not give any errors we will run the workflow. We use a machine with 30 threads/cores to run the workflow and 60GB memory. Therefore :code:`split_number` is set to 30 to parallelize the workflow. Also we are using 10 threads for mapping (bbmap). But snakemake takes care that no more than 30 threads are used.
