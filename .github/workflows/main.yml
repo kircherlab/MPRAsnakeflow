@@ -34,8 +34,6 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_EDITORCONFIG: true
-          EDITORCONFIG_FILE_NAME: .editorconfig
           VALIDATE_PYTHON_FLAKE8: true
           PYTHON_FLAKE8_CONFIG_FILE: .flake8
           VALIDATE_JSON: true
