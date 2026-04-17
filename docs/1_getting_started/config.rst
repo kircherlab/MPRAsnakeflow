@@ -152,7 +152,7 @@ The experiment workflow is configured in the :code:`experiments` section. Each e
     Length of the barcode. This is used to extract the barcode from the index read. The barcode is extracted from the first :code:`bc_length` bases of the index read. When no reverse read is given and :code:`adapter` is not set teh exact length is used to extract the DNA BC from the FWD read.
 :umi_length:
     (Optional) Length of the UMI. This is used to extract the UMI from the index read. The UMI is extracted from the last :code:`umi_length` bases of the index read. Please provide if you use UMIs.
-:split_number :
+:split_number:
     (Optional) To parallelize merging forward and reverse reads, they can be split into into :code:`split_number` files. For example, setting it to 30 means that the reads are split into 30 files, and each file is trimmed (if set) and merged in parallel. This is only useful when using a cluster to speed up the slower merging step. When running the workflow on a single machine, the default value should be used. The default is set to :code:`1`. (For technical reasons, when multiple experiments are defined, all will be set to the maximum defined in the config.)
 :adapters:
     (Optional) List of adapter sequences or fixed length to trim reads before running the workflow. Can be configured for all read inputs (FWD, REV, UMI). See :ref:`Adapter trimming` for a detailed overview.
