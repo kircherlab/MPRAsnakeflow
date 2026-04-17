@@ -191,7 +191,9 @@ def getRawCounts(project: str, dnaRNA_type: str) -> str:
     """
     if useUMI(project, dnaRNA_type):
         if onlyFWD(project, dnaRNA_type):
-            return "results/experiments/{project}/counts/onlyFWDUMI.{condition}.{replicate}.%s.raw_counts.tsv.gz" % dnaRNA_type,
+            return (
+                "results/experiments/{project}/counts/onlyFWDUMI.{condition}.{replicate}.%s.raw_counts.tsv.gz" % dnaRNA_type,
+            )
         else:
             return "results/experiments/{project}/counts/useUMI.{condition}.{replicate}.%s.raw_counts.tsv.gz" % dnaRNA_type
     elif noUMI(project, dnaRNA_type):
