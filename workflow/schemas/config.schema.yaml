@@ -457,6 +457,9 @@ properties:
       ^([^_\.]+)$:
         type: object
         properties:
+          split_number:
+            type: integer
+            default: 1
           bc_length:
             type: integer
             minimum: 1
@@ -680,6 +683,7 @@ properties:
               - min_barcodes
         # entries that have to be in the config file for successful validation
         required:
+          - split_number
           - bc_length
           - data_folder
           - experiment_file

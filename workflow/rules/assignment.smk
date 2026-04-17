@@ -95,7 +95,7 @@ Runs only if the design file is correct.
                 "results/assignment/{{assignment}}/fastq/splits/{{read}}.split{split}.fastq.gz",
                 split=range(
                     0,
-                    getSplitNumber(),
+                    getAssignmentSplitNumber(),
                 ),
             ),
         ),
@@ -113,7 +113,7 @@ Runs only if the design file is correct.
                     read=wc.read,
                     split=range(
                         0,
-                        getSplitNumber(),
+                        getAssignmentSplitNumber(),
                     ),
                 )
             ]
@@ -232,7 +232,7 @@ Get the barcodes.
                 "results/assignment/{{assignment}}/BCs/barcodes.{mapper}.{split}.tsv",
                 split=range(
                     0,
-                    getSplitNumber(),
+                    getAssignmentSplitNumber(),
                 ),
                 mapper=config["assignments"][wc.assignment]["alignment_tool"]["tool"],
             )
@@ -244,7 +244,7 @@ Get the barcodes.
     conda:
         getCondaEnv("default.yaml")
     params:
-        batch_size=("--batch-size=%d" % getSplitNumber() if getSplitNumber() > 1 else ""),
+        batch_size=("--batch-size=%d" % getAssignmentSplitNumber() if getAssignmentSplitNumber() > 1 else ""),
     shell:
         """
         export LC_ALL=C # speed up sort

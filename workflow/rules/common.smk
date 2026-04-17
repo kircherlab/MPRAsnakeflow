@@ -23,9 +23,9 @@ from snakemake.utils import validate
 import pandas as pd
 
 # Workaround: validate() is broken from Snakemake 9.5.1 to snakemake 9.14.7 in remote jobs
-if version.parse(snakemake.__version__) >= version.parse("9.5.1") and version.parse(
-    snakemake.__version__
-) <= version.parse("9.14.7"):
+if version.parse(snakemake.__version__) >= version.parse("9.5.1") and version.parse(snakemake.__version__) <= version.parse(
+    "9.14.7"
+):
     from snakemake_interface_executor_plugins.settings import ExecMode
 
     # Use the global 'workflow' variable directly as recommended by Snakemake
@@ -77,26 +77,14 @@ def modify_config(config):
     if "assignments" in config:
         for assignment in config["assignments"].keys():
             if config["assignments"][assignment]["strand_sensitive"]["enable"]:
-                add_length = len(
-                    config["assignments"][assignment]["strand_sensitive"][
-                        "forward_adapter"
-                    ]
-                ) + len(
-                    config["assignments"][assignment]["strand_sensitive"][
-                        "reverse_adapter"
-                    ]
+                add_length = len(config["assignments"][assignment]["strand_sensitive"]["forward_adapter"]) + len(
+                    config["assignments"][assignment]["strand_sensitive"]["reverse_adapter"]
                 )
                 if config["assignments"][assignment]["alignment_tool"]["tool"] == "bwa":
-                    config["assignments"][assignment]["alignment_tool"]["configs"][
-                        "sequence_length"
-                    ]["min"] += add_length
-                    config["assignments"][assignment]["alignment_tool"]["configs"][
-                        "sequence_length"
-                    ]["max"] += add_length
+                    config["assignments"][assignment]["alignment_tool"]["configs"]["sequence_length"]["min"] += add_length
+                    config["assignments"][assignment]["alignment_tool"]["configs"]["sequence_length"]["max"] += add_length
                 else:
-                    config["assignments"][assignment]["alignment_tool"]["configs"][
-                        "sequence_length"
-                    ] += add_length
+                    config["assignments"][assignment]["alignment_tool"]["configs"]["sequence_length"] += add_length
     return config
 
 
@@ -168,10 +156,7 @@ def getAssignments(match_methods=None):
         if match_methods:
             output = []
             for assignment in config["assignments"]:
-                if (
-                    config["assignments"][assignment]["alignment_tool"]["tool"]
-                    in match_methods
-                ):
+                if config["assignments"][assignment]["alignment_tool"]["tool"] in match_methods:
                     output.append(assignment)
             return output
         else:
@@ -197,10 +182,7 @@ def getConditions(project):
 
 
 def getProjectAssignments(project):
-    if (
-        "assignments" in config["experiments"][project]
-        and len(config["experiments"][project]["assignments"]) > 0
-    ):
+    if "assignments" in config["experiments"][project] and len(config["experiments"][project]["assignments"]) > 0:
         return list(config["experiments"][project]["assignments"].keys())
     else:
         raise MissingAssignmentInConfigException(project)
@@ -431,9 +413,7 @@ def getOutputProjectConditionAssignmentConfigThreshold_helper(files):
             conditions = getConditions(project)
             for condition in conditions:
                 for conf in getConfigs(project):
-                    threshold = config["experiments"][project]["configs"][conf][
-                        "filter"
-                    ]["bc_threshold"]
+                    threshold = config["experiments"][project]["configs"][conf]["filter"]["bc_threshold"]
                     for file in files:
                         output += expand(
                             file,
@@ -507,9 +487,7 @@ def getOutputVariants_helper(files, betweenReplicates=False):
                             project=project,
                             condition=condition,
                             assignment=getProjectAssignments(project),
-                            config=list(
-                                config["experiments"][project]["configs"].keys()
-                            ),
+                            config=list(config["experiments"][project]["configs"].keys()),
                         )
     return output
 
@@ -546,8 +524,7 @@ def useSampling(project, conf, dna_or_rna):
 def withoutZeros(project, conf):
     return (
         config["experiments"][project]["configs"][conf]["filter"]["min_dna_counts"] > 0
-        and config["experiments"][project]["configs"][conf]["filter"]["min_rna_counts"]
-        > 0
+        and config["experiments"][project]["configs"][conf]["filter"]["min_rna_counts"] > 0
     )
 
 
@@ -559,7 +536,7 @@ def reverse_complement(seq):
     return "".join(reversed([complementary[i] for i in seq]))
 
 
-def getSplitNumber():
+def getAssignmentSplitNumber():
     splits = [1]
 
     for assignment in getAssignments():

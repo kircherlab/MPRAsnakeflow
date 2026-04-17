@@ -1,9 +1,7 @@
 rule assignment_mapping_bwa_ref:
     """
-    Create mapping reference for BWA from design file.
-    """
-    conda:
-        getCondaEnv("bwa_samtools_picard_htslib.yaml")
+Create mapping reference for BWA from design file.
+"""
     input:
         ref="results/assignment/{assignment}/reference/reference.fa",
         check="results/assignment/{assignment}/design_check.done",
@@ -15,6 +13,8 @@ rule assignment_mapping_bwa_ref:
         d="results/assignment/{assignment}/reference/reference.fa.dict",
     log:
         temp("results/logs/assignment/mapping.bwa_ref.{assignment}.log"),
+    conda:
+        getCondaEnv("bwa_samtools_picard_htslib.yaml")
     shell:
         """
         bwa index -a bwtsw {input.ref} &> {log};
@@ -25,11 +25,8 @@ rule assignment_mapping_bwa_ref:
 
 rule assignment_mapping_bwa:
     """
-    Map the reads to the reference and sort unsing bwa mem
-    """
-    conda:
-        getCondaEnv("bwa_samtools_picard_htslib.yaml")
-    threads: 1
+Map the reads to the reference and sort unsing bwa mem
+"""
     input:
         reads=lambda wc: getMappingRead(wc.assignment),
         reference="results/assignment/{assignment}/reference/reference.fa",
@@ -39,20 +36,19 @@ rule assignment_mapping_bwa:
         ),
     output:
         bam=temp("results/assignment/{assignment}/bwa/merge_split{split}.mapped.bam"),
+    log:
+        temp("results/logs/assignment/mapping.bwa.{assignment}.{split}.log"),
+    conda:
+        getCondaEnv("bwa_samtools_picard_htslib.yaml")
+    threads: 1
     params:
-        M=lambda wc: (
-            "-M"
-            if config["assignments"][wc.assignment]["alignment_tool"]["configs"]["M"]
-            else ""
-        ),
+        M=lambda wc: ("-M" if config["assignments"][wc.assignment]["alignment_tool"]["configs"]["M"] else ""),
         L=lambda wc: ",".join(
             map(
                 str,
                 config["assignments"][wc.assignment]["alignment_tool"]["configs"]["L"],
             )
         ),
-    log:
-        temp("results/logs/assignment/mapping.bwa.{assignment}.{split}.log"),
     shell:
         """
         bwa mem -t {threads} -L {params.L} {params.M} -C {input.reference} <(
@@ -63,32 +59,30 @@ rule assignment_mapping_bwa:
 
 rule assignment_mapping_bwa_getBCs:
     """
-    Get the barcodes.
-    """
-    conda:
-        getCondaEnv("bwa_samtools_picard_htslib.yaml")
+Get the barcodes.
+"""
     input:
         "results/assignment/{assignment}/bwa/merge_split{split}.mapped.bam",
     output:
         temp("results/assignment/{assignment}/BCs/barcodes.bwa.{split}.tsv"),
-    params:
-        alignment_start_min=lambda wc: config["assignments"][wc.assignment][
-            "alignment_tool"
-        ]["configs"]["alignment_start"]["min"],
-        alignment_start_max=lambda wc: config["assignments"][wc.assignment][
-            "alignment_tool"
-        ]["configs"]["alignment_start"]["max"],
-        sequence_length_min=lambda wc: config["assignments"][wc.assignment][
-            "alignment_tool"
-        ]["configs"]["sequence_length"]["min"],
-        sequence_length_max=lambda wc: config["assignments"][wc.assignment][
-            "alignment_tool"
-        ]["configs"]["sequence_length"]["max"],
-        mapping_quality_min=lambda wc: config["assignments"][wc.assignment][
-            "alignment_tool"
-        ]["configs"]["min_mapping_quality"],
     log:
         temp("results/logs/assignment/mapping.bwa.getBCs.{assignment}.{split}.log"),
+    conda:
+        getCondaEnv("bwa_samtools_picard_htslib.yaml")
+    params:
+        alignment_start_min=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]["alignment_start"][
+            "min"
+        ],
+        alignment_start_max=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]["alignment_start"][
+            "max"
+        ],
+        sequence_length_min=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]["sequence_length"][
+            "min"
+        ],
+        sequence_length_max=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]["sequence_length"][
+            "max"
+        ],
+        mapping_quality_min=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]["min_mapping_quality"],
     shell:
         """
         export LC_ALL=C # speed up sorting
@@ -109,33 +103,27 @@ rule assignment_mapping_bwa_getBCs:
 
 rule assignment_mapping_bwa_getBCs_additional_filter:
     """
-    Get the barcodes with a python script to rescue alignments with 0 mapping quality according to bwa.
-    """
+Get the barcodes with a python script to rescue alignments with 0 mapping quality according to bwa.
+"""
     input:
         bam="results/assignment/{assignment}/bwa/merge_split{split}.mapped.bam",
         script=getScript("assignment/filter_bc_from_bam.py"),
     output:
         "results/assignment/{assignment}/BCs/barcodes.bwa-additional-filtering.{split}.tsv",
-    params:
-        identity_threshold=lambda wc: config["assignments"][wc.assignment][
-            "alignment_tool"
-        ]["configs"]["identity_threshold"],
-        mismatches_threshold=lambda wc: config["assignments"][wc.assignment][
-            "alignment_tool"
-        ]["configs"]["mismatches_threshold"],
-        expected_alignment_length=lambda wc: config["assignments"][wc.assignment][
-            "alignment_tool"
-        ]["configs"]["sequence_length"]["min"],
-        verbose=lambda wc: config["assignments"][wc.assignment]["alignment_tool"][
-            "configs"
-        ]["verbose"],
-        min_mapping_quality=lambda wc: config["assignments"][wc.assignment][
-            "alignment_tool"
-        ]["configs"]["min_mapping_quality"],
-    conda:
-        getCondaEnv("python3.yaml")
     log:
         "results/logs/assignment/mapping.bwa.getBCs_additional_filter.{assignment}.{split}.log",
+    conda:
+        getCondaEnv("python3.yaml")
+    params:
+        identity_threshold=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]["identity_threshold"],
+        mismatches_threshold=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"][
+            "mismatches_threshold"
+        ],
+        expected_alignment_length=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"][
+            "sequence_length"
+        ]["min"],
+        verbose=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]["verbose"],
+        min_mapping_quality=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]["min_mapping_quality"],
     shell:
         """
         python {input.script} \
@@ -147,21 +135,21 @@ rule assignment_mapping_bwa_getBCs_additional_filter:
 
 rule assignment_collect:
     """
-    Collect mapped reads.
-    """
-    conda:
-        getCondaEnv("bwa_samtools_picard_htslib.yaml")
-    threads: 1
+Collect mapped reads.
+"""
     input:
         bams=lambda wc: expand(
             "results/assignment/{{assignment}}/{mapper}/merge_split{split}.mapped.bam",
-            split=range(0, getSplitNumber()),
+            split=range(0, getAssignmentSplitNumber()),
             mapper=config["assignments"][wc.assignment]["alignment_tool"]["tool"],
         ),
     output:
         "results/assignment/{assignment}/aligned_merged_reads.bam",
     log:
         temp("results/logs/assignment/collect.{assignment}.log"),
+    conda:
+        getCondaEnv("bwa_samtools_picard_htslib.yaml")
+    threads: 1
     shell:
         """
         samtools merge -@ {threads} {output} {input.bams} 2> {log}
@@ -170,16 +158,16 @@ rule assignment_collect:
 
 rule assignment_idx_bam:
     """
-    Index the BAM file
-    """
-    conda:
-        getCondaEnv("bwa_samtools_picard_htslib.yaml")
+Index the BAM file
+"""
     input:
         "results/assignment/{assignment}/aligned_merged_reads.bam",
     output:
         "results/assignment/{assignment}/aligned_merged_reads.bam.bai",
     log:
         "results/logs/assignment/{assignment}/assignment_idx_bam.log",
+    conda:
+        getCondaEnv("bwa_samtools_picard_htslib.yaml")
     shell:
         """
         samtools index {input} 2> {log}
@@ -188,10 +176,8 @@ rule assignment_idx_bam:
 
 rule assignment_flagstat:
     """
-    Run samtools flagstat
-    """
-    conda:
-        getCondaEnv("bwa_samtools_picard_htslib.yaml")
+Run samtools flagstat
+"""
     input:
         bam="results/assignment/{assignment}/aligned_merged_reads.bam",
         idx="results/assignment/{assignment}/aligned_merged_reads.bam.bai",
@@ -199,6 +185,8 @@ rule assignment_flagstat:
         "results/assignment/{assignment}/statistic/assignment/bam_stats.txt",
     log:
         temp("results/logs/assignment/flagstat.{assignment}.log"),
+    conda:
+        getCondaEnv("bwa_samtools_picard_htslib.yaml")
     shell:
         """
         samtools flagstat {input.bam} > {output} 2> {log}

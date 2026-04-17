@@ -12,20 +12,18 @@ include: "counts/counts_onlyFWDWithUMI.smk"
 
 rule experiment_counts_filter_counts:
     """
-    Filter the counts to BCs only of the correct length (defined in the config file)
-    """
-    conda:
-        getCondaEnv("default.yaml")
+Filter the counts to BCs only of the correct length (defined in the config file)
+"""
     input:
         lambda wc: getRawCounts(wc.project, wc.type),
     output:
         "results/experiments/{project}/counts/{condition}.{replicate}.{type}.filtered_counts.tsv.gz",
+    log:
+        temp("results/logs/experiment/counts/filter_counts.{project}.{condition}.{replicate}.{type}.log"),
+    conda:
+        getCondaEnv("default.yaml")
     params:
         bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
-    log:
-        temp(
-            "results/logs/experiment/counts/filter_counts.{project}.{condition}.{replicate}.{type}.log"
-        ),
     shell:
         """
         bc={params.bc_length};
@@ -39,19 +37,17 @@ rule experiment_counts_filter_counts:
 
 rule experiment_counts_final_counts:
     """
-    Counting BCs.
-    Discarding PCR duplicates (taking BCxUMI only one time)
-    """
-    conda:
-        getCondaEnv("default.yaml")
+Counting BCs.
+Discarding PCR duplicates (taking BCxUMI only one time)
+"""
     input:
         "results/experiments/{project}/counts/{condition}.{replicate}.{type}.filtered_counts.tsv.gz",
     output:
         counts="results/experiments/{project}/counts/{condition}.{replicate}.{type}.final_counts.tsv.gz",
     log:
-        temp(
-            "results/logs/experiment/counts/final_counts_umi.{project}.{condition}.{replicate}.{type}.log"
-        ),
+        temp("results/logs/experiment/counts/final_counts_umi.{project}.{condition}.{replicate}.{type}.log"),
+    conda:
+        getCondaEnv("default.yaml")
     shell:
         """
         zcat {input} | awk '{{print $1}}' | \
@@ -63,33 +59,23 @@ rule experiment_counts_final_counts:
 
 rule experiment_counts_final_counts_sampler:
     """
-    Creates full + new distribution DNA files
-    """
-    conda:
-        getCondaEnv("python3.yaml")
+Creates full + new distribution DNA files
+"""
     input:
         counts="results/experiments/{project}/counts/{condition}.{replicate}.{type}.final_counts.tsv.gz",
         script=getScript("count/samplerer.py"),
     output:
         "results/experiments/{project}/counts/{condition}.{replicate}.{type}.final_counts.sampling.{config}.tsv.gz",
-    params:
-        samplingprop=lambda wc: counts_getSamplingConfig(
-            wc.project, wc.config, wc.type, "prop"
-        ),
-        downsampling=lambda wc: counts_getSamplingConfig(
-            wc.project, wc.config, wc.type, "threshold"
-        ),
-        samplingtotal=lambda wc: counts_getSamplingConfig(
-            wc.project, wc.config, wc.type, "total"
-        ),
-        seed=lambda wc: counts_getSamplingConfig(wc.project, wc.config, wc.type, "seed"),
-        filtermincounts=lambda wc: counts_getFilterConfig(
-            wc.project, wc.config, wc.type, "min_counts"
-        ),
     log:
-        temp(
-            "results/logs/experiment/counts/final_counts_umi_samplerer.{project}.{condition}.{replicate}.{type}.{config}.log"
-        ),
+        temp("results/logs/experiment/counts/final_counts_umi_samplerer.{project}.{condition}.{replicate}.{type}.{config}.log"),
+    conda:
+        getCondaEnv("python3.yaml")
+    params:
+        samplingprop=lambda wc: counts_getSamplingConfig(wc.project, wc.config, wc.type, "prop"),
+        downsampling=lambda wc: counts_getSamplingConfig(wc.project, wc.config, wc.type, "threshold"),
+        samplingtotal=lambda wc: counts_getSamplingConfig(wc.project, wc.config, wc.type, "total"),
+        seed=lambda wc: counts_getSamplingConfig(wc.project, wc.config, wc.type, "seed"),
+        filtermincounts=lambda wc: counts_getFilterConfig(wc.project, wc.config, wc.type, "min_counts"),
     shell:
         """
         python {input.script} --input {input.counts} \
@@ -104,33 +90,25 @@ rule experiment_counts_final_counts_sampler:
 
 rule experiment_counts_dna_rna_merge_counts:
     """
-    Merge DNA and RNA counts together.
-    Is done in two ways. First no not allow zeros in DNA or RNA BCs (RNA and DNA min_counts not zero).
-    Second with zeros, so a BC can be defined only in the DNA or RNA (RNA or DNA min_counts zero)
-    """
-    conda:
-        getCondaEnv("default.yaml")
+Merge DNA and RNA counts together.
+Is done in two ways. First no not allow zeros in DNA or RNA BCs (RNA and DNA min_counts not zero).
+Second with zeros, so a BC can be defined only in the DNA or RNA (RNA or DNA min_counts zero)
+"""
     input:
-        dna=lambda wc: getFinalCounts(
-            wc.project, wc.config, wc.condition, "DNA", wc.raw_or_assigned
-        ),
-        rna=lambda wc: getFinalCounts(
-            wc.project, wc.config, wc.condition, "RNA", wc.raw_or_assigned
-        ),
+        dna=lambda wc: getFinalCounts(wc.project, wc.config, wc.condition, "DNA", wc.raw_or_assigned),
+        rna=lambda wc: getFinalCounts(wc.project, wc.config, wc.condition, "RNA", wc.raw_or_assigned),
     output:
         "results/experiments/{project}/{raw_or_assigned}/{condition}.{replicate}.merged.config.{config}.tsv.gz",
-    params:
-        zero=lambda wc: "false" if withoutZeros(wc.project, wc.config) else "true",
-        minRNACounts=lambda wc: counts_getFilterConfig(
-            wc.project, wc.config, "RNA", "min_counts"
-        ),
-        minDNACounts=lambda wc: counts_getFilterConfig(
-            wc.project, wc.config, "DNA", "min_counts"
-        ),
     log:
         temp(
             "results/logs/experiment/counts/dna_rna_merge_counts.{project}.{raw_or_assigned}.{condition}.{replicate}.{config}.log"
         ),
+    conda:
+        getCondaEnv("default.yaml")
+    params:
+        zero=lambda wc: "false" if withoutZeros(wc.project, wc.config) else "true",
+        minRNACounts=lambda wc: counts_getFilterConfig(wc.project, wc.config, "RNA", "min_counts"),
+        minDNACounts=lambda wc: counts_getFilterConfig(wc.project, wc.config, "DNA", "min_counts"),
     shell:
         """
         zero={params.zero};

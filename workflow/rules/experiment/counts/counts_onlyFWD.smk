@@ -7,25 +7,19 @@
 
 rule experiment_counts_onlyFWD_raw_counts:
     """
-    Getting the BCs from the reads using fixed length.
-    """
-    conda:
-        getCondaEnv("default.yaml")
+Getting the BCs from the reads using fixed length.
+"""
     input:
-        lambda wc: getFWD(
-            wc.project, wc.condition, wc.replicate, wc.type, check_trimming=True
-        ),
+        lambda wc: getFWD(wc.project, wc.condition, wc.replicate, wc.type, check_splitting=False, check_trimming=True),
     output:
         "results/experiments/{project}/counts/onlyFWD.{condition}.{replicate}.{type}.raw_counts.tsv.gz",
+    log:
+        temp("results/logs/experiment/counts/onlyFWD/onlyFWD_raw_counts.{project}.{condition}.{replicate}.{type}.log"),
+    conda:
+        getCondaEnv("default.yaml")
     params:
         bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
-        bc_extraction=lambda wc: config["experiments"][wc.project].get(
-            "bc_extraction", "start"
-        ),
-    log:
-        temp(
-            "results/logs/experiment/counts/onlyFWD/onlyFWD_raw_counts.{project}.{condition}.{replicate}.{type}.log"
-        ),
+        bc_extraction=lambda wc: config["experiments"][wc.project].get("bc_extraction", "start"),
     shell:
         """
         zcat {input} | \

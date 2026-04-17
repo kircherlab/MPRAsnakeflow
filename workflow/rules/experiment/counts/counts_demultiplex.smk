@@ -7,10 +7,8 @@
 
 rule experiment_counts_demultiplex_create_index:
     """
-    Create the demultiplexing index file for the experiment.
-    """
-    conda:
-        getCondaEnv("python3.yaml")
+Create the demultiplexing index file for the experiment.
+"""
     input:
         experiment_file=lambda wc: config["experiments"][wc.project]["experiment_file"],
         script=getScript("count/create_demultiplexed_index.py"),
@@ -18,6 +16,8 @@ rule experiment_counts_demultiplex_create_index:
         "results/experiments/{project}/counts/demultiplex_index.tsv",
     log:
         temp("results/logs/experiment/counts/create_demultiplexed_index.{project}.log"),
+    conda:
+        getCondaEnv("python3.yaml")
     shell:
         """
         python {input.script} \
@@ -28,8 +28,8 @@ rule experiment_counts_demultiplex_create_index:
 
 checkpoint experiment_counts_demultiplex_BAM_umi:
     """
-    Demultiplexing the data and create demultiplexed bam files per condition.
-    """
+Demultiplexing the data and create demultiplexed bam files per condition.
+"""
     input:
         fwd_fastq=lambda wc: getFWDWithIndex(wc.project),
         rev_fastq=lambda wc: getREVWithIndex(wc.project),
@@ -39,12 +39,12 @@ checkpoint experiment_counts_demultiplex_BAM_umi:
         script=getScript("count/SplitFastQdoubleIndexBAM.py"),
     output:
         "results/experiments/{project}/counts/demultiplex.{name}.bam",
-    params:
-        outdir=lambda w, output: os.path.split(output[0])[0],
-    conda:
-        getCondaEnv("python27.yaml")
     log:
         temp("results/logs/experiment/counts/demultiplex_BAM_umi.{project}.{name}.log"),
+    conda:
+        getCondaEnv("python27.yaml")
+    params:
+        outdir=lambda w, output: os.path.split(output[0])[0],
     shell:
         """
             set +o pipefail;
@@ -74,8 +74,8 @@ checkpoint experiment_counts_demultiplex_BAM_umi:
 
 rule experiment_counts_demultiplex_aggregate:
     """
-    Aggregate the demultiplexed bam files per condition.
-    """
+Aggregate the demultiplexed bam files per condition.
+"""
     input:
         lambda wc: counts_aggregate_demultiplex_input(wc.project),
     output:
@@ -84,21 +84,19 @@ rule experiment_counts_demultiplex_aggregate:
 
 rule experiment_counts_demultiplex_mergeTrimReads_BAM_umi:
     """
-    Merge and trim reads in demultiplexed bam files.
-    """
+Merge and trim reads in demultiplexed bam files.
+"""
     input:
         demultiplex="results/experiments/{project}/counts/demultiplex.done",
         script=getScript("count/MergeTrimReadsBAM.py"),
     output:
         "results/experiments/{project}/counts/merged_demultiplex.{condition}.{replicate}.{type}.bam",
+    log:
+        temp("results/logs/experiment/counts/mergeTrimReads_demultiplex_BAM_umi.{project}.{condition}.{replicate}.{type}.log"),
     conda:
         getCondaEnv("python27.yaml")
     params:
         bam="results/experiments/{project}/counts/demultiplex.{condition}.{replicate}.{type}.bam",
-    log:
-        temp(
-            "results/logs/experiment/counts/mergeTrimReads_demultiplex_BAM_umi.{project}.{condition}.{replicate}.{type}.log"
-        ),
     shell:
         """
         samtools view -h {params.bam} | \

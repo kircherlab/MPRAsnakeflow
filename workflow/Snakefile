@@ -43,6 +43,7 @@ wildcard_constraints:
     replicate=r"[^/_\.]+",
     type=r"(DNA)|(RNA)",
     config=r"[^/\.]+",
+    split=r"[0-9]+",
 
 
 ##### localrules #####

@@ -8,30 +8,24 @@
 
 rule experiment_counts_noUMI_create_BAM:
     """
-    Create a BAM file from FASTQ input, merge FWD and REV read and save UMI in XI flag.
-    """
+Create a BAM file from FASTQ input, merge FWD and REV read and save UMI in XI flag.
+"""
     input:
-        fwd_fastq=lambda wc: getFWD(
-            wc.project, wc.condition, wc.replicate, wc.type, check_trimming=True
-        ),
-        rev_fastq=lambda wc: getREV(
-            wc.project, wc.condition, wc.replicate, wc.type, check_trimming=True
-        ),
+        fwd_fastq=lambda wc: getFWD(wc.project, wc.condition, wc.replicate, wc.type, check_splitting=True, check_trimming=True),
+        rev_fastq=lambda wc: getREV(wc.project, wc.condition, wc.replicate, wc.type, check_splitting=True, check_trimming=True),
         script_FastQ2doubleIndexBAM=getScript("count/FastQ2doubleIndexBAM_python3.py"),
         module_FastQ2doubleIndexBAM=getScript("count/library_python3.py"),
         script_MergeTrimReadsBAM=getScript("count/MergeTrimReadsBAM_python3.py"),
         module_MergeTrimReadsBAM=getScript("count/MergeTrimReads_python3.py"),
     output:
-        "results/experiments/{project}/counts/noUMI.{condition}.{replicate}.{type}.bam",
+        "results/experiments/{project}/counts/noUMI.{condition}.{replicate}.{type}.{split}.bam",
+    log:
+        temp("results/logs/experiment/counts/noUMI/create_BAM.{project}.{condition}.{replicate}.{type}.{split}.log"),
+    conda:
+        getCondaEnv("python3.yaml")
     params:
         bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
         datasetID="{condition}.{replicate}.{type}",
-    conda:
-        getCondaEnv("python3.yaml")
-    log:
-        temp(
-            "results/logs/experiment/counts/noUMI/create_BAM.{project}.{condition}.{replicate}.{type}.log"
-        ),
     shell:
         """
         set +o pipefail;
@@ -59,23 +53,24 @@ rule experiment_counts_noUMI_create_BAM:
 
 rule experiment_counts_noUMI_raw_counts:
     """
-    Counting BCsxUMIs from the BAM files.
-    """
-    conda:
-        getCondaEnv("bwa_samtools_picard_htslib.yaml")
+Counting BCsxUMIs from the BAM files.
+"""
     input:
-        "results/experiments/{project}/counts/noUMI.{condition}.{replicate}.{type}.bam",
+        expand(
+            "results/experiments/{{project}}/counts/noUMI.{{condition}}.{{replicate}}.{{type}}.{split}.bam",
+            split=range(getMaxExperimentSplitNumber()),
+        ),
     output:
         "results/experiments/{project}/counts/noUMI.{condition}.{replicate}.{type}.raw_counts.tsv.gz",
+    log:
+        temp("results/logs/experiment/counts/noUMI/raw_counts_umi.{project}.{condition}.{replicate}.{type}.log"),
+    conda:
+        getCondaEnv("bwa_samtools_picard_htslib.yaml")
     params:
         datasetID="{condition}.{replicate}.{type}",
-    log:
-        temp(
-            "results/logs/experiment/counts/noUMI/raw_counts_umi.{project}.{condition}.{replicate}.{type}.log"
-        ),
     shell:
         """
-        samtools view -F 1 -r {params.datasetID} {input} | \
+        samtools merge -o - {input} | samtools view -F 1 -r {params.datasetID} | \
         awk -v 'OFS=\\t' '{{ print $10 }}' | \
         sort | \
         gzip -c > {output} 2> {log}

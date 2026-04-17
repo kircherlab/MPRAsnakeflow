@@ -20,24 +20,33 @@ def getExperimentCutadaptAdapters(project, read):
     return " ".join(output)
 
 
+def getMaxExperimentSplitNumber() -> int:
+    splits = [1]
+
+    for project in getProjects():
+        splits += [config["experiments"][project]["split_number"]]
+
+    return max(splits)
+
+
 # count.smk specific functions
 
 
-def useUMI(project, type="DNA"):
+def useUMI(project: str, type: str = "DNA") -> bool:
     """
     Helper to check if UMI should be used
     """
     return "UMI" in experiments[project] or f"{type}_UMI" in experiments[project]
 
 
-def onlyFWD(project, type="DNA"):
+def onlyFWD(project: str, type: str = "DNA") -> bool:
     """
     Helper to check if only forward reads should be used
     """
     return f"{type}_BC_R" not in experiments[project]
 
 
-def noUMI(project, type="DNA"):
+def noUMI(project: str, type: str = "DNA") -> bool:
     """
     Helper to check if UMI should not be used
     """
@@ -48,45 +57,79 @@ def noUMI(project, type="DNA"):
     )
 
 
-def useTrimming(project, read_type):
+def useTrimming(project: str, read_type: str) -> bool:
+    """
+    Helper to check if trimming should be used for a specific read type.
+    """
     if "adapters" in config["experiments"][project]:
         if read_type in config["experiments"][project]["read_type"]:
             return True
     return False
 
 
-def getReads(read_type, project, condition, replicate, rnaDna_type, check_trimming=False):
+def useSplitting(project: str, rnaDna_type: str) -> bool:
+    """
+    Helper to check if splitting should be used. Will only apply for merging FWD and REV reads (creating BAM file) and split_number is > 1.
+    """
+    return not onlyFWD(project, rnaDna_type) and config["experiments"][project]["split_number"] > 1
+
+
+def getExperimentReads(
+    read_type: str,
+    project: str,
+    condition: str,
+    replicate: str,
+    rnaDna_type: str,
+    check_splitting: bool,
+    check_trimming: bool,
+):
     if read_type == "FWD":
-        return getFWD(project, condition, replicate, rnaDna_type, check_trimming)
+        return getFWD(project, condition, replicate, rnaDna_type, check_splitting, check_trimming)
     elif read_type == "REV":
-        return getREV(project, condition, replicate, rnaDna_type, check_trimming)
+        return getREV(project, condition, replicate, rnaDna_type, check_splitting, check_trimming)
     elif read_type == "UMI":
-        return getUMI(project, condition, replicate, rnaDna_type, check_trimming)
+        return getUMI(project, condition, replicate, rnaDna_type, check_splitting, check_trimming)
     else:
         raise ValueError("read_type must be one of FWD, REV or UMI")
 
 
-def getFWD(project, condition, replicate, rnaDna_type, check_trimming=False):
+def getFWD(
+    project: str, condition: str, replicate: str, rnaDna_type: str, check_splitting: bool, check_trimming: bool
+) -> list[str]:
     if check_trimming and useTrimming(project, "FWD"):
-        return "results/experiments/{project}/fastq/FWD.trimmed.{condition}.{replicate}.{type}.fastq.gz"
+        if check_splitting and useSplitting(project, rnaDna_type):
+            return ["results/experiments/{project}/fastq/FWD.trimmed.{condition}.{replicate}.{type}.{split}.fastq.gz"]
+        else:
+            return ["results/experiments/{project}/fastq/FWD.trimmed.{condition}.{replicate}.{type}.0.fastq.gz"]
 
-    exp = getExperiments(project)
-    exp = exp[exp.Condition == condition]
-    exp = exp[exp.Replicate.astype(str) == replicate]
-    return [
-        "%s/%s" % (config["experiments"][project]["data_folder"], f) for f in exp["%s_BC_F" % rnaDna_type].iloc[0].split(";")
-    ]
+    elif check_splitting and useSplitting(project, rnaDna_type):
+        return ["results/experiments/{project}/fastq/FWD.split.{condition}.{replicate}.{type}.{split}.fastq.gz"]
+    else:
+        exp = getExperiments(project)
+        exp = exp[exp.Condition == condition]
+        exp = exp[exp.Replicate.astype(str) == replicate]
+        return [
+            "%s/%s" % (config["experiments"][project]["data_folder"], f)
+            for f in exp["%s_BC_F" % rnaDna_type].iloc[0].split(";")
+        ]
 
 
-def getFWDWithIndex(project):
+def getFWDWithIndex(project: str) -> list[str]:
     return [
         "%s/%s" % (config["experiments"][project]["data_folder"], f) for f in getExperiments(project).BC_F.iloc[0].split(";")
     ]
 
 
-def getREV(project, condition, replicate, rnaDna_type, check_trimming=False):
+def getREV(
+    project: str, condition: str, replicate: str, rnaDna_type: str, check_splitting: bool, check_trimming: bool
+) -> list[str]:
     if check_trimming and useTrimming(project, "REV"):
-        return "results/experiments/{project}/fastq/REV.trimmed.{condition}.{replicate}.{type}.fastq.gz"
+        if check_splitting and useSplitting(project, rnaDna_type):
+            return ["results/experiments/{project}/fastq/REV.trimmed.{condition}.{replicate}.{type}.{split}.fastq.gz"]
+        else:
+            return ["results/experiments/{project}/fastq/REV.trimmed.{condition}.{replicate}.{type}.0.fastq.gz"]
+    elif check_splitting and useSplitting(project, rnaDna_type):
+        return ["results/experiments/{project}/fastq/REV.split.{condition}.{replicate}.{type}.{split}.fastq.gz"]
     else:
         exp = getExperiments(project)
         exp = exp[exp.Condition == condition]
@@ -97,15 +140,22 @@ def getREV(project, condition, replicate, rnaDna_type, check_trimming=False):
         ]
 
 
-def getREVWithIndex(project):
+def getREVWithIndex(project: str) -> list[str]:
     return [
         "%s%s" % (config["experiments"][project]["data_folder"], f) for f in getExperiments(project).BC_R.iloc[0].split(";")
     ]
 
 
-def getUMI(project, condition, replicate, rnaDna_type, check_trimming=False):
+def getUMI(
+    project: str, condition: str, replicate: str, rnaDna_type: str, check_splitting: bool, check_trimming: bool
+) -> list[str]:
     if check_trimming and useTrimming(project, "UMI"):
-        return "results/experiments/{project}/fastq/UMI.trimmed.{condition}.{replicate}.{type}.fastq.gz"
+        if check_splitting and useSplitting(project, rnaDna_type):
+            return ["results/experiments/{project}/fastq/UMI.trimmed.{condition}.{replicate}.{type}.{split}.fastq.gz"]
+        else:
+            return ["results/experiments/{project}/fastq/UMI.trimmed.{condition}.{replicate}.{type}.0.fastq.gz"]
+    elif check_splitting and useSplitting(project, rnaDna_type):
+        return ["results/experiments/{project}/fastq/UMI.split.{condition}.{replicate}.{type}.{split}.fastq.gz"]
     else:
         exp = getExperiments(project)
         exp = exp[exp.Condition == condition]
@@ -116,49 +166,40 @@ def getUMI(project, condition, replicate, rnaDna_type, check_trimming=False):
         ]
 
 
-def getUMIWithIndex(project):
+def getUMIWithIndex(project: str) -> list[str]:
     return [config["experiments"][project]["data_folder"] + f for f in getExperiments(project).UMI.iloc[0].split(";")]
 
 
-def getIndexWithIndex(project):
+def getIndexWithIndex(project: str) -> list[str]:
     return [config["experiments"][project]["data_folder"] + f for f in getExperiments(project).INDEX.iloc[0].split(";")]
 
 
-def getUMIBamFile(project, condition, replicate, type):
+def getUMIBamFile(project: str) -> str:
     """
-    gelper to get the correct BAM file (demultiplexed or not)
+    Helper to get the correct BAM file (demultiplexed or not)
     """
+
     if config["experiments"][project]["demultiplex"]:
-        return "results/%s/counts/merged_demultiplex.%s.%s.%s.bam" % (
-            project,
-            condition,
-            replicate,
-            type,
-        )
+        return "results/experiments/{project}/counts/merged_demultiplex.{condition}.{replicate}.{type}.bam"
     else:
-        return "results/experiments/%s/counts/useUMI.%s.%s.%s.bam" % (
-            project,
-            condition,
-            replicate,
-            type,
-        )
+        return "results/experiments/{project}/counts/useUMI.{condition}.{replicate}.{type}.{split}.bam"
 
 
-def getRawCounts(project, type):
+def getRawCounts(project: str, dnaRNA_type: str) -> str:
     """
     Helper to get the correct raw counts file (umi/noUMI or just FWD read)
     """
-    if useUMI(project, type):
-        if onlyFWD(project, type):
-            return "results/experiments/{project}/counts/onlyFWDUMI.{condition}.{replicate}.%s.raw_counts.tsv.gz" % type
+    if useUMI(project, dnaRNA_type):
+        if onlyFWD(project, dnaRNA_type):
+            return "results/experiments/{project}/counts/onlyFWDUMI.{condition}.{replicate}.%s.raw_counts.tsv.gz" % dnaRNA_type,
         else:
-            return "results/experiments/{project}/counts/useUMI.{condition}.{replicate}.%s.raw_counts.tsv.gz" % type
-    elif noUMI(project, type):
-        return "results/experiments/{project}/counts/noUMI.{condition}.{replicate}.%s.raw_counts.tsv.gz" % type
-    elif onlyFWD(project, type):
-        return "results/experiments/{project}/counts/onlyFWD.{condition}.{replicate}.%s.raw_counts.tsv.gz" % type
+            return "results/experiments/{project}/counts/useUMI.{condition}.{replicate}.%s.raw_counts.tsv.gz" % dnaRNA_type
+    elif noUMI(project, dnaRNA_type):
+        return "results/experiments/{project}/counts/noUMI.{condition}.{replicate}.%s.raw_counts.tsv.gz" % dnaRNA_type
+    elif onlyFWD(project, dnaRNA_type):
+        return "results/experiments/{project}/counts/onlyFWD.{condition}.{replicate}.%s.raw_counts.tsv.gz" % dnaRNA_type
     else:
-        raise RuntimeError("Error in getRawCounts: no valid option for %s and %s found" % (project, type))
+        raise RuntimeError("Error in getRawCounts: no valid option for %s and %s found" % (project, dnaRNA_type))
 
 
 def counts_aggregate_demultiplex_input(project):
