@@ -76,7 +76,7 @@ Counting BCsxUMIs from the BAM files.
         datasetID="{condition}.{replicate}.{type}",
     shell:
         """
-        samtools merge -o - {input} | samtools view -F 1 -r {params.datasetID} | \
+        samtools merge -c -o - {input} | samtools view -F 1 -r {params.datasetID} | \
         awk -v 'OFS=\\t' '{{ for (i=12; i<=NF; i++) {{
           if ($i ~ /^XJ:Z:/) print $10,substr($i,6,{params.umi_length})
         }}}}' | \

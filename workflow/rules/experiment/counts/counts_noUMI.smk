@@ -70,7 +70,7 @@ Counting BCsxUMIs from the BAM files.
         datasetID="{condition}.{replicate}.{type}",
     shell:
         """
-        samtools merge -o - {input} | samtools view -F 1 -r {params.datasetID} | \
+        samtools merge -c -o - {input} | samtools view -F 1 -r {params.datasetID} | \
         awk -v 'OFS=\\t' '{{ print $10 }}' | \
         sort | \
         gzip -c > {output} 2> {log}
