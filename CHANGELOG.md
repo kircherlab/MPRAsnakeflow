@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.3](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.6.2...v0.6.3) (2026-05-05)
+
+
+### Bug Fixes
+
+* **assignment:** :tada: Using mem_mb resoucres for bbmap for snakemake &gt;=9.20.0 compatibility ([8ddd146](https://github.com/kircherlab/MPRAsnakeflow/commit/8ddd1467a3893d7823c5f32ccc7eccf193de83cb))
+
 ## [0.6.2](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.6.1...v0.6.2) (2026-04-23)
 
 
