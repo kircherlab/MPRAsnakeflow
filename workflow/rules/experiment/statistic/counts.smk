@@ -146,13 +146,6 @@ Merge the count statistic of all replicates and conditions into one table.
 
 
 rule experiment_statistic_counts_BC_in_RNA_DNA:
-    input:
-        dna=lambda wc: statistic_counts_BC_in_RNA_DNA_helper(project, wc.condition, "DNA", wc.countType),
-        rna=lambda wc: statistic_counts_BC_in_RNA_DNA_helper(project, wc.condition, "RNA", wc.countType),
-    output:
-        temp("results/experiments/{project}/statistic/counts/{condition}.{replicate}.{countType}_BC_in_RNA_DNA.tsv.gz"),
-    log:
-        temp("results/logs/experiment/statistic/counts/BC_in_RNA_DNA.{project}.{condition}.{replicate}.{countType}.log"),
     """
 Count the number of barcodes shared between RNA and DNA per condition and replicate.
 """
