@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: ASCII -*-
 
 """
 Extract the index sequence from the middle and end of an Illumina run. Separates reads for Paired End runs.
@@ -12,17 +13,15 @@ Extract the index sequence from the middle and end of an Illumina run. Separates
 
 """
 
+import sys
 import os
 import string
-import sys
-
 table = string.maketrans('.','N')
 
-from collections import defaultdict
-from optparse import OptionGroup, OptionParser
-
 import pysam
+from collections import defaultdict
 from library import read_fastq
+from optparse import OptionParser,OptionGroup
 
 ireadlength1 = None
 ireadlength2 = None
@@ -41,7 +40,7 @@ def read_sequence_file(infile,sec_read_start=None):
     for seqid, seq, qual in read_fastq(infile):
       seq = seq.translate(table)
       if qual != None and options.qualityoffset != 33: qual = "".join(map(lambda x:chr(ord(x)-options.qualityoffset+33),qual))
-      if sec_read_start == None:
+      if sec_read_start == None: 
         if qual != None:
           yield seqid,seq[-(ireadlength1+ireadlength2):-ireadlength2],qual[-(ireadlength1+ireadlength2):-ireadlength2],seq[-ireadlength2:],qual[-ireadlength2:],seq[:-(ireadlength1+ireadlength2)],qual[:-(ireadlength1+ireadlength2)],None,None
         else:
@@ -224,7 +223,7 @@ for filename in files:
   summary = []
   closed = False
   for tag,value in outfiles.iteritems():
-    if value[2] != None and not closed:
+    if value[2] != None and not closed: 
       value[0].close()
       close = True
     if value[1] == 0 and value[2] != None:

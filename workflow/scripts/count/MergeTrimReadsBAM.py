@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: ASCII -*-
 
 """
 
@@ -13,16 +14,15 @@ Merge/Adapter trim reads stored in BAM
 
 """
 
+import sys, os
 import math
-import os
 import random
-import string
-import sys
-from optparse import OptionGroup, OptionParser
 
 import pysam
-from MergeTrimReads import process_PE, process_SR, set_adapter_sequences, set_keys, set_options
+from optparse import OptionParser,OptionGroup
+import string
 
+from MergeTrimReads import set_adapter_sequences, set_options, set_keys, process_SR, process_PE
 table = string.maketrans('TGCA','ACGT') # COMPLEMENT DNA
 
 maxadapter_comp = 30
@@ -40,7 +40,7 @@ def add_quality_flag(tags,qtype):
   foundzq = False
   if tags != None:
     for tag,value in tags:
-      if tag == "ZQ":
+      if tag == "ZQ": 
         foundzq = True
         qc_tag = list(set(list(value+qtype)))
         qc_tag.sort()
@@ -207,7 +207,7 @@ for filename in files:
             read2 = read.seq
             qual2 = read.qual
           #sys.stderr.write("- %s\n  %s\n"%(read1,read2))
-
+            
         else:
           #sys.stderr.write("%s %s\n"%(read.is_reverse,bread.is_reverse))
           #sys.stderr.write("+ %s\n  %s\n"%(read.seq,bread.seq))
@@ -224,7 +224,7 @@ for filename in files:
             read2 = bread.seq
             qual2 = bread.qual
           #sys.stderr.write("- %s\n  %s\n"%(read1,read2))
-
+            
         # IF WE HAVE NO QUALITY SCORES, ASSUME EQUAL QUALITY SCORES OF 15
         if qual1 == "*": qual1 = len(read1)*"0"
         if qual2 == "*": qual2 = len(read2)*"0"
@@ -240,7 +240,7 @@ for filename in files:
           elif flag == 'D': count_chimera += 1
 
         if newseq != '':
-          if flag == '':
+          if flag == '': 
             if len(newseq) > max(len(read1),len(read2)): count_merged_overlap += 1
             else: count_merged += 1
           new = create_new_read(newseq,newqual,bread,read)
@@ -280,13 +280,13 @@ for filename in files:
                 #sys.stderr.write("4b: %s\n    %s\n"%(read1,revcompl(nread2)))
                 flag_,newseq_,newqual_ = process_PE(read1,qual1,nread2,nqual2)
                 if newseq_ != "": segment = True
-
+              
             if segment:
               for i in range(len(read1)): # CHECK INSERTION IN FORWARD READ
                 nread1 = read1[:i]+"I"+read1[i:]
                 nqual1 = qual1[:i]+"!"+qual1[i:]
                 flag_,newseq_,newqual_ = process_PE(nread1,nqual1,read2,qual2)
-
+                
                 if flag_ != '':
                   bread.is_qcfail = True
                   bread.tags = add_quality_flag(bread.tags,flag_)
@@ -300,7 +300,7 @@ for filename in files:
                   break
                 elif newseq_ != '':
                   #sys.stderr.write("Index of insert in forward read: %d of %d\n"%(i,len(read1)))
-                  if flag_ == '':
+                  if flag_ == '': 
                     if len(newseq_) > max(len(read1)+1,len(read2)): count_merged_overlap += 1
                     else: count_merged += 1
                   new = create_new_read(newseq_,newqual_,bread,read)
@@ -313,7 +313,7 @@ for filename in files:
                   nread2 = read2[:i]+"I"+read2[i:]
                   nqual2 = qual2[:i]+"!"+qual2[i:]
                   flag_,newseq_,newqual_ = process_PE(read1,qual1,nread2,nqual2)
-
+                  
                   if flag_ != '':
                     bread.is_qcfail = True
                     bread.tags = add_quality_flag(bread.tags,flag_)
@@ -327,14 +327,14 @@ for filename in files:
                     break
                   elif newseq_ != '':
                     #sys.stderr.write("Index of insert in reverse read: %d of %d\n"%(i,len(read2)))
-                    if flag_ == '':
+                    if flag_ == '': 
                       if len(newseq_) > max(len(read1),len(read2)+1): count_merged_overlap += 1
                       else: count_merged += 1
                     new = create_new_read(newseq_,newqual_,bread,read)
                     outfile.write(new)
                     success = True
                     break
-
+              
             if not success:
               if flag == '': count_nothing += 1
               outfile.write(bread)
@@ -347,7 +347,7 @@ for filename in files:
             outfile.write(read)
         bread = pysam.AlignedRead()
       else:
-        if options.verbose:
+        if options.verbose: 
           sys.stderr.write('Warning: Skipping read from incomplete pair\n')
         bread = read
     else: # Single End read
@@ -356,7 +356,7 @@ for filename in files:
         count_nothing += 1
         outfile.write(read)
         continue
-
+      
       read1 = read.seq
       qual1 = read.qual
       if qual1 == "*": qual1 = len(read1)*"0"
