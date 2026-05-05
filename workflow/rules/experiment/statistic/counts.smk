@@ -7,6 +7,9 @@ include: "counts_common.smk"
 
 
 rule experiment_statistic_counts_frequent_umis:
+    """
+Count the 10 most frequent UMIs per condition, replicate and DNA/RNA.
+"""
     input:
         "results/experiments/{project}/counts/{condition}.{replicate}.{type}.filtered_counts.tsv.gz",
     output:
@@ -23,9 +26,6 @@ rule experiment_statistic_counts_frequent_umis:
         ),
     log:
         temp("results/logs/experiment/statistic/counts/frequent_umis.{project}.{condition}.{replicate}.{type}.log"),
-    """
-Count the 10 most frequent UMIs per condition, replicate and DNA/RNA.
-"""
     conda:
         getCondaEnv("default.yaml")
     shell:
@@ -41,6 +41,9 @@ Count the 10 most frequent UMIs per condition, replicate and DNA/RNA.
 
 
 rule experiment_statistic_counts_barcode_base_composition:
+    """
+Count the nucleotide composition of the barcodes per condition, replicate and DNA/RNA.
+"""
     input:
         counts="results/experiments/{project}/counts/{condition}.{replicate}.{type}.final_counts.tsv.gz",
         script=getScript("count/nucleotideCountPerPosition.py"),
@@ -60,9 +63,6 @@ rule experiment_statistic_counts_barcode_base_composition:
         ),
     log:
         temp("results/logs/experiment/statistic/counts/barcode_base_composition.{project}.{condition}.{replicate}.{type}.log"),
-    """
-Count the nucleotide composition of the barcodes per condition, replicate and DNA/RNA.
-"""
     conda:
         getCondaEnv("python3.yaml")
     params:
@@ -84,6 +84,9 @@ Count the nucleotide composition of the barcodes per condition, replicate and DN
 
 
 rule experiment_statistic_counts_table:
+    """
+Count statistic of barcodes and UMIs per condition, replicate and DNA/RNA.
+"""
     input:
         lambda wc: (
             "results/experiments/{project}/counts/{condition}.{replicate}.{type}.{countType}_counts.tsv.gz"
@@ -94,9 +97,6 @@ rule experiment_statistic_counts_table:
         temp("results/experiments/{project}/statistic/counts/{condition}.{replicate}.{type}.{countType}_counts.tsv.gz"),
     log:
         temp("results/logs/experiment/statistic/counts/table.{project}.{condition}.{replicate}.{type}.{countType}.log"),
-    """
-Count statistic of barcodes and UMIs per condition, replicate and DNA/RNA.
-"""
     conda:
         getCondaEnv("default.yaml")
     params:
@@ -128,15 +128,15 @@ Count statistic of barcodes and UMIs per condition, replicate and DNA/RNA.
 
 
 rule experiment_statistic_counts_stats_merge:
+    """
+Merge the count statistic of all replicates and conditions into one table.
+"""
     input:
         lambda wc: getCountStats(wc.project, wc.countType),
     output:
         temp("results/experiments/{project}/statistic/counts/count_{countType}.tsv"),
     log:
         temp("results/logs/experiment/statistic/counts/stats_merge.{project}.{countType}.log"),
-    """
-Merge the count statistic of all replicates and conditions into one table.
-"""
     conda:
         getCondaEnv("default.yaml")
     shell:
@@ -156,6 +156,13 @@ rule experiment_statistic_counts_BC_in_RNA_DNA:
     """
 Count the number of barcodes shared between RNA and DNA per condition and replicate.
 """
+    input:
+        dna=lambda wc: statistic_counts_BC_in_RNA_DNA_helper(project, wc.condition, "DNA", wc.countType),
+        rna=lambda wc: statistic_counts_BC_in_RNA_DNA_helper(project, wc.condition, "RNA", wc.countType),
+    output:
+        temp("results/experiments/{project}/statistic/counts/{condition}.{replicate}.{countType}_BC_in_RNA_DNA.tsv.gz"),
+    log:
+        temp("results/logs/experiment/statistic/counts/BC_in_RNA_DNA.{project}.{condition}.{replicate}.{countType}.log"),
     conda:
         getCondaEnv("default.yaml")
     params:
@@ -171,15 +178,15 @@ Count the number of barcodes shared between RNA and DNA per condition and replic
 
 
 rule experiment_statistic_counts_BC_in_RNA_DNA_merge:
+    """
+Merge the shared barcodes statistic of all replicates and conditions into one table.
+"""
     input:
         getBCinRNADNAStats,
     output:
         temp("results/experiments/{project}/statistic/counts/BC_in_RNA_DNA_{countType}.tsv"),
     log:
         temp("results/logs/experiment/statistic/counts/BC_in_RNA_DNA_merge.{project}.{countType}.log"),
-    """
-Merge the shared barcodes statistic of all replicates and conditions into one table.
-"""
     conda:
         getCondaEnv("default.yaml")
     shell:
@@ -189,6 +196,9 @@ Merge the shared barcodes statistic of all replicates and conditions into one ta
 
 
 rule experiment_statistic_counts_final:
+    """
+Combine the final count statistic of all replicates and conditions into one table.
+"""
     input:
         counts="results/experiments/{project}/statistic/counts/count_{countType}.tsv",
         shared="results/experiments/{project}/statistic/counts/BC_in_RNA_DNA_{countType}.tsv",
@@ -205,9 +215,6 @@ rule experiment_statistic_counts_final:
         ),
     log:
         temp("results/logs/experiment/statistic/counts/final.{project}.{countType}.log"),
-    """
-Combine the final count statistic of all replicates and conditions into one table.
-"""
     conda:
         getCondaEnv("r.yaml")
     shell:

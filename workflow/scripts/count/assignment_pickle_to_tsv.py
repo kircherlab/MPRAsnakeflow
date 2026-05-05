@@ -22,7 +22,7 @@ def cli(assignment_file):
 
     for oligo,barcodes in assoc.items():
         for barcode in barcodes:
-             print("{}\t{}".format(barcode, oligo))
+             print(f"{barcode}\t{oligo}")
 
 if __name__ == '__main__':
     cli()

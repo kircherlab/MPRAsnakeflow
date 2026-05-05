@@ -37,8 +37,8 @@ def cli(condition, counts, output_file):
         file=replicate_count[1]
 
         #DNA 1 (condition A, replicate 1)
-        colnames=["Barcode", "DNA {} (condition {}, replicate {})".format(rep,condition,rep),
-                             "RNA {} (condition {}, replicate {})".format(rep,condition,rep)]
+        colnames=["Barcode", f"DNA {rep} (condition {condition}, replicate {rep})",
+                             f"RNA {rep} (condition {condition}, replicate {rep})"]
         cur=pd.DataFrame(pd.read_csv(file, sep='\t', header=None))
         print(cur.head())
         cur.columns=colnames

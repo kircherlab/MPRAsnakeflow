@@ -4,6 +4,9 @@ Rules to create statistics for the assignment workflow.
 
 
 rule assignment_statistic_totalCounts:
+    """
+Statistic of the total (unfiltered counts).
+"""
     input:
         bc="results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
         script=getScript("assignment/statistic_total_counts.py"),
@@ -11,9 +14,6 @@ rule assignment_statistic_totalCounts:
         "results/assignment/{assignment}/statistic/total_counts.tsv",
     log:
         "results/logs/assignment/statistic_totalCounts.{assignment}.log",
-    """
-Statistic of the total (unfiltered counts).
-"""
     conda:
         getCondaEnv("python3.yaml")
     shell:
@@ -23,6 +23,9 @@ Statistic of the total (unfiltered counts).
 
 
 rule assignment_statistic_assignedCounts:
+    """
+Statistic of the assigned counts.
+"""
     input:
         bc="results/assignment/{assignment}/assignment_barcodes_with_ambiguous.{assignment_config}.tsv.gz",
         script=getScript("assignment/statistic_total_counts.py"),
@@ -30,9 +33,6 @@ rule assignment_statistic_assignedCounts:
         "results/assignment/{assignment}/statistic/assigned_counts.{assignment_config}.tsv",
     log:
         "results/logs/assignment/statistic_assignedCounts.{assignment}.{assignment_config}.log",
-    """
-Statistic of the assigned counts.
-"""
     conda:
         getCondaEnv("python3.yaml")
     shell:
@@ -42,6 +42,9 @@ Statistic of the assigned counts.
 
 
 rule assignment_statistic_assignment:
+    """
+Statistic of the filtered assignment.
+"""
     input:
         bc="results/assignment/{assignment}/assignment_barcodes_with_ambiguous.{assignment_config}.tsv.gz",
         script=getScript("assignment/statistic_assignment.R"),
@@ -50,9 +53,6 @@ rule assignment_statistic_assignment:
         plot="results/assignment/{assignment}/statistic/assignment.{assignment_config}.png",
     log:
         "results/logs/assignment/statistic_assignment.{assignment}.{assignment_config}.log",
-    """
-Statistic of the filtered assignment.
-"""
     conda:
         getCondaEnv("r.yaml")
     shell:
@@ -62,6 +62,9 @@ Statistic of the filtered assignment.
 
 
 rule assignment_statistic_quality_metric:
+    """
+Quality metrics of the assignment run
+"""
     input:
         assignment="results/assignment/{assignment}/assignment_barcodes.{assignment_config}.tsv.gz",
         design="results/assignment/{assignment}/reference/reference.fa",
@@ -70,9 +73,6 @@ rule assignment_statistic_quality_metric:
         "results/assignment/{assignment}/qc_metrics.{assignment_config}.json",
     log:
         "results/logs/assignment/statistic_quality_metric.{assignment}.{assignment_config}.log",
-    """
-Quality metrics of the assignment run
-"""
     conda:
         getCondaEnv("mpralib.yaml")
     shell:

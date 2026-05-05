@@ -44,7 +44,7 @@ def cli(condition, variants, bc_threshold, output_file):
             rep_2=variants[j][0]
             file_2=variants[j][1]
 
-            click.echo("Compare replicate {} with replicate {}".format(rep_1, rep_2))
+            click.echo(f"Compare replicate {rep_1} with replicate {rep_2}")
 
             # variants file
             click.echo("Read variants file...")

@@ -19,6 +19,9 @@ include: "statistic/bc_overlap.smk"
 
 
 rule experiment_statistic_quality_metric:
+    """
+Quality metrics of the assignment run
+"""
     input:
         barcode="results/experiments/{project}/reporter_experiment.barcode.{condition}.{assignment}.{config}.all.tsv.gz",
         assignment="results/experiments/{project}/assignment/{assignment}.tsv.gz",
@@ -27,9 +30,6 @@ rule experiment_statistic_quality_metric:
         "results/experiments/{project}/qc_metrics.{condition}.{assignment}.{config}.json",
     log:
         "results/logs/experiment/statistic_quality_metric.{project}.{condition}.{assignment}.{config}.log",
-    """
-Quality metrics of the assignment run
-"""
     conda:
         getCondaEnv("mpralib.yaml")
     params:

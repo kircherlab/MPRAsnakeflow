@@ -26,11 +26,11 @@ def read_sequence_files(
         seqid_bc, seq_bc, qual_bc = bc
         seqid_bc = str(seqid_bc).split(" ")[0]
         if seqid_read != seqid_bc:
-            raise Exception("Sequence IDs do not match: {} != {}".format(seqid_read, seqid_bc))
+            raise Exception(f"Sequence IDs do not match: {seqid_read} != {seqid_bc}")
         if use_BC_reverse_complement:
             seq_bc = reverse_complement(seq_bc)
             qual_bc = str(qual_bc)[::-1]
-        seqid = "{} XI:Z:{},YI:Z:{}".format(seqid_read, seq_bc, qual_bc)
+        seqid = f"{seqid_read} XI:Z:{seq_bc},YI:Z:{qual_bc}"
         if len(seqid) >= 255:
             """255 character limit for QNAME exceeded, No BC"""
             seqid = "{} XI:Z:{},YI:Z:{}".format(seqid_read, "N", "I")
@@ -57,7 +57,7 @@ def cli(read_file, barcode_file, use_reverse_complement, attach_sequence):
                 inputs["add_sequence_right"] = reverse_complement(attach_sequence[1])
 
         for seqid, seq, qual in read_sequence_files(**inputs):
-            click.echo("@{}\n{}\n+\n{}".format(seqid, seq, qual))
+            click.echo(f"@{seqid}\n{seq}\n+\n{qual}")
 
 
 def reverse_complement(seq):

@@ -4,6 +4,9 @@
 
 
 rule experiment_statistic_bc_overlap_run:
+    """
+Get overlap of counts and barcodes between replicates.
+"""
     input:
         files=lambda wc: expand(
             getFinalCounts(wc.project, wc.config, wc.condition, wc.type, wc.raw_or_assigned),
@@ -19,9 +22,6 @@ rule experiment_statistic_bc_overlap_run:
         ),
     log:
         temp("results/logs/experiment/statistic/bc_overlap/run.{project}.{condition}.{type}.{config}.{raw_or_assigned}.log"),
-    """
-Get overlap of counts and barcodes between replicates.
-"""
     conda:
         getCondaEnv("r.yaml")
     params:
@@ -46,6 +46,9 @@ Get overlap of counts and barcodes between replicates.
 
 
 rule experiment_statistic_bc_overlap_combine_counts:
+    """
+Combine overlap BC and count statistic into one file (raw counts).
+"""
     input:
         statistic=lambda wc: expand(
             "results/experiments/{{project}}/statistic/bc_overlap/counts/overlapBCandCounts.{condition}.{type}.{config}.tsv",
@@ -67,9 +70,6 @@ rule experiment_statistic_bc_overlap_combine_counts:
         ),
     log:
         temp("results/logs/experiment/statistic/bc_overlap/combine_counts.{project}.{config}.log"),
-    """
-Combine overlap BC and count statistic into one file (raw counts).
-"""
     conda:
         getCondaEnv("default.yaml")
     shell:
@@ -85,6 +85,9 @@ Combine overlap BC and count statistic into one file (raw counts).
 
 
 rule experiment_statistic_bc_overlap_combine_assigned_counts:
+    """
+Combine overlap BC and count statistic into one file (assigned counts).
+"""
     input:
         statistic=lambda wc: expand(
             "results/experiments/{{project}}/statistic/bc_overlap/assigned_counts/{{assignment}}/overlapBCandCounts.{condition}.{type}.{{config}}.tsv",
@@ -105,9 +108,6 @@ rule experiment_statistic_bc_overlap_combine_assigned_counts:
         ),
     log:
         temp("results/logs/experiment/statistic/bc_overlap/combine_assigned_counts.{project}.{config}.{assignment}.log"),
-    """
-Combine overlap BC and count statistic into one file (assigned counts).
-"""
     conda:
         getCondaEnv("default.yaml")
     shell:

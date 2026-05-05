@@ -4,6 +4,9 @@
 
 
 rule experiment_statistic_correlation_bc_counts:
+    """
+Calculate the correlation of the raw counts for each condition across replicates.
+"""
     input:
         files=lambda wc: getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[0],
         script=getScript("count/plot_perBCCounts_correlation.R"),
@@ -46,9 +49,6 @@ rule experiment_statistic_correlation_bc_counts:
         temp(
             "results/logs/experiment/statistic/correlation/correlate_bc_counts.{project}.{condition}.{config}.{raw_or_assigned}.log"
         ),
-    """
-Calculate the correlation of the raw counts for each condition across replicates.
-"""
     conda:
         getCondaEnv("r.yaml")
     params:
@@ -69,6 +69,9 @@ Calculate the correlation of the raw counts for each condition across replicates
 
 
 rule experiment_statistic_correlation_bc_counts_hist:
+    """
+Generate histogram and boxplots of the raw counts for each condition across replicates.
+"""
     input:
         files=lambda wc: getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[0],
         script=getScript("count/plot_perBCCounts_stats.R"),
@@ -79,9 +82,6 @@ rule experiment_statistic_correlation_bc_counts_hist:
         temp(
             "results/logs/experiment/statistic/correlation/correlate_bc_counts_hist.{project}.{condition}.{config}.{raw_or_assigned}.log"
         ),
-    """
-Generate histogram and boxplots of the raw counts for each condition across replicates.
-"""
     conda:
         getCondaEnv("r.yaml")
     params:
@@ -102,6 +102,9 @@ Generate histogram and boxplots of the raw counts for each condition across repl
 
 
 rule experiment_statistic_correlation_combine_bc_raw:
+    """
+Combine the correlation of the raw counts for each condition across replicates into one table.
+"""
     input:
         files=lambda wc: expand(
             "results/experiments/{{project}}/statistic/barcode/counts/{condition}.{{config}}.barcode.correlation.tsv",
@@ -120,9 +123,6 @@ rule experiment_statistic_correlation_combine_bc_raw:
         ),
     log:
         "results/logs/experiment/statistic/correlation/combine_bc_raw.{project}.{config}.log",
-    """
-Combine the correlation of the raw counts for each condition across replicates into one table.
-"""
     conda:
         getCondaEnv("default.yaml")
     shell:
@@ -137,6 +137,9 @@ Combine the correlation of the raw counts for each condition across replicates i
 
 
 rule experiment_statistic_correlation_combine_bc_assigned:
+    """
+Combine the correlation of the assigned counts for each condition across replicates into one table.
+"""
     input:
         files=lambda wc: expand(
             "results/experiments/{{project}}/statistic/barcode/assigned_counts/{{assignment}}/{condition}.{{config}}.barcode.correlation.tsv",
@@ -155,9 +158,6 @@ rule experiment_statistic_correlation_combine_bc_assigned:
         ),
     log:
         temp("results/logs/experiment/statistic/correlation/combine_bc_assigned.{project}.{assignment}.{config}.log"),
-    """
-Combine the correlation of the assigned counts for each condition across replicates into one table.
-"""
     conda:
         getCondaEnv("default.yaml")
     shell:
@@ -177,6 +177,9 @@ Combine the correlation of the assigned counts for each condition across replica
 
 
 rule experiment_statistic_correlation_calculate:
+    """
+Calculate the correlation of oligos for each condition across replicates.
+"""
     input:
         counts=lambda wc: expand(
             "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}.{replicate}.merged_assigned_counts.tsv.gz",
@@ -267,9 +270,6 @@ rule experiment_statistic_correlation_calculate:
         ),
     log:
         temp("results/logs/experiment/statistic/correlation/calculate.{project}.{condition}.{config}.{assignment}.log"),
-    """
-Calculate the correlation of oligos for each condition across replicates.
-"""
     conda:
         getCondaEnv("r.yaml")
     params:
@@ -307,6 +307,9 @@ Calculate the correlation of oligos for each condition across replicates.
 
 
 rule experiment_statistic_correlation_hist_box_plots:
+    """
+Generate histogram and boxplots of the oligos for each condition across replicates.
+"""
     input:
         counts=lambda wc: expand(
             "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}.{replicate}.merged_assigned_counts.tsv.gz",
@@ -326,9 +329,6 @@ rule experiment_statistic_correlation_hist_box_plots:
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}.dna_vs_rna_minThreshold.png",
     log:
         temp("results/logs/experiment/statistic/correlation/hist_box_plots.{project}.{condition}.{config}.{assignment}.log"),
-    """
-Generate histogram and boxplots of the oligos for each condition across replicates.
-"""
     conda:
         getCondaEnv("r.yaml")
     params:
@@ -366,6 +366,9 @@ Generate histogram and boxplots of the oligos for each condition across replicat
 
 
 rule experiment_statistic_correlation_combine_oligo:
+    """
+Combine the correlation of oligos for each condition across replicates into one table.
+"""
     input:
         correlation=lambda wc: expand(
             "results/experiments/{{project}}/statistic/assigned_counts/{{assignment}}/{{config}}/{condition}.correlation.tsv",
@@ -389,9 +392,6 @@ rule experiment_statistic_correlation_combine_oligo:
         ),
     log:
         temp("results/logs/experiment/statistic/correlation/combine_oligo.{project}.{config}.{assignment}.log"),
-    """
-Combine the correlation of oligos for each condition across replicates into one table.
-"""
     conda:
         getCondaEnv("default.yaml")
     params:
