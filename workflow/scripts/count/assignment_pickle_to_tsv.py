@@ -2,7 +2,9 @@
 # print out barcodes and correspoding assignment (tsv format to standard out) from a picke file
 
 import pickle
+
 import click
+
 
 # options
 @click.command()
@@ -20,7 +22,7 @@ def cli(assignment_file):
 
     for oligo,barcodes in assoc.items():
         for barcode in barcodes:
-             print("%s\t%s" % (barcode, oligo))
+             print("{}\t{}".format(barcode, oligo))
 
 if __name__ == '__main__':
     cli()

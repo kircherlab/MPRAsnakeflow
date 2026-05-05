@@ -1,8 +1,8 @@
 # Author: Max Schubach 2021
 # Nucleotides count per position
 
-import pandas as pd
 import click
+import pandas as pd
 
 
 # options

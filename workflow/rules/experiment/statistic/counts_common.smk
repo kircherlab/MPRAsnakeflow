@@ -5,10 +5,7 @@ def statistic_counts_BC_in_RNA_DNA_helper(project, condition, dna_or_rna, countT
     if countType == "raw":
         output = getRawCounts(project, dna_or_rna)
     else:
-        output = (
-            "results/experiments/{project}/counts/{condition}.{replicate}.%s.{countType}_counts.tsv.gz"
-            % dna_or_rna
-        )
+        output = "results/experiments/{project}/counts/{condition}.{replicate}.%s.{countType}_counts.tsv.gz" % dna_or_rna
 
     if len(replicates) == 1:
         output = output.replace("{replicate}", replicates[0])

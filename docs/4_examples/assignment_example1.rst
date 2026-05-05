@@ -57,7 +57,7 @@ For large files and unstable internet connection we recommend the command `prefe
     fastq-dump --gzip --split-files SRR10800986
     cd ..
 
-.. note:: Please be sure that all files are downloaded completely without errors! Depending on your internet connection this can take a while. If you just want some data to run MPRsnakeAflow you can just limit yourself to one condition and/or just one replicate. 
+.. note:: Please be sure that all files are downloaded completely without errors! Depending on your internet connection this can take a while. If you just want some data to run MPRsnakeAflow you can just limit yourself to one condition and/or just one replicate.
 
 
 With
@@ -94,7 +94,7 @@ Now we are ready to run MPRAsnakeflow and create CRS-barcode mappings.
 Run snakemake
 ------------------------------
 
-Now we have everything at hand to run the count MPRAsnakeflow pipeline. We will run the pipeline directly in the :code:`assoc_basic` folder. The MPRAsnakeflow workflow can be in a different directory. Let's assume :code:`/home/user/MPRAsnakeflow`. 
+Now we have everything at hand to run the count MPRAsnakeflow pipeline. We will run the pipeline directly in the :code:`assoc_basic` folder. The MPRAsnakeflow workflow can be in a different directory. Let's assume :code:`/home/user/MPRAsnakeflow`.
 
 First we have to configure the config file and save it to the :code:`assoc_basic` folder. The config file is a simple text file with the following content:
 
@@ -113,7 +113,7 @@ First we do a try run using snakemake :code:`-n` option. The MPRAsnakeflow comma
 You should see a list of rules that will be executed. This is the summary:
 
 .. code-block:: text
-   
+
     Job stats:
     job                                    count
     -----------------------------------  -------
@@ -189,7 +189,7 @@ All needed output files will be in the :code:`results/assignment/assocBasic` fol
 Total file tree of the results folder:
 
 .. code-block:: text
-   
+
     results
     ├── assignment
     │   └── assocBasic

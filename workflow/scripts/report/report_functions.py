@@ -1,5 +1,6 @@
 from IPython.display import Image, display
 
+
 def get_unique_files(png_files):
     file_dict = {}
 
@@ -17,7 +18,7 @@ def get_unique_files(png_files):
 def display_unique_images(pattern, image_path, exclude=None):
     # Get the image files that match the pattern
     png_files = list(image_path.glob(pattern))
-    
+
     # Exclude files if necessary
     if exclude:
         png_files = [file for file in png_files if exclude not in file.name]

@@ -90,4 +90,3 @@ To verify the installation, run the following command:
 
     conda activate snakemake
     snakemake --help
-

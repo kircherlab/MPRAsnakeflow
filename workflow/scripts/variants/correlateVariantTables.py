@@ -1,7 +1,7 @@
 # Author: Max Schubach 20202
 
-import pandas as pd
 import click
+import pandas as pd
 
 
 # options
@@ -44,7 +44,7 @@ def cli(condition, variants, bc_threshold, output_file):
             rep_2=variants[j][0]
             file_2=variants[j][1]
 
-            click.echo("Compare replicate %s with replicate %s" % (rep_1, rep_2))
+            click.echo("Compare replicate {} with replicate {}".format(rep_1, rep_2))
 
             # variants file
             click.echo("Read variants file...")

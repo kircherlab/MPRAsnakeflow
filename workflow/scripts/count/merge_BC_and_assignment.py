@@ -1,8 +1,8 @@
 #Author: Gracie Gordon 2019
 #merge tables
 
-import pandas as pd
 import click
+import pandas as pd
 
 
 # options

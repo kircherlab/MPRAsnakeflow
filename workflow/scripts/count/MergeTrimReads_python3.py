@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: ASCII -*-
 
 """
 
@@ -18,9 +17,9 @@ Python3 Updated version
 
 """
 
-import sys
 import math
 import random
+import sys
 
 table = str.maketrans('TGCA','ACGT') # COMPLEMENT DNA
 
@@ -66,7 +65,7 @@ def edits(seq1,seq2):
   return dist
 
 
-##CALCULATE QUALITY SCORE CORRECTED IDENTITY BETWEEN TWO READS 
+##CALCULATE QUALITY SCORE CORRECTED IDENTITY BETWEEN TWO READS
 ##FIRST READ DEFINES MAX LENGTH OF COMPARISION
 def quality_ident(seq1,qual1,seq2,qual2=[],maxcomp=-1):
   global max_prob_same_channel
@@ -121,7 +120,7 @@ def quality_ident(seq1,qual1,seq2,qual2=[],maxcomp=-1):
     sys.exit()
     return 0.0
 
-  if maxcomp > 0: 
+  if maxcomp > 0:
     res = ident/float(maxcomp)
   return res
 
@@ -220,10 +219,10 @@ def check_merge(read1,qual1,pqual1,read2,qual2,pqual2):
       if options_onlyoverlap:
         new_seq = "".join(new_lseq[spos:lread1+1])
         new_qual = new_qual[spos:lread1+1]
-        #if read2.startswith("I") or read1.startswith("I"): 
+        #if read2.startswith("I") or read1.startswith("I"):
           #sys.stderr.write("OnlyOverlap mode %d %d!\n"%(spos,lread1+1))
       else:
-        #if read2.startswith("I") or read1.startswith("I"): 
+        #if read2.startswith("I") or read1.startswith("I"):
           #sys.stderr.write("Not in OnlyOverlap mode %d %d!\n"%(spos,lread1+1))
         new_seq = "".join(new_lseq)
   return new_seq,convert_logprob_quality(new_qual)
@@ -300,10 +299,10 @@ def set_keys(key_text):
 
 
 def process_PE(read1,qual1,read2,qual2):
-  if len(read1) != len(qual1) or len(read2) != len(qual2): 
+  if len(read1) != len(qual1) or len(read2) != len(qual2):
     sys.stderr.write("Error: Length of quality score and read strings do not match!\n")
     return '','',''
-  
+
   # CHECK KEY, IF KEY SEQUENCE SPECIFIED AND MATCHES REMOVE KEY FROM BOTH ENDS
   if handle_key and len(read1) > 0:
     if ((read1[:len_key1] == keys[0]) and (read2[:len_key2] == keys[1])) or (options_allowMissing and (edits(read1[:len_key1],keys[0]) == 1) and (read2[:len_key2] == keys[1])) or (options_allowMissing and (read1[:len_key1] == keys[0]) and (edits(read2[:len_key2],keys[1]) == 1)):
@@ -431,10 +430,10 @@ def process_PE(read1,qual1,read2,qual2):
 
 
 def overlap_reads(read1,qual1,read2,qual2):
-  if len(read1) != len(qual1) or len(read2) != len(qual2): 
+  if len(read1) != len(qual1) or len(read2) != len(qual2):
     sys.stderr.write("Error: Length of quality score and read strings do not match!\n")
     return '','',''
-  
+
   lread1 = len(read1)
   lread2 = len(read2)
   ## CONVERTE QUALITY STRINGS TO PROBABILIITIES...
@@ -472,10 +471,10 @@ def overlap_reads(read1,qual1,read2,qual2):
 
 
 def consensus_reads(read1,qual1,read2,qual2):
-  if len(read1) != len(qual1) or len(read2) != len(qual2) or len(read1) != len(read2): 
+  if len(read1) != len(qual1) or len(read2) != len(qual2) or len(read1) != len(read2):
     sys.stderr.write("Error: Length of quality score and read strings do not match!\n")
     return '','',''
-  
+
   ## CONVERTE QUALITY STRINGS TO PROBABILIITIES...
   lqual1 = convert_quality_logprob(qual1)
   pqual1 = convert_logprob_prob(lqual1)
@@ -494,7 +493,7 @@ def consensus_reads(read1,qual1,read2,qual2):
 
 
 def process_SR(read1,qual1):
-  if len(read1) != len(qual1): 
+  if len(read1) != len(qual1):
     sys.stderr.write("Error: Length of quality score and read strings do not match!\n")
     return '','',''
 
@@ -525,7 +524,7 @@ def process_SR(read1,qual1):
       elif (quality_ident(read1,pqual1,chimera[1:],maxcomp=maxadapter_comp-1) > cutoff_merge_trim): # CONSIDER LOSING FIRST BASE...
         read1 = ""
         break
-    if read1 == "": 
+    if read1 == "":
       return 'D','',''
 
   adapter_pos = -2
@@ -565,9 +564,9 @@ if __name__ == '__main__':
   print("Overlap read consensus", overlap_reads('ATAAACATATGGCAAACATGGTTCTAAAAGAAAGAAAGAAAGAAAGAAAGAAAGAAAGAAAGAAAGAAATCACTAACACATTCATTTTCCAGACACCCTTCACACTACCGTCGGATCGTGCGTGTACCTCTGAATCTCGTATGCCGTCTTCT',  '55???BBBDDDDDDDDFFFFF>EEHBF?EFFFFG@FHHHHHHHHHHHH@GHHHHHHHHHHHHHHF?FFHEGDG=EHG?FFGCFGBGHHHFGCFCFHHHHHBD.?C--@=<+<CECE=;46=@@+=,=,5=5,AB,,55A;*5,C=:;18?##',  'TCTGGAAAATGAATGTGTTAGTGATTTCTTTCTTTCTTTCTTTCTTTCTTTCTTTCTTTCTTTCTTTTAGAACCATGTTTGCCATATGTTTATCTTCAGCTTCCCGATTACGGATCTCGTATGTGTAGATCTCGGTGGTCGCCG',  '+?BDDDDDFFFCCBFEFHFFF>EF@GGHHHHFHFHHHFFHHHHHHFFHHHHHGHHHHHHHHHHHHHHH-A-CFF,C//AECFD?EEFDFGH/CAFHF/ACFHDFFEEEHDH<DDD)7?;?+@7@-7,66B?D?,+@@@######'))
   print()
   set_adapter_sequences("ATTGCGTGAACCGAAGCTCATCAAGATCTG","GTTGATCCGGTCCTAGGCAGTGAAGATCTC","",maxadapter_comp)
-  print() 
+  print()
   print(process_SR("TTTACGGCTCATTGCGTGAACCGAAGCTCATCAAGATCTGGCCTCGGCGGCCAAGCTTAGTCGCCTATACGGTGATGGGTGCATNNTTCATNNNNATNNNCTCCCCGTTTAATCCCATATCTCGTATGCCGTCTTCTGCTTGAAAAAAAA","=======++5<5@9@@>CCEEE>CCCCCEEFFGFFFFFFDFFEFEEEECCDDCE+ACEDD5CEDEEECDE@D=9E+CDD@;@DE##113D9####00###21*28@@2<E?E=E=EEE</;(6?EEE<E<<E;6<EE#############"))
   set_adapter_sequences("GTTGATCCGGTCCTAGGCAGTGAAGATCTC","ATTGCGTGAACCGAAGCTCATCAAGATCTG","",maxadapter_comp)
   print(process_SR("AGCCGTAAAAGTTGATCCGGTCCTAGGCAGTGTAGATCTCGGTGGTCGCCGTATCATTAAAAAAAAAAAAAACAAGGAAAATAAAAAAAAAAACCCAGCCAACTAACAAAAAACAAACAAAACAAAAACGAAACCAAAACCAAAAAATAC","????????BDB<9<BBFFBCCC7ECCACEECFGFCDBCBFFFEEDC?>7C7>EEFGH=CDEGGHHHDE##################################################################################"))
-  print() 
+  print()
   print(process_PE("TTTACGGCTCATTGCGTGAACCGAAGCTCATCAAGATCTGGCCTCGGCGGCCAAGCTTAGTCGCCTATACGGTGATGGGTGCATNNTTCATNNNNATNNNCTCCCCGTTTAATCCCATATCTCGTATGCCGTCTTCTGCTTGAAAAAAAA","=======++5<5@9@@>CCEEE>CCCCCEEFFGFFFFFFDFFEFEEEECCDDCE+ACEDD5CEDEEECDE@D=9E+CDD@;@DE##113D9####00###21*28@@2<E?E=E=EEE</;(6?EEE<E<<E;6<EE#############","AGCCGTAAAAGTTGATCCGGTCCTAGGCAGTGTAGATCTCGGTGGTCGCCGTATCATTAAAAAAAAAAAAAACAAGGAAAATAAAAAAAAAAACCCAGCCAACTAACAAAAAACAAACAAAACAAAAACGAAACCAAAACCAAAAAATAC","????????BDB<9<BBFFBCCC7ECCACEECFGFCDBCBFFFEEDC?>7C7>EEFGH=CDEGGHHHDE##################################################################################"))

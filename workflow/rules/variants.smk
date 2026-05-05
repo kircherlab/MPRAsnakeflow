@@ -1,7 +1,5 @@
 # --use-pseudo-counts
 rule variants_generateVariantTable:
-    conda:
-        getCondaEnv("python3.yaml")
     input:
         variant_definition=lambda wc: getVariants(wc.project)["map"],
         counts="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}.{replicate}.merged_assigned_counts.tsv.gz",
@@ -12,6 +10,8 @@ rule variants_generateVariantTable:
         temp(
             "results/logs/experiments/variants/generateVariantTable.{project}.{assignment}.{config}.{condition}.{replicate}.log"
         ),
+    conda:
+        getCondaEnv("python3.yaml")
     shell:
         """
         python {input.script} \
@@ -22,8 +22,6 @@ rule variants_generateVariantTable:
 
 
 rule variants_MasterTable:
-    conda:
-        getCondaEnv("python3.yaml")
     input:
         variants=lambda wc: expand(
             "results/experiments/{{project}}/variants/{{assignment}}/{{config}}/{{condition}}.{replicate}.variantTable.tsv.gz",
@@ -32,6 +30,10 @@ rule variants_MasterTable:
         script=getScript("variants/generateMasterVariantTable.py"),
     output:
         "results/experiments/{project}/variants/{assignment}/{config}/{condition}.variantTable.tsv.gz",
+    log:
+        temp("results/logs/experiments/variants/MasterTable.{project}.{assignment}/{config}.{condition}.log"),
+    conda:
+        getCondaEnv("python3.yaml")
     params:
         input=lambda wc: " ".join(
             [
@@ -46,16 +48,8 @@ rule variants_MasterTable:
                 )
             ]
         ),
-        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
-            wc.config
-        ]["filter"]["min_rna_counts"],
-        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
-            wc.config
-        ]["filter"]["min_dna_counts"],
-    log:
-        temp(
-            "results/logs/experiments/variants/MasterTable.{project}.{assignment}/{config}.{condition}.log"
-        ),
+        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["filter"]["min_rna_counts"],
+        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["filter"]["min_dna_counts"],
     shell:
         """
         python {input.script} \
@@ -67,8 +61,6 @@ rule variants_MasterTable:
 
 
 rule variants_correlate:
-    conda:
-        getCondaEnv("python3.yaml")
     input:
         counts=lambda wc: expand(
             "results/experiments/{{project}}/variants/{{assignment}}/{{config}}/{{condition}}.{replicate}.variantTable.tsv.gz",
@@ -77,6 +69,12 @@ rule variants_correlate:
         script=getScript("variants/correlateVariantTables.py"),
     output:
         "results/experiments/{project}/statistic/variants/{assignment}/{config}/{condition}/{condition}.correlation_variantTable_minBC{threshold}.tsv.gz",
+    log:
+        temp(
+            "results/logs/experiments/variants/correlate.{project}.{assignment}.{config}.{condition}.{condition}.{threshold}.log"
+        ),
+    conda:
+        getCondaEnv("python3.yaml")
     params:
         cond="{condition}",
         threshold="{threshold}",
@@ -90,10 +88,6 @@ rule variants_correlate:
                 replicate=getReplicatesOfCondition(wc.project, wc.condition),
             )
         ),
-    log:
-        temp(
-            "results/logs/experiments/variants/correlate.{project}.{assignment}.{config}.{condition}.{condition}.{threshold}.log"
-        ),
     shell:
         """
         python {input.script} \
@@ -105,8 +99,6 @@ rule variants_correlate:
 
 
 rule variants_combineVariantCorrelationTables:
-    conda:
-        getCondaEnv("default.yaml")
     input:
         correlation=lambda wc: expand(
             "results/experiments/{{project}}/statistic/variants/{{assignment}}/{{config}}/{condition}/{condition}.correlation_variantTable_minBC{threshold}.tsv.gz",
@@ -126,9 +118,9 @@ rule variants_combineVariantCorrelationTables:
             },
         ),
     log:
-        temp(
-            "results/logs/experiments/variants/combineVariantCorrelationTables.{project}.{assignment}.{config}.log"
-        ),
+        temp("results/logs/experiments/variants/combineVariantCorrelationTables.{project}.{assignment}.{config}.log"),
+    conda:
+        getCondaEnv("default.yaml")
     shell:
         """
         set +o pipefail;

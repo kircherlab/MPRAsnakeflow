@@ -5,7 +5,7 @@ This repository contains example data and python notebooks for running MPRAsnake
 ## Introduction
 
 MPRAsnakeflow is a pipeline that processes sequencing data from MPRA to create count tables for candidate sequences tested in the experiment.
-The code can be found [here](https://github.com/kircherlab/MPRAsnakeflow) and an extensive documentation [here](https://mprasnakeflow.readthedocs.io).  
+The code can be found [here](https://github.com/kircherlab/MPRAsnakeflow) and an extensive documentation [here](https://mprasnakeflow.readthedocs.io).
 This readme explains the types of notebooks that are within the repository and type of example data as well as the structure of the input or MPRAsnakeflow.
 
 If you have more questions or need help, please write an issue on the [MPRAsnakeflow_tutorial repository](https://github.com/kircherlab/MPRAsnakeflow_tutorial/issues). For general questions about MPRAsnakeflow, please write an issue on the [MPRAsnakeflow repository](https://github.com/kircherlab/MPRAsnakeflow/issues). You can also contact the main developer Max Schubach (<max.schubach@bih-charite.de>).
@@ -13,23 +13,23 @@ If you have more questions or need help, please write an issue on the [MPRAsnake
 
 ## Notebooks
 
-- Assignment: `tutorial_assignment.ipynb`  
+- Assignment: `tutorial_assignment.ipynb`
   This notebook is used to assign the barcodes to the sequences and to create a final file which maps barcodes to designed oligos, like `example_data/assignment/assignment_barcodes.default.tsv.gz`. The config file for the part of the workflow is `config_assignment.yaml`.
-- Experiment: `tutorial_experiment.ipynb`  
+- Experiment: `tutorial_experiment.ipynb`
   This notebook is used to generate activity measurements from DNA, barcode counts. The input file of the assignment workflow is needed to associate the barcodes to designed oligos. The config file for the part of the workflow is `config_experiment.yaml`.
-- Combined: `tutorial_combined.ipynb`  
+- Combined: `tutorial_combined.ipynb`
   This notebook runs both, the assignment and the experiment workflow. It does not use a pre-defined assignment file (maps barcodes to oligos). It uses directly the output of the assignment, configured in the config file. The advantage is that more jobs can be parallalized because the oligo/barcode map is needed later in the experiment workflow. Therfore the jobs before can already be run. This is usually helpfull if you run MPRAsnakeflow on a large HPC using a scheduling system like SLURM. The config file for the part of the workflow is `config_combined.yaml`.
 
 
 ## Example data
 
-We designed a CNN-based deep neural network (DNN) to identify variants potentially affecting specific tissues or being tissue-agnostic across diverse human cell lines (e.g., HepG2, HEK293T, K562, WTC-11). We selected 120,000 variants based on high/low predictive effects from our DNN for MPRA experiments across all mentioned cell types.  
+We designed a CNN-based deep neural network (DNN) to identify variants potentially affecting specific tissues or being tissue-agnostic across diverse human cell lines (e.g., HepG2, HEK293T, K562, WTC-11). We selected 120,000 variants based on high/low predictive effects from our DNN for MPRA experiments across all mentioned cell types.
 
 All candidate cis-regulatory sequences (cCREs) of length 200bp (flanked from both directions with a 15bp barcode) undergo MPRA in human hepatocellular carcinoma cell line (HepG2) and kidney epithelial (HEK293T) cells as 3 replicates. This example dataset contains ~1000 variants and ~100 negative control sequences tested in HepG2.
 
 The example data is stored in the `example_data/` directory. The config files you need for MPRAsnakflow are within this folder called `config_assignment.yaml`, `config_experiment.yaml`, and `config_combined.yaml`. For more information on the config files see the [MPRAsnakeflow documentation](https://mprasnakeflow.readthedocs.io/en/latest/config.html).
 
-## Running the tutorial notebooks 
+## Running the tutorial notebooks
 
 ### Local
 - If you want to run the workflow locally with the example data it took on a unix system with a single core 20 minutes and required around 3GB of RAM.

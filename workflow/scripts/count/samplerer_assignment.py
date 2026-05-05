@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on Wed Apr 06 14:00:09 2022
 
@@ -9,8 +8,8 @@ Samplerer - set fraction n so value is generated as follows.
 usecase: samplerer.py --input <assignment_file> --prop <proportion to achieve> --output <output_file>
 """
 
-import pandas as pd
 import click
+import pandas as pd
 
 # options
 

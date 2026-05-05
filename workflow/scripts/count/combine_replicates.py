@@ -1,9 +1,9 @@
 # Author max Schubach, 2023
 # count tables of replicates into one table using sum of counts and also the mean ratio. Add the labelsof oligos if present.
 
-import pandas as pd
-import numpy as np
 import click
+import numpy as np
+import pandas as pd
 
 # options
 
@@ -53,7 +53,7 @@ def combine_replicates(label_file, df_allreps, total_dna_counts, total_rna_count
             "n_bc": ["sum", "mean"],
         }
     )
-    
+
     df_allreps = df_allreps.reset_index()
     df_out = df_allreps.iloc[:, 0:1]
     df_out.columns = ["oligo_name"]
@@ -75,7 +75,7 @@ def combine_replicates(label_file, df_allreps, total_dna_counts, total_rna_count
     df_out["mean_rna_counts"] = df_allreps.rna_counts["mean"]
     df_out["mean_dna_normalized"] = df_allreps.dna_normalized["mean"]
     df_out["mean_rna_normalized"] = df_allreps.rna_normalized["mean"]
-    
+
     df_out["mean_log2FoldChange"] = df_allreps.log2FoldChange["mean"]
 
 

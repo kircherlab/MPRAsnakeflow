@@ -1,7 +1,7 @@
-import sys
-import os
 import math
+import os
 import subprocess
+import sys
 
 """
 Just some frequently used functions stripped from the scripts

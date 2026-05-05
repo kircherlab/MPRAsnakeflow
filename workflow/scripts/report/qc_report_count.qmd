@@ -147,14 +147,14 @@ def filter_table(df):
 ```{python}
 #| echo: false
 oligo_cor_merged_table_thresh_filter = filter_table(oligo_cor_merged_table_thresh)
-oligo_cor_merged_table_thresh_filter.style.hide(axis="index").format( precision=2) 
+oligo_cor_merged_table_thresh_filter.style.hide(axis="index").format( precision=2)
 ```
 
 ## All
 ```{python}
 #| echo: false
 oligo_cor_merged_table_all_filter = filter_table(oligo_cor_merged_table_all)
-oligo_cor_merged_table_all_filter.style.hide(axis="index").format( precision=2) 
+oligo_cor_merged_table_all_filter.style.hide(axis="index").format( precision=2)
 ```
 
 :::
@@ -228,7 +228,7 @@ avg_unknown_barcodes =  df_merged['unknown barcodes dna/rna'].mean()
 ```
 
 
-The total number of oligos in this experiment is `{python} f"{n_oligos}"` (defined by the assignment) with `{python} f"{n_barcodes}"` associated barcodes. 
+The total number of oligos in this experiment is `{python} f"{n_oligos}"` (defined by the assignment) with `{python} f"{n_barcodes}"` associated barcodes.
 
 In average across replicates we see `{python} f"{avg_oligos:.0f}"` from `{python} f"{avg_matched_barcodes:.0f}"` average barcodes in the count data and around `{python} f"{avg_unknown_barcodes:.0f}"` barcodes where not in the assignment.
 
@@ -238,14 +238,14 @@ In average across replicates we see `{python} f"{avg_oligos:.0f}"` from `{python
 ```{python}
 #| echo: false
 df_merged.drop(columns=['oligos design','barcodes design', 'barcodes dna/rna'], inplace=True)
-df_merged.style.hide(axis="index").format( precision=2) 
+df_merged.style.hide(axis="index").format( precision=2)
 ```
 
 # DNA/RNA individual
 ```{python}
 #| echo: false
 df_single = pd.read_csv(f"{workdir}/{statistics_all_single}", sep='\t').round(2)
-df_single.style.hide(axis="index").format( precision=2) 
+df_single.style.hide(axis="index").format( precision=2)
 ```
 
 :::
@@ -261,20 +261,20 @@ Histogramm of number of barcodes per oligo and the number of counts per barcode 
 # Number of barcodes per oligo
 ```{python}
 #| echo: false
-display(Image(f"{workdir}/{counts_per_oligo}")) 
+display(Image(f"{workdir}/{counts_per_oligo}"))
 ```
 
 
 # Number of counts per DNA barcode
 ```{python}
 #| echo: false
-display(Image(f"{workdir}/{counts_per_bc_dna}")) 
+display(Image(f"{workdir}/{counts_per_bc_dna}"))
 ```
 
 # Number of counts per RNA barcode
 ```{python}
 #| echo: false
-display(Image(f"{workdir}/{counts_per_bc_rna}")) 
+display(Image(f"{workdir}/{counts_per_bc_rna}"))
 ```
 
 :::

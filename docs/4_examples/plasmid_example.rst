@@ -7,7 +7,7 @@
 ENCODE data (Plasmid based)
 ===========================
 
-This example runs the assignment and experiment workflow on data from Ryan Tewhey's lab, available via the ENCODE portal. We use the A549 experiment data published in the article `Gosai SJ, Castro RI, Fuentes N et al. Machine-guided design of cell-type-targeting cis-regulatory elements. Nature. 2024. <https://doi.org/10.1038/s41586-024-08070-z>`_. 
+This example runs the assignment and experiment workflow on data from Ryan Tewhey's lab, available via the ENCODE portal. We use the A549 experiment data published in the article `Gosai SJ, Castro RI, Fuentes N et al. Machine-guided design of cell-type-targeting cis-regulatory elements. Nature. 2024. <https://doi.org/10.1038/s41586-024-08070-z>`_.
 
 The main differences from other examples are:
 - For the assignment part, the barcode is attached to the forward read, so we must split them first based on a linker or, in this case, a specific sequence length after the barcode.
@@ -56,7 +56,7 @@ There are four sets of association sequencing for this data, which contains a ba
     wget https://www.encodeproject.org/files/ENCFF504ZPY/@@download/ENCFF504ZPY.fastq.gz
     wget https://www.encodeproject.org/files/ENCFF708MPZ/@@download/ENCFF708MPZ.fastq.gz
     wget https://www.encodeproject.org/files/ENCFF847HXK/@@download/ENCFF847HXK.fastq.gz
-    
+
     cd ../../
 
 .. note:: Please be sure that all files are downloaded completely without errors! Please check the md5sum of files (see the ENCODE portal).
@@ -108,7 +108,7 @@ Here we have ten sequencing runs for the DNA count data (before electroporation)
     wget https://www.encodeproject.org/files/ENCFF891CIZ/@@download/ENCFF891CIZ.fastq.gz
     wget https://www.encodeproject.org/files/ENCFF944CEQ/@@download/ENCFF944CEQ.fastq.gz
     wget https://www.encodeproject.org/files/ENCFF966RRE/@@download/ENCFF966RRE.fastq.gz
-    
+
 
     wget https://www.encodeproject.org/files/ENCFF061UCM/@@download/ENCFF061UCM.fastq.gz
     wget https://www.encodeproject.org/files/ENCFF311KDS/@@download/ENCFF311KDS.fastq.gz
@@ -237,7 +237,7 @@ Run snakemake
 
 Now we are ready to run MPRAsnakeflow. We will do it on one node with 50GB memory and 30 cores.
 
-We will run the pipeline directly in the :code:`ENCFF074MMO` folder. The MPRAsnakeflow workflow can be in a different directory. Let's assume :code:`/home/user/MPRAsnakeflow`. 
+We will run the pipeline directly in the :code:`ENCFF074MMO` folder. The MPRAsnakeflow workflow can be in a different directory. Let's assume :code:`/home/user/MPRAsnakeflow`.
 
 First we do a try run using snakemake :code:`-n` option. The MPRAsnakeflow command is:
 

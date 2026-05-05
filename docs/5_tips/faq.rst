@@ -20,7 +20,7 @@ The design file must meet the following requirements:
     - The first character must be one of: :code:`0-9`, :code:`A-Z`, :code:`a-z`, or :code:`! # $ % & + . / : ; ? @ ^ _ | ~ -` (notably, :code:`*` and :code:`=` are NOT allowed as the first character)
     - Subsequent characters may include all of the above, plus :code:`*` and :code:`=`
     - This prevents headers from starting with :code:`*` or :code:`=`, which may be reserved or problematic in downstream tools.
-* **Unique sequences**: Sequences must be different in both sense and antisense directions. Otherwise, the mapper places the read to both IDs, and the barcode becomes ambiguous and is discarded. 
+* **Unique sequences**: Sequences must be different in both sense and antisense directions. Otherwise, the mapper places the read to both IDs, and the barcode becomes ambiguous and is discarded.
 
 When you allow min/max start/lengths for sequences (e.g., in BWA mapping), ensure that the smallest substring is unique across all other (sub)sequences. If you have antisense collisions and want to keep strand sensitivity, enable it using the option :code:`strand_sensitive: {enable: true}` in the config file (see the previous question).
 

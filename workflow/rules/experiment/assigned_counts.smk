@@ -4,30 +4,22 @@
 
 
 rule experiment_assigned_counts_filterAssignment:
-    """
-    Use only unique assignments and do sampling if needed.
-    """
-    conda:
-        getCondaEnv("python3.yaml")
     input:
         assignment=lambda wc: getAssignmentFile(wc.project, wc.assignment),
         script=getScript("count/samplerer_assignment.py"),
     output:
         "results/experiments/{project}/assignment/{assignment}.tsv.gz",
-    params:
-        samplingprop=lambda wc: assignedCounts_getAssignmentSamplingConfig(
-            wc.project, wc.assignment, "prop"
-        ),
-        samplingtotal=lambda wc: assignedCounts_getAssignmentSamplingConfig(
-            wc.project, wc.assignment, "total"
-        ),
-        seed=lambda wc: assignedCounts_getAssignmentSamplingConfig(
-            wc.project, wc.assignment, "seed"
-        ),
     log:
-        temp(
-            "results/logs/experiment/assigned_counts/filterAssignment.{project}.{assignment}.log"
-        ),
+        temp("results/logs/experiment/assigned_counts/filterAssignment.{project}.{assignment}.log"),
+    """
+Use only unique assignments and do sampling if needed.
+"""
+    conda:
+        getCondaEnv("python3.yaml")
+    params:
+        samplingprop=lambda wc: assignedCounts_getAssignmentSamplingConfig(wc.project, wc.assignment, "prop"),
+        samplingtotal=lambda wc: assignedCounts_getAssignmentSamplingConfig(wc.project, wc.assignment, "total"),
+        seed=lambda wc: assignedCounts_getAssignmentSamplingConfig(wc.project, wc.assignment, "seed"),
     shell:
         """
         python {input.script} \
@@ -40,17 +32,15 @@ rule experiment_assigned_counts_filterAssignment:
 
 
 rule experiment_assigned_counts_createAssignmentPickleFile:
-    conda:
-        getCondaEnv("python3.yaml")
     input:
         files="results/experiments/{project}/assignment/{assignment}.tsv.gz",
         script=getScript("count/create_pickle.py"),
     output:
         "results/experiments/{project}/assignment/{assignment}.pickle",
     log:
-        temp(
-            "results/logs/experiment/assigned_counts/assignment/createAssignmentPickleFile.{project}.{assignment}.log"
-        ),
+        temp("results/logs/experiment/assigned_counts/assignment/createAssignmentPickleFile.{project}.{assignment}.log"),
+    conda:
+        getCondaEnv("python3.yaml")
     shell:
         """
         python {input.script} -i {input.files} -o {output} &> {log}
@@ -58,15 +48,8 @@ rule experiment_assigned_counts_createAssignmentPickleFile:
 
 
 rule experiment_assigned_counts_assignBarcodes:
-    """
-    Assign RNA and DNA barcodes seperately to make the statistic for assigned
-    """
-    conda:
-        getCondaEnv("python3.yaml")
     input:
-        counts=lambda wc: getFinalCounts(
-            wc.project, wc.config, wc.condition, wc.type, "counts"
-        ),
+        counts=lambda wc: getFinalCounts(wc.project, wc.config, wc.condition, wc.type, "counts"),
         association="results/experiments/{project}/assignment/{assignment}.tsv.gz",
         script=getScript("count/merge_BC_and_assignment.py"),
     output:
@@ -74,12 +57,17 @@ rule experiment_assigned_counts_assignBarcodes:
         statistic=temp(
             "results/experiments/{project}/statistic/assigned_counts/{assignment}/{condition}.{replicate}.{type}.{config}.statistic.tsv.gz"
         ),
-    params:
-        name="{condition}.{replicate}.{type}",
     log:
         temp(
             "results/logs/experiment/assigned_counts/assignBarcodes.{project}.{condition}.{replicate}.{type}.{config}.{assignment}.log"
         ),
+    """
+Assign RNA and DNA barcodes seperately to make the statistic for assigned
+"""
+    conda:
+        getCondaEnv("python3.yaml")
+    params:
+        name="{condition}.{replicate}.{type}",
     shell:
         """
         python {input.script} --counts {input.counts} \
@@ -91,11 +79,6 @@ rule experiment_assigned_counts_assignBarcodes:
 
 
 rule experiment_assigned_counts_dna_rna_merge:
-    """
-    Assign merged RNA/DNA barcodes. Filter BC depending on the min_counts option.
-    """
-    conda:
-        getCondaEnv("python3.yaml")
     input:
         counts="results/experiments/{project}/counts/{condition}.{replicate}.merged.config.{config}.tsv.gz",
         association="results/experiments/{project}/assignment/{assignment}.tsv.gz",
@@ -107,32 +90,26 @@ rule experiment_assigned_counts_dna_rna_merge:
         statistic=temp(
             "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}.{replicate}.merged_assigned_counts.statistic.tsv.gz"
         ),
-    params:
-        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
-            wc.config
-        ]["filter"]["min_rna_counts"],
-        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
-            wc.config
-        ]["filter"]["min_dna_counts"],
-        outlier_detection=lambda wc: (
-            "--outlier-detection %s "
-            % config["experiments"][wc.project]["configs"][wc.config]["filter"][
-                "outlier_detection"
-            ]["method"]
-            if "method"
-            in config["experiments"][wc.project]["configs"][wc.config]["filter"][
-                "outlier_detection"
-            ]
-            else ""
-        ),
-        outlier_zscore_times=lambda wc: "--outlier-rna-zscore-times %f"
-        % config["experiments"][wc.project]["configs"][wc.config]["filter"][
-            "outlier_detection"
-        ]["times_zscore"],
     log:
         temp(
             "results/logs/experiment/assigned_counts/{assignment}/dna_rna_merge.{project}.{condition}.{replicate}.{config}.log"
         ),
+    """
+Assign merged RNA/DNA barcodes. Filter BC depending on the min_counts option.
+"""
+    conda:
+        getCondaEnv("python3.yaml")
+    params:
+        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["filter"]["min_rna_counts"],
+        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["filter"]["min_dna_counts"],
+        outlier_detection=lambda wc: (
+            "--outlier-detection %s "
+            % config["experiments"][wc.project]["configs"][wc.config]["filter"]["outlier_detection"]["method"]
+            if "method" in config["experiments"][wc.project]["configs"][wc.config]["filter"]["outlier_detection"]
+            else ""
+        ),
+        outlier_zscore_times=lambda wc: "--outlier-rna-zscore-times %f"
+        % config["experiments"][wc.project]["configs"][wc.config]["filter"]["outlier_detection"]["times_zscore"],
     shell:
         """
         python {input.script} --counts {input.counts} \
@@ -147,11 +124,6 @@ rule experiment_assigned_counts_dna_rna_merge:
 
 
 rule experiment_assigned_counts_make_master_tables:
-    """
-    Final master table with all replicates combined. With and without threshold.
-    """
-    conda:
-        getCondaEnv("r.yaml")
     input:
         counts=lambda wc: expand(
             "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}.{replicate}.merged_assigned_counts.tsv.gz",
@@ -162,6 +134,13 @@ rule experiment_assigned_counts_make_master_tables:
         statistic="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}.average_allreps.merged.tsv.gz",
         all="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}.allreps.merged.tsv.gz",
         thresh="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}.allreps_minThreshold.merged.tsv.gz",
+    log:
+        temp("results/logs/experiment/assigned_counts/make_master_tables.{project}.{condition}.{config}.{assignment}.log"),
+    """
+Final master table with all replicates combined. With and without threshold.
+"""
+    conda:
+        getCondaEnv("r.yaml")
     params:
         files=lambda wc: ",".join(
             expand(
@@ -173,16 +152,8 @@ rule experiment_assigned_counts_make_master_tables:
                 config=wc.config,
             )
         ),
-        replicates=lambda wc: ",".join(
-            getReplicatesOfCondition(wc.project, wc.condition)
-        ),
-        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
-            "filter"
-        ]["bc_threshold"],
-    log:
-        temp(
-            "results/logs/experiment/assigned_counts/make_master_tables.{project}.{condition}.{config}.{assignment}.log"
-        ),
+        replicates=lambda wc: ",".join(getReplicatesOfCondition(wc.project, wc.condition)),
+        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["filter"]["bc_threshold"],
     shell:
         """
         Rscript {input.script} \
@@ -196,10 +167,6 @@ rule experiment_assigned_counts_make_master_tables:
 
 
 rule experiment_assigned_counts_combine_replicates_barcode_output:
-    """
-    Combine replictes of assigned barcode counts into one file."""
-    conda:
-        getCondaEnv("python3.yaml")
     input:
         bc_counts=lambda wc: expand(
             "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}.{replicate}.barcode_assigned_counts.tsv.gz",
@@ -213,20 +180,22 @@ rule experiment_assigned_counts_combine_replicates_barcode_output:
     output:
         bc_merged_thresh="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}.allreps_minThreshold.merged_barcode_assigned_counts.tsv.gz",
         bc_merged_all="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}.allreps.merged_barcode_assigned_counts.tsv.gz",
+    log:
+        temp(
+            "results/logs/experiment/assigned_counts/combine_replicates_barcode_output.{project}.{condition}.{config}.{assignment}.log"
+        ),
+    """
+Combine replictes of assigned barcode counts into one file."""
+    conda:
+        getCondaEnv("python3.yaml")
     params:
-        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
-            "filter"
-        ]["bc_threshold"],
+        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["filter"]["bc_threshold"],
         bc_counts=lambda wc: " ".join(
             [
                 "--counts %s results/experiments/%s/assigned_counts/%s/%s/%s.%s.barcode_assigned_counts.tsv.gz"
                 % (rep, wc.project, wc.assignment, wc.config, wc.condition, rep)
                 for rep in getReplicatesOfCondition(wc.project, wc.condition)
             ]
-        ),
-    log:
-        temp(
-            "results/logs/experiment/assigned_counts/combine_replicates_barcode_output.{project}.{condition}.{config}.{assignment}.log"
         ),
     shell:
         """
@@ -239,25 +208,25 @@ rule experiment_assigned_counts_combine_replicates_barcode_output:
 
 
 rule experiment_assigned_counts_combine_replicates:
-    """
-    Combine replicates of master table by summing counts up and using also the average.
-    """
-    conda:
-        getCondaEnv("python3.yaml")
     input:
         master_table="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}.{allreps_or_threshold}.merged.tsv.gz",
         script=getScript("count/combine_replicates.py"),
     output:
         "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}.{allreps_or_threshold}.merged.combined.tsv.gz",
+    log:
+        temp(
+            "results/logs/experiment/assigned_counts/combine_replicates.{project}.{condition}.{config}.{assignment}.{allreps_or_threshold}.log"
+        ),
+    """
+Combine replicates of master table by summing counts up and using also the average.
+"""
+    conda:
+        getCondaEnv("python3.yaml")
     params:
         label_file=lambda wc: (
             "--labels %s" % config["experiments"][wc.project]["label_file"]
             if "label_file" in config["experiments"][wc.project]
             else ""
-        ),
-    log:
-        temp(
-            "results/logs/experiment/assigned_counts/combine_replicates.{project}.{condition}.{config}.{assignment}.{allreps_or_threshold}.log"
         ),
     shell:
         """
@@ -269,11 +238,6 @@ rule experiment_assigned_counts_combine_replicates:
 
 
 rule experiment_assigned_counts_copy_final_all_files:
-    """
-    Will copy final files to the main folder so that it is clear which files to use.
-    """
-    conda:
-        getCondaEnv("default.yaml")
     input:
         all=lambda wc: "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}.allreps.merged.tsv.gz",
         bc_all=lambda wc: "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}.allreps.merged_barcode_assigned_counts.tsv.gz",
@@ -281,9 +245,12 @@ rule experiment_assigned_counts_copy_final_all_files:
         all="results/experiments/{project}/reporter_experiment.oligo.{condition}.{assignment}.{config}.all.tsv.gz",
         bc_all="results/experiments/{project}/reporter_experiment.barcode.{condition}.{assignment}.{config}.all.tsv.gz",
     log:
-        temp(
-            "results/logs/experiment/assigned_counts/copy_final_all_files.{project}.{condition}.{assignment}.{config}.log"
-        ),
+        temp("results/logs/experiment/assigned_counts/copy_final_all_files.{project}.{condition}.{assignment}.{config}.log"),
+    """
+Will copy final files to the main folder so that it is clear which files to use.
+"""
+    conda:
+        getCondaEnv("default.yaml")
     shell:
         """
         cp {input.all} {output.all} &> {log}
@@ -292,11 +259,6 @@ rule experiment_assigned_counts_copy_final_all_files:
 
 
 rule experiment_assigned_counts_copy_final_thresh_files:
-    """
-    Will copy final files to the main folder so that it is clear which files to use.
-    """
-    conda:
-        getCondaEnv("default.yaml")
     input:
         thresh=lambda wc: "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}.allreps_minThreshold.merged.tsv.gz",
         bc_thresh=lambda wc: "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}.allreps_minThreshold.merged_barcode_assigned_counts.tsv.gz",
@@ -307,6 +269,11 @@ rule experiment_assigned_counts_copy_final_thresh_files:
         temp(
             "results/logs/experiment/assigned_counts/copy_final_thresh_files.{project}.{condition}.{assignment}.{config}.{threshold}.log"
         ),
+    """
+Will copy final files to the main folder so that it is clear which files to use.
+"""
+    conda:
+        getCondaEnv("default.yaml")
     shell:
         """
         cp {input.thresh} {output.thresh} &> {log}

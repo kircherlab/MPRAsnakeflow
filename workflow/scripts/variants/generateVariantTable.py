@@ -1,8 +1,8 @@
 # Author: Max Schubach 2022
 
-import pandas as pd
-import numpy as np
 import click
+import numpy as np
+import pandas as pd
 
 
 # options

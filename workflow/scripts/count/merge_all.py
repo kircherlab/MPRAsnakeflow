@@ -2,16 +2,17 @@
 #merge tables
 
 import sys
-import pandas as pd
-import numpy as np
-import dask.dataframe as dd
 
 import click
+import dask.dataframe as dd
+import numpy as np
+import pandas as pd
+
 
 # options
 @click.command()
 @click.option('--condition',
-              required=True, 
+              required=True,
               type=str,
               help='Name of the condition.')
 @click.option('--counts',
@@ -29,15 +30,15 @@ import click
 def cli(condition, counts, output_file):
 
     dk_full_df= None
-    
+
     for replicate_count in counts:
-        
+
         rep=replicate_count[0]
         file=replicate_count[1]
-        
+
         #DNA 1 (condition A, replicate 1)
-        colnames=["Barcode", "DNA %s (condition %s, replicate %s)" % (rep,condition,rep),
-                             "RNA %s (condition %s, replicate %s)" % (rep,condition,rep)]
+        colnames=["Barcode", "DNA {} (condition {}, replicate {})".format(rep,condition,rep),
+                             "RNA {} (condition {}, replicate {})".format(rep,condition,rep)]
         cur=pd.DataFrame(pd.read_csv(file, sep='\t', header=None))
         print(cur.head())
         cur.columns=colnames
@@ -60,7 +61,7 @@ def cli(condition, counts, output_file):
 
 
     dk_full_df.compute().to_csv(output_file, index=False)
-    
-    
+
+
 if __name__ == '__main__':
     cli()

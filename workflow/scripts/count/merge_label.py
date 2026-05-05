@@ -1,9 +1,9 @@
 # Author: Gracie Gordon 2019
 # merge tables
 
-import pandas as pd
-import numpy as np
 import click
+import numpy as np
+import pandas as pd
 
 # options
 
@@ -224,7 +224,7 @@ def cli(
             raise ValueError("Outlier removal method not recognized")
     else:
         removed_barcodes = pd.DataFrame({'barcode' : []})
-        
+
     if removed_barcodes_file:
         removed_barcodes.to_csv(removed_barcodes_file, columns=["barcode"], header=False, index=False)
 
@@ -246,11 +246,11 @@ def cli(
     if pseudocountRNA != 0:
         total_rna_counts = sum(counts["rna_count"])
 
-    # group by oligo name 
+    # group by oligo name
     grouped_label = counts.groupby("oligo_name").agg(
         {"dna_count": ["sum", "count"], "rna_count": ["sum", "count"]}
     )
-    
+
     grouped_label.reset_index(inplace=True)
 
     output = pd.DataFrame()
@@ -311,15 +311,15 @@ def outlier_removal_by_mad(df, n_bins = 20, times_mad = 5):
 
     # Calculate quantiles within  n_bins
     qs = np.unique(np.quantile(np.log10(df['rna_count']), np.arange(0, n_bins) / n_bins))
-    
+
     # Create bins based on rna_count
     df['bin'] = pd.cut(np.log10(df['rna_count']), bins=qs, include_lowest=True, labels=[str(i) for i in range(0, len(qs)-1)])
     # Filter based on ratio_diff and mad
     df['ratio_diff_med'] = df.groupby('bin', observed=True)['ratio_diff'].transform('median')
     df['ratio_diff_med_dist'] = np.abs(df['ratio_diff'] - df['ratio_diff_med'])
     df['mad'] = df.groupby('bin', observed=True)['ratio_diff_med_dist'].transform('median')
-    # df['mad'] = df.groupby('bin', observed=True)['ratio_diff'].transform(lambda x: np.median(np.abs(x - np.median(x)))) 
-    
+    # df['mad'] = df.groupby('bin', observed=True)['ratio_diff'].transform(lambda x: np.median(np.abs(x - np.median(x))))
+
     m = df.ratio_diff <= times_mad * df.mad
     barcodes_removed = df[~m].barcode
     df = df[m]

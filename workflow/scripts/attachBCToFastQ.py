@@ -1,7 +1,8 @@
-import click
-from common import read_fastq
 import gzip
 from typing import Optional
+
+import click
+from common import read_fastq
 
 
 def read_sequence_files(
@@ -25,14 +26,14 @@ def read_sequence_files(
         seqid_bc, seq_bc, qual_bc = bc
         seqid_bc = str(seqid_bc).split(" ")[0]
         if seqid_read != seqid_bc:
-            raise Exception("Sequence IDs do not match: %s != %s" % (seqid_read, seqid_bc))
+            raise Exception("Sequence IDs do not match: {} != {}".format(seqid_read, seqid_bc))
         if use_BC_reverse_complement:
             seq_bc = reverse_complement(seq_bc)
             qual_bc = str(qual_bc)[::-1]
-        seqid = "%s XI:Z:%s,YI:Z:%s" % (seqid_read, seq_bc, qual_bc)
+        seqid = "{} XI:Z:{},YI:Z:{}".format(seqid_read, seq_bc, qual_bc)
         if len(seqid) >= 255:
             """255 character limit for QNAME exceeded, No BC"""
-            seqid = "%s XI:Z:%s,YI:Z:%s" % (seqid_read, "N", "I")
+            seqid = "{} XI:Z:{},YI:Z:{}".format(seqid_read, "N", "I")
 
         yield seqid, seq_read, qual_read
     return
@@ -56,7 +57,7 @@ def cli(read_file, barcode_file, use_reverse_complement, attach_sequence):
                 inputs["add_sequence_right"] = reverse_complement(attach_sequence[1])
 
         for seqid, seq, qual in read_sequence_files(**inputs):
-            click.echo("@%s\n%s\n+\n%s" % (seqid, seq, qual))
+            click.echo("@{}\n{}\n+\n{}".format(seqid, seq, qual))
 
 
 def reverse_complement(seq):

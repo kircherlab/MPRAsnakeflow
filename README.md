@@ -30,14 +30,14 @@ We have [tutorial](https://github.com/kircherlab/MPRAsnakeflow_tutorial) created
 
 If you use MPRAsnakeflow in your work please cite out recent preprint:
 
-**Uniform processing and analysis of IGVF massively parallel reporter assay data with MPRAsnakeflow**  
-Jonathan D. Rosen, Arjun Devadas Vasanthakumari, Kilian Salomon, Nikola de Lange, Pyaree Mohan Dash, Pia Keukeleire, Ali Hassan, Alejandro Barrera, Martin Kircher, Michael I. Love, Max Schubach  
+**Uniform processing and analysis of IGVF massively parallel reporter assay data with MPRAsnakeflow**
+Jonathan D. Rosen, Arjun Devadas Vasanthakumari, Kilian Salomon, Nikola de Lange, Pyaree Mohan Dash, Pia Keukeleire, Ali Hassan, Alejandro Barrera, Martin Kircher, Michael I. Love, Max Schubach
 *bioRxiv* (2025). [2025.09.25.678548](https://doi.org/10.1101/2025.09.25.678548)
 
 
 ## Usage
 
-If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of this (original) repository and, if available, its DOI (see above). Here is a very short description of the usage. Please look at the [documentation](https://mprasnakeflow.readthedocs.io) for more comprehensive usage. 
+If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of this (original) repository and, if available, its DOI (see above). Here is a very short description of the usage. Please look at the [documentation](https://mprasnakeflow.readthedocs.io) for more comprehensive usage.
 
 ### Step 1: Obtain a copy of this workflow
 
@@ -131,4 +131,3 @@ In case you have also changed or added steps, please consider contributing them 
 3. Copy the modified files from your analysis to the clone of your fork, e.g., `cp -r workflow path/to/fork`. Make sure to **not** accidentally copy config file contents or sample sheets. Instead, manually update the example config files if necessary.
 4. Commit and push your changes to your fork.
 5. Create a [pull request](https://help.github.com/en/articles/creating-a-pull-request) against the original repository.
-

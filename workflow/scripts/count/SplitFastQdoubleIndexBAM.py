@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: ASCII -*-
 
 """
 Extract the index sequence from the middle and end of an Illumina run and compare
@@ -15,15 +14,17 @@ requested seperate in multiple BAM files. Separates reads for Paired End runs.
 
 """
 
-import sys
 import os
 import string
+import sys
+
 table = string.maketrans('.','N')
 
-import pysam
 from collections import defaultdict
+from optparse import OptionGroup, OptionParser
+
+import pysam
 from library import read_fastq
-from optparse import OptionParser,OptionGroup
 
 index_length1 = None
 index_length2 = None
@@ -306,7 +307,7 @@ def read_sequence_file(infile,sec_read_start=None):
     for seqid, seq, qual in read_fastq(infile):
       seq = seq.translate(table)
       if qual != None and options.qualityoffset != 33: qual = "".join(map(lambda x:chr(ord(x)-options.qualityoffset+33),qual))
-      if sec_read_start == None: 
+      if sec_read_start == None:
         if qual != None:
           yield seqid,seq[-(ireadlength1+ireadlength2):-ireadlength2],qual[-(ireadlength1+ireadlength2):-ireadlength2],seq[-ireadlength2:],qual[-ireadlength2:],seq[:-(ireadlength1+ireadlength2)],qual[:-(ireadlength1+ireadlength2)],None,None
         else:
@@ -445,7 +446,7 @@ SAMheader = { 'HD': {'VN': '1.4','SO':'queryname'}, 'SQ': [{'LN': 0, 'SN': '*'}]
 rgs=[]
 for v in names.values():
     rgs.append({'ID': v, "PL":"Illumina", "LB": v, "SM": v })
-SAMheader['RG'] = rgs    
+SAMheader['RG'] = rgs
 
 if options.verbose: sys.stderr.write("Creating output files/streams...\n")
 outfiles = {}
@@ -545,7 +546,7 @@ for filename in files:
 
       if ireadlength2 == None: indseq2 = None
 
-      if (len(indexes1) == 0): 
+      if (len(indexes1) == 0):
         cind = None
         if (minqual1 >= options.quality) and (minqual2 >= options.quality): is_qcfail = False
       elif (not isdoubleIndex): # Single Index
@@ -582,10 +583,10 @@ for filename in files:
                 break
       tags.append(("RG",cind))
 
-    if options.remove and cind == "unknown": 
+    if options.remove and cind == "unknown":
       outfiles[cind][1]+=1
       continue
-    
+
     if (len(oindseq1) != 0):
       tags.append(("XI",oindseq1))
       tags.append(("YI",oindqual1))
@@ -641,7 +642,7 @@ for filename in files:
   closed = False
   if options.verbose and len(outfiles) > 1: sys.stderr.write("Cleaning up not needed output files...")
   for tag,value in outfiles.iteritems():
-    if value[2] != None and not closed: 
+    if value[2] != None and not closed:
       value[0].close()
       close = True
     if value[1] == 0 and value[2] != None:

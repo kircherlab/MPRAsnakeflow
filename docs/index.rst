@@ -58,8 +58,8 @@ If you use MPRAsnakeflow in your work, please cite our recent preprint:
 
 .. epigraph::
 
-    **Uniform processing and analysis of IGVF massively parallel reporter assay data with MPRAsnakeflow**  
-    Jonathan D. Rosen, Arjun Devadas Vasanthakumari, Kilian Salomon, Nikola de Lange, Pyaree Mohan Dash, Pia Keukeleire, Ali Hassan, Alejandro Barrera, Martin Kircher, Michael I. Love, Max Schubach  
+    **Uniform processing and analysis of IGVF massively parallel reporter assay data with MPRAsnakeflow**
+    Jonathan D. Rosen, Arjun Devadas Vasanthakumari, Kilian Salomon, Nikola de Lange, Pyaree Mohan Dash, Pia Keukeleire, Ali Hassan, Alejandro Barrera, Martin Kircher, Michael I. Love, Max Schubach
     *bioRxiv* (2025). `2025.09.25.678548 <https://doi.org/10.1101/2025.09.25.678548>`_
 
 Usage
@@ -110,7 +110,7 @@ Then run the main workflow with:
 Features
 --------
 
-.. list-table:: 
+.. list-table::
    :widths: 25 80
    :header-rows: 1
 

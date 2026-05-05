@@ -8,7 +8,7 @@ We highly recommend starting with the MPRAsnakeflow :ref:`Tutorial` or the :ref:
 
 MPRAsnakeflow consists of two subworkflows: :ref:`Assignment` and :ref:`Experiment`. This quickstart shows the configuration for both. If you only want to run one of them, leave out the respective part.
 
-1. **Experiment Workflow Only:** Create an :code:`experiment.csv` file in the format below, including the header. 
+1. **Experiment Workflow Only:** Create an :code:`experiment.csv` file in the format below, including the header.
    - `DNA_BC_F` or `RNA_BC_F`: The name of the gzipped FASTQ file of the forward read of the DNA or RNA from the defined condition and replicate.
    - `DNA_UMI` or `RNA_UMI`: The corresponding index read with UMIs (excluding sample barcodes).
    - `DNA_BC_R` or `RNA_BC_R`: The reverse read.

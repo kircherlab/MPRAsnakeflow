@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on Thu Feb 15 10:16:29 2022
 
@@ -10,10 +9,11 @@ usecase: samplerer.py --input <count_file> --prop <proportion to achieve> --outp
 (accepted values as prop are float only between 0 and 1)
 """
 
-import pandas as pd
-import click
 import math
 import random
+
+import click
+import pandas as pd
 
 # options
 

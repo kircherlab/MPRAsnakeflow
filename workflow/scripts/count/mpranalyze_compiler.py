@@ -1,9 +1,11 @@
 #contributed by Tal Ashuach, Max Schubach
 
 import re
-import pandas as pd
-import numpy as np
+
 import click
+import numpy as np
+import pandas as pd
+
 
 # options
 @click.command()
@@ -37,7 +39,7 @@ import click
 
 def cli(input_file, rna_counts_output_file, dna_counts_output_file, rna_annotation_output_file, dna_annotation_output_file):
 
-    annot_pattern = re.compile("^([DR]NA).*\(condition (.*), replicate (.*)\)$")
+    annot_pattern = re.compile(r"^([DR]NA).*\(condition (.*), replicate (.*)\)$")
     def get_annot(head):
         m = annot_pattern.match(head)
         if m is not None:

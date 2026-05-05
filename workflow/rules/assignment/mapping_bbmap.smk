@@ -78,9 +78,9 @@ BAM/SAM fields:
             split(a[3],a,",");
             if (a[1] !~ /N/) {{
                 if (($5 >= {params.mapping_quality_min}) && ($4 >= 1)) {{
-                    print a[1],$3,$4";"$6";"$12";"$13";"$5 
+                    print a[1],$3,$4";"$6";"$12";"$13";"$5
                 }} else {{
-                    print a[1],"other","NA" 
+                    print a[1],"other","NA"
                 }}
             }}
         }}' | sort -k1,1 -k2,2 -k3,3 -S 7G > {output} 2> {log}

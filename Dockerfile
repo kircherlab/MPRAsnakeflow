@@ -7,7 +7,7 @@ LABEL io.github.snakemake.conda_env_hash="9a2cd7d943a12a67aae93978ccc10c6213b846
 # Step 1: Retrieve conda environments
 
 # Conda environment:
-#   source: workflow/envs/NGmerge.yaml 
+#   source: workflow/envs/NGmerge.yaml
 #   prefix: /conda-envs/2abb0048c6dce1e9bf1a7960f16f3a74
 #   ---
 #   channels:
@@ -22,7 +22,7 @@ RUN mkdir -p /conda-envs/2abb0048c6dce1e9bf1a7960f16f3a74
 COPY workflow/envs/NGmerge.yaml /conda-envs/2abb0048c6dce1e9bf1a7960f16f3a74/environment.yaml
 
 # Conda environment:
-#   source: workflow/envs/fastq-join.yaml 
+#   source: workflow/envs/fastq-join.yaml
 #   prefix: /conda-envs/7f3db13e2aa951f4484dd79393a5b358
 #   ---
 #   channels:
@@ -205,7 +205,7 @@ EOR
 
 # workflow/envs/NGmerge.yaml
 RUN conda env create --no-default-packages --prefix /conda-envs/2abb0048c6dce1e9bf1a7960f16f3a74 --file /conda-envs/2abb0048c6dce1e9bf1a7960f16f3a74/environment.yaml
-# workflow/envs/fastq-join.yaml 
+# workflow/envs/fastq-join.yaml
 RUN conda env create --no-default-packages --prefix /conda-envs/7f3db13e2aa951f4484dd79393a5b358 --file /conda-envs/7f3db13e2aa951f4484dd79393a5b358/environment.yaml
 # workflow/envs/bbmap_samtools_htslib.yaml
 RUN conda env create --no-default-packages --prefix /conda-envs/a1cc34886525015a2366c351dc84f094 --file /conda-envs/a1cc34886525015a2366c351dc84f094/environment.yaml

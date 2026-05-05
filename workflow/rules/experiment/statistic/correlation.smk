@@ -4,15 +4,8 @@
 
 
 rule experiment_statistic_correlation_bc_counts:
-    """
-    Calculate the correlation of the raw counts for each condition across replicates.
-    """
-    conda:
-        getCondaEnv("r.yaml")
     input:
-        files=lambda wc: getMergedCounts(
-            wc.project, wc.raw_or_assigned, wc.condition, wc.config
-        )[0],
+        files=lambda wc: getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[0],
         script=getScript("count/plot_perBCCounts_correlation.R"),
     output:
         report(
@@ -48,28 +41,23 @@ rule experiment_statistic_correlation_bc_counts:
                 "Plot": "Ratio",
             },
         ),
-        temp(
-            "results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}.{config}.barcode.correlation.tsv"
-        ),
-    params:
-        replicates=lambda wc: ",".join(
-            getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[1]
-        ),
-        cond="{condition}",
-        outdir="results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}.{config}",
-        input=lambda wc: ",".join(
-            getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[0]
-        ),
-        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
-            wc.config
-        ]["filter"]["min_rna_counts"],
-        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
-            wc.config
-        ]["filter"]["min_dna_counts"],
+        temp("results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}.{config}.barcode.correlation.tsv"),
     log:
         temp(
             "results/logs/experiment/statistic/correlation/correlate_bc_counts.{project}.{condition}.{config}.{raw_or_assigned}.log"
         ),
+    """
+Calculate the correlation of the raw counts for each condition across replicates.
+"""
+    conda:
+        getCondaEnv("r.yaml")
+    params:
+        replicates=lambda wc: ",".join(getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[1]),
+        cond="{condition}",
+        outdir="results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}.{config}",
+        input=lambda wc: ",".join(getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[0]),
+        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["filter"]["min_rna_counts"],
+        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["filter"]["min_dna_counts"],
     shell:
         """
         Rscript {input.script} \
@@ -81,38 +69,28 @@ rule experiment_statistic_correlation_bc_counts:
 
 
 rule experiment_statistic_correlation_bc_counts_hist:
-    """
-    Generate histogram and boxplots of the raw counts for each condition across replicates.
-    """
-    conda:
-        getCondaEnv("r.yaml")
     input:
-        files=lambda wc: getMergedCounts(
-            wc.project, wc.raw_or_assigned, wc.condition, wc.config
-        )[0],
+        files=lambda wc: getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[0],
         script=getScript("count/plot_perBCCounts_stats.R"),
     output:
         "results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}.{config}.DNA.perBarcode.png",
         "results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}.{config}.RNA.perBarcode.png",
-    params:
-        replicates=lambda wc: ",".join(
-            getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[1]
-        ),
-        cond="{condition}",
-        outdir="results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}.{config}",
-        input=lambda wc: ",".join(
-            getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[0]
-        ),
-        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][
-            wc.config
-        ]["filter"]["min_rna_counts"],
-        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][
-            wc.config
-        ]["filter"]["min_dna_counts"],
     log:
         temp(
             "results/logs/experiment/statistic/correlation/correlate_bc_counts_hist.{project}.{condition}.{config}.{raw_or_assigned}.log"
         ),
+    """
+Generate histogram and boxplots of the raw counts for each condition across replicates.
+"""
+    conda:
+        getCondaEnv("r.yaml")
+    params:
+        replicates=lambda wc: ",".join(getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[1]),
+        cond="{condition}",
+        outdir="results/experiments/{project}/statistic/barcode/{raw_or_assigned}/{condition}.{config}",
+        input=lambda wc: ",".join(getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[0]),
+        minRNACounts=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["filter"]["min_rna_counts"],
+        minDNACounts=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["filter"]["min_dna_counts"],
     shell:
         """
         Rscript {input.script} \
@@ -124,11 +102,6 @@ rule experiment_statistic_correlation_bc_counts_hist:
 
 
 rule experiment_statistic_correlation_combine_bc_raw:
-    """
-    Combine the correlation of the raw counts for each condition across replicates into one table.
-    """
-    conda:
-        getCondaEnv("default.yaml")
     input:
         files=lambda wc: expand(
             "results/experiments/{{project}}/statistic/barcode/counts/{condition}.{{config}}.barcode.correlation.tsv",
@@ -147,6 +120,11 @@ rule experiment_statistic_correlation_combine_bc_raw:
         ),
     log:
         "results/logs/experiment/statistic/correlation/combine_bc_raw.{project}.{config}.log",
+    """
+Combine the correlation of the raw counts for each condition across replicates into one table.
+"""
+    conda:
+        getCondaEnv("default.yaml")
     shell:
         """
         (
@@ -159,11 +137,6 @@ rule experiment_statistic_correlation_combine_bc_raw:
 
 
 rule experiment_statistic_correlation_combine_bc_assigned:
-    """
-    Combine the correlation of the assigned counts for each condition across replicates into one table.
-    """
-    conda:
-        getCondaEnv("default.yaml")
     input:
         files=lambda wc: expand(
             "results/experiments/{{project}}/statistic/barcode/assigned_counts/{{assignment}}/{condition}.{{config}}.barcode.correlation.tsv",
@@ -181,9 +154,12 @@ rule experiment_statistic_correlation_combine_bc_assigned:
             },
         ),
     log:
-        temp(
-            "results/logs/experiment/statistic/correlation/combine_bc_assigned.{project}.{assignment}.{config}.log"
-        ),
+        temp("results/logs/experiment/statistic/correlation/combine_bc_assigned.{project}.{assignment}.{config}.log"),
+    """
+Combine the correlation of the assigned counts for each condition across replicates into one table.
+"""
+    conda:
+        getCondaEnv("default.yaml")
     shell:
         """
         (
@@ -201,11 +177,6 @@ rule experiment_statistic_correlation_combine_bc_assigned:
 
 
 rule experiment_statistic_correlation_calculate:
-    """
-    Calculate the correlation of oligos for each condition across replicates.
-    """
-    conda:
-        getCondaEnv("r.yaml")
     input:
         counts=lambda wc: expand(
             "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}.{replicate}.merged_assigned_counts.tsv.gz",
@@ -213,9 +184,7 @@ rule experiment_statistic_correlation_calculate:
         ),
         label=(
             lambda wc: (
-                config["experiments"][wc.project]["label_file"]
-                if "label_file" in config["experiments"][wc.project]
-                else []
+                config["experiments"][wc.project]["label_file"] if "label_file" in config["experiments"][wc.project] else []
             )
         ),
         script=getScript("count/plot_perInsertCounts_correlation.R"),
@@ -265,11 +234,7 @@ rule experiment_statistic_correlation_calculate:
                 "Condition": "{condition}",
                 "Configuration": "{config}",
                 "Plot": "DNA",
-                "Threshold": str(
-                    config["experiments"][wc.project]["configs"][wc.config]["filter"][
-                        "bc_threshold"
-                    ]
-                ),
+                "Threshold": str(config["experiments"][wc.project]["configs"][wc.config]["filter"]["bc_threshold"]),
             },
         ),
         report(
@@ -281,11 +246,7 @@ rule experiment_statistic_correlation_calculate:
                 "Condition": "{condition}",
                 "Configuration": "{config}",
                 "Plot": "RNA",
-                "Threshold": str(
-                    config["experiments"][wc.project]["configs"][wc.config]["filter"][
-                        "bc_threshold"
-                    ]
-                ),
+                "Threshold": str(config["experiments"][wc.project]["configs"][wc.config]["filter"]["bc_threshold"]),
             },
         ),
         report(
@@ -297,19 +258,20 @@ rule experiment_statistic_correlation_calculate:
                 "Condition": "{condition}",
                 "Configuration": "{config}",
                 "Plot": "Ratio",
-                "Threshold": str(
-                    config["experiments"][wc.project]["configs"][wc.config]["filter"][
-                        "bc_threshold"
-                    ]
-                ),
+                "Threshold": str(config["experiments"][wc.project]["configs"][wc.config]["filter"]["bc_threshold"]),
             },
         ),
-        temp(
-            "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}.correlation.tsv"
-        ),
+        temp("results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}.correlation.tsv"),
         temp(
             "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}.correlation.minThreshold.tsv"
         ),
+    log:
+        temp("results/logs/experiment/statistic/correlation/calculate.{project}.{condition}.{config}.{assignment}.log"),
+    """
+Calculate the correlation of oligos for each condition across replicates.
+"""
+    conda:
+        getCondaEnv("r.yaml")
     params:
         cond="{condition}",
         files=lambda wc: ",".join(
@@ -322,12 +284,8 @@ rule experiment_statistic_correlation_calculate:
                 config=wc.config,
             )
         ),
-        replicates=lambda wc: ",".join(
-            getReplicatesOfCondition(wc.project, wc.condition)
-        ),
-        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
-            "filter"
-        ]["bc_threshold"],
+        replicates=lambda wc: ",".join(getReplicatesOfCondition(wc.project, wc.condition)),
+        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["filter"]["bc_threshold"],
         outdir="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}",
         label=(
             lambda wc: (
@@ -335,10 +293,6 @@ rule experiment_statistic_correlation_calculate:
                 if "label_file" in config["experiments"][wc.project]
                 else ""
             )
-        ),
-    log:
-        temp(
-            "results/logs/experiment/statistic/correlation/calculate.{project}.{condition}.{config}.{assignment}.log"
         ),
     shell:
         """
@@ -353,11 +307,6 @@ rule experiment_statistic_correlation_calculate:
 
 
 rule experiment_statistic_correlation_hist_box_plots:
-    """
-    Generate histogram and boxplots of the oligos for each condition across replicates.
-    """
-    conda:
-        getCondaEnv("r.yaml")
     input:
         counts=lambda wc: expand(
             "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}.{replicate}.merged_assigned_counts.tsv.gz",
@@ -365,9 +314,7 @@ rule experiment_statistic_correlation_hist_box_plots:
         ),
         label=(
             lambda wc: (
-                config["experiments"][wc.project]["label_file"]
-                if "label_file" in config["experiments"][wc.project]
-                else []
+                config["experiments"][wc.project]["label_file"] if "label_file" in config["experiments"][wc.project] else []
             )
         ),
         script=getScript("count/plot_perInsertCounts_stats.R"),
@@ -377,6 +324,13 @@ rule experiment_statistic_correlation_hist_box_plots:
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}.group_barcodesPerInsert_box_minThreshold.png",
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}.dna_vs_rna.png",
         "results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}.dna_vs_rna_minThreshold.png",
+    log:
+        temp("results/logs/experiment/statistic/correlation/hist_box_plots.{project}.{condition}.{config}.{assignment}.log"),
+    """
+Generate histogram and boxplots of the oligos for each condition across replicates.
+"""
+    conda:
+        getCondaEnv("r.yaml")
     params:
         cond="{condition}",
         files=lambda wc: ",".join(
@@ -389,12 +343,8 @@ rule experiment_statistic_correlation_hist_box_plots:
                 config=wc.config,
             )
         ),
-        replicates=lambda wc: ",".join(
-            getReplicatesOfCondition(wc.project, wc.condition)
-        ),
-        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
-            "filter"
-        ]["bc_threshold"],
+        replicates=lambda wc: ",".join(getReplicatesOfCondition(wc.project, wc.condition)),
+        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["filter"]["bc_threshold"],
         outdir="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}",
         label=(
             lambda wc: (
@@ -402,10 +352,6 @@ rule experiment_statistic_correlation_hist_box_plots:
                 if "label_file" in config["experiments"][wc.project]
                 else ""
             )
-        ),
-    log:
-        temp(
-            "results/logs/experiment/statistic/correlation/hist_box_plots.{project}.{condition}.{config}.{assignment}.log"
         ),
     shell:
         """
@@ -420,11 +366,6 @@ rule experiment_statistic_correlation_hist_box_plots:
 
 
 rule experiment_statistic_correlation_combine_oligo:
-    """
-    Combine the correlation of oligos for each condition across replicates into one table.
-    """
-    conda:
-        getCondaEnv("default.yaml")
     input:
         correlation=lambda wc: expand(
             "results/experiments/{{project}}/statistic/assigned_counts/{{assignment}}/{{config}}/{condition}.correlation.tsv",
@@ -446,14 +387,15 @@ rule experiment_statistic_correlation_combine_oligo:
                 "Assignment": "{assignment}",
             },
         ),
-    params:
-        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config][
-            "filter"
-        ]["bc_threshold"],
     log:
-        temp(
-            "results/logs/experiment/statistic/correlation/combine_oligo.{project}.{config}.{assignment}.log"
-        ),
+        temp("results/logs/experiment/statistic/correlation/combine_oligo.{project}.{config}.{assignment}.log"),
+    """
+Combine the correlation of oligos for each condition across replicates into one table.
+"""
+    conda:
+        getCondaEnv("default.yaml")
+    params:
+        thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["filter"]["bc_threshold"],
     shell:
         """
         set +o pipefail;

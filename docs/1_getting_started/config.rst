@@ -79,7 +79,7 @@ For each assignment you want to process, you must give it a name like :code:`exa
 :BC_rev_comp:
     (Optional) If set to :code:`true`, the barcode is reverse complemented. Default is :code:`false`.
 :linker_length:
-    (Optional) Length of the linker. Only needed if you don't have a barcode read and the barcode is in the forward read with the structure: BC+Linker+Insert. The fixed length is used for the linker after a fixed length of BC. The recommended option is :code:`linker` by defining the exact linker sequence and using cutadapt for trimming. 
+    (Optional) Length of the linker. Only needed if you don't have a barcode read and the barcode is in the forward read with the structure: BC+Linker+Insert. The fixed length is used for the linker after a fixed length of BC. The recommended option is :code:`linker` by defining the exact linker sequence and using cutadapt for trimming.
 :linker:
     (Required for long read, otherwise optional) The exact linker between BC and oligo. *Short read data:* Only needed if you don't have a barcode read and the barcode is in the forward read with the structure: BC+Linker+Insert. Uses cutadapt to trim the linker to get the barcode as well as the start of the insert. *Long read data:* Required! BC will be taken after the linker.
 :FWD:
@@ -131,7 +131,7 @@ For each assignment you want to process, you must give it a name like :code:`exa
 
 :configs:
     After mapping the reads to the design file and extracting the barcodes per oligo, the configuration (using different names) can be used to generate multiple filtering and configuration settings of the final mapping oligo to barcode. Use `<your_config_name>: {}` to use the default values for the keys. Each configuration is a dictionary with the following keys:
-    
+
     :min_support:
         A minimum number of same BC that map to the same oligo. Larger value gives more evidence to be correct. But can remove lot's of BCs (depedning on the complexity, sequencing depth and quality of sequencing). Recommended option is :code:`3`.
     :fraction:
@@ -163,8 +163,8 @@ The experiment workflow is configured in the :code:`experiments` section. Each e
 :demultiplex:
     (Optional) If set to :code:`true` the reads are demultiplexed. This means that the reads are split into different files for each barcode. This is usefull for further analysis. Default is :code:`false`.
 :label_file:
-    (Optional) Path to the label file. The full or relative path to the file should be used. The label file is a tab separated file and contais the oligo name and the label of it. The oligo name should be the same as in the design file. The label is used to group the oligos in the final output, e.g. for plotting. 
-    
+    (Optional) Path to the label file. The full or relative path to the file should be used. The label file is a tab separated file and contais the oligo name and the label of it. The oligo name should be the same as in the design file. The label is used to group the oligos in the final output, e.g. for plotting.
+
     .. code-block:: text
 
         insert1_name label1
@@ -229,7 +229,7 @@ The experiment workflow is configured in the :code:`experiments` section. Each e
                 Sample down the DNA counts to this number.
             :seed:
                 Seed for the random DNA sampling.
-        
+
         :RNA:
             Settings for sampling RNA counts.
 

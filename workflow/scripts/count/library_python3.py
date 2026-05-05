@@ -1,7 +1,7 @@
-import sys
-import os
 import math
+import os
 import subprocess
+import sys
 
 """
 Just some frequently used functions stripped from the scripts
@@ -81,15 +81,15 @@ def make_output_filename(inputname, options, suffix):
           inputname = inputname.split("/")[-1]
           inputname = options.outdir.rstrip("/")+"/"+ inputname
     return inputname
-        
+
 
 def read_fastq(filehandle):
     """ Reads fastq and fasta entries from filehandle
         supports multiline fasta and fastq
     """
     count = 0
-    seq = ""            
-    id = ""             
+    seq = ""
+    id = ""
     qual = None
     is_fasta = False
     for line in filehandle:
@@ -102,7 +102,7 @@ def read_fastq(filehandle):
         elif count == 1:        # read sequence
             seq = line
             count+=1
-        
+
         elif count == 2:  # multiple case: a) quality identifier (fastq), b) more sequence (fastq,fasta), c) next sequence identifier (fasta)
             if line.startswith("+"):  # case a)
                 id2 = line[1:]
@@ -119,13 +119,13 @@ def read_fastq(filehandle):
 
             else: # case b)
                 seq = seq + line
-        
+
         elif count == 3:
             if qual == None:
                 qual = line
             else:
                 qual = qual + line
-                
+
             if (len(qual) > len(seq)): # Another sanity check
                 sys.stderr.write("[NOTE] sequence and quality line differ in length\n")
             if (len(qual) >= len(seq)):
@@ -180,7 +180,7 @@ def parse_range_string(options, silent=False, write_to=sys.stdout):
     try:
       fields = options.range.strip().split("-")
       start = max(int(fields[0])-1,0)
-      
+
       if fields[1].upper() != "MAX":
         end = int(fields[1])
         if end < start: end = None

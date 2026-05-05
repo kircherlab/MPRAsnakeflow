@@ -1,9 +1,10 @@
-import click
-import pandas as pd
-import numpy as np
-from mpralib.mpradata import MPRABarcodeData
-from Bio import SeqIO
 import json
+
+import click
+import numpy as np
+import pandas as pd
+from Bio import SeqIO
+from mpralib.mpradata import MPRABarcodeData
 
 
 @click.group(help="Command line interface to generate quality metrics from MPRAsnakeflow.")

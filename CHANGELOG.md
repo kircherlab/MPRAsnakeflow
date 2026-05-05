@@ -246,7 +246,7 @@
 * Normalization changed which may result in different outputs
 
 ### Features
- 
+
  * outlier removal methods ([#132](https://github.com/kircherlab/MPRAsnakeflow/pull/132))
  * No min max length for bbmap. default mapq is 30. ([#131](https://github.com/kircherlab/MPRAsnakeflow/pull/131))
  * IGVF outputs ([#129](https://github.com/kircherlab/MPRAsnakeflow/pull/129))
@@ -264,7 +264,7 @@
 
 ## [0.1.0](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.0.1...v0.1.0) (2024-09-18)
 
-First release of MPRAsnakeflow! 
+First release of MPRAsnakeflow!
 
 ### Feature highlights
 

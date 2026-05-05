@@ -37,10 +37,7 @@ def useAssignmentAdapterTrimming(assignment: str, read: str) -> bool:
     """
     Return True if adapter trimming should be used for the given read in the assignment.
     """
-    return (
-        "adapters" in config["assignments"][assignment]
-        and read in config["assignments"][assignment]["adapters"]
-    )
+    return "adapters" in config["assignments"][assignment] and read in config["assignments"][assignment]["adapters"]
 
 
 def getAssignmentRead(assignment: str, read: str) -> list[str]:
@@ -59,8 +56,7 @@ def getAssignmentRead(assignment: str, read: str) -> list[str]:
         return ["results/assignment/{assignment}/fastq/{read}.byLength.fastq.gz"]
     else:
         raise RuntimeError(
-            "Wrong assignment configuration. Cannot find corerct combinations of reads for assignment %s"
-            % assignment
+            "Wrong assignment configuration. Cannot find corerct combinations of reads for assignment %s" % assignment
         )
 
 
@@ -84,10 +80,7 @@ def getMappingRead(assignment: str) -> str:
 
 def getAssignmentCutadaptAdapters(assignment: str, read: str) -> str:
     output = []
-    if (
-        "adapters" in config["assignments"][assignment]
-        and read in config["assignments"][assignment]["adapters"]
-    ):
+    if "adapters" in config["assignments"][assignment] and read in config["assignments"][assignment]["adapters"]:
         adapters_config = config["assignments"][assignment]["adapters"][read]
         if isinstance(adapters_config, list) and isinstance(adapters_config[0], int):
             output = ["-u %d" % u for u in adapters_config]

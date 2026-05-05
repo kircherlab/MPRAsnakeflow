@@ -1,6 +1,8 @@
-import pandas as pd
 import os
+
 import click
+import pandas as pd
+
 
 @click.command()
 @click.option(
@@ -72,17 +74,17 @@ def cli(counts_files, bc_thresh, output_threshold_file, output_file):
         df = df.reset_index()
 
         df.columns = ['_'.join(col).strip() if col[1] else col[0] for col in df.columns.values]
-            
+
         df = df[["barcode", "oligo_name"] + col_order]
 
         for col in col_order:
             df[col] = df[col].astype('Int32')
-        
+
         return df
 
     # only keep oligo's with a number of barcodes of at least the given threshold
     df_filtered = df.groupby(["oligo_name", "replicate"]).filter(lambda x: len(x) >= bc_thresh)
-    
+
     # write to output file
     pivot_table(df_filtered,replicates).to_csv(output_threshold_file, sep="\t", index=False, compression="gzip")
     pivot_table(df,replicates).to_csv(output_file, sep="\t", index=False, compression="gzip")

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: ASCII -*-
 
 """
 
@@ -9,8 +8,8 @@
 """
 
 import sys
-from optparse import OptionParser
 from collections import defaultdict
+from optparse import OptionParser
 
 ## Assumes a barcode sorted file with three columns
 ## 1: barcode

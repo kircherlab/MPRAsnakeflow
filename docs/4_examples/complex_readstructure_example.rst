@@ -42,7 +42,7 @@ Please install conda, the MPRAsnakeflow environment and clone the actual MPRAsna
 Design file
 -----------
 
-We need the design file and have to modify it by trimming not sequenced adapters as well as creating the reverse complement (see above). 
+We need the design file and have to modify it by trimming not sequenced adapters as well as creating the reverse complement (see above).
 
 .. code-block:: bash
 
@@ -66,7 +66,7 @@ There are four sets of association sequencing for this data, which contain a bar
     cd data/association
     prefetch --max-size 50GB SRR14567165
     fastq-dump --gzip --split-files SRR14567165
-        
+
     cd ../../
 
 .. note:: Please be sure that all files are downloaded completely without errors! Please check the md5sum of files (see the ENCODE portal).
@@ -95,7 +95,7 @@ Reads count data
 
 We have three replicates of DNA and RNA counts each. These data must be downloaded.
 
-replicate | plasmid | cDNA 
+replicate | plasmid | cDNA
 1   | SRR14567158   | SRR14567161
 2   | SRR14567159   | SRR14567162
 3   | SRR14567160   | SRR14567163
@@ -209,7 +209,7 @@ Run snakemake
 
 Now we are ready to run MPRAsnakeflow. We will do it on one node with 50GB memory and 30 cores.
 
-We will run the pipeline directly in the actual folder. The MPRAsnakeflow workflow can be in a different directory. Let's assume :code:`/home/user/MPRAsnakeflow`. 
+We will run the pipeline directly in the actual folder. The MPRAsnakeflow workflow can be in a different directory. Let's assume :code:`/home/user/MPRAsnakeflow`.
 
 First we do a dry run using snakemake :code:`-n` option. The MPRAsnakeflow command is:
 

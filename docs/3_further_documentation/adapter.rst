@@ -14,7 +14,7 @@ Otherwise, you have to trim your reads to run the workflow. Since MPRAsnakeflow 
 .. note::
 
     Adapter trimming can only be used when all reads of a certain type (FWD, REV, UMI, BC) have the same adapters. For example, when you sequenced FWD and REV twice, once each with 150bp and once with 151bp, you might need to remove adapters of different lengths between the two runs. This is currently not supported but can be done manually before running MPRAsnakeflow. See :ref:`Complex example` for an example where this is exactly the case within the assignment workflow.
-    
+
     Also it is not possible to trim adapter different DNA and RNA counts. for FWD (or REV) count reads they have to be performed in the same way.
 
 We use the adapter trimming option in two examples: :ref:`Complex example` and :ref:`Plasmid example` if you want to see real examples.

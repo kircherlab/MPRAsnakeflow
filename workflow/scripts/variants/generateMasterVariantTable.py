@@ -1,8 +1,8 @@
 # Author: Max Schubach 2022
 
-import pandas as pd
-import numpy as np
 import click
+import numpy as np
+import pandas as pd
 
 
 # options
@@ -68,7 +68,7 @@ def cli(input_files, minRNACounts, minDNACounts, output_file):
 
     def normalize(df, total, count_type, ref_alt, pseudocount, scaling):
         return(((
-            df["%s_counts_%s" % (count_type, ref_alt)] + pseudocount * df['n_bc_%s' % ref_alt]
+            df["{}_counts_{}".format(count_type, ref_alt)] + pseudocount * df['n_bc_%s' % ref_alt]
         )/df['n_bc_%s' % ref_alt])/total*scaling)
 
     for ref_alt in ["REF", "ALT"]:
@@ -76,7 +76,7 @@ def cli(input_files, minRNACounts, minDNACounts, output_file):
             total = total_rna if count_type == 'rna' else total_dna
             pseudocount = pseudocountRNA if count_type == 'rna' else pseudocountDNA
 
-            df['%s_normalized_%s' % (count_type, ref_alt)] = normalize(
+            df['{}_normalized_{}'.format(count_type, ref_alt)] = normalize(
                 df, total, count_type, ref_alt, pseudocount, scaling)
 
         df['ratio_%s' % ref_alt] = df['rna_normalized_%s' % ref_alt] / df['dna_normalized_%s' % ref_alt]

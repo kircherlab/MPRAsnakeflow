@@ -4,10 +4,12 @@
 ###
 
 
-import click
-import pickle
-import gzip
 import csv
+import gzip
+import pickle
+
+import click
+
 
 @click.command()
 @click.option("-i",

@@ -1,10 +1,11 @@
 # usecase: python filter_bc_from_bam.py --identity_threshold 0.98 --mismatches_threshold 3 --use_expected_alignment_length True --expected_alignment_length 265 --bamfile /data/gpfs-1/users/kisa11_c/work/coding/MPRA/IGVF_Y1_design/experiment/standard_results/results/assignment/standardAssignIGVFDesignNoTemp/bam/bwa_merged.bam --verbose True
-import pysam
-import pandas
 import sys
-import click
-from typing import Optional, List, Tuple
 from enum import Enum, auto
+from typing import List, Optional, Tuple
+
+import click
+import pandas
+import pysam
 
 
 class Mode(Enum):
@@ -95,7 +96,7 @@ def main(
     output_path: str,
 ):
     # helpful functions
-    def aln_length(cigarlist: List[Tuple[int, int]]) -> int:
+    def aln_length(cigarlist: list[tuple[int, int]]) -> int:
         tlength = 0
         for operation, length in cigarlist:
             if operation == 0 or operation == 2 or operation == 3 or operation >= 6:

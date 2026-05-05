@@ -7,10 +7,11 @@ Also checks for duplicated headers in the design file.
 :Date: *19.07.2024
 """
 
-import pyfastx
+import re
+
 import click
 import numpy as np
-import re
+import pyfastx
 
 
 # options
@@ -158,8 +159,8 @@ def cli(input_file, start, length, fast_search, sequence_check, attach_sequence,
                 antisense_collitions.append(antisense_collition)
 
         # unique names
-        forward_collitions = [list(i) for i in set(tuple(i) for i in forward_collitions)]
-        antisense_collitions = [list(i) for i in set(tuple(i) for i in antisense_collitions)]
+        forward_collitions = [list(i) for i in {tuple(i) for i in forward_collitions}]
+        antisense_collitions = [list(i) for i in {tuple(i) for i in antisense_collitions}]
 
         if (len(forward_collitions) > 0) or (len(antisense_collitions) > 0):
             click.echo(

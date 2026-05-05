@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: ASCII -*-
 
 """
 Extract the index sequence from the middle and end of an Illumina run. Separates reads for Paired End runs.
@@ -20,15 +19,16 @@ Python3 Updated version
 
 """
 
-import sys
 import os
+import sys
 
 table = str.maketrans('.', 'N')
 
-import pysam
 from collections import defaultdict
+from optparse import OptionGroup, OptionParser
+
+import pysam
 from library_python3 import read_fastq
-from optparse import OptionParser, OptionGroup
 
 ireadlength1 = None
 ireadlength2 = None
