@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.4](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.6.3...v0.6.4) (2026-05-06)
+
+
+### Bug Fixes
+
+* **experiment:** :bug: Fix error in check if trimming is needed ([625c6ea](https://github.com/kircherlab/MPRAsnakeflow/commit/625c6ea741cc8526b03c5f02849fc5fb83b54da1))
+* **experiment:** :bug: Fix error in check if trimming is needed ([ffc3724](https://github.com/kircherlab/MPRAsnakeflow/commit/ffc3724a5ea9d323f092fa0404fbce62ab1d5cf0))
+
 ## [0.6.3](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.6.2...v0.6.3) (2026-05-05)
 
 
