@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.5](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.6.4...v0.6.5) (2026-05-06)
+
+
+### Bug Fixes
+
+* **experiment:** :bug: Fix input of rul experiment_preprocessing_trim_reads ([#267](https://github.com/kircherlab/MPRAsnakeflow/issues/267)) ([47c796d](https://github.com/kircherlab/MPRAsnakeflow/commit/47c796d0c53b26ff4d11d1757bd22b330e5b5567))
+
 ## [0.6.4](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.6.3...v0.6.4) (2026-05-06)
 
 
