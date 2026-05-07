@@ -200,7 +200,9 @@ def getReplicatesOfCondition(project: str, condition: str) -> list[str]:
     exp = exp[exp.Condition == condition]
     replicates: list[str] = list(exp.Replicate.astype(str))
     if not replicates:
-        raise ValueError(f"No replicates found for project '{project}' and condition '{condition}'. Check if the experiment file is correct and contains the expected columns.")
+        raise ValueError(
+            f"No replicates found for project '{project}' and condition '{condition}'. Check if the experiment file is correct and contains the expected columns."
+        )
     return replicates
 
 
