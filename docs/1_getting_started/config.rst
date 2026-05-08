@@ -100,7 +100,7 @@ For each assignment you want to process, you must give it a name like :code:`exa
     :frac_mismatches_allowed:
         (Optional) Fraction of mismatches allowed in the overlap. Default is :code:`0.1`.
     :min_dovetailed_overlap:
-        (Optional) Minimum dovetailed overlap. Default is :code:`10`.
+        (Optional) Minimum dovetailed overlap. Default is :code:`50`.
 
 :fastq-join:
     (Optional) Options for fastq-join. Fastq-join is used to merge FWD and REV reads. The following options are possible (we recommend using the default values):
@@ -162,6 +162,25 @@ The experiment workflow is configured in the :code:`experiments` section. Each e
     Path to the experiment file. The full or relative path to the file should be used. The experiment file is a comma separated file and is decribed in the `Experiment file`_ section.
 :demultiplex:
     (Optional) If set to :code:`true` the reads are demultiplexed. This means that the reads are split into different files for each barcode. This is usefull for further analysis. Default is :code:`false`.
+:merge_tool:
+    (Optional) Select the read-merging/counting backend for paired-read experiments.
+
+    :custom:
+        Keep the legacy BAM-based path (FastQ2doubleIndexBAM + MergeTrimReadsBAM).
+    :NGmerge:
+        Use NGmerge-based merging for paired reads. This is supported for both no-UMI and UMI experiments.
+
+        - no-UMI: FWD/REV are merged via NGmerge and barcode counts are extracted from merged reads.
+        - UMI: UMI reads are first attached to read headers, then FWD/REV are merged via NGmerge; BCxUMI counts are extracted from merged read headers and sequences.
+
+    Default is :code:`NGmerge`.
+:NGmerge:
+    (Optional) NGmerge options for experiment counts when :code:`merge_tool: NGmerge`.
+
+    :min_overlap:
+        (Optional) Minimum overlap of the reads. NGmerge option :code:`-m`. Default is :code:`11`.
+    :frac_mismatches_allowed:
+        (Optional) Fraction of mismatches allowed in the overlap. NGmerge option :code:`-p`. Default is :code:`0.1`.
 :label_file:
     (Optional) Path to the label file. The full or relative path to the file should be used. The label file is a tab separated file and contais the oligo name and the label of it. The oligo name should be the same as in the design file. The label is used to group the oligos in the final output, e.g. for plotting.
 

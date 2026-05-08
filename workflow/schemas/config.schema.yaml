@@ -557,6 +557,25 @@ properties:
           demultiplex:
             type: boolean
             default: false
+          merge_tool:
+            type: string
+            enum:
+              - custom
+              - NGmerge
+            default: NGmerge
+          NGmerge:
+            type: object
+            properties:
+              min_overlap:
+                type: integer
+                default: 11
+              frac_mismatches_allowed:
+                type: number
+                default: 0.1
+            required:
+              - min_overlap
+              - frac_mismatches_allowed
+            default: {}
           label_file:
             type: string
           assignments:

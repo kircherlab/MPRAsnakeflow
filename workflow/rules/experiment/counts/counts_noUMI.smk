@@ -48,6 +48,17 @@ Create a BAM file from FASTQ input, merge FWD and REV read and save UMI in XI fl
         """
 
 
+use rule experiment_counts_merge_NGmerge_template as experiment_counts_noUMI_merge_NGmerge with:
+    input:
+        FWD=lambda wc: getFWD(wc.project, wc.condition, wc.replicate, wc.type, check_splitting=True, check_trimming=True),
+        REV=lambda wc: getREV(wc.project, wc.condition, wc.replicate, wc.type, check_splitting=True, check_trimming=True),
+    output:
+        un=temp("results/experiments/{project}/counts/noUMI.{condition}.{replicate}.{type}.{split}.un.NGmerge.fastq.gz"),
+        join="results/experiments/{project}/counts/noUMI.{condition}.{replicate}.{type}.{split}.join.NGmerge.fastq.gz",
+    log:
+        temp("results/logs/experiment/counts/noUMI/merge_NGmerge.{project}.{condition}.{replicate}.{type}.{split}.log"),
+
+
 ### START COUNTING ####
 
 
@@ -56,9 +67,16 @@ rule experiment_counts_noUMI_raw_counts:
 Counting BCsxUMIs from the BAM files.
 """
     input:
-        expand(
-            "results/experiments/{{project}}/counts/noUMI.{{condition}}.{{replicate}}.{{type}}.{split}.bam",
-            split=range(getMaxExperimentSplitNumber()),
+        lambda wc: (
+            expand(
+                "results/experiments/{{project}}/counts/noUMI.{{condition}}.{{replicate}}.{{type}}.{split}.bam",
+                split=range(getMaxExperimentSplitNumber()),
+            )
+            if config["experiments"][wc.project].get("merge_tool", "NGmerge") == "custom"
+            else expand(
+                "results/experiments/{{project}}/counts/noUMI.{{condition}}.{{replicate}}.{{type}}.{split}.join.NGmerge.fastq.gz",
+                split=range(getMaxExperimentSplitNumber()),
+            )
         ),
     output:
         "results/experiments/{project}/counts/noUMI.{condition}.{replicate}.{type}.raw_counts.tsv.gz",
@@ -68,10 +86,19 @@ Counting BCsxUMIs from the BAM files.
         getCondaEnv("bwa_samtools_picard_htslib.yaml")
     params:
         datasetID="{condition}.{replicate}.{type}",
+        merge_tool=lambda wc: config["experiments"][wc.project].get("merge_tool", "NGmerge"),
     shell:
         """
-        samtools merge -c -o - {input} | samtools view -F 1 -r {params.datasetID} | \
-        awk -v 'OFS=\\t' '{{ print $10 }}' | \
-        sort | \
-        gzip -c > {output} 2> {log}
+        if [[ "{params.merge_tool}" == "custom" ]]; then
+            samtools merge -c -o - {input} | samtools view -F 1 -r {params.datasetID} | \
+            awk -v 'OFS=\\t' '{{ print $10 }}' | \
+            sort | \
+            gzip -c > {output} 2> {log}
+
+        else
+            zcat {input} | \
+            awk 'NR%4==2 {{print $1}}' | \
+            sort | \
+            gzip -c > {output} 2> {log}
+        fi
         """
