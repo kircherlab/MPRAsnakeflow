@@ -74,9 +74,12 @@ Attach UMI read to FWD/REV headers before NGmerge.
         temp("results/logs/experiment/counts/umi/attach_idx.{project}.{condition}.{replicate}.{type}.{read}.{split}.log"),
     conda:
         getCondaEnv("NGmerge.yaml")
+    params:
+        read_args=lambda wc, input: " ".join(f"-r {path}" for path in input.read),
+        umi_args=lambda wc, input: " ".join(f"-b {path}" for path in input.umi_fastq),
     shell:
         """
-        python {input.script} -r {input.read} -b {input.umi_fastq} | bgzip -c > {output.read} 2> {log}
+        python {input.script} {params.read_args} {params.umi_args} | bgzip -c > {output.read} 2> {log}
         """
 
 
