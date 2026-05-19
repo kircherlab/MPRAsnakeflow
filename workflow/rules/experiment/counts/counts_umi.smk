@@ -142,7 +142,7 @@ Counting BCsxUMIs from the BAM files.
             awk -v OFS='\\t' -v umi_len={params.umi_length} '
                 NR%4==1 {{
                     umi="";
-                    if (match($0, /XI:Z:([^,[:space:]]+)/, m)) umi=substr(m[1], 1, umi_len)
+                    if (match($0, /XI:Z:[^,[:space:]]+/)) umi=substr($0, RSTART + 5, umi_len)
                 }}
                 NR%4==2 {{if (umi != "") print $1, umi}}
             ' | \
