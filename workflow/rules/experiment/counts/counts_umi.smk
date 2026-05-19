@@ -131,15 +131,15 @@ Counting BCsxUMIs from the BAM files.
         """
         if [[ "{params.merge_tool}" == "custom" ]]; then
             samtools merge -c -o - {input} | samtools view -F 1 -r {params.datasetID} | \
-            awk -v 'OFS=\\t' '{{ for (i=12; i<=NF; i++) {{
+            awk -v OFS='\\t' '{{ for (i=12; i<=NF; i++) {{
               if ($i ~ /^XJ:Z:/) print $10,substr($i,6,{params.umi_length})
             }}}}' | \
             sort | uniq -c | \
-            awk -v 'OFS=\\t' '{{ print $2,$3,$1 }}' | \
+            awk -v OFS='\\t' '{{ print $2,$3,$1 }}' | \
             gzip -c > {output} 2> {log}
         else
             zcat {input} | \
-            awk -v 'OFS=\\t' -v umi_len={params.umi_length} '
+            awk -v OFS='\\t' -v umi_len={params.umi_length} '
                 NR%4==1 {{
                     umi="";
                     if (match($0, /XI:Z:([^,[:space:]]+)/, m)) umi=substr(m[1], 1, umi_len)
@@ -147,7 +147,7 @@ Counting BCsxUMIs from the BAM files.
                 NR%4==2 {{if (umi != "") print $1, umi}}
             ' | \
             sort | uniq -c | \
-            awk -v 'OFS=\\t' '{{ print $2,$3,$1 }}' | \
+            awk -v OFS='\\t' '{{ print $2,$3,$1 }}' | \
             gzip -c > {output} 2> {log}
         fi
         """
