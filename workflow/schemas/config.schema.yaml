@@ -89,6 +89,9 @@ properties:
                           minItems: 1
                           maxItems: 2
                           default: [80]
+                        cigar_filter_regex:
+                          type: string
+                          description: Optional regex for full CIGAR matching (e.g. 200M or 200M|210M)
                       required:
                         - sequence_length
                         - alignment_start
@@ -177,6 +180,9 @@ properties:
                         alignment_start:
                           type: integer
                           minimum: 1
+                        cigar_filter_regex:
+                          type: string
+                          description: Optional regex for full CIGAR matching (e.g. 200M or 200M|210M)
                       required:
                         - min_mapping_quality
                         - sequence_length

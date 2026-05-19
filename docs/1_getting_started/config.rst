@@ -59,6 +59,8 @@ For each assignment you want to process, you must give it a name like :code:`exa
             Defines the :code:`min` and :code:`max` of the start of the alignment in an oligo. When using adapters, you must set the length of the adapter. Otherwise, 1 will be the choice for most cases. We also recommend varying this value slightly because the start might not be exact after the adapter (e.g., ±1).
         :min_mapping_quality (bwa, bwa-additional-filtering, bbmap):
             (Optional) Defines the minimum mapping quality (MAPQ) of the alignment to an oligo. MAPQs differ between bbmap and bwa. For bwa: When using oligos with only 1bp difference, it is recommended to set it to 1 (bwa default is :code:`1`). BBMap is better here, and we can use, for example, 30 or 35. For regions with larger edit distances, 30 or 40 might be a good choice. Default is :code:`30` (bbmap).
+        :cigar_filter_regex (bwa, bbmap):
+            (Optional) Regular expression to filter alignments by CIGAR string before barcode assignment. The full CIGAR string must match. Example values are :code:`200M` or :code:`200M|210M`. If not set, no CIGAR-based filtering is applied.
         :M: (bwa, bwa-additional-filtering):
             (Optional) BWA option :code:`-M`: Mark shorter split hits as secondary. Default is :code:`true`.
         :L: (bwa, bwa-additional-filtering):
