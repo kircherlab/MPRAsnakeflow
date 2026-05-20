@@ -193,6 +193,7 @@ Indices and Tables
     4_examples/complex_readstructure_example
     4_examples/GSE306816_example
     4_examples/GSE293036_example
+    4_examples/GSE316891_example
 
 .. toctree::
     :caption: Tips & Tricks
