@@ -64,9 +64,6 @@ properties:
                               type: integer
                             max:
                               type: integer
-                          required:
-                            - min
-                            - max
                         alignment_start:
                           type: object
                           properties:
@@ -74,9 +71,6 @@ properties:
                               type: integer
                             max:
                               type: integer
-                          required:
-                            - min
-                            - max
                         M:
                           type: boolean
                           description: mark shorter split hits as secondary
@@ -93,8 +87,6 @@ properties:
                           type: string
                           description: Optional regex for full CIGAR matching (e.g. 200M or 200M|210M)
                       required:
-                        - sequence_length
-                        - alignment_start
                         - min_mapping_quality
                   required:
                     - configs
@@ -108,25 +100,8 @@ properties:
                       type: object
                       properties:
                         sequence_length:
-                          type: object
-                          properties:
-                            min:
-                              type: integer
-                            max:
-                              type: integer
-                          required:
-                            - min
-                            - max
-                        alignment_start:
-                          type: object
-                          properties:
-                            min:
-                              type: integer
-                            max:
-                              type: integer
-                          required:
-                            - min
-                            - max
+                          type: integer
+                          minimum: 1
                         min_mapping_quality:
                           type: integer
                           minimum: 0
@@ -157,7 +132,6 @@ properties:
                           default: false
                       required:
                         - sequence_length
-                        - alignment_start
                         - min_mapping_quality
                   required:
                     - configs
@@ -174,19 +148,11 @@ properties:
                           type: integer
                           minimum: 0
                           default: 30
-                        sequence_length:
-                          type: integer
-                          minimum: 1
-                        alignment_start:
-                          type: integer
-                          minimum: 1
                         cigar_filter_regex:
                           type: string
                           description: Optional regex for full CIGAR matching (e.g. 200M or 200M|210M)
                       required:
                         - min_mapping_quality
-                        - sequence_length
-                        - alignment_start
                   required:
                     - configs
               - if:
@@ -218,12 +184,6 @@ properties:
                     configs:
                       type: object
                       properties:
-                        alignment_start:
-                          type: integer
-                          minimum: 1
-                        sequence_length:
-                          type: integer
-                          minimum: 1
                         preset:
                           type: string
                           enum:
@@ -239,8 +199,6 @@ properties:
                           maximum: 1
                           default: 0.9
                       required:
-                        - alignment_start
-                        - sequence_length
                         - preset
                         - min_concordance
                   required:
@@ -394,6 +352,12 @@ properties:
               sequence_collisions:
                 type: boolean
                 default: true
+              sequence_start:
+                type: integer
+                minimum: 1
+              sequence_length:
+                type: integer
+                minimum: 1
             default: {}
             required:
               - fast

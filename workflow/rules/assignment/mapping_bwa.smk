@@ -70,18 +70,18 @@ Get the barcodes.
     conda:
         getCondaEnv("bwa_samtools_picard_htslib.yaml")
     params:
-        alignment_start_min=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]["alignment_start"][
-            "min"
-        ],
-        alignment_start_max=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]["alignment_start"][
-            "max"
-        ],
-        sequence_length_min=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]["sequence_length"][
-            "min"
-        ],
-        sequence_length_max=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]["sequence_length"][
-            "max"
-        ],
+        alignment_start_min=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]
+        .get("alignment_start", {})
+        .get("min", ""),
+        alignment_start_max=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]
+        .get("alignment_start", {})
+        .get("max", ""),
+        sequence_length_min=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]
+        .get("sequence_length", {})
+        .get("min", ""),
+        sequence_length_max=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]
+        .get("sequence_length", {})
+        .get("max", ""),
         mapping_quality_min=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]["min_mapping_quality"],
         cigar_filter_regex=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"].get(
             "cigar_filter_regex", ""
@@ -90,12 +90,19 @@ Get the barcodes.
         """
         export LC_ALL=C # speed up sorting
         samtools view -F 1792 {input} | \
-        awk -v "OFS=\\t" -v "CIGAR_REGEX={params.cigar_filter_regex}" '{{
+        awk -v "OFS=\\t" \
+            -v "CIGAR_REGEX={params.cigar_filter_regex}" \
+            -v "ALIGNMENT_START_MIN={params.alignment_start_min}" \
+            -v "ALIGNMENT_START_MAX={params.alignment_start_max}" \
+            -v "SEQUENCE_LENGTH_MIN={params.sequence_length_min}" \
+            -v "SEQUENCE_LENGTH_MAX={params.sequence_length_max}" '{{
             split($(NF),a,":");
             split(a[3],a,",");
             if (a[1] !~ /N/) {{
                 pass_cigar = (CIGAR_REGEX == "" || $6 ~ ("^(" CIGAR_REGEX ")$"));
-                if (pass_cigar && ($5 >= {params.mapping_quality_min}) && ($4 >= {params.alignment_start_min}) && ($4 <= {params.alignment_start_max}) && (length($10) >= {params.sequence_length_min}) && (length($10) <= {params.sequence_length_max})) {{
+                pass_alignment_start = ((ALIGNMENT_START_MIN == "" || $4 >= ALIGNMENT_START_MIN) && (ALIGNMENT_START_MAX == "" || $4 <= ALIGNMENT_START_MAX));
+                pass_sequence_length = ((SEQUENCE_LENGTH_MIN == "" || length($10) >= SEQUENCE_LENGTH_MIN) && (SEQUENCE_LENGTH_MAX == "" || length($10) <= SEQUENCE_LENGTH_MAX));
+                if (pass_cigar && ($5 >= {params.mapping_quality_min}) && pass_alignment_start && pass_sequence_length) {{
                     print a[1],$3,$4";"$6";"$12";"$13";"$5
                 }} else {{
                     print a[1],"other","NA"
@@ -125,7 +132,7 @@ Get the barcodes with a python script to rescue alignments with 0 mapping qualit
         ],
         expected_alignment_length=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"][
             "sequence_length"
-        ]["min"],
+        ],
         verbose=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]["verbose"],
         min_mapping_quality=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]["min_mapping_quality"],
     shell:

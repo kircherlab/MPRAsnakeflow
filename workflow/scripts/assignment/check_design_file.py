@@ -26,16 +26,18 @@ import pyfastx
 @click.option(
     "--start",
     "start",
-    required=True,
+    required=False,
+    default=None,
     type=int,
     help="Start of the sequence to look at (1 based).",
 )
 @click.option(
     "--length",
     "length",
-    required=True,
+    required=False,
+    default=None,
     type=int,
-    help="length of the sequence to lok at,",
+    help="Length of the sequence to look at.",
 )
 @click.option(
     "--fast-dict/--slow-string-search",
@@ -62,9 +64,12 @@ import pyfastx
     "output",
     required=True,
     type=click.Path(writable=True),
-    help="Output reference fasqt file with attached sequences (if set). Otherwise just a copy.",
+    help="Output reference fasta file with attached sequences (if set). Otherwise just a copy.",
 )
 def cli(input_file, start, length, fast_search, sequence_check, attach_sequence, output):
+
+    if sequence_check != "skip" and (start is None or length is None):
+        raise click.UsageError("--start and --length are required unless --sequence-check is set to skip.")
 
     seq_dict = dict()
 
