@@ -7,7 +7,7 @@
 Basic assignment workflow
 ============================
 
-This example runs the assignment workflow on 5'/5' WT MRPA data in the HEPG2 cell line from `Klein J., Agarwal, V., Keith, A., et al. 2019 <https://www.biorxiv.org/content/10.1101/576405v1.full.pdf>`_.
+This example runs the assignment workflow on 5'/5' WT MRPA data in the HEPG2 cell line from `Klein J., Agarwal, V., Keith, A., et al. 2019 <http://dx.doi.org/10.1038/s41592-020-0965-y>`_.
 
 Prerequisites
 ======================

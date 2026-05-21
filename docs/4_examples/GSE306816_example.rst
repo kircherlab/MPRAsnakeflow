@@ -3,9 +3,9 @@
 .. role:: bash(code)
     :language: bash
 
-===============
-GSE306816 dpSTR
-===============
+===================================
+GSE306816 (Zhang et al. dpSTR MPRA)
+===================================
 
 This example runs the assignment and experiment workflows on data from the preprint by `Zhang et al. Systematic Evaluation of the Impact of Promoter Proximal Short Tandem Repeats on Expression. bioRxiv (2025). <https://doi.org/10.1101/2025.09.14.676153>`_. The data were published in `GEO:GSE306816 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE306816>`_.
 
