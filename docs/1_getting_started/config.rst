@@ -166,14 +166,14 @@ The experiment workflow is configured in the :code:`experiments` section. Each e
     (Optional) Select the read-merging/counting backend for paired-read experiments.
 
     :custom:
-        Keep the legacy BAM-based path (FastQ2doubleIndexBAM + MergeTrimReadsBAM).
+        Keep the legacy BAM-based path (FastQ2doubleIndexBAM + MergeTrimReadsBAM). Slow but better results usually.
     :NGmerge:
-        Use NGmerge-based merging for paired reads. This is supported for both no-UMI and UMI experiments.
+        Use NGmerge-based merging for paired reads. This is supported for both no-UMI and UMI experiments. Usually faster than custom but correlation across replicate smight be lower.
 
         - no-UMI: FWD/REV are merged via NGmerge and barcode counts are extracted from merged reads.
         - UMI: UMI reads are first attached to read headers, then FWD/REV are merged via NGmerge; BCxUMI counts are extracted from merged read headers and sequences.
 
-    Default is :code:`NGmerge`.
+    Default is :code:`custom`.
 :NGmerge:
     (Optional) NGmerge options for experiment counts when :code:`merge_tool: NGmerge`.
 

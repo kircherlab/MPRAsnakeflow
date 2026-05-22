@@ -562,7 +562,7 @@ properties:
             enum:
               - custom
               - NGmerge
-            default: NGmerge
+            default: custom
           NGmerge:
             type: object
             properties:

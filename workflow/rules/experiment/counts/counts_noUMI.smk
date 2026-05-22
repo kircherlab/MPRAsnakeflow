@@ -72,7 +72,7 @@ Counting BCsxUMIs from the BAM files.
                 "results/experiments/{{project}}/counts/noUMI.{{condition}}.{{replicate}}.{{type}}.{split}.bam",
                 split=range(getMaxExperimentSplitNumber()),
             )
-            if config["experiments"][wc.project].get("merge_tool", "NGmerge") == "custom"
+            if config["experiments"][wc.project].get("merge_tool", "custom") == "custom"
             else expand(
                 "results/experiments/{{project}}/counts/noUMI.{{condition}}.{{replicate}}.{{type}}.{split}.join.NGmerge.fastq.gz",
                 split=range(getMaxExperimentSplitNumber()),
@@ -86,18 +86,17 @@ Counting BCsxUMIs from the BAM files.
         getCondaEnv("bwa_samtools_picard_htslib.yaml")
     params:
         datasetID="{condition}.{replicate}.{type}",
-        merge_tool=lambda wc: config["experiments"][wc.project].get("merge_tool", "NGmerge"),
+        merge_tool=lambda wc: config["experiments"][wc.project].get("merge_tool", "custom"),
     shell:
         """
-        if [[ "{params.merge_tool}" == "custom" ]]; then
-            samtools merge -c -o - {input} | samtools view -F 1 -r {params.datasetID} | \
-            awk -v 'OFS=\\t' '{{ print $10 }}' | \
-            sort | \
-            gzip -c > {output} 2> {log}
-
-        else
+        if [[ "{params.merge_tool}" == "NGmerge" ]]; then
             zcat {input} | \
             awk 'NR%4==2 {{print $1}}' | \
+            sort | \
+            gzip -c > {output} 2> {log}
+        else
+            samtools merge -c -o - {input} | samtools view -F 1 -r {params.datasetID} | \
+            awk -v 'OFS=\\t' '{{ print $10 }}' | \
             sort | \
             gzip -c > {output} 2> {log}
         fi
