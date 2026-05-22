@@ -17,9 +17,9 @@ Create mapping reference for BWA from design file.
         getCondaEnv("bwa_samtools_picard_htslib.yaml")
     shell:
         """
-        bwa index -a bwtsw {input.ref} &> {log};
-        samtools faidx {input.ref} &>> {log};
-        picard CreateSequenceDictionary REFERENCE={input.ref} OUTPUT={output.d} &>> {log}
+        bwa index -a bwtsw {input.ref} &>{log}
+        samtools faidx {input.ref} &>>{log}
+        picard CreateSequenceDictionary REFERENCE={input.ref} OUTPUT={output.d} &>>{log}
         """
 
 
@@ -53,7 +53,7 @@ Map the reads to the reference and sort unsing bwa mem
         """
         bwa mem -t {threads} -L {params.L} {params.M} -C {input.reference} <(
             gzip -dc {input.reads}
-        )  | samtools sort -l 0 -@ {threads} > {output} 2> {log}
+        ) | samtools sort -l 0 -@ {threads} >{output} 2>{log}
         """
 
 
@@ -89,26 +89,26 @@ Get the barcodes.
     shell:
         """
         export LC_ALL=C # speed up sorting
-        samtools view -F 1792 {input} | \
-        awk -v "OFS=\\t" \
-            -v "CIGAR_REGEX={params.cigar_filter_regex}" \
-            -v "ALIGNMENT_START_MIN={params.alignment_start_min}" \
-            -v "ALIGNMENT_START_MAX={params.alignment_start_max}" \
-            -v "SEQUENCE_LENGTH_MIN={params.sequence_length_min}" \
-            -v "SEQUENCE_LENGTH_MAX={params.sequence_length_max}" '{{
-            split($(NF),a,":");
-            split(a[3],a,",");
-            if (a[1] !~ /N/) {{
-                pass_cigar = (CIGAR_REGEX == "" || $6 ~ ("^(" CIGAR_REGEX ")$"));
-                pass_alignment_start = ((ALIGNMENT_START_MIN == "" || $4 >= ALIGNMENT_START_MIN) && (ALIGNMENT_START_MAX == "" || $4 <= ALIGNMENT_START_MAX));
-                pass_sequence_length = ((SEQUENCE_LENGTH_MIN == "" || length($10) >= SEQUENCE_LENGTH_MIN) && (SEQUENCE_LENGTH_MAX == "" || length($10) <= SEQUENCE_LENGTH_MAX));
-                if (pass_cigar && ($5 >= {params.mapping_quality_min}) && pass_alignment_start && pass_sequence_length) {{
-                    print a[1],$3,$4";"$6";"$12";"$13";"$5
-                }} else {{
-                    print a[1],"other","NA"
-                }}
-            }}
-        }}' | sort -k1,1 -k2,2 -k3,3 -S 7G > {output} 2> {log}
+        samtools view -F 1792 {input} \
+            | awk -v "OFS=\\t" \
+                -v "CIGAR_REGEX={params.cigar_filter_regex}" \
+                -v "ALIGNMENT_START_MIN={params.alignment_start_min}" \
+                -v "ALIGNMENT_START_MAX={params.alignment_start_max}" \
+                -v "SEQUENCE_LENGTH_MIN={params.sequence_length_min}" \
+                -v "SEQUENCE_LENGTH_MAX={params.sequence_length_max}" '{{
+                                                    split($(NF),a,":");
+                                                    split(a[3],a,",");
+                                                    if (a[1] !~ /N/) {{
+                                                        pass_cigar = (CIGAR_REGEX == "" || $6 ~ ("^(" CIGAR_REGEX ")$"));
+                                                        pass_alignment_start = ((ALIGNMENT_START_MIN == "" || $4 >= ALIGNMENT_START_MIN) && (ALIGNMENT_START_MAX == "" || $4 <= ALIGNMENT_START_MAX));
+                                                        pass_sequence_length = ((SEQUENCE_LENGTH_MIN == "" || length($10) >= SEQUENCE_LENGTH_MIN) && (SEQUENCE_LENGTH_MAX == "" || length($10) <= SEQUENCE_LENGTH_MAX));
+                                                        if (pass_cigar && ($5 >= {params.mapping_quality_min}) && pass_alignment_start && pass_sequence_length) {{
+                                                            print a[1],$3,$4";"$6";"$12";"$13";"$5
+                                                        }} else {{
+                                                            print a[1],"other","NA"
+                                                        }}
+                                                    }}
+                                                }}' | sort -k1,1 -k2,2 -k3,3 -S 7G >{output} 2>{log}
         """
 
 
@@ -138,9 +138,9 @@ Get the barcodes with a python script to rescue alignments with 0 mapping qualit
     shell:
         """
         python {input.script} \
-        --identity_threshold {params.identity_threshold} --mismatches_threshold {params.mismatches_threshold} \
-        --expected_alignment_length {params.expected_alignment_length} \
-        --min_mapping_quality {params.min_mapping_quality} --bamfile {input.bam} --verbose {params.verbose} --output {output} 2> {log} && sort -k1,1 -k2,2 -k3,3 -o {output} {output}
+            --identity_threshold {params.identity_threshold} --mismatches_threshold {params.mismatches_threshold} \
+            --expected_alignment_length {params.expected_alignment_length} \
+            --min_mapping_quality {params.min_mapping_quality} --bamfile {input.bam} --verbose {params.verbose} --output {output} 2>{log} && sort -k1,1 -k2,2 -k3,3 -o {output} {output}
         """
 
 
@@ -163,7 +163,7 @@ Collect mapped reads.
     threads: 1
     shell:
         """
-        samtools merge -@ {threads} {output} {input.bams} 2> {log}
+        samtools merge -@ {threads} {output} {input.bams} 2>{log}
         """
 
 
@@ -181,7 +181,7 @@ Index the BAM file
         getCondaEnv("bwa_samtools_picard_htslib.yaml")
     shell:
         """
-        samtools index {input} 2> {log}
+        samtools index {input} 2>{log}
         """
 
 
@@ -200,5 +200,5 @@ Run samtools flagstat
         getCondaEnv("bwa_samtools_picard_htslib.yaml")
     shell:
         """
-        samtools flagstat {input.bam} > {output} 2> {log}
+        samtools flagstat {input.bam} >{output} 2>{log}
         """

@@ -21,8 +21,8 @@ Create the demultiplexing index file for the experiment.
     shell:
         """
         python {input.script} \
-        --experiment {input.experiment_file} \
-        --output {output} &> {log}
+            --experiment {input.experiment_file} \
+            --output {output} &>{log}
         """
 
 
@@ -47,28 +47,28 @@ Demultiplexing the data and create demultiplexed bam files per condition.
         outdir=lambda w, output: os.path.split(output[0])[0],
     shell:
         """
-            set +o pipefail;
+        set +o pipefail
 
-            umi_length=`zcat {input.umi_fastq} | head -2 | tail -1 | wc -c`;
-            umi_length=$(expr $(($umi_length-1)));
+        umi_length=$(zcat {input.umi_fastq} | head -2 | tail -1 | wc -c)
+        umi_length=$(expr $(($umi_length - 1)))
 
-            idx_length=`zcat {input.index_fastq} | head -2 | tail -1 | wc -c`;
-            idx_length=$(expr $(($idx_length-1)));
+        idx_length=$(zcat {input.index_fastq} | head -2 | tail -1 | wc -c)
+        idx_length=$(expr $(($idx_length - 1)))
 
-            fwd_length=`zcat {input.fwd_fastq} | head -2 | tail -1 | wc -c`;
-            fwd_length=$(expr $(($fwd_length-1)));
+        fwd_length=$(zcat {input.fwd_fastq} | head -2 | tail -1 | wc -c)
+        fwd_length=$(expr $(($fwd_length - 1)))
 
-            rev_start=$(expr $(($fwd_length+$idx_length+1)));
+        rev_start=$(expr $(($fwd_length + $idx_length + 1)))
 
-            echo $rev_start
-            echo $idx_length
-            echo $umi_length
+        echo $rev_start
+        echo $idx_length
+        echo $umi_length
 
-            python {input.script} -s $rev_start -l $idx_length -m $umi_length -i {input.index_list} --outdir {params.outdir} --remove --summary --separate_files \
-            <(\
-        paste <( zcat {input.fwd_fastq} ) <( zcat {input.index_fastq} ) <( zcat {input.rev_fastq} ) <( zcat {input.umi_fastq} ) | \
-            awk '{{ count+=1; if ((count == 1) || (count == 3)) {{ print $1 }} else {{ print $1$2$3$4 }}; if (count == 4) {{ count=0 }} }}'\
-            ) &> {log}
+        python {input.script} -s $rev_start -l $idx_length -m $umi_length -i {input.index_list} --outdir {params.outdir} --remove --summary --separate_files \
+            <(
+                paste <(zcat {input.fwd_fastq}) <(zcat {input.index_fastq}) <(zcat {input.rev_fastq}) <(zcat {input.umi_fastq}) \
+                    | awk '{{ count+=1; if ((count == 1) || (count == 3)) {{ print $1 }} else {{ print $1$2$3$4 }}; if (count == 4) {{ count=0 }} }}'
+            ) &>{log}
         """
 
 
@@ -99,7 +99,7 @@ Merge and trim reads in demultiplexed bam files.
         bam="results/experiments/{project}/counts/demultiplex.{condition}.{replicate}.{type}.bam",
     shell:
         """
-        samtools view -h {params.bam} | \
-        python {input.script} -p --mergeoverlap -f ACCGGTCGCCACCATGGTGAGCAAGGGCGAGGA -s CTTAGCTTTCGCTTAGCGATGTGTTCACTTTGC \
-        > {output} 2> {log}
+        samtools view -h {params.bam} \
+            | python {input.script} -p --mergeoverlap -f ACCGGTCGCCACCATGGTGAGCAAGGGCGAGGA -s CTTAGCTTTCGCTTAGCGATGTGTTCACTTTGC \
+                >{output} 2>{log}
         """

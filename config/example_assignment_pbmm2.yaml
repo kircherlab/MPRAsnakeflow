@@ -1,18 +1,19 @@
 ---
-version: "0.6"
+version: "0.7"
 
 assignments:
   exampleLongRead:
     bc_length: 15
     long_read_input: resources/long_read/CEBPRE_10k.bam
     design_file: resources/long_read/CEBPRE_reference.fasta
+    design_check:
+      sequence_start: 1
+      sequence_length: 303
     alignment_tool:
       tool: pbmm2
       configs:
         preset: SUBREAD
         min_concordance: 0.9
-        alignment_start: 1
-        sequence_length: 303
     linker: GCAAAGTGAACACATCGCTAAGCGAAAGCTAAG # linker sequence in the read after we expect the BC
     configs:
       test:

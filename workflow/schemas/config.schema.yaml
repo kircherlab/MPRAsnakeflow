@@ -362,6 +362,17 @@ properties:
             required:
               - fast
               - sequence_collisions
+            allOf:
+              - if:
+                  properties:
+                    sequence_collisions:
+                      const: true
+                  required:
+                    - sequence_collisions
+                then:
+                  required:
+                    - sequence_start
+                    - sequence_length
           strand_sensitive:
             type: object
             default: {}

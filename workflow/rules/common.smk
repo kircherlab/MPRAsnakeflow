@@ -19,6 +19,64 @@ def getCondaEnv(name):
 
 
 ##### load config and sample sheets #####
+
+
+# modify config based on certain rules before evaluation
+def modify_config_before_eval(config):
+    def get_mapper_window_values(tool, mapper_cfg):
+        mapper_start = None
+        mapper_length = None
+
+        if tool in ["bwa", "bwa-additional-filtering"]:
+            alignment_start_cfg = mapper_cfg.get("alignment_start")
+            if isinstance(alignment_start_cfg, dict):
+                mapper_start = alignment_start_cfg.get("min")
+            elif isinstance(alignment_start_cfg, int):
+                mapper_start = alignment_start_cfg
+
+            sequence_length_cfg = mapper_cfg.get("sequence_length")
+            if isinstance(sequence_length_cfg, dict):
+                mapper_length = sequence_length_cfg.get("min")
+            elif isinstance(sequence_length_cfg, int):
+                mapper_length = sequence_length_cfg
+        else:
+            alignment_start_cfg = mapper_cfg.get("alignment_start")
+            sequence_length_cfg = mapper_cfg.get("sequence_length")
+            if isinstance(alignment_start_cfg, int):
+                mapper_start = alignment_start_cfg
+            if isinstance(sequence_length_cfg, int):
+                mapper_length = sequence_length_cfg
+
+        return mapper_start, mapper_length
+
+    if "assignments" in config:
+        for assignment, assignment_cfg in config["assignments"].items():
+
+            # Update design check sequence_lenth and seqreunce_start based on alignment tool configs
+            assignment_cfg.setdefault("design_check", {})
+
+            assignment_cfg.setdefault("alignment_tool", {})
+            assignment_cfg["alignment_tool"].setdefault("configs", {})
+
+            mapper_cfg = assignment_cfg["alignment_tool"]["configs"]
+
+            alignment_start_cfg = mapper_cfg.get("alignment_start")
+            if isinstance(alignment_start_cfg, dict):
+                assignment_cfg["design_check"].setdefault("sequence_start", alignment_start_cfg.get("min"))
+            elif isinstance(alignment_start_cfg, int):
+                assignment_cfg["design_check"]["sequence_start"] = alignment_start_cfg
+
+            sequence_length_cfg = mapper_cfg.get("sequence_length")
+            if isinstance(sequence_length_cfg, dict):
+                assignment_cfg["design_check"].setdefault("sequence_length", sequence_length_cfg.get("min"))
+            elif isinstance(sequence_length_cfg, int):
+                assignment_cfg["design_check"]["sequence_length"] = sequence_length_cfg
+
+    return config
+
+
+config = modify_config_before_eval(config)
+
 from snakemake.utils import validate
 import pandas as pd
 
@@ -69,63 +127,10 @@ if not config["skip_version_check"]:
     check_version(version.parse(config["version"]))
 
 
-# modify config based on certain rules
-
-
-def modify_config(config):
-    def get_mapper_window_values(tool, mapper_cfg):
-        mapper_start = None
-        mapper_length = None
-
-        if tool in ["bwa", "bwa-additional-filtering"]:
-            alignment_start_cfg = mapper_cfg.get("alignment_start")
-            if isinstance(alignment_start_cfg, dict):
-                mapper_start = alignment_start_cfg.get("min")
-            elif isinstance(alignment_start_cfg, int):
-                mapper_start = alignment_start_cfg
-
-            sequence_length_cfg = mapper_cfg.get("sequence_length")
-            if isinstance(sequence_length_cfg, dict):
-                mapper_length = sequence_length_cfg.get("min")
-            elif isinstance(sequence_length_cfg, int):
-                mapper_length = sequence_length_cfg
-        else:
-            alignment_start_cfg = mapper_cfg.get("alignment_start")
-            sequence_length_cfg = mapper_cfg.get("sequence_length")
-            if isinstance(alignment_start_cfg, int):
-                mapper_start = alignment_start_cfg
-            if isinstance(sequence_length_cfg, int):
-                mapper_length = sequence_length_cfg
-
-        return mapper_start, mapper_length
-
+# modify config based on certain rules after evaluation
+def modify_config_after_eval(config):
     if "assignments" in config:
         for assignment, assignment_cfg in config["assignments"].items():
-            assignment_cfg.setdefault("design_check", {})
-            assignment_cfg["design_check"].setdefault("fast", True)
-            assignment_cfg["design_check"].setdefault("sequence_collisions", True)
-
-            mapper_tool = assignment_cfg["alignment_tool"]["tool"]
-            mapper_cfg = assignment_cfg["alignment_tool"]["configs"]
-            mapper_start, mapper_length = get_mapper_window_values(mapper_tool, mapper_cfg)
-
-            # For bwa/bwa-additional-filtering/exact, mapper values have precedence if provided.
-            if mapper_tool in ["bwa", "bwa-additional-filtering", "exact"]:
-                if mapper_start is not None:
-                    assignment_cfg["design_check"]["sequence_start"] = mapper_start
-                if mapper_length is not None:
-                    assignment_cfg["design_check"]["sequence_length"] = mapper_length
-            # For other mappers, mapping config must provide both values when collisions are enabled.
-            elif assignment_cfg["design_check"]["sequence_collisions"]:
-                if mapper_start is None or mapper_length is None:
-                    raise ValueError(
-                        "Assignment %s uses mapper '%s' and requires alignment_tool.configs.alignment_start and "
-                        "alignment_tool.configs.sequence_length when design_check.sequence_collisions=true"
-                        % (assignment, mapper_tool)
-                    )
-                assignment_cfg["design_check"]["sequence_start"] = mapper_start
-                assignment_cfg["design_check"]["sequence_length"] = mapper_length
-
             # update sequence length with when adapters are added via strand sensitive is enabled
             if assignment_cfg["strand_sensitive"]["enable"]:
                 add_length = len(assignment_cfg["strand_sensitive"]["forward_adapter"]) + len(
@@ -143,48 +148,10 @@ def modify_config(config):
                 if isinstance(assignment_cfg["design_check"].get("sequence_length"), int):
                     assignment_cfg["design_check"]["sequence_length"] += add_length
 
-            # Final runtime validation: only required when sequence collision checking is enabled.
-            if assignment_cfg["design_check"]["sequence_collisions"]:
-                if (
-                    assignment_cfg["design_check"].get("sequence_start") is None
-                    or assignment_cfg["design_check"].get("sequence_length") is None
-                ):
-                    raise ValueError(
-                        "Assignment %s is missing sequence_start/sequence_length for design_check with "
-                        "sequence_collisions=true. Set design_check.sequence_start and design_check.sequence_length "
-                        "or provide mapper-specific values." % assignment
-                    )
-
     return config
 
 
-config = modify_config(config)
-
-
-def getDesignCheckConfig(assignment):
-    return config["assignments"][assignment].get("design_check", {})
-
-
-def getDesignCheckSequenceCollisions(assignment):
-    return getDesignCheckConfig(assignment).get("sequence_collisions", True)
-
-
-def getDesignCheckFast(assignment):
-    return getDesignCheckConfig(assignment).get("fast", True)
-
-
-def getDesignCheckWindowArgs(assignment):
-    if not getDesignCheckSequenceCollisions(assignment):
-        return ""
-
-    start = getDesignCheckConfig(assignment).get("sequence_start")
-    length = getDesignCheckConfig(assignment).get("sequence_length")
-    if start is None or length is None:
-        raise ValueError(
-            "Assignment %s has sequence_collisions=true but no sequence_start/sequence_length in finalized design_check."
-            % assignment
-        )
-    return f"--start {start} --length {length}"
+config = modify_config_after_eval(config)
 
 
 ################################

@@ -18,7 +18,7 @@ Statistic of the total (unfiltered counts).
         getCondaEnv("python3.yaml")
     shell:
         """
-        python {input.script} --input {input.bc} --output >(sed -n '1,3p;'  > {output}) 2> {log}
+        python {input.script} --input {input.bc} --output >(sed -n '1,3p;' >{output}) 2>{log}
         """
 
 
@@ -37,7 +37,7 @@ Statistic of the assigned counts.
         getCondaEnv("python3.yaml")
     shell:
         """
-        python {input.script} --input {input.bc} --output {output} &> {log}
+        python {input.script} --input {input.bc} --output {output} &>{log}
         """
 
 
@@ -57,7 +57,7 @@ Statistic of the filtered assignment.
         getCondaEnv("r.yaml")
     shell:
         """
-        Rscript {input.script} --input {input.bc} --statistic {output.stats} --plot {output.plot} &> {log}
+        Rscript {input.script} --input {input.bc} --statistic {output.stats} --plot {output.plot} &>{log}
         """
 
 
@@ -77,5 +77,5 @@ Quality metrics of the assignment run
         getCondaEnv("mpralib.yaml")
     shell:
         """
-        python {input.script} assignment --assignment {input.assignment} --design {input.design} --output {output} &> {log}
+        python {input.script} assignment --assignment {input.assignment} --design {input.design} --output {output} &>{log}
         """

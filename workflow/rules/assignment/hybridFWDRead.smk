@@ -31,13 +31,14 @@ Get the barcode and read from the FWD read using fixed length
         + 1,
     shell:
         """
-        zcat {input.fastq} | \
-        awk '{{if (NR%4==2 || NR%4==0){{
-                print substr($0,1,{params.bc_length}) > "{output.BC_tmp}"; print substr($0,{params.insert_start}) > "{output.FWD_tmp}"
-            }} else {{
-                print $0 > "{output.BC_tmp}"; print $0 > "{output.FWD_tmp}"
-            }}}}';
-        cat {output.BC_tmp} | bgzip > {output.BC} & cat {output.FWD_tmp} | bgzip > {output.FWD};
+        zcat {input.fastq} \
+            | awk '{{if (NR%4==2 || NR%4==0){{
+                                                        print substr($0,1,{params.bc_length}) > "{output.BC_tmp}"; print substr($0,{params.insert_start}) > "{output.FWD_tmp}"
+                                                    }} else {{
+                                                        print $0 > "{output.BC_tmp}"; print $0 > "{output.FWD_tmp}"
+                                                    }}}}'
+        cat {output.BC_tmp} | bgzip >{output.BC} &
+        cat {output.FWD_tmp} | bgzip >{output.FWD}
         """
 
 
@@ -64,6 +65,5 @@ Uses the paired end mode of cutadapt to write the FWD and BC read.
         linker=lambda wc: config["assignments"][wc.assignment]["linker"],
     shell:
         """
-        cutadapt --cores {threads} -a {params.linker} -G {params.linker}\
-        -o {output.BC} -p {output.FWD} <(zcat {input}) <(zcat {input}) &> {log}
+        cutadapt --cores {threads} -a {params.linker} -G {params.linker} -o {output.BC} -p {output.FWD} <(zcat {input}) <(zcat {input}) &>{log}
         """

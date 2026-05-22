@@ -23,11 +23,11 @@ Use only unique assignments and do sampling if needed.
     shell:
         """
         python {input.script} \
-        --input {input.assignment} \
-        {params.samplingprop} \
-        {params.samplingtotal} \
-        {params.seed} \
-        --output {output} &> {log}
+            --input {input.assignment} \
+            {params.samplingprop} \
+            {params.samplingtotal} \
+            {params.seed} \
+            --output {output} &>{log}
         """
 
 
@@ -43,7 +43,7 @@ rule experiment_assigned_counts_createAssignmentPickleFile:
         getCondaEnv("python3.yaml")
     shell:
         """
-        python {input.script} -i {input.files} -o {output} &> {log}
+        python {input.script} -i {input.files} -o {output} &>{log}
         """
 
 
@@ -71,10 +71,10 @@ Assign RNA and DNA barcodes seperately to make the statistic for assigned
     shell:
         """
         python {input.script} --counts {input.counts} \
-        --assignment {input.association} \
-        --output {output.counts} \
-        --statistic {output.statistic} \
-        --name {params.name} &> {log}
+            --assignment {input.association} \
+            --output {output.counts} \
+            --statistic {output.statistic} \
+            --name {params.name} &>{log}
         """
 
 
@@ -113,13 +113,13 @@ Assign merged RNA/DNA barcodes. Filter BC depending on the min_counts option.
     shell:
         """
         python {input.script} --counts {input.counts} \
-        --minRNACounts {params.minRNACounts} --minDNACounts {params.minDNACounts} \
-        --assignment {input.association} \
-        {params.outlier_detection} --outlier-barcodes {output.removed_bcs} \
-        {params.outlier_zscore_times} \
-        --output {output.counts} \
-        --bcOutput {output.bc_counts} \
-        --statistic {output.statistic} &> {log}
+            --minRNACounts {params.minRNACounts} --minDNACounts {params.minDNACounts} \
+            --assignment {input.association} \
+            {params.outlier_detection} --outlier-barcodes {output.removed_bcs} \
+            {params.outlier_zscore_times} \
+            --output {output.counts} \
+            --bcOutput {output.bc_counts} \
+            --statistic {output.statistic} &>{log}
         """
 
 
@@ -157,12 +157,12 @@ Final master table with all replicates combined. With and without threshold.
     shell:
         """
         Rscript {input.script} \
-        --threshold {params.thresh} \
-        --files {params.files} \
-        --replicates {params.replicates} \
-        --output {output.thresh} \
-        --output-all {output.all} \
-        --statistic {output.statistic} &> {log}
+            --threshold {params.thresh} \
+            --files {params.files} \
+            --replicates {params.replicates} \
+            --output {output.thresh} \
+            --output-all {output.all} \
+            --statistic {output.statistic} &>{log}
         """
 
 
@@ -201,10 +201,10 @@ Combine replictes of assigned barcode counts into one file.
     shell:
         """
         python {input.script} \
-        {params.bc_counts} \
-        --threshold {params.thresh} \
-        --output-threshold {output.bc_merged_thresh} \
-        --output {output.bc_merged_all} &> {log}
+            {params.bc_counts} \
+            --threshold {params.thresh} \
+            --output-threshold {output.bc_merged_thresh} \
+            --output {output.bc_merged_all} &>{log}
         """
 
 
@@ -232,9 +232,9 @@ Combine replicates of master table by summing counts up and using also the avera
     shell:
         """
         python {input.script} \
-        --input {input.master_table} \
-        {params.label_file} \
-        --output {output}  &> {log}
+            --input {input.master_table} \
+            {params.label_file} \
+            --output {output} &>{log}
         """
 
 
@@ -254,8 +254,8 @@ Will copy final files to the main folder so that it is clear which files to use.
         getCondaEnv("default.yaml")
     shell:
         """
-        cp {input.all} {output.all} &> {log}
-        cp {input.bc_all} {output.bc_all} &>> {log}
+        cp {input.all} {output.all} &>{log}
+        cp {input.bc_all} {output.bc_all} &>>{log}
         """
 
 
@@ -277,6 +277,6 @@ Will copy final files to the main folder so that it is clear which files to use.
         getCondaEnv("default.yaml")
     shell:
         """
-        cp {input.thresh} {output.thresh} &> {log}
-        cp {input.bc_thresh} {output.bc_thresh} &>> {log}
+        cp {input.thresh} {output.thresh} &>{log}
+        cp {input.bc_thresh} {output.bc_thresh} &>>{log}
         """
