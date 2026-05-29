@@ -49,16 +49,18 @@ For each assignment you want to process, you must give it a name like :code:`exa
     :configs:
         Configurations of the alignment tool selected.
 
-        :sequence_length (exact, bbmap, pbmm2):
+        :sequence_length (exact, bwa-additional-filtering):
             Defines the :code:`sequence_length`, which is the length of a sequence alignment to an oligo in the design file. Only one length design is supported.
-        :alignment_start (exact, bbmap, pbmm2):
+        :alignment_start (exact):
             Defines the start of the alignment in an oligo. When using adapters, you must set the length of the adapter. Otherwise, 1 will be the choice for most cases.
-        :sequence_length (bwa, bwa-additional-filtering):
-            Defines the :code:`min` and :code:`max` of a :code:`sequence_length` specification. :code:`sequence_length` is the length of a sequence alignment to an oligo in the design file. Because there can be insertions and deletions, we recommend varying it slightly around the exact length (e.g., ±5). This option enables designs with multiple sequence lengths.
-        :alignment_start (bwa, bwa-additional-filtering):
-            Defines the :code:`min` and :code:`max` of the start of the alignment in an oligo. When using adapters, you must set the length of the adapter. Otherwise, 1 will be the choice for most cases. We also recommend varying this value slightly because the start might not be exact after the adapter (e.g., ±1).
+        :sequence_length (bwa):
+            (Optiona) Defines the :code:`min` and :code:`max` of a :code:`sequence_length` specification. :code:`sequence_length` is the length of a sequence alignment to an oligo in the design file. Because there can be insertions and deletions, we recommend varying it slightly around the exact length (e.g., ±5). This option enables designs with multiple sequence lengths.
+        :alignment_start (bwa):
+            (Optional) Defines the :code:`min` and :code:`max` of the start of the alignment in an oligo. When using adapters, you must set the length of the adapter. Otherwise, 1 will be the choice for most cases. We also recommend varying this value slightly because the start might not be exact after the adapter (e.g., ±1).
         :min_mapping_quality (bwa, bwa-additional-filtering, bbmap):
             (Optional) Defines the minimum mapping quality (MAPQ) of the alignment to an oligo. MAPQs differ between bbmap and bwa. For bwa: When using oligos with only 1bp difference, it is recommended to set it to 1 (bwa default is :code:`1`). BBMap is better here, and we can use, for example, 30 or 35. For regions with larger edit distances, 30 or 40 might be a good choice. Default is :code:`30` (bbmap).
+        :cigar_filter_regex (bwa, bbmap):
+            (Optional) Regular expression to filter alignments by CIGAR string before barcode assignment. The full CIGAR string must match. Example values are :code:`200M` or :code:`200M|210M`. If not set, no CIGAR-based filtering is applied.
         :M: (bwa, bwa-additional-filtering):
             (Optional) BWA option :code:`-M`: Mark shorter split hits as secondary. Default is :code:`true`.
         :L: (bwa, bwa-additional-filtering):
@@ -119,6 +121,12 @@ For each assignment you want to process, you must give it a name like :code:`exa
         (Optional) Use a simple dictionary to find identical sequences. This is faster but uses only the whole (or center part depending on start/length) of the design file. Cannot find substrings as part of any sequence. Set to false for more correct, but slower, search. Default is :code:`true`.
     :sequence_collisions:
         (Optional) Check if there are identical sequences in the design file. Default is :code:`true`.
+    :sequence_start:
+        (Conditionally required) 1-based start position used for sequence collision checking.
+        Required only when :code:`sequence_collisions` is set to :code:`true` and no alignment_start is defined via the mapping tool config (bwa or exact).
+    :sequence_length:
+        (Conditionally required) Number of bases used for sequence collision checking.
+        Required only when :code:`sequence_collisions` is set to :code:`true` and no sequence_length is defined via the mapping tool config (bwa, bwa-additional-filtering, or exact).
 :strand_sensitive:
     (Optional) If enabled, the reads are mapped to the oligos in a strand-sensitive way by adding unique adapters to both ends of the oligo reference as well as the FASTQ files. By default, this option is not enabled.
 

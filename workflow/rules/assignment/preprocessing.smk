@@ -19,5 +19,5 @@ Uses cutadapt to trim adapters based on the primer direction.
     shell:
         """
         cutadapt --cores {threads} {params.adapters} \
-        -o {output.trimmed_reads} <(zcat {input.reads}) &> {log}
+            -o {output.trimmed_reads} <(zcat {input.reads}) &>{log}
         """

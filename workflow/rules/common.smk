@@ -19,6 +19,64 @@ def getCondaEnv(name):
 
 
 ##### load config and sample sheets #####
+
+
+# modify config based on certain rules before evaluation
+def modify_config_before_eval(config):
+    def get_mapper_window_values(tool, mapper_cfg):
+        mapper_start = None
+        mapper_length = None
+
+        if tool in ["bwa", "bwa-additional-filtering"]:
+            alignment_start_cfg = mapper_cfg.get("alignment_start")
+            if isinstance(alignment_start_cfg, dict):
+                mapper_start = alignment_start_cfg.get("min")
+            elif isinstance(alignment_start_cfg, int):
+                mapper_start = alignment_start_cfg
+
+            sequence_length_cfg = mapper_cfg.get("sequence_length")
+            if isinstance(sequence_length_cfg, dict):
+                mapper_length = sequence_length_cfg.get("min")
+            elif isinstance(sequence_length_cfg, int):
+                mapper_length = sequence_length_cfg
+        else:
+            alignment_start_cfg = mapper_cfg.get("alignment_start")
+            sequence_length_cfg = mapper_cfg.get("sequence_length")
+            if isinstance(alignment_start_cfg, int):
+                mapper_start = alignment_start_cfg
+            if isinstance(sequence_length_cfg, int):
+                mapper_length = sequence_length_cfg
+
+        return mapper_start, mapper_length
+
+    if "assignments" in config:
+        for assignment, assignment_cfg in config["assignments"].items():
+
+            # Update design check sequence_lenth and seqreunce_start based on alignment tool configs
+            assignment_cfg.setdefault("design_check", {})
+
+            assignment_cfg.setdefault("alignment_tool", {})
+            assignment_cfg["alignment_tool"].setdefault("configs", {})
+
+            mapper_cfg = assignment_cfg["alignment_tool"]["configs"]
+
+            alignment_start_cfg = mapper_cfg.get("alignment_start")
+            if isinstance(alignment_start_cfg, dict):
+                assignment_cfg["design_check"].setdefault("sequence_start", alignment_start_cfg.get("min"))
+            elif isinstance(alignment_start_cfg, int):
+                assignment_cfg["design_check"]["sequence_start"] = alignment_start_cfg
+
+            sequence_length_cfg = mapper_cfg.get("sequence_length")
+            if isinstance(sequence_length_cfg, dict):
+                assignment_cfg["design_check"].setdefault("sequence_length", sequence_length_cfg.get("min"))
+            elif isinstance(sequence_length_cfg, int):
+                assignment_cfg["design_check"]["sequence_length"] = sequence_length_cfg
+
+    return config
+
+
+config = modify_config_before_eval(config)
+
 from snakemake.utils import validate
 import pandas as pd
 
@@ -69,26 +127,33 @@ if not config["skip_version_check"]:
     check_version(version.parse(config["version"]))
 
 
-# modify config based on certain rules
-
-
-def modify_config(config):
-    # update sequence length with when adapters are added via strand sensitive is enabled
+# modify config based on certain rules after evaluation
+def modify_config_after_eval(config):
     if "assignments" in config:
-        for assignment in config["assignments"].keys():
-            if config["assignments"][assignment]["strand_sensitive"]["enable"]:
-                add_length = len(config["assignments"][assignment]["strand_sensitive"]["forward_adapter"]) + len(
-                    config["assignments"][assignment]["strand_sensitive"]["reverse_adapter"]
+        for assignment, assignment_cfg in config["assignments"].items():
+            # update sequence length with when adapters are added via strand sensitive is enabled
+            if assignment_cfg["strand_sensitive"]["enable"]:
+                add_length = len(assignment_cfg["strand_sensitive"]["forward_adapter"]) + len(
+                    assignment_cfg["strand_sensitive"]["reverse_adapter"]
                 )
-                if config["assignments"][assignment]["alignment_tool"]["tool"] == "bwa":
-                    config["assignments"][assignment]["alignment_tool"]["configs"]["sequence_length"]["min"] += add_length
-                    config["assignments"][assignment]["alignment_tool"]["configs"]["sequence_length"]["max"] += add_length
-                else:
-                    config["assignments"][assignment]["alignment_tool"]["configs"]["sequence_length"] += add_length
+                sequence_length_cfg = mapper_cfg.get("sequence_length")
+                if isinstance(sequence_length_cfg, dict):
+                    if "min" in sequence_length_cfg:
+                        sequence_length_cfg["min"] += add_length
+                    if "max" in sequence_length_cfg:
+                        sequence_length_cfg["max"] += add_length
+                elif isinstance(sequence_length_cfg, int):
+                    mapper_cfg["sequence_length"] += add_length
+
+                if isinstance(assignment_cfg["design_check"].get("sequence_length"), int):
+                    assignment_cfg["design_check"]["sequence_length"] += add_length
+
     return config
 
 
-config = modify_config(config)
+config = modify_config_after_eval(config)
+
+
 ################################
 #### HELPERS AND EXCEPTIONS ####
 ################################

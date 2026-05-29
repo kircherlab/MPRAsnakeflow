@@ -95,3 +95,25 @@ def getAssignmentCutadaptAdapters(assignment: str, read: str) -> str:
 
             return " ".join(output)
     return " ".join(output)
+
+
+def getDesignCheckConfig(assignment: str) -> dict:
+    return config["assignments"][assignment].get("design_check")
+
+
+def getDesignCheckSequenceCollisions(assignment: str) -> bool:
+    return getDesignCheckConfig(assignment).get("sequence_collisions")
+
+
+def getDesignCheckFast(assignment: str) -> bool:
+    return getDesignCheckConfig(assignment).get("fast")
+
+
+def getDesignCheckWindowArgs(assignment):
+    if not getDesignCheckSequenceCollisions(assignment):
+        return ""
+
+    start = getDesignCheckConfig(assignment).get("sequence_start")
+    length = getDesignCheckConfig(assignment).get("sequence_length")
+
+    return f"--start {start} --length {length}"

@@ -30,22 +30,22 @@ Create a BAM file from FASTQ input, merge FWD and REV read and save UMI in XI fl
         datasetID="{condition}.{replicate}.{type}",
     shell:
         """
-        set +o pipefail;
+        set +o pipefail
 
-        fwd_length=`zcat {input.fwd_fastq} | head -2 | tail -1 | wc -c`;
-        fwd_length=$(expr $(($fwd_length-1)));
+        fwd_length=$(zcat {input.fwd_fastq} | head -2 | tail -1 | wc -c)
+        fwd_length=$(expr $(($fwd_length - 1)))
 
-        rev_start=$(expr $(($fwd_length+1)));
+        rev_start=$(expr $(($fwd_length + 1)))
 
-        minoverlap=`echo ${{fwd_length}} ${{fwd_length}} {params.bc_length} | awk '{{print ($1+$2-$3-1 < 11) ? $1+$2-$3-1 : 11}}'`;
+        minoverlap=$(echo ${{fwd_length}} ${{fwd_length}} {params.bc_length} | awk '{{print ($1+$2-$3-1 < 11) ? $1+$2-$3-1 : 11}}')
 
-        echo $rev_start >> {log}
-        echo $minoverlap >> {log}
+        echo $rev_start >>{log}
+        echo $minoverlap >>{log}
 
-        paste <( zcat {input.fwd_fastq} ) <( zcat {input.rev_fastq}  ) <( zcat {input.umi_fastq} ) | \
-        awk '{{if (NR % 4 == 2 || NR % 4 == 0) {{print $1$2$3}} else {{print $1}}}}' | \
-        python {input.script_FastQ2doubleIndexBAM} -p -s $rev_start -l 0 -m {params.umi_length} --RG {params.datasetID} | \
-        python {input.script_MergeTrimReadsBAM} --FirstReadChimeraFilter '' --adapterFirstRead '' --adapterSecondRead '' -p --mergeoverlap --minoverlap $minoverlap > {output} 2>> {log}
+        paste <(zcat {input.fwd_fastq}) <(zcat {input.rev_fastq}) <(zcat {input.umi_fastq}) \
+            | awk '{{if (NR % 4 == 2 || NR % 4 == 0) {{print $1$2$3}} else {{print $1}}}}' \
+            | python {input.script_FastQ2doubleIndexBAM} -p -s $rev_start -l 0 -m {params.umi_length} --RG {params.datasetID} \
+            | python {input.script_MergeTrimReadsBAM} --FirstReadChimeraFilter '' --adapterFirstRead '' --adapterSecondRead '' -p --mergeoverlap --minoverlap $minoverlap >{output} 2>>{log}
         """
 
 

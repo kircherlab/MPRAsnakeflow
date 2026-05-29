@@ -39,9 +39,9 @@ Get overlap of counts and barcodes between replicates.
     shell:
         """
         Rscript {input.script} \
-        --outfile {output} \
-        --condition {params.cond} \
-        --files {params.input} --replicates {params.replicates} &> {log}
+            --outfile {output} \
+            --condition {params.cond} \
+            --files {params.input} --replicates {params.replicates} &>{log}
         """
 
 
@@ -74,13 +74,13 @@ Combine overlap BC and count statistic into one file (raw counts).
         getCondaEnv("default.yaml")
     shell:
         """
-        set +o pipefail;
+        set +o pipefail
         (
-            cat {input.statistic[0]} | head -n 1;
+            cat {input.statistic[0]} | head -n 1
             for i in {input.statistic}; do
                 cat $i | tail -n +2
-            done;
-        ) > {output} 2> {log}
+            done
+        ) >{output} 2>{log}
         """
 
 
@@ -112,11 +112,11 @@ Combine overlap BC and count statistic into one file (assigned counts).
         getCondaEnv("default.yaml")
     shell:
         """
-        set +o pipefail;
+        set +o pipefail
         (
-            cat {input.statistic[0]} | head -n 1;
+            cat {input.statistic[0]} | head -n 1
             for i in {input.statistic}; do
                 cat $i | tail -n +2
-            done;
-        ) > {output} 2> {log}
+            done
+        ) >{output} 2>{log}
         """

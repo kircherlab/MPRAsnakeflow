@@ -30,8 +30,8 @@ Count the 10 most frequent UMIs per condition, replicate and DNA/RNA.
         getCondaEnv("default.yaml")
     shell:
         """
-        set +o pipefail;
-        zcat {input} | cut -f 2 | sort | uniq -c | sort -nr | head > {output} 2> {log}
+        set +o pipefail
+        zcat {input} | cut -f 2 | sort | uniq -c | sort -nr | head >{output} 2>{log}
         """
 
 
@@ -69,12 +69,12 @@ Count the nucleotide composition of the barcodes per condition, replicate and DN
         name="{condition}.{replicate}.{type}",
     shell:
         """
-        zcat {input.counts} | awk '{{print $1}}' | gzip -c > {output.bc};
+        zcat {input.counts} | awk '{{print $1}}' | gzip -c >{output.bc}
         python {input.script} \
-        --column 1 \
-        --chunksize 100000 \
-        --input {output.bc} \
-        --output {output.stats} &> {log}
+            --column 1 \
+            --chunksize 100000 \
+            --input {output.bc} \
+            --output {output.stats} &>{log}
         """
 
 
@@ -105,25 +105,25 @@ Count statistic of barcodes and UMIs per condition, replicate and DNA/RNA.
         type="{type}",
     shell:
         """
-        paste <( echo "{params.cond}") <( echo "{params.rep}") <( echo "{params.type}") \
-        <(
-            zcat {input} | \
-            awk -v OFS='\\t' 'BEGIN{{
-                pbar="NA"
-            }}{{
-                count += $NF; umi_sum+=$3; if (pbar != $1) {{ barcodes+=1 }}; pbar=$1
-            }}END{{
-                if (NR > 0) {{
-                    print umi_sum/NR,count,NR,barcodes
-                }} else {{
-                    print 0,0,0,0
-                }}
-            }}'
-        ) \
-        <(
-            zcat {input} | cut -f 2 | sort -u | wc -l
-        ) | \
-        gzip -c > {output} 2> {log}
+        paste <(echo "{params.cond}") <(echo "{params.rep}") <(echo "{params.type}") \
+            <(
+                zcat {input} \
+                    | awk -v OFS='\\t' 'BEGIN{{
+                                                        pbar="NA"
+                                                    }}{{
+                                                        count += $NF; umi_sum+=$3; if (pbar != $1) {{ barcodes+=1 }}; pbar=$1
+                                                    }}END{{
+                                                        if (NR > 0) {{
+                                                            print umi_sum/NR,count,NR,barcodes
+                                                        }} else {{
+                                                            print 0,0,0,0
+                                                        }}
+                                                    }}'
+            ) \
+            <(
+                zcat {input} | cut -f 2 | sort -u | wc -l
+            ) \
+            | gzip -c >{output} 2>{log}
         """
 
 
@@ -141,7 +141,7 @@ Merge the count statistic of all replicates and conditions into one table.
         getCondaEnv("default.yaml")
     shell:
         """
-        zcat {input} | sort -k1,1 -k3,3 -k2,2 > {output} 2> {log}
+        zcat {input} | sort -k1,1 -k3,3 -k2,2 >{output} 2>{log}
         """
 
 
@@ -163,10 +163,10 @@ Count the number of barcodes shared between RNA and DNA per condition and replic
         rep="{replicate}",
     shell:
         """
-        paste <( echo "{params.cond}") <( echo "{params.rep}") \
-        <( join <( zcat {input.dna} | cut -f 1 | sort | uniq ) \
-        <( zcat {input.rna} | cut -f 1 | sort | uniq ) | wc -l ) | \
-        gzip -c > {output} 2> {log}
+        paste <(echo "{params.cond}") <(echo "{params.rep}") \
+            <(join <(zcat {input.dna} | cut -f 1 | sort | uniq) \
+                <(zcat {input.rna} | cut -f 1 | sort | uniq) | wc -l) \
+            | gzip -c >{output} 2>{log}
         """
 
 
@@ -184,7 +184,7 @@ Merge the shared barcodes statistic of all replicates and conditions into one ta
         getCondaEnv("default.yaml")
     shell:
         """
-        zcat {input} | sort -k1,1 -k2,2 > {output} 2> {log}
+        zcat {input} | sort -k1,1 -k2,2 >{output} 2>{log}
         """
 
 
@@ -212,5 +212,5 @@ Combine the final count statistic of all replicates and conditions into one tabl
         getCondaEnv("r.yaml")
     shell:
         """
-        Rscript {input.script} --count {input.counts} --shared {input.shared} --output {output} > {log}
+        Rscript {input.script} --count {input.counts} --shared {input.shared} --output {output} >{log}
         """

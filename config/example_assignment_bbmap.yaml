@@ -1,5 +1,5 @@
 ---
-version: "0.6"
+version: "0.7"
 assignments:
   exampleAssignment: # name of an example assignment (can be any string)
     bc_length: 15
@@ -8,8 +8,6 @@ assignments:
       tool: bbmap
       configs:
         min_mapping_quality: 30 # 30 is default for bbmap
-        sequence_length: 171 # sequence length of design excluding adapters.
-        alignment_start: 1 # start of an alignment in the reference/design_file.
     FWD:
       - resources/Assignment_BasiC/R1.fastq.gz
     BC:
@@ -17,5 +15,8 @@ assignments:
     REV:
       - resources/Assignment_BasiC/R3.fastq.gz
     design_file: resources/design.fa
+    design_check:
+      sequence_start: 1 # start of an alignment in the reference/design_file.
+      sequence_length: 171 # sequence length of design excluding adapters.
     configs:
       default: {} # name of an example filtering config
