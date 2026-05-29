@@ -4,6 +4,7 @@
 
 
 include: "counts/counts_demultiplex.smk"
+include: "counts/counts_merge_ngmerge.smk"
 include: "counts/counts_umi.smk"
 include: "counts/counts_noUMI.smk"
 include: "counts/counts_onlyFWD.smk"
