@@ -160,8 +160,6 @@ Create a config file (e.g. ``config_assignment.yaml``) with the following conten
             fraction: 0.51
       GSE325256CIGAR:
         bc_length: 15
-        strand_sensitive:
-          enable: true
         alignment_tool:
           split_number: 30
           tool: bbmap
@@ -181,7 +179,26 @@ Create a config file (e.g. ``config_assignment.yaml``) with the following conten
           default: {}
           lowFraction:
             fraction: 0.51
-
+      GSE325256StrandSensitive:
+        bc_length: 15
+        strand_sensitive:
+          enable: true
+        alignment_tool:
+          split_number: 30
+          tool: bbmap
+        FWD:
+          - data/assignment/SRR37895574_1.fastq.gz
+        BC:
+          - data/assignment/SRR37895574_2.fastq.gz
+        REV:
+          - data/assignment/SRR37895574_3.fastq.gz
+        design_file: data/assignment/GSM9640449_VariantMPRAdesignFile.seq_merged.fa
+        design_check:
+          sequence_collisions: false
+        configs:
+          default: {}
+          lowFraction:
+            fraction: 0.51
 
 Run Assignment Workflow
 -----------------------
@@ -259,6 +276,7 @@ Create a config file (e.g. ``config_experiment.yaml``):
     version: "0.7.0"
     experiments:
       GSE325256:
+        split_number: 30 # increases speed due to large input data
         bc_length: 15
         umi_length: 16
         data_folder: data/experiment
@@ -293,6 +311,63 @@ Run Experiment Workflow
 Results
 =======
 
-Assignment results are written to :code:`results/assignment/GSE325256`, :code:`results/assignment/GSE325256BWA`, and :code:`results/assignment/GSE325256CIGAR`. The final assignment files and QC reports are placed in those directories. The library is very deeply sequenced and we get a median of over 1000 barcodes per oligo. Due to the challenging design (e.g. contains one base deletion but not within but at the end of the designed oligo) we also do not get the whole library assigned. Only around 70%. We can increase the assignment allowing a lower fraction percentage of reads assigned to the top hit (e.g. 0.51 instead of 0.75) but that also increases the risk of false positive assignments. Also the customized MPRAsnakeflow mapping with ``bwa`` disabling ``MAPQ`` with ``min_mapping_quality: 0`` but allwoing only specific CIGAR strings ``cigar_filter_regex: 208M|210M|212M|214M|216M|218M|219M`` works sightly better. The Experiment QC report later can help to make an informed decision on the best assignment parameters for this dataset. You can have a look at the assignment QC report for assignment with `bbmap and 0.75 fraction <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256.assignment.qc_report.bbmap.default.html>`_, `bbmap and 0.51 fraction <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256.assignment.qc_report.bbmap.lowFraction.html>`_, `bwa-additional-filtering and 0.75 fraction <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256.assignment.qc_report.bwa_additional_filtering.default.html>`_, `bwa-additional-filtering and 0.51 fraction <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256.assignment.qc_report.bwa_additional_filtering.lowFraction.html>`_, `bwa with CIGAR filter and 0.75 fraction <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256.assignment.qc_report.bwa.default.html>`_, and `bwa with CIGAR filter and 0.51 fraction <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256.assignment.qc_report.bwa.lowFraction.html>`_.
+Assignment results are written to :code:`results/assignment/GSE325256`, :code:`results/assignment/GSE325256BWA`, :code:`results/assignment/GSE325256CIGAR`, and :code:`results/assignment/GSE325256StrandSensitive`. The final assignment files and QC reports are placed in those directories. The library is very deeply sequenced and we get a median of over 1000 barcodes per oligo. Due to the challenging design (e.g. contains one base deletion but not within but at the end of the designed oligo) we also do not get the whole library assigned. Only around 70%. We can increase the assignment allowing a lower fraction percentage of reads assigned to the top hit (e.g. 0.51 instead of 0.75) but that also increases the risk of false positive assignments. Also the customized MPRAsnakeflow mapping with ``bwa`` disabling ``MAPQ`` with ``min_mapping_quality: 0`` but allwoing only specific CIGAR strings ``cigar_filter_regex: 208M|210M|212M|214M|216M|218M|219M`` works sightly better.
 
-Experiment results are written to :code:`results/experiments/GSE325256`. The count outputs use the published GEO assignment as well as the assignments generated in this workflow.
+To reduce false positives, we also added the strand-sensitive mapping option (``GSE325256StrandSensitive`` using the default ``bbmap`` approach). We assign on average half of the barcodes (~500 per oligo). But it can be that we reduce the false positive rate.
+
+The Experiment QC report later can help to make an informed decision on the best assignment parameters for this dataset.
+
+You can have a look at the assignment QC reports here:
+
+.. list-table:: Assignment QC reports for GSE325256
+   :header-rows: 1
+
+   * - Assignment mode
+     - Fraction
+     - QC report
+   * - bbmap
+     - 0.75
+     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bbmap.default.html>`_
+   * - bbmap
+     - 0.51
+     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bbmap.lowFraction.html>`_
+   * - bwa-additional-filtering
+     - 0.75
+     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bwa_additional_filtering.default.html>`_
+   * - bwa-additional-filtering
+     - 0.51
+     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bwa_additional_filtering.lowFraction.html>`_
+   * - bwa with CIGAR filter
+     - 0.75
+     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bwa.default.html>`_
+   * - bwa with CIGAR filter
+     - 0.51
+     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bwa.lowFraction.html>`_
+   * - bbmap strand-sensitive mode
+     - 0.75
+     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bwa.default.html>`_
+   * - bbmap strand-sensitive mode
+     - 0.51
+     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.strand-sensitive.lowFraction.html>`_
+
+
+Experiment results are written to :code:`results/experiments/GSE325256`. The count outputs use the published GEO assignment as well as the assignments generated in this workflow. We only used the mapping with the default fraction (0.75) for the experiment results.
+
+The results show that in comparison to their assignment file we reached a similar pearosn correlation (around 0.67) for activity. Interestingly the strand-sensitive mode increased the correlsion to 0.72 suggesting that a high number of barcodes are false positives and the data might benefit from a strict mappinng strategy.
+
+
+.. list-table:: Experiment QC reports for GSE325256
+   :header-rows: 1
+
+   * - Assignment mode
+     - QC report
+   * - GEO assignment
+     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.experiment.qc_report.geo.html>`_
+   * - bbmap
+     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.experiment.qc_report.bbmap.default.html>`_
+   * - bwa-additional-filtering
+     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.experiment.qc_report.bwa_additional_filtering.default.html>`_
+   * - bwa with CIGAR filter
+     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.experiment.qc_report.bwa.default.html>`_
+   * - bwa strand-sensitive mode
+     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.experiment.qc_report.strand-sensitive.default.html>`_
