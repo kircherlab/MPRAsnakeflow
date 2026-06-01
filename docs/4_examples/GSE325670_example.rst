@@ -327,28 +327,28 @@ You can have a look at the assignment QC reports here:
      - QC report
    * - bbmap
      - 0.75
-     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bbmap.default.html>`_
+     - `bbmap 0.75 QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bbmap.default.html>`_
    * - bbmap
      - 0.51
-     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bbmap.lowFraction.html>`_
+     - `bbmap 0.51 QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bbmap.lowFraction.html>`_
    * - bwa-additional-filtering
      - 0.75
-     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bwa_additional_filtering.default.html>`_
+     - `bwa-additional-filtering 0.75 QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bwa_additional_filtering.default.html>`_
    * - bwa-additional-filtering
      - 0.51
-     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bwa_additional_filtering.lowFraction.html>`_
+     - `bwa-additional-filtering 0.51 QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bwa_additional_filtering.lowFraction.html>`_
    * - bwa with CIGAR filter
      - 0.75
-     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bwa.default.html>`_
+     - `bwa CIGAR 0.75 QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bwa.default.html>`_
    * - bwa with CIGAR filter
      - 0.51
-     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bwa.lowFraction.html>`_
+     - `bwa CIGAR 0.51 QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bwa.lowFraction.html>`_
    * - bbmap strand-sensitive mode
      - 0.75
-     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bwa.default.html>`_
+     - `bbmap strand-sensitive 0.75 QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.bwa.default.html>`_
    * - bbmap strand-sensitive mode
      - 0.51
-     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.strand-sensitive.lowFraction.html>`_
+     - `bbmap strand-sensitive 0.51 QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.assignment.qc_report.strand-sensitive.lowFraction.html>`_
 
 
 Experiment results are written to :code:`results/experiments/GSE325256`. The count outputs use the published GEO assignment as well as the assignments generated in this workflow. We only used the mapping with the default fraction (0.75) for the experiment results.
@@ -362,12 +362,12 @@ The results show that in comparison to their assignment file we reached a simila
    * - Assignment mode
      - QC report
    * - GEO assignment
-     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.experiment.qc_report.geo.html>`_
+     - `GEO assignment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.experiment.qc_report.geo.html>`_
    * - bbmap
-     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.experiment.qc_report.bbmap.default.html>`_
+     - `bbmap experiment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.experiment.qc_report.bbmap.default.html>`_
    * - bwa-additional-filtering
-     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.experiment.qc_report.bwa_additional_filtering.default.html>`_
+     - `bwa-additional-filtering experiment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.experiment.qc_report.bwa_additional_filtering.default.html>`_
    * - bwa with CIGAR filter
-     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.experiment.qc_report.bwa.default.html>`_
+     - `bwa CIGAR experiment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.experiment.qc_report.bwa.default.html>`_
    * - bwa strand-sensitive mode
-     - `Open report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.experiment.qc_report.strand-sensitive.default.html>`_
+     - `strand-sensitive experiment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE325256/GSE325256.experiment.qc_report.strand-sensitive.default.html>`_
