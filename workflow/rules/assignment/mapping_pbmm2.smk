@@ -13,7 +13,7 @@ Create pbmm2 index from design reference.
         getCondaEnv("pbmm2_pysam.yaml")
     shell:
         """
-        pbmm2 index {input.ref} {output} &> {log}
+        pbmm2 index {input.ref} {output} &>{log}
         """
 
 
@@ -41,7 +41,7 @@ Align long reads (BAM or FASTA) to reference using pbmm2.
             --sort \
             --best-n 1 \
             --min-concordance-perc {params.min_concordance} \
-            -j {threads} &> {log}
+            -j {threads} &>{log}
         """
 
 
@@ -69,6 +69,6 @@ barcode TSV for downstream collection and filtering.
             --bam {input.bam} \
             --pattern {params.pattern} \
             --bc-length {params.bc_length} \
-            --output /dev/stdout 2> {log} | \
-        sort -k1,1 -k2,2 -k3,3 -S 7G > {output}
+            --output /dev/stdout 2>{log} \
+            | sort -k1,1 -k2,2 -k3,3 -S 7G >{output}
         """

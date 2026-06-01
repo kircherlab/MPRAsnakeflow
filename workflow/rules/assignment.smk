@@ -69,10 +69,10 @@ Also check if no duplicated headers and no illegal characters in header.
         trap "cat {log.err}" ERR
         cp {input.design} {output.ref_tmp}
         python {input.script} --input {output.ref_tmp} \
-        --output {output.ref} \
-        --start {params.start} --length {params.length} \
-        {params.fast_check} --sequence-check {params.sequence_collisions} \
-        {params.attach_sequence} > {log.log} 2> {log.err};
+            --output {output.ref} \
+            --start {params.start} --length {params.length} \
+            {params.fast_check} --sequence-check {params.sequence_collisions} \
+            {params.attach_sequence} >{log.log} 2>{log.err}
         """
 
 
@@ -120,7 +120,7 @@ Runs only if the design file is correct.
         ),
     shell:
         """
-        fastqsplitter -i <(zcat {input.fastq}) -t 1 {params.files} &> {log}
+        fastqsplitter -i <(zcat {input.fastq}) -t 1 {params.files} &>{log}
         """
 
 
@@ -153,7 +153,7 @@ Extract the index sequence and add it to the header.
         ),
     shell:
         """
-        python {input.script} -r {input.read} -b {input.BC} {params.BC_rev_comp} {params.attach_sequence} | bgzip -c > {output.read} 2> {log}
+        python {input.script} -r {input.read} -b {input.BC} {params.BC_rev_comp} {params.attach_sequence} | bgzip -c >{output.read} 2>{log}
         """
 
 
@@ -178,14 +178,14 @@ Merge the FWD, REV and BC fastq files into one using NGmerge.
     shell:
         """
         NGmerge \
-        -1 {input.FWD} \
-        -2 {input.REV} \
-        -m {params.min_overlap} -p {params.frac_mismatches_allowed} \
-        -d \
-        -e {params.min_dovetailed_overlap} \
-        -z \
-        -o  {output.join} \
-        -i -f {output.un} &> {log}
+            -1 {input.FWD} \
+            -2 {input.REV} \
+            -m {params.min_overlap} -p {params.frac_mismatches_allowed} \
+            -d \
+            -e {params.min_dovetailed_overlap} \
+            -z \
+            -o {output.join} \
+            -i -f {output.un} &>{log}
         """
 
 
@@ -210,7 +210,7 @@ Merge the FWD, REV and BC fastq files into one using fastq-join.
     shell:
         """
         fastq-join -p {params.min_overlap} -m {params.max_pct_mismatch} {input.FWD} {input.REV} \
-        -o {output.un1} -o {output.un2} -o {output.join} &> {log}
+            -o {output.un1} -o {output.un2} -o {output.join} &>{log}
         """
 
 
@@ -248,8 +248,8 @@ Get the barcodes.
     shell:
         """
         export LC_ALL=C # speed up sort
-        sort -S 7G {params.batch_size} --parallel={threads} -k1,1 -k2,2 -k3,3 -m {input} | \
-        gzip -c > {output} 2> {log}
+        sort -S 7G {params.batch_size} --parallel={threads} -k1,1 -k2,2 -k3,3 -m {input} \
+            | gzip -c >{output} 2>{log}
         """
 
 
@@ -278,12 +278,12 @@ FIXME: Limitation is that oligos cannot have a name ambiguous or other.
     shell:
         """
         trap "cat {log.err}" ERR
-        zcat  {input.assignment} | \
-        awk -v "OFS=\\t" -F"\\t" '{{if (length($1)=={params.bc_length}){{print $0 }}}}' | \
-        python {input.script} \
-        -m {params.min_support} -f {params.fraction} {params.unknown_other} {params.ambiguous} | \
-        tee >(gzip -c > {output.ambiguous}) | \
-        awk -v "OFS=\\t"  -F"\\t" '{{ if (($2 != \"ambiguous\") && ($2 != \"other\")) {{ print $1,$2 }} }}' | \
-        gzip -c > {output.final} 2> {log.err};
+        zcat {input.assignment} \
+            | awk -v "OFS=\\t" -F"\\t" '{{if (length($1)=={params.bc_length}){{print $0 }}}}' \
+            | python {input.script} \
+                -m {params.min_support} -f {params.fraction} {params.unknown_other} {params.ambiguous} \
+            | tee >(gzip -c >{output.ambiguous}) \
+            | awk -v "OFS=\\t" -F"\\t" '{{ if (($2 != \"ambiguous\") && ($2 != \"other\")) {{ print $1,$2 }} }}' \
+            | gzip -c >{output.final} 2>{log.err}
         gzip -l {output.final} | awk 'NR==2 {{exit($2==0)}}' || {{ echo "Error: Empty barcode file {output.final}. No barcodes detected!" >> {log.err}; exit 1; }}
         """

@@ -22,8 +22,8 @@ Getting the BCs from the reads using fixed length.
         bc_extraction=lambda wc: config["experiments"][wc.project].get("bc_extraction", "start"),
     shell:
         """
-        zcat {input} | \
-        awk 'NR%4==2 {{if ("{params.bc_extraction}" == "start") print substr($1,1,{params.bc_length}); else print substr($1,length($1)-{params.bc_length}+1)}}' |\
-        sort | \
-        gzip -c > {output} 2> {log}
+        zcat {input} \
+            | awk 'NR%4==2 {{if ("{params.bc_extraction}" == "start") print substr($1,1,{params.bc_length}); else print substr($1,length($1)-{params.bc_length}+1)}}' \
+            | sort \
+            | gzip -c >{output} 2>{log}
         """

@@ -17,9 +17,9 @@ Create mapping reference for BWA from design file.
         getCondaEnv("bwa_samtools_picard_htslib.yaml")
     shell:
         """
-        bwa index -a bwtsw {input.ref} &> {log};
-        samtools faidx {input.ref} &>> {log};
-        picard CreateSequenceDictionary REFERENCE={input.ref} OUTPUT={output.d} &>> {log}
+        bwa index -a bwtsw {input.ref} &>{log}
+        samtools faidx {input.ref} &>>{log}
+        picard CreateSequenceDictionary REFERENCE={input.ref} OUTPUT={output.d} &>>{log}
         """
 
 
@@ -53,7 +53,7 @@ Map the reads to the reference and sort unsing bwa mem
         """
         bwa mem -t {threads} -L {params.L} {params.M} -C {input.reference} <(
             gzip -dc {input.reads}
-        )  | samtools sort -l 0 -@ {threads} > {output} 2> {log}
+        ) | samtools sort -l 0 -@ {threads} >{output} 2>{log}
         """
 
 
@@ -86,8 +86,8 @@ Get the barcodes.
     shell:
         """
         export LC_ALL=C # speed up sorting
-        samtools view -F 1792 {input} | \
-        awk -v "OFS=\\t" '{{
+        samtools view -F 1792 {input} \
+            | awk -v "OFS=\\t" '{{
             split($(NF),a,":");
             split(a[3],a,",");
             if (a[1] !~ /N/) {{
@@ -97,7 +97,7 @@ Get the barcodes.
                     print a[1],"other","NA"
                 }}
             }}
-        }}' | sort -k1,1 -k2,2 -k3,3 -S 7G > {output} 2> {log}
+        }}' | sort -k1,1 -k2,2 -k3,3 -S 7G >{output} 2>{log}
         """
 
 
@@ -127,9 +127,9 @@ Get the barcodes with a python script to rescue alignments with 0 mapping qualit
     shell:
         """
         python {input.script} \
-        --identity_threshold {params.identity_threshold} --mismatches_threshold {params.mismatches_threshold} \
-        --expected_alignment_length {params.expected_alignment_length} \
-        --min_mapping_quality {params.min_mapping_quality} --bamfile {input.bam} --verbose {params.verbose} --output {output} 2> {log} && sort -k1,1 -k2,2 -k3,3 -o {output} {output}
+            --identity_threshold {params.identity_threshold} --mismatches_threshold {params.mismatches_threshold} \
+            --expected_alignment_length {params.expected_alignment_length} \
+            --min_mapping_quality {params.min_mapping_quality} --bamfile {input.bam} --verbose {params.verbose} --output {output} 2>{log} && sort -k1,1 -k2,2 -k3,3 -o {output} {output}
         """
 
 
@@ -152,7 +152,7 @@ Collect mapped reads.
     threads: 1
     shell:
         """
-        samtools merge -@ {threads} {output} {input.bams} 2> {log}
+        samtools merge -@ {threads} {output} {input.bams} 2>{log}
         """
 
 
@@ -170,7 +170,7 @@ Index the BAM file
         getCondaEnv("bwa_samtools_picard_htslib.yaml")
     shell:
         """
-        samtools index {input} 2> {log}
+        samtools index {input} 2>{log}
         """
 
 
@@ -189,5 +189,5 @@ Run samtools flagstat
         getCondaEnv("bwa_samtools_picard_htslib.yaml")
     shell:
         """
-        samtools flagstat {input.bam} > {output} 2> {log}
+        samtools flagstat {input.bam} >{output} 2>{log}
         """

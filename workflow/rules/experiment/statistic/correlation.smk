@@ -61,10 +61,10 @@ Calculate the correlation of the raw counts for each condition across replicates
     shell:
         """
         Rscript {input.script} \
-        --outdir {params.outdir} \
-        --condition {params.cond} \
-        --mindnacounts {params.minDNACounts} --minrnacounts {params.minRNACounts} \
-        --files {params.input} --replicates {params.replicates} &> {log}
+            --outdir {params.outdir} \
+            --condition {params.cond} \
+            --mindnacounts {params.minDNACounts} --minrnacounts {params.minRNACounts} \
+            --files {params.input} --replicates {params.replicates} &>{log}
         """
 
 
@@ -94,10 +94,10 @@ Generate histogram and boxplots of the raw counts for each condition across repl
     shell:
         """
         Rscript {input.script} \
-        --outdir {params.outdir} \
-        --condition {params.cond} \
-        --mindnacounts {params.minDNACounts} --minrnacounts {params.minRNACounts} \
-        --files {params.input} --replicates {params.replicates} &> {log}
+            --outdir {params.outdir} \
+            --condition {params.cond} \
+            --mindnacounts {params.minDNACounts} --minrnacounts {params.minRNACounts} \
+            --files {params.input} --replicates {params.replicates} &>{log}
         """
 
 
@@ -128,11 +128,11 @@ Combine the correlation of the raw counts for each condition across replicates i
     shell:
         """
         (
-        cat {input.files[0]} | head -n 1;
-        for i in {input.files}; do
-            cat $i | tail -n +2;
-        done;
-        ) > {output} 2> {log}
+            cat {input.files[0]} | head -n 1
+            for i in {input.files}; do
+                cat $i | tail -n +2
+            done
+        ) >{output} 2>{log}
         """
 
 
@@ -163,11 +163,11 @@ Combine the correlation of the assigned counts for each condition across replica
     shell:
         """
         (
-        cat {input.files[0]} | head -n 1;
-        for i in {input.files}; do
-            cat $i | tail -n +2;
-        done;
-        ) > {output} 2> {log}
+            cat {input.files[0]} | head -n 1
+            for i in {input.files}; do
+                cat $i | tail -n +2
+            done
+        ) >{output} 2>{log}
         """
 
 
@@ -297,12 +297,12 @@ Calculate the correlation of oligos for each condition across replicates.
     shell:
         """
         Rscript {input.script} \
-        --condition {params.cond} \
-        {params.label} \
-        --files {params.files} \
-        --replicates {params.replicates} \
-        --threshold {params.thresh} \
-        --outdir {params.outdir} &> {log}
+            --condition {params.cond} \
+            {params.label} \
+            --files {params.files} \
+            --replicates {params.replicates} \
+            --threshold {params.thresh} \
+            --outdir {params.outdir} &>{log}
         """
 
 
@@ -356,12 +356,12 @@ Generate histogram and boxplots of the oligos for each condition across replicat
     shell:
         """
         Rscript {input.script} \
-        --condition {params.cond} \
-        {params.label} \
-        --files {params.files} \
-        --replicates {params.replicates} \
-        --threshold {params.thresh} \
-        --outdir {params.outdir} &> {log}
+            --condition {params.cond} \
+            {params.label} \
+            --files {params.files} \
+            --replicates {params.replicates} \
+            --threshold {params.thresh} \
+            --outdir {params.outdir} &>{log}
         """
 
 
@@ -398,14 +398,14 @@ Combine the correlation of oligos for each condition across replicates into one 
         thresh=lambda wc: config["experiments"][wc.project]["configs"][wc.config]["filter"]["bc_threshold"],
     shell:
         """
-        set +o pipefail;
+        set +o pipefail
         (
-        cat {input.correlation[0]} | head -n 1 | awk -v 'OFS=\\t' '{{print $0,"threshold (min {params.thresh})"}}';
-        for i in {input.correlation}; do
-            cat $i | tail -n +2 | awk -v 'OFS=\\t' '{{print $0,"False"}}'
-        done;
-        for i in {input.correlation_thresh}; do
-            cat $i | tail -n +2 | awk -v 'OFS=\\t' '{{print $0,"True"}}'
-        done;
-        ) > {output} 2> {log}
+            cat {input.correlation[0]} | head -n 1 | awk -v 'OFS=\\t' '{{print $0,"threshold (min {params.thresh})"}}'
+            for i in {input.correlation}; do
+                cat $i | tail -n +2 | awk -v 'OFS=\\t' '{{print $0,"False"}}'
+            done
+            for i in {input.correlation_thresh}; do
+                cat $i | tail -n +2 | awk -v 'OFS=\\t' '{{print $0,"True"}}'
+            done
+        ) >{output} 2>{log}
         """

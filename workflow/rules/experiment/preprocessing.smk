@@ -27,7 +27,7 @@ n is given by split_read in the configuration file.
         for file in {output}; do
             OUTPUT_FILES="${{OUTPUT_FILES}} -o ${{file}}"
         done
-        fastqsplitter -i <(zcat {input}) -t 1 ${{OUTPUT_FILES}} &> {log}
+        fastqsplitter -i <(zcat {input}) -t 1 ${{OUTPUT_FILES}} &>{log}
         """
 
 
@@ -53,5 +53,5 @@ Getting the BCs from the reads using cutadapt.
     shell:
         """
         cutadapt --cores {threads} {params.adapters} \
-        -o {output.trimmed_reads} <(zcat {input.reads}) &> {log}
+            -o {output.trimmed_reads} <(zcat {input.reads}) &>{log}
         """

@@ -39,8 +39,8 @@ Map the reads to the reference and sort unsing bwa mem
     shell:
         """
         bbmap.sh -eoom -Xmx{resources.mem_mb}M -t={threads} nullifybrokenquality \
-        in={input.reads} ref={input.reference} nodisk out={output.bam} &> {log};
-        samtools sort -l 0 -@ {threads} {output.bam} > {output.sorted_bam} 2>> {log};
+            in={input.reads} ref={input.reference} nodisk out={output.bam} &>{log}
+        samtools sort -l 0 -@ {threads} {output.bam} >{output.sorted_bam} 2>>{log}
         """
 
 
@@ -71,8 +71,8 @@ BAM/SAM fields:
     shell:
         """
         export LC_ALL=C # speed up sorting
-        samtools view -F 1792 {input} | \
-        awk -F"\\t" -v "OFS=\\t" '{{
+        samtools view -F 1792 {input} \
+            | awk -F"\\t" -v "OFS=\\t" '{{
             split($1,a," ");
             split(a[2],a,":");
             split(a[3],a,",");
@@ -83,5 +83,5 @@ BAM/SAM fields:
                     print a[1],"other","NA"
                 }}
             }}
-        }}' | sort -k1,1 -k2,2 -k3,3 -S 7G > {output} 2> {log}
+        }}' | sort -k1,1 -k2,2 -k3,3 -S 7G >{output} 2>{log}
         """

@@ -26,13 +26,13 @@ Combine assigned counts statistic per replicate and modality (DNA and RNA not me
         getCondaEnv("default.yaml")
     shell:
         """
-        set +o pipefail;
+        set +o pipefail
         (
-            zcat {input.stats[0]} | head -n 1;
+            zcat {input.stats[0]} | head -n 1
             for i in {input.stats}; do
                 zcat $i | tail -n +2
-            done;
-        ) | gzip -c > {output} 2> {log}
+            done
+        ) | gzip -c >{output} 2>{log}
         """
 
 
@@ -66,13 +66,13 @@ Combined assinged counts statistic per condition (DNA and aRNA not merged)
         getCondaEnv("default.yaml")
     shell:
         """
-        set +o pipefail;
+        set +o pipefail
         (
-            zcat {input.stats[0]} | head -n 1;
+            zcat {input.stats[0]} | head -n 1
             for i in {input.stats}; do
                 zcat $i | tail -n +2
-            done;
-        ) > {output} 2> {log}
+            done
+        ) >{output} 2>{log}
         """
 
 
@@ -108,9 +108,9 @@ Combine assigned counts statistic per replicate (DNA and RNA merged)
     shell:
         """
         python {input.script} \
-        --condition {params.cond} \
-        {params.statistic} \
-        --output {output} &> {log}
+            --condition {params.cond} \
+            {params.statistic} \
+            --output {output} &>{log}
         """
 
 
@@ -144,11 +144,11 @@ Combine assigned counts statistic per condition (DNA and RNA merged)
         getCondaEnv("default.yaml")
     shell:
         """
-        set +o pipefail;
+        set +o pipefail
         (
-            zcat {input.files[0]} | head -n 1;
+            zcat {input.files[0]} | head -n 1
             for i in {input.files}; do
                 zcat $i | tail -n +2
             done
-        ) > {output} 2> {log}
+        ) >{output} 2>{log}
         """

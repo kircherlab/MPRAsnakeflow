@@ -15,9 +15,9 @@ rule variants_generateVariantTable:
     shell:
         """
         python {input.script} \
-        --counts {input.counts} \
-        --declaration {input.variant_definition} \
-        --output {output} &> {log}
+            --counts {input.counts} \
+            --declaration {input.variant_definition} \
+            --output {output} &>{log}
         """
 
 
@@ -53,10 +53,10 @@ rule variants_MasterTable:
     shell:
         """
         python {input.script} \
-        {params.input} \
-        --minRNACounts {params.minRNACounts} \
-        --minDNACounts {params.minDNACounts} \
-        --output {output} &> {log}
+            {params.input} \
+            --minRNACounts {params.minRNACounts} \
+            --minDNACounts {params.minDNACounts} \
+            --output {output} &>{log}
         """
 
 
@@ -91,10 +91,10 @@ rule variants_correlate:
     shell:
         """
         python {input.script} \
-        --condition {params.cond} \
-        {params.tables} \
-        --bc-threshold {params.threshold} \
-        --output {output} &> {log}
+            --condition {params.cond} \
+            {params.tables} \
+            --bc-threshold {params.threshold} \
+            --output {output} &>{log}
         """
 
 
@@ -123,11 +123,11 @@ rule variants_combineVariantCorrelationTables:
         getCondaEnv("default.yaml")
     shell:
         """
-        set +o pipefail;
+        set +o pipefail
         (
-        zcat {input.correlation[0]} | head -n 1;
-        for i in {input.correlation}; do
-            zcat $i | tail -n +2;
-        done;
-        ) > {output} 2> {log}
+            zcat {input.correlation[0]} | head -n 1
+            for i in {input.correlation}; do
+                zcat $i | tail -n +2
+            done
+        ) >{output} 2>{log}
         """
