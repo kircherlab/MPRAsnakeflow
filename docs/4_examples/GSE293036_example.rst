@@ -3,9 +3,9 @@
 .. role:: bash(code)
     :language: bash
 
-=========
-GSE293036
-=========
+==============================================
+GSE293036 (Granitto et al. GWAS variant MPRA)
+==============================================
 
 This example runs the assignment and experiment workflows on data from `Granitto et al. Genome-wide discovery of multiple sclerosis genetic risk variant allelic regulatory activity. G3 Genes|Genomes|Genetics (2025) <https://doi.org/10.1093/g3journal/jkaf192>`_. The data were published in `GEO:GSE293036 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE293036>`_.
 

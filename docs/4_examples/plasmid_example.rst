@@ -3,9 +3,9 @@
 .. role:: bash(code)
    :language: bash
 
-===========================
-ENCODE data (Plasmid based)
-===========================
+========================================
+ENCODE data (Gosai et al. Plasmid based)
+========================================
 
 This example runs the assignment and experiment workflow on data from Ryan Tewhey's lab, available via the ENCODE portal. We use the A549 experiment data published in the article `Gosai SJ, Castro RI, Fuentes N et al. Machine-guided design of cell-type-targeting cis-regulatory elements. Nature. 2024. <https://doi.org/10.1038/s41586-024-08070-z>`_.
 
@@ -14,13 +14,13 @@ The main differences from other examples are:
 - For the experiment/count workflow, as is often done in plasmid-based assays, only one DNA sequencing is performed before electroporation. We need to define the DNA count sequencing fastq file for each replicate. MPRAsnakeflow will recognize that these files are identical, count DNA only once, and use the result for all replicates.
 
 Prerequisites
-======================
+=============
 
 This example depends on the following data and software:
 
 
 Installation of MPRAsnakeflow
-----------------------------------------
+-----------------------------
 
 Please install conda, the MPRAsnakeflow environment and clone the actual MPRAsnakeflow master branch. You will find more help under :ref:`Installation`.
 

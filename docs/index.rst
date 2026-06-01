@@ -186,6 +186,7 @@ Indices and Tables
     :maxdepth: 2
     :hidden:
 
+    4_examples/overview
     4_examples/assignment_example1
     4_examples/count_example1
     4_examples/combined_example1
@@ -193,6 +194,9 @@ Indices and Tables
     4_examples/complex_readstructure_example
     4_examples/GSE306816_example
     4_examples/GSE293036_example
+    4_examples/GSE316891_example
+    4_examples/GSE284330_example
+    4_examples/GSE325670_example
 
 .. toctree::
     :caption: Tips & Tricks

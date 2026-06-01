@@ -3,9 +3,9 @@
 .. role:: bash(code)
     :language: bash
 
-===============
-GSE306816 dpSTR
-===============
+===================================
+GSE306816 (Zhang et al. dpSTR MPRA)
+===================================
 
 This example runs the assignment and experiment workflows on data from the preprint by `Zhang et al. Systematic Evaluation of the Impact of Promoter Proximal Short Tandem Repeats on Expression. bioRxiv (2025). <https://doi.org/10.1101/2025.09.14.676153>`_. The data were published in `GEO:GSE306816 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE306816>`_.
 
@@ -362,7 +362,7 @@ Results
 
 For assignment, all output files are written to :code:`results/assignment/dpSTR`. The final assignment file is :code:`results/assignment/dpSTR/assignment_barcodes.default.tsv.gz`. You should also inspect the QC report: :code:`results/assignment/dpSTR/qc_report.default.html`.
 
-An example assignment QC report is available here: `Example assignment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE306816.assignment.qc_report.default.html>`_.
+An example assignment QC report is available here: `Example assignment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE306816/GSE306816.assignment.qc_report.default.html>`_.
 
 
 For experiments, all output files are written to :code:`results/experiments/dpSTR`.
@@ -375,4 +375,4 @@ Final count files:
 
 You should also inspect the QC reports, for example :code:`results/experiments/dpSTR/qc_report.dpSTRHelaRNHWT.GSM9209852Illumina.default.html`.
 
-Example QC reports are available here: `Experiment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE306816.qc_report.dpSTRHelaRNHWT.dpSTRAssignment.default.html>`_, `Illumina QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE306816.qc_report.dpSTRHelaRNHWT.GSM9209852Illumina.default.html>`_, and `Element QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE306816.qc_report.dpSTRHelaRNHWT.GSM9209853Element.default.html>`_.
+Example QC reports are available here: `Experiment QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE306816/GSE306816.qc_report.dpSTRHelaRNHWT.dpSTRAssignment.default.html>`_, `Illumina QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE306816/GSE306816.qc_report.dpSTRHelaRNHWT.GSM9209852Illumina.default.html>`_, and `Element QC report <https://htmlpreview.github.io/?https://github.com/kircherlab/MPRAsnakeflow/blob/master/docs/4_examples/GSE306816/GSE306816.qc_report.dpSTRHelaRNHWT.GSM9209853Element.default.html>`_.
