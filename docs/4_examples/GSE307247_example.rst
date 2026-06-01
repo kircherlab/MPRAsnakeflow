@@ -77,9 +77,9 @@ There is only one set of sequencing data for this experiment, and we are selecti
 
     prefetch --option-file GSE307247_Acc_List.txt
 
-    while read -r acc; do 
+    while read -r acc; do
         fasterq-dump ${acc} --include-technical --split-files
-    done < GSE307247_Acc_List.txt 
+    done < GSE307247_Acc_List.txt
 
     gzip -c SRR35247192_2.fastq > data/Koplik/SRR35247192_2.fastq.gz
     gzip -c SRR35247193_3.fastq > data/Koplik/SRR35247193_3.fastq.gz
@@ -102,7 +102,7 @@ There is only one set of sequencing data for this experiment, and we are selecti
     gzip -c SRR35247201_4.fastq > data/Koplik/SRR35247201_4.fastq.gz
     gzip -c SRR35247202_3.fastq > data/Koplik/SRR35247202_3.fastq.gz
     gzip -c SRR35247202_4.fastq > data/Koplik/SRR35247203_4.fastq.gz
- 
+
 .. note:: Please be sure that all files are downloaded completely without errors!
 
 With
@@ -290,4 +290,3 @@ Final count files:
 * :code:`results/experiments/Koplik/reporter_experiment.barcode.MCF7.fromFile.bcone.all.tsv.gz` (counts generated in this workflow)
 
 You should also inspect the QC reports, for example :code:`results/experiments/Koplik/qc_report.HEK293.fromFile.bcone.html`.
-

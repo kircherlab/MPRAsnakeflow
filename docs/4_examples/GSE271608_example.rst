@@ -63,9 +63,9 @@ There is only one set of sequencing data for this experiment, and we are selecti
 
     prefetch --option-file GSE271608_Acc_List.txt
 
-    while read acc; do 
+    while read acc; do
         fasterq-dump ${acc} --split-files
-    done < GSE271608_Acc_List.txt 
+    done < GSE271608_Acc_List.txt
 
     cat SRR29718876.fastq SRR29718877.fastq | gzip > sf_19664.RNA1.fastq.gz
     cat SRR29718872.fastq SRR29718873.fastq | gzip > sf_19664.RNA2.fastq.gz
@@ -77,7 +77,7 @@ There is only one set of sequencing data for this experiment, and we are selecti
     cat SRR29718862_1.fastq SRR29718863_1.fastq | gzip > sf_19919.RNA4.fastq.gz
     cat SRR29718918_1.fastq SRR29718919_1.fastq | gzip > sf_19664.DNA.fastq.gz
     cat SRR29718920_1.fastq SRR29718921_1.fastq | gzip > sf_19919.DNA.fastq.gz
- 
+
     cd ../../
 
 .. note:: Please be sure that all files are downloaded completely without errors!
@@ -249,4 +249,3 @@ Final count files:
 * :code:`results/experiments/Zahm/reporter_experiment.barcode.sf19919.fromFile.default.all.tsv.gz` (counts generated in this workflow)
 
 You should also inspect the QC reports, for example :code:`results/experiments/Zahm/qc_report.sf19664.fromFile.default.html`.
-
