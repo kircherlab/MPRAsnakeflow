@@ -23,32 +23,6 @@ def getCondaEnv(name):
 
 # modify config based on certain rules before evaluation
 def modify_config_before_eval(config):
-    def get_mapper_window_values(tool, mapper_cfg):
-        mapper_start = None
-        mapper_length = None
-
-        if tool in ["bwa", "bwa-additional-filtering"]:
-            alignment_start_cfg = mapper_cfg.get("alignment_start")
-            if isinstance(alignment_start_cfg, dict):
-                mapper_start = alignment_start_cfg.get("min")
-            elif isinstance(alignment_start_cfg, int):
-                mapper_start = alignment_start_cfg
-
-            sequence_length_cfg = mapper_cfg.get("sequence_length")
-            if isinstance(sequence_length_cfg, dict):
-                mapper_length = sequence_length_cfg.get("min")
-            elif isinstance(sequence_length_cfg, int):
-                mapper_length = sequence_length_cfg
-        else:
-            alignment_start_cfg = mapper_cfg.get("alignment_start")
-            sequence_length_cfg = mapper_cfg.get("sequence_length")
-            if isinstance(alignment_start_cfg, int):
-                mapper_start = alignment_start_cfg
-            if isinstance(sequence_length_cfg, int):
-                mapper_length = sequence_length_cfg
-
-        return mapper_start, mapper_length
-
     if "assignments" in config:
         for assignment, assignment_cfg in config["assignments"].items():
 
