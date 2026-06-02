@@ -59,17 +59,6 @@ use rule experiment_counts_merge_NGmerge_template as experiment_counts_noUMI_mer
         temp("results/logs/experiment/counts/noUMI/merge_NGmerge.{project}.{condition}.{replicate}.{type}.{split}.log"),
 
 
-use rule experiment_counts_merge_NGmerge_template as experiment_counts_noUMI_merge_NGmerge with:
-    input:
-        FWD=lambda wc: getFWD(wc.project, wc.condition, wc.replicate, wc.type, check_splitting=True, check_trimming=True),
-        REV=lambda wc: getREV(wc.project, wc.condition, wc.replicate, wc.type, check_splitting=True, check_trimming=True),
-    output:
-        un=temp("results/experiments/{project}/counts/noUMI.{condition}.{replicate}.{type}.{split}.un.NGmerge.fastq.gz"),
-        join="results/experiments/{project}/counts/noUMI.{condition}.{replicate}.{type}.{split}.join.NGmerge.fastq.gz",
-    log:
-        temp("results/logs/experiment/counts/noUMI/merge_NGmerge.{project}.{condition}.{replicate}.{type}.{split}.log"),
-
-
 ### START COUNTING ####
 
 
