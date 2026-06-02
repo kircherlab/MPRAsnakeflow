@@ -26,12 +26,12 @@ Filter the counts to BCs only of the correct length (defined in the config file)
         bc_length=lambda wc: config["experiments"][wc.project]["bc_length"],
     shell:
         """
-        bc={params.bc_length};
-        echo $bc;
-        zcat {input} | grep -v "N" | \
-        awk -v var="$bc" -v 'OFS=\\t' '{{ if (length($1) == var) {{ print }} }}' | \
-        sort | \
-        gzip -c > {output}
+        bc={params.bc_length}
+        echo $bc
+        zcat {input} | grep -v "N" \
+            | awk -v var="$bc" -v 'OFS=\\t' '{{ if (length($1) == var) {{ print }} }}' \
+            | sort \
+            | gzip -c >{output}
         """
 
 
@@ -50,10 +50,10 @@ Discarding PCR duplicates (taking BCxUMI only one time)
         getCondaEnv("default.yaml")
     shell:
         """
-        zcat {input} | awk '{{print $1}}' | \
-        uniq -c | \
-        awk -v 'OFS=\\t' '{{ print $2,$1 }}' | \
-        gzip -c > {output.counts} 2> {log}
+        zcat {input} | awk '{{print $1}}' \
+            | uniq -c \
+            | awk -v 'OFS=\\t' '{{ print $2,$1 }}' \
+            | gzip -c >{output.counts} 2>{log}
         """
 
 
@@ -79,12 +79,12 @@ Creates full + new distribution DNA files
     shell:
         """
         python {input.script} --input {input.counts} \
-        {params.samplingprop} \
-        {params.downsampling} \
-        {params.samplingtotal} \
-        {params.seed} \
-        {params.filtermincounts} \
-        --output {output} &> {log}
+            {params.samplingprop} \
+            {params.downsampling} \
+            {params.samplingtotal} \
+            {params.seed} \
+            {params.filtermincounts} \
+            --output {output} &>{log}
         """
 
 
@@ -111,17 +111,16 @@ Second with zeros, so a BC can be defined only in the DNA or RNA (RNA or DNA min
         minDNACounts=lambda wc: counts_getFilterConfig(wc.project, wc.config, "DNA", "min_counts"),
     shell:
         """
-        zero={params.zero};
-        if [[ -z "${{zero//false}}" ]]
-        then
+        zero={params.zero}
+        if [[ -z "${{zero//false}}" ]]; then
             join -1 1 -2 1 -t"$(echo -e '\\t')" \
-            <( zcat  {input.dna} | sort ) \
-            <( zcat {input.rna} | sort);
+                <(zcat {input.dna} | sort) \
+                <(zcat {input.rna} | sort)
         else
             join -e 0 -a1 -a2 -t"$(echo -e '\\t')" -o 0 1.2 2.2 \
-            <( zcat  {input.dna} | sort ) \
-            <( zcat {input.rna}  | sort);
-        fi  | \
-        awk -v 'OFS=\\t' '{{if ($2 >= {params.minDNACounts} && $3 >= {params.minRNACounts}) {{print $0}}}}' | \
-        gzip -c > {output} 2> {log}
+                <(zcat {input.dna} | sort) \
+                <(zcat {input.rna} | sort)
+        fi \
+            | awk -v 'OFS=\\t' '{{if ($2 >= {params.minDNACounts} && $3 >= {params.minRNACounts}) {{print $0}}}}' \
+            | gzip -c >{output} 2>{log}
         """

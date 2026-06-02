@@ -33,9 +33,9 @@ Getting the BCs and UMIs from the reads using fixed length.
     shell:
         """
         paste <(zcat {input.fwd_fastq} | awk 'NR%4==2 {{if ("{params.bc_extraction}" == "start") print substr($1,1,{params.bc_length}); else print substr($1,length($1)-{params.bc_length}+1)}}') \
-              <(zcat {input.umi_fastq} | awk 'NR%4==2 {{if ("{params.umi_extraction}" == "start") print substr($1,1,{params.umi_length}); else print substr($1,length($1)-{params.umi_length}+1)}}') | \
-        awk -v 'OFS=\\t' 'length($2) == {params.umi_length} {{print $0}}' | \
-        sort | uniq -c | \
-        awk -v 'OFS=\\t' '{{ print $2,$3,$1 }}' | \
-        gzip -c > {output} 2> {log}
+            <(zcat {input.umi_fastq} | awk 'NR%4==2 {{if ("{params.umi_extraction}" == "start") print substr($1,1,{params.umi_length}); else print substr($1,length($1)-{params.umi_length}+1)}}') \
+            | awk -v 'OFS=\\t' 'length($2) == {params.umi_length} {{print $0}}' \
+            | sort | uniq -c \
+            | awk -v 'OFS=\\t' '{{ print $2,$3,$1 }}' \
+            | gzip -c >{output} 2>{log}
         """

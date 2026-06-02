@@ -37,7 +37,7 @@ Quality metrics of the assignment run
     shell:
         """
         python {input.script} experiment \
-        --assignment {input.assignment} --barcode {input.barcode} \
-        --bc-threshold {params.bc_threshold} \
-        --output {output} &> {log}
+            --assignment {input.assignment} --barcode {input.barcode} \
+            --bc-threshold {params.bc_threshold} \
+            --output {output} &>{log}
         """

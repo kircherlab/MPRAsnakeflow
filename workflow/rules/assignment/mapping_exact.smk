@@ -14,12 +14,12 @@ Create reference to map the exact design
     shell:
         """
         paste <(
-            cat {input.ref} | awk '{{if ($1 ~ /^>/) {{ print substr($1,2)}}}}';
-            cat {input.ref} | awk '{{if ($1 ~ /^>/) {{ print substr($1,2)}}}}';
+            cat {input.ref} | awk '{{if ($1 ~ /^>/) {{ print substr($1,2)}}}}'
+            cat {input.ref} | awk '{{if ($1 ~ /^>/) {{ print substr($1,2)}}}}'
         ) <(
-            cat {input.ref} | awk '{{if ($1 ~ /^[^>]/) {{ seq=seq$1}}; if ($1 ~ /^>/ && NR!=1) {{print seq; seq=""}}}} END {{print seq}}';
-            cat {input.ref} | awk '{{if ($1 ~ /^[^>]/) {{ seq=seq$1}}; if ($1 ~ /^>/ && NR!=1) {{print seq; seq=""}}}} END {{print seq}}' | tr ACGTacgt TGCAtgca | rev;
-        ) > {output}
+            cat {input.ref} | awk '{{if ($1 ~ /^[^>]/) {{ seq=seq$1}}; if ($1 ~ /^>/ && NR!=1) {{print seq; seq=""}}}} END {{print seq}}'
+            cat {input.ref} | awk '{{if ($1 ~ /^[^>]/) {{ seq=seq$1}}; if ($1 ~ /^>/ && NR!=1) {{print seq; seq=""}}}} END {{print seq}}' | tr ACGTacgt TGCAtgca | rev
+        ) >{output}
         """
 
 
@@ -45,12 +45,12 @@ Map the reads to the reference and sort using exact match.
         export LC_ALL=C # speed up sort
 
         awk -v "OFS=\\t" 'NR==FNR {{a[$2] = $1; next}} {{if ($3 in a) print $2,a[$3],"{params.sequence_length}M"; else print $2,"other","NA"}}' \
-        <(
-            cat {input.reference} | awk -v "OFS=\\t" '{{print $1,substr($2, {params.alignment_start},{params.sequence_length})}}'
-        ) \
-        <(
-            zcat {input.reads} | awk 'NR%4==2 || NR%4==1' | paste - -
-        ) | \
-        sed 's/,YI:Z[^\\t]*//g' | sed 's/XI:Z://g' | \
-        sort -k1,1 -k2,2 -k3,3 -S 7G > {output} 2> {log}
+            <(
+                cat {input.reference} | awk -v "OFS=\\t" '{{print $1,substr($2, {params.alignment_start},{params.sequence_length})}}'
+            ) \
+            <(
+                zcat {input.reads} | awk 'NR%4==2 || NR%4==1' | paste - -
+            ) \
+            | sed 's/,YI:Z[^\\t]*//g' | sed 's/XI:Z://g' \
+            | sort -k1,1 -k2,2 -k3,3 -S 7G >{output} 2>{log}
         """
