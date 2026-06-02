@@ -19,10 +19,10 @@ Template rule to merge paired reads using NGmerge.
     shell:
         """
         NGmerge \
-        -1 {input.FWD} \
-        -2 {input.REV} \
-        -m {params.min_overlap} -p {params.frac_mismatches_allowed} \
-        -z \
-        -o  {output.join} \
-        -i -f {output.un} &> {log}
+            -1 {input.FWD} \
+            -2 {input.REV} \
+            -m {params.min_overlap} -p {params.frac_mismatches_allowed} \
+            -z \
+            -o {output.join} \
+            -i -f {output.un} &>{log}
         """
