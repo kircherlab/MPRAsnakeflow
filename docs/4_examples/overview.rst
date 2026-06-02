@@ -48,6 +48,14 @@ Published Dataset Examples
 
   Processed HepG2 sub1 MPRA data from `Zaratiana et al. <https://www.cell.com/molecular-cell/fulltext/S1097-2765(26)00232-7>`_, GEO `GSE284330 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE284330>`_. STARR-seq like assay, therefore not optimal for the workflow. But it uses designed oligonucleotides we demonstrate experiment-only processing using oligonucleotides as barcodes and shared DNA input across RNA replicates.
 
+* :doc:`GSE271608_example`
+
+  Synthetic promoter MPRA from `Zahm et al. (Nat Commun. 2024) <https://doi.org/10.1038/s41467-024-54502-9>`_, GEO `GSE271608 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE271608>`_. Demonstrates experiment-only processing using an externally supplied barcode dictionary when the raw assignment-building reads are not available.
+
+* :doc:`GSE307247_example`
+
+  Splicing-focused reporter assay from `Koplik et al. (bioRxiv 2025) <https://www.biorxiv.org/content/10.1101/2025.10.12.681955v1.full#sec-19>`_, GEO `GSE307247 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE307247>`_. Shows how to use MPRAsnakeflow for count quantification in a non-standard MPRA setting with supplied barcode references and UMI-aware counting.
+
 * :doc:`GSE325670_example`
 
   Variation/saturation mutagenesis MPRA from `Hauser et al. (2026) <https://doi.org/10.64898/2026.03.06.710116>`_, GEO umbrella `GSE325670 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE325670>`_ (example uses GSE325256). Highlights challenging library assignment settings, including bbmap/bwa-additional-filtering, strand-sensitive assignment, and downstream comparison in experiment counting.

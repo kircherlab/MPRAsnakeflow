@@ -197,6 +197,8 @@ Indices and Tables
     4_examples/GSE316891_example
     4_examples/GSE284330_example
     4_examples/GSE325670_example
+    4_examples/GSE271608_example
+    4_examples/GSE307247_example
 
 .. toctree::
     :caption: Tips & Tricks
