@@ -11,18 +11,18 @@ Input files
 
 Experiment File
 ---------------
-Comma separated file (CSV) that assigns all fastq files present in a directory to a condidtion and replicate. Each line represents an experiment, which will all be processed in parallel
+Comma separated file (CSV) that assigns all fastq files present in a directory to a condition and replicate. Each line represents an experiment, which will all be processed in parallel
 
 
 .. code-block:: text
 
     Condition,Replicate,DNA_BC_F,DNA_UMI,DNA_BC_R,RNA_BC_F,RNA_UMI,RNA_BC_R
-    Condidtion1,1,C1R1_DNA_barcode_F.fastq.gz,C1R1_DNA_barcode_UMI.fastq.gz,C1R1_DNA_barcode_R.fastq.gz,C1R1_RNA_barcode_F.fastq.gz,C1R1_RNA_barcode_UMI.fastq.gz,C1R1_RNA_barcode_R.fastq.gz
-    Condidtion1,2,C1R2_DNA_barcode_F.fastq.gz,C1R2_DNA_barcode_UMI.fastq.gz,C1R2_DNA_barcode_R.fastq.gz,C1R2_RNA_barcode_F.fastq.gz,C1R2_RNA_barcode_UMI.fastq.gz,C1R2_RNA_barcode_R.fastq.gz
-    Condidtion1,3,C1R3_DNA_barcode_F.fastq.gz,C1R3_DNA_barcode_UMI.fastq.gz,C1R3_DNA_barcode_R.fastq.gz,C1R3_RNA_barcode_F.fastq.gz,C1R3_RNA_barcode_UMI.fastq.gz,C1R3_RNA_barcode_R.fastq.gz
-    Condidtion2,1,C2R1_DNA_barcode_F.fastq.gz,C2R1_DNA_barcode_UMI.fastq.gz,C2R1_DNA_barcode_R.fastq.gz,C2R1_RNA_barcode_F.fastq.gz,C2R1_RNA_barcode_UMI.fastq.gz,C2R1_RNA_barcode_R.fastq.gz
-    Condidtion2,2,C2R2_DNA_barcode_F.fastq.gz,C2R2_DNA_barcode_UMI.fastq.gz,C2R2_DNA_barcode_R.fastq.gz,C2R2_RNA_barcode_F.fastq.gz,C2R2_RNA_barcode_UMI.fastq.gz,C2R2_RNA_barcode_R.fastq.gz
-    Condidtion2,3,C2R3_DNA_barcode_F.fastq.gz,C2R3_DNA_barcode_UMI.fastq.gz,C2R3_DNA_barcode_R.fastq.gz,C2R3_RNA_barcode_F.fastq.gz,C2R3_RNA_barcode_UMI.fastq.gz,C2R3_RNA_barcode_R.fastq.gz
+    Condition1,1,C1R1_DNA_barcode_F.fastq.gz,C1R1_DNA_barcode_UMI.fastq.gz,C1R1_DNA_barcode_R.fastq.gz,C1R1_RNA_barcode_F.fastq.gz,C1R1_RNA_barcode_UMI.fastq.gz,C1R1_RNA_barcode_R.fastq.gz
+    Condition1,2,C1R2_DNA_barcode_F.fastq.gz,C1R2_DNA_barcode_UMI.fastq.gz,C1R2_DNA_barcode_R.fastq.gz,C1R2_RNA_barcode_F.fastq.gz,C1R2_RNA_barcode_UMI.fastq.gz,C1R2_RNA_barcode_R.fastq.gz
+    Condition1,3,C1R3_DNA_barcode_F.fastq.gz,C1R3_DNA_barcode_UMI.fastq.gz,C1R3_DNA_barcode_R.fastq.gz,C1R3_RNA_barcode_F.fastq.gz,C1R3_RNA_barcode_UMI.fastq.gz,C1R3_RNA_barcode_R.fastq.gz
+    Condition2,1,C2R1_DNA_barcode_F.fastq.gz,C2R1_DNA_barcode_UMI.fastq.gz,C2R1_DNA_barcode_R.fastq.gz,C2R1_RNA_barcode_F.fastq.gz,C2R1_RNA_barcode_UMI.fastq.gz,C2R1_RNA_barcode_R.fastq.gz
+    Condition2,2,C2R2_DNA_barcode_F.fastq.gz,C2R2_DNA_barcode_UMI.fastq.gz,C2R2_DNA_barcode_R.fastq.gz,C2R2_RNA_barcode_F.fastq.gz,C2R2_RNA_barcode_UMI.fastq.gz,C2R2_RNA_barcode_R.fastq.gz
+    Condition2,3,C2R3_DNA_barcode_F.fastq.gz,C2R3_DNA_barcode_UMI.fastq.gz,C2R3_DNA_barcode_R.fastq.gz,C2R3_RNA_barcode_F.fastq.gz,C2R3_RNA_barcode_UMI.fastq.gz,C2R3_RNA_barcode_R.fastq.gz
 
 
 We allow different flavours of experiment files because sometimes no UMI exists or only a FWD read is used. Different options are:
@@ -91,15 +91,15 @@ Mandatory arguments:
   :\-\-configfile:
     Specify or overwrite the config file of the workflow (see the docs). Values specified in JSON or YAML format are available in the global config dictionary inside the workflow. Multiple files overwrite each other in the given order. Thereby missing keys in previous config files are extended by following configfiles. Note that this order also includes a config file defined in the workflow definition itself (which will come first). (default: None)
   :\-\-sdm:
-    **Required to run MPRAsnakeflow.** : :code:`--sdm conda` or :code:`--sdm apptainer conda` Uses the defined conda environment per rule. We highly recommend to use apptainer where we build a predefined docker container with all software installewd within it. :code:`--sdm conda` the conda envs will be installed by the first excecution of the workflow. If this flag is not set, the conda/apptainer directive is ignored. (default: False)
+    **Required to run MPRAsnakeflow.** : :code:`--sdm conda` or :code:`--sdm apptainer conda` Uses the defined conda environment per rule. We highly recommend using apptainer where we build a predefined docker container with all software installed within it. With :code:`--sdm conda`, the conda envs will be installed by the first execution of the workflow. If this flag is not set, the conda/apptainer directive is ignored. (default: False)
 Recommended arguments:
   :\-\-snakefile:
-    You should not need to specify this. By default, Snakemake will search for 'Snakefile', 'snakefile', 'workflow/Snakefile','workflow/snakefile' beneath the current working directory, in this order. Only if you definitely want a different layout, you need to use this parameter. This is very usefull when you want to have the results in a different folder than MPRAsnakeflow is in. (default: None)
-Usefull arguments:
+    You should not need to specify this. By default, Snakemake will search for 'Snakefile', 'snakefile', 'workflow/Snakefile','workflow/snakefile' beneath the current working directory, in this order. Only if you definitely want a different layout, you need to use this parameter. This is very useful when you want to have the results in a different folder than MPRAsnakeflow is in. (default: None)
+Useful arguments:
   :-n:
     Do not execute anything, and display what would be done. If you have a very large workflow, use --dry-run --quiet to just print a summary of the DAG of jobs. (default: False)
   :\-\-touch, -t:
-    Touch output files (mark them up to date without really changing them) instead of running their commands. This is used to pretend that the rules were executed, in order to fool future invocations of snakemake. Fails if a file does not yet exist. Note that this will only touch files that would otherwise be recreated by Snakemake (e.g. because their input files are newer). For enforcing a touch, combine this with --force, --forceall, or --forcerun. Note however that you loose the provenance information when the files have been created in realitiy. Hence, this should be used only as a last resort. (default: False)
+    Touch output files (mark them up to date without really changing them) instead of running their commands. This is used to pretend that the rules were executed, in order to fool future invocations of snakemake. Fails if a file does not yet exist. Note that this will only touch files that would otherwise be recreated by Snakemake (e.g. because their input files are newer). For enforcing a touch, combine this with --force, --forceall, or --forcerun. Note however that you lose the provenance information when the files have been created in reality. Hence, this should be used only as a last resort. (default: False)
 
 
 Rules
@@ -115,9 +115,9 @@ Rules run by snakemake in the experiment workflow. Some rules will be run only i
 - **all_experiments_counts_stats**: All rule to get count statistics of the experiment workflow.
 - **all_qc_report**: All rule to generate QC reports.
 - **all_stats_BCNucleotideComposition**: All rule to get BC nucleotide composition of the experiment workflow.
-- **experiment_assigned_counts_assignBarcodes**: Assign RNA and DNA barcodes seperately to make the statistic for assigned
+- **experiment_assigned_counts_assignBarcodes**: Assign RNA and DNA barcodes separately to make the statistic for assigned
 - **experiment_assigned_counts_combine_replicates**: Combine replicates of master table by summing counts up and using also the average.
-- **experiment_assigned_counts_combine_replicates_barcode_output**: Combine replictes of assigned barcode counts into one file.
+- **experiment_assigned_counts_combine_replicates_barcode_output**: Combine replicates of assigned barcode counts into one file.
 - **experiment_assigned_counts_copy_final_all_files**: Will copy final files to the main folder so that it is clear which files to use.
 - **experiment_assigned_counts_copy_final_thresh_files**: Will copy final files to the main folder so that it is clear which files to use.
 - **experiment_assigned_counts_createAssignmentPickleFile**: Create a pickle file for assigned counts.
@@ -139,7 +139,7 @@ Rules run by snakemake in the experiment workflow. Some rules will be run only i
 - **experiment_counts_umi_create_BAM**: Create a BAM file from FASTQ input, merge FWD and REV read and save UMI in XI flag.
 - **experiment_counts_umi_raw_counts**: Counting BCsxUMIs from the BAM files.
 - **experiment_preprocessing_trim_reads**: Getting the BCs from the reads using cutadapt.
-- **experiment_statistic_assigned_counts_combine_BC_assignment_stats**: Combined assinged counts statistic per condition (DNA and aRNA not merged)
+- **experiment_statistic_assigned_counts_combine_BC_assignment_stats**: Combined assigned counts statistic per condition (DNA and RNA not merged)
 - **experiment_statistic_assigned_counts_combine_BC_assignment_stats_helper**: Combine assigned counts statistic per replicate and modality (DNA and RNA not merged)
 - **experiment_statistic_assigned_counts_combine_stats_dna_rna_merge**: Combine assigned counts statistic per replicate (DNA and RNA merged)
 - **experiment_statistic_assigned_counts_combine_stats_dna_rna_merge_all**: Combine assigned counts statistic per condition (DNA and RNA merged)
@@ -168,15 +168,15 @@ Rules run by snakemake in the experiment workflow. Some rules will be run only i
 Output
 ==========
 
-The output can be found in the folder defined by the option :code:`results/experiments/`. It is structured in folders of the experiment name, defined in the config file. It is structured in folders of the experiemnt name as follows:
+The output can be found in the folder defined by the option :code:`results/experiments/`. It is structured in folders of the experiment name, defined in the config file. It is structured in folders of the experiment name as follows:
 
 Files
 -------------
-Once the pipline is finished running then all the output files can be seen in the results folder. This pipline also generates a qc report.
+Once the pipeline is finished running then all the output files can be seen in the results folder. This pipeline also generates a qc report.
 For more details, refer to the `HTML QC report <https://kircherlab.github.io/mprasnakeflow/experiment.html>`_.
 
 
-File tree of the result folder (names in :code:`< >` can be specified in the config file). Might be slightly different when using wih/without UMI or with/without paired reads:
+File tree of the result folder (names in :code:`< >` can be specified in the config file). Might be slightly different when using with/without UMI or with/without paired reads:
 
 .. code-block:: text
 
@@ -250,8 +250,8 @@ File tree of the result folder (names in :code:`< >` can be specified in the con
 
 Key output files:
 
-- **qc_report.<config_name>.html**: QC report of the experimemt.
+- **qc_report.<config_name>.html**: QC report of the experiment.
 - **reporter_experiment.barcode.<condition>.<assignment_name>.<config_name>.all.tsv.gz**: Reporter experiment barcode count file containing barcode, oligo ID, and then columns for DNA and RNA counts for each replicate. If not observed the entry is empty.
-- **reporter_experiment.barcode.<condition>.<assignment_name>.<config_name>.min_oligo_threshold_10.tsv.gz**: Same as abive but just for oligos that have at least 10 barcodes.
-- **reporter_experiment.oligo.<condition>.<assignment_name>.<config_name>.all.tsv.gz**: Reporter experiment count file aggegated to oligo level. Containing replicate name, oligo ID, dna counts, rna counts, dna normalized (CPM), rna normalized (CPM), log2FoldChange, and number of barcodes.
+- **reporter_experiment.barcode.<condition>.<assignment_name>.<config_name>.min_oligo_threshold_10.tsv.gz**: Same as above but just for oligos that have at least 10 barcodes.
+- **reporter_experiment.oligo.<condition>.<assignment_name>.<config_name>.all.tsv.gz**: Reporter experiment count file aggregated to oligo level. Containing replicate name, oligo ID, dna counts, rna counts, dna normalized (CPM), rna normalized (CPM), log2FoldChange, and number of barcodes.
 - **reporter_experiment.oligo.<condition>.<assignment_name>.<config_name>.min_oligo_threshold_10.tsv.gz**: Same as above but just for oligos that have at least 10 barcodes.

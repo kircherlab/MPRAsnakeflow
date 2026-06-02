@@ -46,7 +46,7 @@ Published Dataset Examples
 
 * :doc:`GSE284330_example`
 
-  Processed HepG2 sub1 MPRA data from `Zaratiana et al. <https://www.cell.com/molecular-cell/fulltext/S1097-2765(26)00232-7>`_, GEO `GSE284330 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE284330>`_. STARR-seq like assay, therefore not optimal for the workflow. But it uses designed oligonucleotides we demonstrate experiment-only processing using oligonucleotides as barcodes and shared DNA input across RNA replicates.
+  Processed HepG2 sub1 MPRA data from `Zaratiana et al. <https://www.cell.com/molecular-cell/fulltext/S1097-2765(26)00232-7>`_, GEO `GSE284330 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE284330>`_. STARR-seq like assay, therefore not optimal for the workflow. But it uses designed oligonucleotides, and we demonstrate experiment-only processing using oligonucleotides as barcodes and shared DNA input across RNA replicates.
 
 * :doc:`GSE271608_example`
 
