@@ -64,8 +64,9 @@ cd docs && make html
 ### Adding a New Rule
 ```snakemake
 rule my_rule:
-    conda:
-        getCondaEnv("python3.yaml")
+    """
+Documentation of my_rule goes here. Describe inputs, outputs, and purpose.
+"""
     input:
         script=getScript("mydir/myscript.py"),
         data=lambda wc: config["assignments"][wc.assignment]["design_file"],
@@ -73,8 +74,12 @@ rule my_rule:
         "results/assignment/{assignment}/myoutput.tsv",
     log:
         "results/logs/assignment/my_rule.{assignment}.log",
+    conda:
+        getCondaEnv("python3.yaml")
     shell:
-        "python {input.script} --input {input.data} > {output} 2> {log}"
+        """
+        python {input.script} --input {input.data} >{output} 2>{log}
+        """
 ```
 
 ### Config Access
