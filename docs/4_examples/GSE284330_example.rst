@@ -113,7 +113,7 @@ Create a config file (e.g. ``config_experiment.yaml``). Please note that we have
         bc_length: 200
         merge_tool: NGmerge
         NGmerge:
-          max_overlap: 80
+          min_overlap: 80
         adapters:
           FWD:
             five_prime:

@@ -48,6 +48,9 @@ def read_sequence_files(
 )
 def cli(read_files, barcode_files, use_reverse_complement, attach_sequence):
 
+    if len(read_files) != len(barcode_files):
+        raise click.UsageError("--reads and --barcodes must be provided the same number of times.")
+
     for read_file, barcode_file in zip(read_files, barcode_files):
         with gzip.open(read_file, "rt") as r_file, gzip.open(barcode_file, "rt") as bc_file:
             inputs = {"read_file": r_file, "bc_file": bc_file, "use_BC_reverse_complement": use_reverse_complement}

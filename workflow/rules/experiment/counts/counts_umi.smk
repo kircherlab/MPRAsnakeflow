@@ -79,7 +79,7 @@ Attach UMI read to FWD/REV headers before NGmerge.
         umi_args=lambda wc, input: " ".join(f"-b {path}" for path in input.umi_fastq),
     shell:
         """
-        python {input.script} {params.read_args} {params.umi_args} | bgzip -c >{output.read} 2>{log}
+        python {input.script} {params.read_args} {params.umi_args} 2>{log} | bgzip -c >{output.read} 2>>{log}
         """
 
 

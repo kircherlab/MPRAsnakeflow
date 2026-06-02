@@ -139,12 +139,8 @@ Create a config file (e.g. ``config_assignment.yaml``) with the following conten
           tool: bwa-additional-filtering
           configs:
             min_mapping_quality: 1
-            sequence_length:
-              min: 200
-              max: 225
-            alignment_start:
-              min: 1
-              max: 3
+            sequence_length: 220
+            alignment_start: 1
         FWD:
           - data/assignment/SRR37895574_1.fastq.gz
         BC:
@@ -311,7 +307,7 @@ Run Experiment Workflow
 Results
 =======
 
-Assignment results are written to :code:`results/assignment/GSE325256`, :code:`results/assignment/GSE325256BWA`, :code:`results/assignment/GSE325256CIGAR`, and :code:`results/assignment/GSE325256StrandSensitive`. The final assignment files and QC reports are placed in those directories. The library is very deeply sequenced and we get a median of over 1000 barcodes per oligo. Due to the challenging design (e.g. contains one base deletion but not within but at the end of the designed oligo) we also do not get the whole library assigned. Only around 70%. We can increase the assignment allowing a lower fraction percentage of reads assigned to the top hit (e.g. 0.51 instead of 0.75) but that also increases the risk of false positive assignments. Also the customized MPRAsnakeflow mapping with ``bwa`` disabling ``MAPQ`` with ``min_mapping_quality: 0`` but allwoing only specific CIGAR strings ``cigar_filter_regex: 208M|210M|212M|214M|216M|218M|219M`` works sightly better.
+Assignment results are written to :code:`results/assignment/GSE325256`, :code:`results/assignment/GSE325256BWA`, :code:`results/assignment/GSE325256CIGAR`, and :code:`results/assignment/GSE325256StrandSensitive`. The final assignment files and QC reports are placed in those directories. The library is very deeply sequenced and we get a median of over 1000 barcodes per oligo. Due to the challenging design (e.g. contains one base deletion but not within but at the end of the designed oligo) we also do not get the whole library assigned. Only around 70%. We can increase the assignment allowing a lower fraction percentage of reads assigned to the top hit (e.g. 0.51 instead of 0.75) but that also increases the risk of false positive assignments. Also the customized MPRAsnakeflow mapping with ``bwa`` disabling ``MAPQ`` with ``min_mapping_quality: 0`` but allowing only specific CIGAR strings ``cigar_filter_regex: 208M|210M|212M|214M|216M|218M|219M`` works slightly better.
 
 To reduce false positives, we also added the strand-sensitive mapping option (``GSE325256StrandSensitive`` using the default ``bbmap`` approach). We assign on average half of the barcodes (~500 per oligo). But it can be that we reduce the false positive rate.
 
@@ -353,7 +349,7 @@ You can have a look at the assignment QC reports here:
 
 Experiment results are written to :code:`results/experiments/GSE325256`. The count outputs use the published GEO assignment as well as the assignments generated in this workflow. We only used the mapping with the default fraction (0.75) for the experiment results.
 
-The results show that in comparison to their assignment file we reached a similar pearosn correlation (around 0.67) for activity. Interestingly the strand-sensitive mode increased the correlsion to 0.72 suggesting that a high number of barcodes are false positives and the data might benefit from a strict mappinng strategy.
+The results show that in comparison to their assignment file we reached a similar Pearson correlation (around 0.67) for activity. Interestingly the strand-sensitive mode increased the correlation to 0.72 suggesting that a high number of barcodes are false positives and the data might benefit from a strict mapping strategy.
 
 
 .. list-table:: Experiment QC reports for GSE325256

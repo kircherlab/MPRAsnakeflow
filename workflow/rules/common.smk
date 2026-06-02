@@ -261,7 +261,7 @@ def getReplicatesOfConditionType(project: str, condition: str, rna_or_dna: str) 
 
 
 def hasReplicates(project: str, condition: str | None = None) -> bool:
-    if condition == None:
+    if condition is None:
         conditions = getConditions(project)
         for condition in conditions:
             if len(getReplicatesOfCondition(project, condition)) <= 1:
@@ -269,21 +269,6 @@ def hasReplicates(project: str, condition: str | None = None) -> bool:
     else:
         return len(getReplicatesOfCondition(project, condition)) > 1
     return True
-
-
-def getReplicatesOfConditionType(project: str, condition: str, rna_or_dna: str) -> list[str]:
-    exp = getExperiments(project)
-
-    replicates: list[str] = getReplicatesOfCondition(project, condition)
-
-    if f"{rna_or_dna}_BC_F" in exp.columns:
-
-        exp_filter = exp[exp.Condition == condition]
-
-        if len(replicates) > 1 and exp_filter[f"{rna_or_dna}_BC_F"].nunique() == 1:
-            return [replicates[0]]
-
-    return replicates
 
 
 def getConfigs(project: str) -> list[str]:

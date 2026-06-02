@@ -1,7 +1,7 @@
 .. _GSE316891_example:
 
 .. role:: bash(code)
-	 :language: bash
+    :language: bash
 
 ================================
 GSE316891 (Yan et al. L1a1 MPRA)
@@ -51,22 +51,22 @@ Create a config file (e.g. ``config_assignment.yaml``) with the following conten
 
 .. code-block:: yaml
 
-	version: "0.6.2"
+	version: "0.7.0"
 	assignments:
 	  GSE316891L1a1:
 	    bc_length: 15
         alignment_tool:
           split_number: 30
           tool: bbmap
-          configs:
-            sequence_length: 270
-            alignment_start: 1
         FWD:
           - data/assignment/SRR36893758_1.fastq.gz
         REV:
           - data/assignment/SRR36893758_2.fastq.gz
         BC:
           - data/assignment/SRR36893758_3.fastq.gz
+        design_check:
+          sequence_start: 1
+          sequence_length: 270
         design_file: data/assignment/GSM9462019_L1a1.fix.fa
         configs:
           default: {}
