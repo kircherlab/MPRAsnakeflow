@@ -40,14 +40,14 @@ We need the design file and must modify it by parsing the csv file, removing the
 
     mkdir -p data/Zahm
 
-    wget -O data/Zahm/Zahm.bacode.dictionary.csv.gz https://ftp.ncbi.nlm.nih.gov/geo/series/GSE271nnn/GSE271608/suppl/GSE271608%5FfinalBarcodeMap%2Ecsv%2Egz
+    wget -O data/Zahm/Zahm.barcode.dictionary.csv.gz https://ftp.ncbi.nlm.nih.gov/geo/series/GSE271nnn/GSE271608/suppl/GSE271608%5FfinalBarcodeMap%2Ecsv%2Egz
 
     # Convert supplied csv file to format compatible with MPRAsnakeflow.
-    zcat data/Zahm/Zahm.bacode.dictionary.csv.gz | \
+    zcat data/Zahm/Zahm.barcode.dictionary.csv.gz | \
         sed 's/,/\t/g' | \
         sed '1d' | \
         awk '{print $7"\t"$2"_"$3"_"$4"_"$5}' | \
-        gzip > data/Zahm/Zahm.bacode.dictionary.tsv.gz
+        gzip > data/Zahm/Zahm.barcode.dictionary.tsv.gz
 
 
 Read experiment data
@@ -105,8 +105,8 @@ The folder should look like this:
         ├── sf_19919.RNA2.fastq.gz
         ├── sf_19919.RNA3.fastq.gz
         ├── sf_19919.RNA4.fastq.gz
-        ├── Zahm.bacode.dictionary.csv.gz
-        └── Zahm.bacode.dictionary.tsv.gz
+        ├── Zahm.barcode.dictionary.csv.gz
+        └── Zahm.barcode.dictionary.tsv.gz
 
     1 directory, 12 files
 
@@ -148,7 +148,7 @@ Create config files
             assignments:
                 fromFile:
                     type: file
-                    assignment_file: data/Zahm/Zahm.bacode.dictionary.tsv.gz
+                    assignment_file: data/Zahm/Zahm.barcode.dictionary.tsv.gz
             configs:
                 default: {} # name of an example filtering config
     EOF

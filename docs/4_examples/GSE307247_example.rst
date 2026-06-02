@@ -11,7 +11,7 @@ This example runs the experiment workflow on data from `Koplik et al. Massively 
 
 The authors used a custom processing pipeline, available on `GitHub <https://github.com/skoplik/ESL_MPRA_2025>`_, but here we run part of the analysis in MPRAsnakeflow.
 
-.. note:: This experiment represents a significant departure from a traditional MPRA experiment. Specifically, barcodes are used to associate reads with reporter constructs, but the ultimate quantification relies on counting exon skipping or inclusion events. The reference sequences consist of specific exons and introns with variable flanking sequences. The highly customized steps are mostly bash and Python scripts so are readily integratable into a Snakemake pipeline. Here, we merely demonstrate how a user could intersect this pipeline with MPRAsnakeflow for count quantification without actually integrating the entire workflow.
+.. note:: This experiment represents a significant departure from a traditional MPRA experiment. Specifically, barcodes are used to associate reads with reporter constructs, but the ultimate quantification relies on counting exon skipping or inclusion events. The reference sequences consist of specific exons and introns with variable flanking sequences. The highly customized steps are mostly bash and Python scripts, so they can be readily integrated into a Snakemake pipeline. Here, we merely demonstrate how a user could intersect this pipeline with MPRAsnakeflow for count quantification without actually integrating the entire workflow.
 
 
 Prerequisites
@@ -40,9 +40,9 @@ We need the design file and must modify it by parsing the csv file, removing the
 
     mkdir -p data/Koplik
 
-    wget -O data/Koplik/Koplik.bacode.dictionary.fasta.gz https://ftp.ncbi.nlm.nih.gov/geo/series/GSE307nnn/GSE307247/suppl/GSE307247%5FESL%5Fconcat%5F2023%5F09%5F19%5Fsubsampleparams%5Fd1c%5Fms75%5Fshorter3p%5Fiterate%5Fmincov5%5Freference%2Efasta%2Egz
+    wget -O data/Koplik/Koplik.barcode.dictionary.fasta.gz https://ftp.ncbi.nlm.nih.gov/geo/series/GSE307nnn/GSE307247/suppl/GSE307247%5FESL%5Fconcat%5F2023%5F09%5F19%5Fsubsampleparams%5Fd1c%5Fms75%5Fshorter3p%5Fiterate%5Fmincov5%5Freference%2Efasta%2Egz
 
-    zcat data/Koplik/Koplik.bacode.dictionary.fasta.gz | \
+    zcat data/Koplik/Koplik.barcode.dictionary.fasta.gz | \
         awk '/^>/ {if (N>0) printf "\n"; printf "%s\t", $0; N++; next} {printf "%s", $0} END {if (N>0) printf "\n"}' | \
         sed 's/^>//g' | \
         sed 's/ /_/g' | \
@@ -52,7 +52,7 @@ We need the design file and must modify it by parsing the csv file, removing the
         tr ACGTN TGCAN \
         > data/Koplik/Koplik.bacodes.temp
 
-    zcat data/Koplik/Koplik.bacode.dictionary.fasta.gz | \
+    zcat data/Koplik/Koplik.barcode.dictionary.fasta.gz | \
         awk '/^>/ {if (N>0) printf "\n"; printf "%s\t", $0; N++; next} {printf "%s", $0} END {if (N>0) printf "\n"}' | \
         sed 's/^>//g' | \
         sed 's/ /_/g' | \
@@ -69,7 +69,7 @@ We need the design file and must modify it by parsing the csv file, removing the
 Read experiment data
 --------------------
 
-There is only one set of sequencing data for this experiment, and we are selecting all experiments (HEP293, HeLa, HMC3, K562, MCF7) each having two replicates. Each replicate has two fastq files associated with it, which are combined and compressed for convenience and compatibility with MPRAsnakeflow, which expects compressed fastq files. Raw sequencing reads are obtained from GEO and processed together in a list of accessions. Note the need for the --include-technical flag to ensure obtaining the necessary sequencing files containing UMIs for deduplication.
+There is only one set of sequencing data for this experiment, and we are selecting all experiments (HEK293, HeLa, HMC3, K562, MCF7), each having two replicates. Each replicate has two fastq files associated with it, which are combined and compressed for convenience and compatibility with MPRAsnakeflow, which expects compressed fastq files. Raw sequencing reads are obtained from GEO and processed together in a list of accessions. Note the need for the --include-technical flag to ensure obtaining the necessary sequencing files containing UMIs for deduplication.
 
 .. code-block:: bash
 
@@ -101,7 +101,7 @@ There is only one set of sequencing data for this experiment, and we are selecti
     gzip -c SRR35247201_3.fastq > data/Koplik/SRR35247201_3.fastq.gz
     gzip -c SRR35247201_4.fastq > data/Koplik/SRR35247201_4.fastq.gz
     gzip -c SRR35247202_3.fastq > data/Koplik/SRR35247202_3.fastq.gz
-    gzip -c SRR35247202_4.fastq > data/Koplik/SRR35247203_4.fastq.gz
+    gzip -c SRR35247202_4.fastq > data/Koplik/SRR35247202_4.fastq.gz
 
 .. note:: Please be sure that all files are downloaded completely without errors!
 
@@ -118,8 +118,8 @@ The folder should look like this:
 
     data
     └── Koplik
-        ├── Koplik.bacode.dictionary.fasta.gz
-        ├── Koplik.bacode.dictionary.tsv.gz
+       ├── Koplik.barcode.dictionary.fasta.gz
+       ├── Koplik.barcode.dictionary.tsv.gz
         ├── SRR35247192_2.fastq.gz
         ├── SRR35247193_3.fastq.gz
         ├── SRR35247193_4.fastq.gz
@@ -162,7 +162,7 @@ We run only the count workflow. Note, we use assignment ``fromFile`` instead of 
 
 First, define the config file and the experiment CSV file to map DNA/RNA counts to the correct replicates.
 
-Important details for the config file: the barcodes are 20 bp long. Deduplication using UMIs is performed so it is critical to supply umi_length, 8 bp in this case. In addition, note that the "default" configs settings are not used here. Due to the nature of the experiment, the barcode threshold needs to be set to 1 to avoid filtering out all most barcodes.
+Important details for the config file: the barcodes are 20 bp long. Deduplication using UMIs is performed, so it is critical to supply umi_length, 8 bp in this case. In addition, note that the default config settings are not used here. Due to the nature of the experiment, the barcode threshold needs to be set to 1 to avoid filtering out almost all barcodes.
 
 Create config files
 -------------------
@@ -182,7 +182,7 @@ Create config files
             assignments:
                 fromFile:
                     type: file
-                    assignment_file: data/Koplik/Koplik_bc_dictionary.tsv.gz
+                    assignment_file: data/Koplik/Koplik.barcode.dictionary.tsv.gz
             configs:
                 bcone:
                     filter:
