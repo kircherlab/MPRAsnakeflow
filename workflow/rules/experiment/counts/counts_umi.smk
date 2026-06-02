@@ -79,7 +79,7 @@ Attach UMI read to FWD/REV headers before NGmerge.
         umi_args=lambda wc, input: " ".join(f"-b {path}" for path in input.umi_fastq),
     shell:
         """
-        python {input.script} {params.read_args} {params.umi_args} | bgzip -c > {output.read} 2> {log}
+        python {input.script} {params.read_args} {params.umi_args} | bgzip -c >{output.read} 2>{log}
         """
 
 
@@ -130,24 +130,24 @@ Counting BCsxUMIs from the BAM files.
     shell:
         """
         if [[ "{params.merge_tool}" == "NGmerge" ]]; then
-            zcat {input} | \
-            awk -v OFS='\\t' -v umi_len={params.umi_length} '
+            zcat {input} \
+                | awk -v OFS='\\t' -v umi_len={params.umi_length} '
                 NR%4==1 {{
                     umi="";
                     if (match($0, /XI:Z:[^,[:space:]]+/)) umi=substr($0, RSTART + 5, umi_len)
                 }}
                 NR%4==2 {{if (umi != "") print $1, umi}}
-            ' | \
-            sort | uniq -c | \
-            awk -v OFS='\\t' '{{ print $2,$3,$1 }}' | \
-            gzip -c > {output} 2> {log}
+            ' \
+                | sort | uniq -c \
+                | awk -v OFS='\\t' '{{ print $2,$3,$1 }}' \
+                | gzip -c >{output} 2>{log}
         else
-            samtools merge -c -o - {input} | samtools view -F 1 -r {params.datasetID} | \
-            awk -v OFS='\\t' '{{ for (i=12; i<=NF; i++) {{
+            samtools merge -c -o - {input} | samtools view -F 1 -r {params.datasetID} \
+                | awk -v OFS='\\t' '{{ for (i=12; i<=NF; i++) {{
               if ($i ~ /^XJ:Z:/) print $10,substr($i,6,{params.umi_length})
-            }}}}' | \
-            sort | uniq -c | \
-            awk -v OFS='\\t' '{{ print $2,$3,$1 }}' | \
-            gzip -c > {output} 2> {log}
+            }}}}' \
+                | sort | uniq -c \
+                | awk -v OFS='\\t' '{{ print $2,$3,$1 }}' \
+                | gzip -c >{output} 2>{log}
         fi
         """
