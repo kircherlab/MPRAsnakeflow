@@ -11,8 +11,7 @@ Input files
 
 Experiment File
 ---------------
-Comma separated file (CSV) that assigns all fastq files present in a directory to a condition and replicate. Each line represents an experiment, which will all be processed in parallel
-
+Comma separated file (CSV) that assigns all fastq files present in a directory to a condition and replicate. Each line represents an experiment; all experiments will be processed in parallel.
 
 .. code-block:: text
 
