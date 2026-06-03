@@ -102,8 +102,7 @@ Create the :code:`experiments.csv` file to map DNA/RNA counts to the correct rep
     EOF
 
 
-Create a config file (e.g. ``config_experiment.yaml``). Please note that we have to set the barcode length to 200, which is the length of the designed oligonucleotides used as barcodes in this assay. Because the implemented paird-end BC merging is not optimized for such long reads we use NGmerge ``merge_tool: NGmerge`` and extend the maximum overlap. Also note that we have to use a barcode threshold of 1 because there are not really barcodes. We do a one to one mapping of the oligos:
-
+Create a config file (e.g. ``config_experiment.yaml``). Please note that we have to set the barcode length to 200, which is the length of the designed oligonucleotides used as barcodes in this assay. Because the implemented paired-end BC merging is not optimized for such long reads, we use NGmerge (``merge_tool: NGmerge``) and extend the minimum overlap. Also note that we have to use a barcode threshold of 1 because these are not really barcodes; we do a one-to-one mapping of the oligos:
 .. code-block:: yaml
 
     ---
