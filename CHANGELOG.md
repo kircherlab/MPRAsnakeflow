@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.7.0](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.6.5...v0.7.0) (2026-06-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* **assignment:** cigar filtering for BWA and optional length filter ([#273](https://github.com/kircherlab/MPRAsnakeflow/issues/273))
+
+### Features
+
+* **assignment:** cigar filtering for BWA and optional length filter ([#273](https://github.com/kircherlab/MPRAsnakeflow/issues/273)) ([f8d51e0](https://github.com/kircherlab/MPRAsnakeflow/commit/f8d51e03fea764595b1fe991183d3f0da750ca95))
+* **experiment:** :sparkles: NGmerge for paired-end BC reads merging ([#270](https://github.com/kircherlab/MPRAsnakeflow/issues/270)) ([68b5175](https://github.com/kircherlab/MPRAsnakeflow/commit/68b5175b9559e3226eee9c7d47ccf270f8fd2dfb))
+
+
+### Bug Fixes
+
+* duplicated rule experiment_counts_noUMI_merge_NGmerge ([defa204](https://github.com/kircherlab/MPRAsnakeflow/commit/defa2042c2215911339f4bde2f5ce9560785af97))
+
+
+### Documentation
+
+* :memo: Adding example using data GEO:GSE306816 ([5f4595b](https://github.com/kircherlab/MPRAsnakeflow/commit/5f4595b40b2bda04282be5987fcd86a144b71dcf))
+* add GSE293036 example with correct FASTQ file names ([#269](https://github.com/kircherlab/MPRAsnakeflow/issues/269)) ([ff607b5](https://github.com/kircherlab/MPRAsnakeflow/commit/ff607b5757702fe05c87839c5189dba1ecce05a9))
+* Added Zahm and KopliK examples - GSE271608 and GSE307247 ([#275](https://github.com/kircherlab/MPRAsnakeflow/issues/275)) ([bb0292b](https://github.com/kircherlab/MPRAsnakeflow/commit/bb0292ba99f526582510f810779bf1aa493101c3))
+* fixing typos ([6c4f52a](https://github.com/kircherlab/MPRAsnakeflow/commit/6c4f52ad4abc6977bbcbfb253423d1093b3ddf84))
+* overview page of examples and more examples ([#272](https://github.com/kircherlab/MPRAsnakeflow/issues/272)) ([136d681](https://github.com/kircherlab/MPRAsnakeflow/commit/136d68123cb93a9d8218a08826c12443e933d8a9))
+* Potential fix for pull request finding ([a067b86](https://github.com/kircherlab/MPRAsnakeflow/commit/a067b866afad3cab225680184d5d2d57533a73a5))
+* sphix compilation ([803594e](https://github.com/kircherlab/MPRAsnakeflow/commit/803594e063de7d1bfdbf4c3d756ac90e57e989ee))
+* typo fixes ([5e491a8](https://github.com/kircherlab/MPRAsnakeflow/commit/5e491a84754eee6564e7884a03d5fa3681ce2814))
+* typo fixes and build cleanup ([d44e87d](https://github.com/kircherlab/MPRAsnakeflow/commit/d44e87d1e9d7c14089f88e683ac0ecbfb2de4450))
+* update example config ([daf884a](https://github.com/kircherlab/MPRAsnakeflow/commit/daf884a6c75e063272ca3ebcaecba8e9d43aec18))
+
 ## [0.6.5](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.6.4...v0.6.5) (2026-05-06)
 
 
