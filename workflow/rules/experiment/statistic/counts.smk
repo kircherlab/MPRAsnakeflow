@@ -109,16 +109,16 @@ Count statistic of barcodes and UMIs per condition, replicate and DNA/RNA.
             <(
                 zcat {input} \
                     | awk -v OFS='\\t' 'BEGIN{{
-                                                        pbar="NA"
-                                                    }}{{
-                                                        count += $NF; umi_sum+=$3; if (pbar != $1) {{ barcodes+=1 }}; pbar=$1
-                                                    }}END{{
-                                                        if (NR > 0) {{
-                                                            print umi_sum/NR,count,NR,barcodes
-                                                        }} else {{
-                                                            print 0,0,0,0
-                                                        }}
-                                                    }}'
+                                                                pbar="NA"
+                                                            }}{{
+                                                                count += $NF; umi_sum+=$3; if (pbar != $1) {{ barcodes+=1 }}; pbar=$1
+                                                            }}END{{
+                                                                if (NR > 0) {{
+                                                                    print umi_sum/NR,count,NR,barcodes
+                                                                }} else {{
+                                                                    print 0,0,0,0
+                                                                }}
+                                                            }}'
             ) \
             <(
                 zcat {input} | cut -f 2 | sort -u | wc -l

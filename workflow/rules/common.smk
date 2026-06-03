@@ -105,6 +105,7 @@ if not config["skip_version_check"]:
 def modify_config_after_eval(config):
     if "assignments" in config:
         for assignment, assignment_cfg in config["assignments"].items():
+            mapper_cfg = assignment_cfg["alignment_tool"]["configs"]
             # update sequence length with when adapters are added via strand sensitive is enabled
             if assignment_cfg["strand_sensitive"]["enable"]:
                 add_length = len(assignment_cfg["strand_sensitive"]["forward_adapter"]) + len(

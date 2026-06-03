@@ -39,10 +39,10 @@ Create a BAM file from FASTQ input, merge FWD and REV read and save UMI in XI fl
 
         paste <(zcat {input.fwd_fastq}) <(zcat {input.rev_fastq}) \
             | awk '{{if (NR % 4 == 2 || NR % 4 == 0) {{
-                                                        print $1$2
-                                                    }} else {{
-                                                        print $1
-                                                    }}}}' \
+                                                                print $1$2
+                                                            }} else {{
+                                                                print $1
+                                                            }}}}' \
             | python {input.script_FastQ2doubleIndexBAM} -p -s $rev_start -l 0 -m 0 --RG {params.datasetID} \
             | python {input.script_MergeTrimReadsBAM} --FirstReadChimeraFilter '' --adapterFirstRead '' --adapterSecondRead '' -p --mergeoverlap --minoverlap $minoverlap >{output} 2>{log}
         """
