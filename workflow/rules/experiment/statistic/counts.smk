@@ -109,16 +109,16 @@ Count statistic of barcodes and UMIs per condition, replicate and DNA/RNA.
             <(
                 zcat {input} \
                     | awk -v OFS='\\t' 'BEGIN{{
-                pbar="NA"
-            }}{{
-                count += $NF; umi_sum+=$3; if (pbar != $1) {{ barcodes+=1 }}; pbar=$1
-            }}END{{
-                if (NR > 0) {{
-                    print umi_sum/NR,count,NR,barcodes
-                }} else {{
-                    print 0,0,0,0
-                }}
-            }}'
+                                                                pbar="NA"
+                                                            }}{{
+                                                                count += $NF; umi_sum+=$3; if (pbar != $1) {{ barcodes+=1 }}; pbar=$1
+                                                            }}END{{
+                                                                if (NR > 0) {{
+                                                                    print umi_sum/NR,count,NR,barcodes
+                                                                }} else {{
+                                                                    print 0,0,0,0
+                                                                }}
+                                                            }}'
             ) \
             <(
                 zcat {input} | cut -f 2 | sort -u | wc -l
@@ -150,8 +150,8 @@ rule experiment_statistic_counts_BC_in_RNA_DNA:
 Count the number of barcodes shared between RNA and DNA per condition and replicate.
 """
     input:
-        dna=lambda wc: statistic_counts_BC_in_RNA_DNA_helper(project, wc.condition, "DNA", wc.countType),
-        rna=lambda wc: statistic_counts_BC_in_RNA_DNA_helper(project, wc.condition, "RNA", wc.countType),
+        dna=lambda wc: statistic_counts_BC_in_RNA_DNA_helper(wc.project, wc.condition, "DNA", wc.countType),
+        rna=lambda wc: statistic_counts_BC_in_RNA_DNA_helper(wc.project, wc.condition, "RNA", wc.countType),
     output:
         temp("results/experiments/{project}/statistic/counts/{condition}.{replicate}.{countType}_BC_in_RNA_DNA.tsv.gz"),
     log:

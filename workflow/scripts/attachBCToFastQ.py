@@ -40,24 +40,28 @@ def read_sequence_files(
 
 
 @click.command()
-@click.option("--reads", "-r", "read_file", type=click.Path(exists=True, readable=True), required=True)
-@click.option("--barcodes", "-b", "barcode_file", type=click.Path(exists=True, readable=True), required=True)
+@click.option("--reads", "-r", "read_files", type=click.Path(exists=True, readable=True), required=True, multiple=True)
+@click.option("--barcodes", "-b", "barcode_files", type=click.Path(exists=True, readable=True), required=True, multiple=True)
 @click.option("--reverse-complement", "use_reverse_complement", is_flag=True)
 @click.option(
     "--attach-sequence", "attach_sequence", required=False, type=(click.Choice(["left", "right", "both"]), click.STRING)
 )
-def cli(read_file, barcode_file, use_reverse_complement, attach_sequence):
+def cli(read_files, barcode_files, use_reverse_complement, attach_sequence):
 
-    with gzip.open(read_file, "rt") as r_file, gzip.open(barcode_file, "rt") as bc_file:
-        inputs = {"read_file": r_file, "bc_file": bc_file, "use_BC_reverse_complement": use_reverse_complement}
-        if attach_sequence:
-            if attach_sequence[0] == "left" or attach_sequence[0] == "both":
-                inputs["add_sequence_left"] = attach_sequence[1]
-            if attach_sequence[0] == "right" or attach_sequence[0] == "both":
-                inputs["add_sequence_right"] = reverse_complement(attach_sequence[1])
+    if len(read_files) != len(barcode_files):
+        raise click.UsageError("--reads and --barcodes must be provided the same number of times.")
 
-        for seqid, seq, qual in read_sequence_files(**inputs):
-            click.echo(f"@{seqid}\n{seq}\n+\n{qual}")
+    for read_file, barcode_file in zip(read_files, barcode_files):
+        with gzip.open(read_file, "rt") as r_file, gzip.open(barcode_file, "rt") as bc_file:
+            inputs = {"read_file": r_file, "bc_file": bc_file, "use_BC_reverse_complement": use_reverse_complement}
+            if attach_sequence:
+                if attach_sequence[0] == "left" or attach_sequence[0] == "both":
+                    inputs["add_sequence_left"] = attach_sequence[1]
+                if attach_sequence[0] == "right" or attach_sequence[0] == "both":
+                    inputs["add_sequence_right"] = reverse_complement(attach_sequence[1])
+
+            for seqid, seq, qual in read_sequence_files(**inputs):
+                click.echo(f"@{seqid}\n{seq}\n+\n{qual}")
 
 
 def reverse_complement(seq):

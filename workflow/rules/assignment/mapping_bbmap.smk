@@ -68,20 +68,24 @@ BAM/SAM fields:
         getCondaEnv("bbmap_samtools_htslib.yaml")
     params:
         mapping_quality_min=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"]["min_mapping_quality"],
+        cigar_filter_regex=lambda wc: config["assignments"][wc.assignment]["alignment_tool"]["configs"].get(
+            "cigar_filter_regex", ""
+        ),
     shell:
         """
         export LC_ALL=C # speed up sorting
         samtools view -F 1792 {input} \
-            | awk -F"\\t" -v "OFS=\\t" '{{
-            split($1,a," ");
-            split(a[2],a,":");
-            split(a[3],a,",");
-            if (a[1] !~ /N/) {{
-                if (($5 >= {params.mapping_quality_min}) && ($4 >= 1)) {{
-                    print a[1],$3,$4";"$6";"$12";"$13";"$5
-                }} else {{
-                    print a[1],"other","NA"
-                }}
-            }}
-        }}' | sort -k1,1 -k2,2 -k3,3 -S 7G >{output} 2>{log}
+            | awk -F"\\t" -v "OFS=\\t" -v "CIGAR_REGEX={params.cigar_filter_regex}" '{{
+                                                            split($1,a," ");
+                                                            split(a[2],a,":");
+                                                            split(a[3],a,",");
+                                                            if (a[1] !~ /N/) {{
+                                                                pass_cigar = (CIGAR_REGEX == "" || $6 ~ ("^(" CIGAR_REGEX ")$"));
+                                                                if (pass_cigar && ($5 >= {params.mapping_quality_min}) && ($4 >= 1)) {{
+                                                                    print a[1],$3,$4";"$6";"$12";"$13";"$5
+                                                                }} else {{
+                                                                    print a[1],"other","NA"
+                                                                }}
+                                                            }}
+                                                        }}' | sort -k1,1 -k2,2 -k3,3 -S 7G >{output} 2>{log}
         """

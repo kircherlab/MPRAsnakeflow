@@ -31,30 +31,9 @@ Also check if no duplicated headers and no illegal characters in header.
     conda:
         getCondaEnv("python3.yaml")
     params:
-        start=lambda wc: (
-            config["assignments"][wc.assignment]["alignment_tool"]["configs"]["alignment_start"]["max"]
-            if config["assignments"][wc.assignment]["alignment_tool"]["tool"]
-            in [
-                "bwa",
-                "bwa-additional-filtering",
-            ]
-            else config["assignments"][wc.assignment]["alignment_tool"]["configs"]["alignment_start"]
-        ),
-        length=lambda wc: (
-            config["assignments"][wc.assignment]["alignment_tool"]["configs"]["sequence_length"]["min"]
-            if config["assignments"][wc.assignment]["alignment_tool"]["tool"]
-            in [
-                "bwa",
-                "bwa-additional-filtering",
-            ]
-            else config["assignments"][wc.assignment]["alignment_tool"]["configs"]["sequence_length"]
-        ),
-        fast_check=lambda wc: (
-            "--fast-dict" if config["assignments"][wc.assignment]["design_check"]["fast"] else "--slow-string-search"
-        ),
-        sequence_collisions=lambda wc: (
-            "sense_antisense" if config["assignments"][wc.assignment]["design_check"]["sequence_collisions"] else "skip"
-        ),
+        start_length_args=lambda wc: getDesignCheckWindowArgs(wc.assignment),
+        fast_check=lambda wc: ("--fast-dict" if getDesignCheckFast(wc.assignment) else "--slow-string-search"),
+        sequence_collisions=lambda wc: ("sense_antisense" if getDesignCheckSequenceCollisions(wc.assignment) else "skip"),
         attach_sequence=lambda wc: (
             "--attach-sequence %s %s"
             % (
@@ -70,7 +49,7 @@ Also check if no duplicated headers and no illegal characters in header.
         cp {input.design} {output.ref_tmp}
         python {input.script} --input {output.ref_tmp} \
             --output {output.ref} \
-            --start {params.start} --length {params.length} \
+            {params.start_length_args} \
             {params.fast_check} --sequence-check {params.sequence_collisions} \
             {params.attach_sequence} >{log.log} 2>{log.err}
         """

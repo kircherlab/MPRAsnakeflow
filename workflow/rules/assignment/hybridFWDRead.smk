@@ -33,10 +33,10 @@ Get the barcode and read from the FWD read using fixed length
         """
         zcat {input.fastq} \
             | awk '{{if (NR%4==2 || NR%4==0){{
-                print substr($0,1,{params.bc_length}) > "{output.BC_tmp}"; print substr($0,{params.insert_start}) > "{output.FWD_tmp}"
-            }} else {{
-                print $0 > "{output.BC_tmp}"; print $0 > "{output.FWD_tmp}"
-            }}}}'
+                                                                print substr($0,1,{params.bc_length}) > "{output.BC_tmp}"; print substr($0,{params.insert_start}) > "{output.FWD_tmp}"
+                                                            }} else {{
+                                                                print $0 > "{output.BC_tmp}"; print $0 > "{output.FWD_tmp}"
+                                                            }}}}'
         cat {output.BC_tmp} | bgzip >{output.BC} &
         cat {output.FWD_tmp} | bgzip >{output.FWD}
         """

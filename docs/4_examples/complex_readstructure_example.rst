@@ -1,11 +1,13 @@
 .. _Complex example:
 
+.. _GSE174534 example:
+
 .. role:: bash(code)
     :language: bash
 
-======================
-Complex read structure
-======================
+===============================================
+GSE174534 (Abell et al. Complex Read Structure)
+===============================================
 
 This example runs the assignment and experiment workflow on data from the publication `Nathan S. Abell et al. Multiple causal variants underlie genetic associations in humans. Science 375, 1247-1254 (2022). <https://doi.org/10.1126/science.abj5117>`_. Their data was published on `GEO:GSE174534 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE174534>`_. They used a custom processing pipeline, available on `Zenodo <https://zenodo.org/records/5921042>`_, but we try to run everything in MPRAsnakeflow.
 
@@ -207,7 +209,7 @@ And the :code:`experiment.csv` file to map the DNA/RNA counts to the correct rep
 Run snakemake
 -------------
 
-Now we are ready to run MPRAsnakeflow. We will do it on one node with 50GB memory and 30 cores.
+Now we are ready to run MPRAsnakeflow. We will do it on one node with 60 GB memory and 30 cores.
 
 We will run the pipeline directly in the actual folder. The MPRAsnakeflow workflow can be in a different directory. Let's assume :code:`/home/user/MPRAsnakeflow`.
 
