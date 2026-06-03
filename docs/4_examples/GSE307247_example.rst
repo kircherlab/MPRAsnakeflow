@@ -50,7 +50,7 @@ We need the design file and must modify it by parsing the csv file, removing the
         cut -f1 | \
         rev | \
         tr ACGTN TGCAN \
-        > data/Koplik/Koplik.bacodes.temp
+        > data/Koplik/Koplik.barcodes.temp
 
     zcat data/Koplik/Koplik.barcode.dictionary.fasta.gz | \
         awk '/^>/ {if (N>0) printf "\n"; printf "%s\t", $0; N++; next} {printf "%s", $0} END {if (N>0) printf "\n"}' | \
