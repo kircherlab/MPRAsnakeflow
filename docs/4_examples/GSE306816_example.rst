@@ -212,7 +212,7 @@ Create config files
 
     cat << 'EOF' >  config.yaml
     ---
-    version: "0.6.5"
+    version: "0.7"
     assignments:
         dpSTR:
             bc_length: 20
@@ -224,14 +224,16 @@ Create config files
                 split_number: 30
                 tool: bbmap
                 configs:
-                    sequence_length: 135
-                    alignment_start: 1
+                    min_mapping_quality: 30
+            design_check:
+                sequence_start: 1
+                sequence_length: 135
             FWD:
-            - data/assignment/SRR35184121_2.fastq.gz
-            - data/assignment/SRR35184122_2.fastq.gz
+                - data/assignment/SRR35184121_2.fastq.gz
+                - data/assignment/SRR35184122_2.fastq.gz
             BC:
-            - data/assignment/SRR35184121_1.fastq.gz
-            - data/assignment/SRR35184122_1.fastq.gz
+                - data/assignment/SRR35184121_1.fastq.gz
+                - data/assignment/SRR35184122_1.fastq.gz
             design_file: data/assignment/uber_seq_135pb_dedup.fa
             configs:
                 default: {}
