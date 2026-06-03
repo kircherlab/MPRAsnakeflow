@@ -60,7 +60,7 @@ We need the design file and must modify it by parsing the csv file, removing the
         cut -f2 \
         > data/Koplik/Koplik.names.temp
 
-    paste data/Koplik/Koplik.bacodes.temp data/Koplik/Koplik.names.temp | \
+    paste data/Koplik/Koplik.barcodes.temp data/Koplik/Koplik.names.temp | \
         gzip \
         > data/Koplik/Koplik.barcode.dictionary.tsv.gz
 
