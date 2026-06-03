@@ -1,14 +1,11 @@
 ---
-version: "0.6"
+version: "0.7"
 assignments:
   assocBasic:
     bc_length: 15
     alignment_tool:
       split_number: 30
       tool: bbmap
-      configs:
-        sequence_length: 171
-        alignment_start: 1
     FWD:
       - data/SRR10800986_1.fastq.gz
     BC:
@@ -16,5 +13,8 @@ assignments:
     REV:
       - data/SRR10800986_3.fastq.gz
     design_file: design.fa
+    design_check:
+      sequence_start: 1
+      sequence_length: 171
     configs:
       default: {}
