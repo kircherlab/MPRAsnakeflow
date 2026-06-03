@@ -79,7 +79,7 @@ def cli(input_file, rna_counts_output_file, dna_counts_output_file, rna_annotati
     ## generate output DNA/RNA count tables
     ## rows oligo/seq ids,/assignment then per barcode the counts. padding with zeros
     def generateCountOutput(data,columns):
-        counts = pd.DataFrame(list(data.groupby('label').apply(lambda x: x.values.flatten()))).fillna(0).astype(np.int64)
+        counts = pd.DataFrame(list(data.groupby('label').apply(lambda x: x.values.flatten(order='F')))).fillna(0).astype(np.int64)
         counts.columns = columns
         counts['seq_id'] = data.index.unique()
         counts = counts[(['seq_id'] + list(columns))]
