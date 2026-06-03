@@ -92,8 +92,7 @@ Download and Prepare Data
     cd data/
 
     wget -O GSM9462019_L1a1_oligos_to_barcodes.txt.gz https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM9462nnn/GSM9462019/suppl/GSM9462019%5FL1a1%5Foligos%5Fto%5Fbarcodes%2Etxt%2Egz
-    zcat GSM9462019_L1a1_oligos_to_barcodes.txt.gz | tail -n +2 | awk -F',' -v "OFS=\t" '{print $2,$1}' | sed 's/\[/|/g' | sed 's/\]/|/g' | gzip -c > data/GSM9462019_L1a1_oligos_to_barcodes.fix.tsv.gz | sort | gzip -c > GSM9462019_L1a1_oligos_to_barcodes.tsv.gz
-
+    zcat GSM9462019_L1a1_oligos_to_barcodes.txt.gz | tail -n +2 | awk -F',' -v "OFS=\t" '{print $2,$1}' | sed 's/\[/|/g' | sed 's/\]/|/g' | sort | gzip -c > GSM9462019_L1a1_oligos_to_barcodes.tsv.gz
     cd experiment
     prefetch --max-size 30GB SRR36893764 SRR36893763 SRR36893762 SRR36893761 SRR36893760 SRR36893759
     fastq-dump --gzip --split-files SRR36893764
