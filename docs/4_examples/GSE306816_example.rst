@@ -201,7 +201,7 @@ We run assignment and count workflows together. It is also possible to run them 
 
 First, define the config file and the experiment CSV file to map DNA/RNA counts to the correct replicates.
 
-Important details for the config file: the oligo design is 135 bp and barcodes are 20 bp long. Remove the 6-bp sequence (``TCTAG``) at the 3-prime end of the barcode read.
+Important details for the config file: the oligo design is 135 bp and barcodes are 20 bp long. Remove the 5-bp sequence (``TCTAG``) at the 3-prime end of the barcode read.
 
 For counting, reads are longer than the 20-bp barcode. There is also a 3-prime adapter sequence that we remove using cutadapt.
 

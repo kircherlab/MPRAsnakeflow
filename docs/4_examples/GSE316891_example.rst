@@ -158,6 +158,7 @@ Create a config file (e.g. ``config_experiment.yaml``):
             assignment_file: data/GSM9462019_L1a1_oligos_to_barcodes.tsv.gz
         configs:
           default: {}
+
 Run Experiment Workflow
 -----------------------
 

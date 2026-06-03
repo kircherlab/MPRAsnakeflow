@@ -64,7 +64,7 @@ We need the design file and must modify it by parsing the csv file, removing the
         gzip \
         > data/Koplik/Koplik.barcode.dictionary.tsv.gz
 
-    rm data/Koplik/Koplik.bacodes.temp data/Koplik/Koplik.names.temp
+    rm data/Koplik/Koplik.barcodes.temp data/Koplik/Koplik.names.temp
 
 Read experiment data
 --------------------
