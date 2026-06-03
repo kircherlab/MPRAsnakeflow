@@ -142,23 +142,22 @@ Create a config file (e.g. ``config_experiment.yaml``):
 
 .. code-block:: yaml
 
-    version: "0.6.2"
+    version: "0.7"
     experiments:
-    GSE316891L1a1:
-      bc_length: 15
-      umi_length: 16
-      data_folder: data/experiment
-      experiment_file: experiments.csv
-      assignments:
-        L1a1Assignment:
-          type: file
-          assignment_file: results/assignment/GSE316891L1a1/assignment_barcodes.default.tsv.gz
-        GEOAssignment:
-          type: file
-          assignment_file: data/GSM9462019_L1a1_oligos_to_barcodes.tsv.gz
-      configs:
-        default: {}
-
+      GSE316891L1a1:
+        bc_length: 15
+        umi_length: 16
+        data_folder: data/experiment
+        experiment_file: experiments.csv
+        assignments:
+          L1a1Assignment:
+            type: file
+            assignment_file: results/assignment/GSE316891L1a1/assignment_barcodes.default.tsv.gz
+          GEOAssignment:
+            type: file
+            assignment_file: data/GSM9462019_L1a1_oligos_to_barcodes.tsv.gz
+        configs:
+          default: {}
 Run Experiment Workflow
 -----------------------
 
