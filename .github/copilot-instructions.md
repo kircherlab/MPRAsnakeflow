@@ -65,8 +65,8 @@ cd docs && make html
 ```snakemake
 rule my_rule:
     """
-Documentation of my_rule goes here. Describe inputs, outputs, and purpose.
-"""
+    Documentation of my_rule goes here. Describe inputs, outputs, and purpose.
+    """
     input:
         script=getScript("mydir/myscript.py"),
         data=lambda wc: config["assignments"][wc.assignment]["design_file"],
