@@ -6,9 +6,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "workflow", "sc
 def main():
     import tempfile
 
-    import pandas as pd
-
     import mpranalyze_compiler as c
+    import pandas as pd
 
     here = os.path.dirname(__file__)
     with tempfile.TemporaryDirectory() as tmp:
