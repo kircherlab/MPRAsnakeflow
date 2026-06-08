@@ -6,6 +6,44 @@ import click
 import numpy as np
 import pandas as pd
 
+ANNOT_PATTERN = re.compile(r"^([DR]NA).*\(condition (.*), replicate (.*)\)$")
+
+
+def get_annot(head: str) -> tuple[str|None, str|None, str|None]:
+    match = ANNOT_PATTERN.match(head)
+    if match is not None:
+        group1 = match.group(1)
+        group2 = match.group(2)
+        group3 = match.group(3)
+        return (group1, group2, group3)
+    return (None, None, None)
+
+
+def generate_annotation_output(data, number_barcodes):
+    data = data.loc[data.index.repeat(number_barcodes)].copy()
+    data['barcode'] = data.groupby(['type', 'condition', 'replicate']).cumcount() + 1
+    data['barcode'] = data['barcode'].astype(str)
+    data['sample'] = data[['type', 'condition', 'replicate', 'barcode']].agg('_'.join, axis=1)
+    return data[["sample", "type", "condition", "replicate", "barcode"]]
+
+
+def generate_count_output(data, columns, number_barcodes):
+    rows = []
+    seq_ids = []
+    for label, group in data.groupby('label', sort=False):
+        padded = np.zeros((number_barcodes, data.shape[1]), dtype=np.int64)
+        vals = group.values[:number_barcodes].astype(np.int64)
+        padded[:len(vals)] = vals
+        rows.append(padded.flatten(order='F'))
+        seq_ids.append(label)
+    counts = pd.DataFrame(rows, columns=columns)
+    counts.insert(0, 'seq_id', seq_ids)
+    return counts
+
+
+def write_table(data, file):
+    data.to_csv(file, index=False, sep='\t', compression='gzip')
+
 
 # options
 @click.command()
@@ -39,12 +77,6 @@ import pandas as pd
 
 def cli(input_file, rna_counts_output_file, dna_counts_output_file, rna_annotation_output_file, dna_annotation_output_file):
 
-    annot_pattern = re.compile(r"^([DR]NA).*\(condition (.*), replicate (.*)\)$")
-    def get_annot(head):
-        m = annot_pattern.match(head)
-        if m is not None:
-            return m.group(1,2,3)
-
     # read input
     df = pd.read_csv(input_file,sep="\t", header='infer')
 
@@ -61,44 +93,26 @@ def cli(input_file, rna_counts_output_file, dna_counts_output_file, rna_annotati
 
     # counts for observation
 
-    dna_df = df.iloc[:,2:(2+n_dna_obs)].applymap(np.int64)
-    rna_df = df.iloc[:,(2+n_dna_obs):].applymap(np.int64)
+    dna_df = df.iloc[:,2:(2+n_dna_obs)].astype(np.int16)
+    rna_df = df.iloc[:,(2+n_dna_obs):].astype(np.int16)
 
     ## generate output DNA/RNA annotations (type_condition_replicate_barcode)
     n_bc = df.groupby('label').Barcode.agg(len).max()
-    def generateAnnotationOutput(data, number_barcodes):
-        data = data.loc[data.index.repeat(number_barcodes)]
-        data['barcode'] = data.groupby(['type','condition','replicate']).cumcount() +1
-        data['barcode'] = data['barcode'].astype(str)
-        data['sample'] = data[['type','condition','replicate','barcode']].agg('_'.join,axis=1)
-        data = data[["sample", "type", "condition", "replicate", "barcode"]]
-        return(data)
-    dna_annot = generateAnnotationOutput(dna_annot, n_bc)
-    rna_annot = generateAnnotationOutput(rna_annot, n_bc)
+    dna_annot = generate_annotation_output(dna_annot, n_bc)
+    rna_annot = generate_annotation_output(rna_annot, n_bc)
 
     ## generate output DNA/RNA count tables
     ## rows oligo/seq ids,/assignment then per barcode the counts. padding with zeros
-    def generateCountOutput(data,columns):
-        counts = pd.DataFrame(list(data.groupby('label').apply(lambda x: x.values.flatten(order='F')))).fillna(0).astype(np.int64)
-        counts.columns = columns
-        counts['seq_id'] = data.index.unique()
-        counts = counts[(['seq_id'] + list(columns))]
-        return(counts)
-
-    dna_counts = generateCountOutput(dna_df,dna_annot['sample'])
-    rna_counts = generateCountOutput(rna_df,rna_annot['sample'])
-
-    ## write table function
-    def write(data,file):
-        data.to_csv(file, index=False,sep='\t', compression='gzip')
+    dna_counts = generate_count_output(dna_df, dna_annot['sample'], n_bc)
+    rna_counts = generate_count_output(rna_df, rna_annot['sample'], n_bc)
 
     ## write output DNA/RNA annotations
-    write(dna_annot,dna_annotation_output_file)
-    write(rna_annot,rna_annotation_output_file)
+    write_table(dna_annot, dna_annotation_output_file)
+    write_table(rna_annot, rna_annotation_output_file)
 
     ## write output DNA/RNA annotations
-    write(dna_counts,dna_counts_output_file)
-    write(rna_counts,rna_counts_output_file)
+    write_table(dna_counts, dna_counts_output_file)
+    write_table(rna_counts, rna_counts_output_file)
 
 if __name__ == '__main__':
     cli()
