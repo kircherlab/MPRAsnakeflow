@@ -33,5 +33,10 @@ def minimal_count_input(count_fixtures_root: Path) -> Path:
 
 
 @pytest.fixture
+def ragged_missing_input(count_fixtures_root: Path) -> Path:
+    return count_fixtures_root / "ragged_missing_input.tsv"
+
+
+@pytest.fixture
 def cli_runner() -> CliRunner:
     return CliRunner()

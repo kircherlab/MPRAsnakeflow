@@ -86,3 +86,55 @@ class TestMpranalyzeCompiler:
             30,
             31,
         ]
+
+    def test_cli_missing_count_does_not_shift_replicates(self, cli_runner, ragged_missing_input, tmp_path):
+        # Regression guard for the MPRAflow-style "ragged within an oligo" bug
+        # (shendurelab/MPRAflow#87): a missing trailing count (empty cell / trailing
+        # tab) must stay a zero in its own replicate/barcode slot and must NOT shift
+        # later counts into the wrong replicate. The fixture's oligoA is missing its
+        # RNA replicate-3 / barcode-2 value, and oligoB has a single barcode (so it
+        # also exercises the across-oligo padding case).
+        rna_counts_output = tmp_path / "rna_counts.tsv.gz"
+        dna_counts_output = tmp_path / "dna_counts.tsv.gz"
+        rna_annotation_output = tmp_path / "rna_annot.tsv.gz"
+        dna_annotation_output = tmp_path / "dna_annot.tsv.gz"
+
+        result = cli_runner.invoke(
+            compiler.cli,
+            [
+                "--input",
+                str(ragged_missing_input),
+                "--rna-counts-output",
+                str(rna_counts_output),
+                "--dna-counts-output",
+                str(dna_counts_output),
+                "--rna-annotation-output",
+                str(rna_annotation_output),
+                "--dna-annotation-output",
+                str(dna_annotation_output),
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+
+        rna: pd.DataFrame = pd.read_csv(rna_counts_output, sep="\t").set_index("seq_id")
+        dna: pd.DataFrame = pd.read_csv(dna_counts_output, sep="\t").set_index("seq_id")
+
+        rna_cols = [
+            "RNA_X_1_1", "RNA_X_1_2", "RNA_X_1_3",
+            "RNA_X_2_1", "RNA_X_2_2", "RNA_X_2_3",
+            "RNA_X_3_1", "RNA_X_3_2", "RNA_X_3_3",
+        ]
+        # oligoA: the hole is at replicate 3 / barcode 2 -> must be 0, and the real
+        # barcode-3 value (302) must stay in barcode 3, not shift up to barcode 2.
+        assert list(rna.loc["oligoA", rna_cols]) == [100, 101, 102, 200, 201, 202, 300, 0, 302]
+        # oligoB has one barcode; remaining barcode slots pad with zeros per replicate.
+        assert list(rna.loc["oligoB", rna_cols]) == [103, 0, 0, 203, 0, 0, 303, 0, 0]
+
+        # DNA has no missing values; confirm nothing shifted there either.
+        dna_cols = [
+            "DNA_X_1_1", "DNA_X_1_2", "DNA_X_1_3",
+            "DNA_X_2_1", "DNA_X_2_2", "DNA_X_2_3",
+            "DNA_X_3_1", "DNA_X_3_2", "DNA_X_3_3",
+        ]
+        assert list(dna.loc["oligoA", dna_cols]) == [10, 11, 12, 20, 21, 22, 30, 31, 32]
