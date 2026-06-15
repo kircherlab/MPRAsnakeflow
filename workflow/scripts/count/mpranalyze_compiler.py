@@ -93,8 +93,8 @@ def cli(input_file, rna_counts_output_file, dna_counts_output_file, rna_annotati
 
     # counts for observation
 
-    dna_df = df.iloc[:,2:(2+n_dna_obs)].astype(np.int16)
-    rna_df = df.iloc[:,(2+n_dna_obs):].astype(np.int16)
+    dna_df = df.iloc[:,2:(2+n_dna_obs)].astype(np.int64)
+    rna_df = df.iloc[:,(2+n_dna_obs):].astype(np.int64)
 
     ## generate output DNA/RNA annotations (type_condition_replicate_barcode)
     n_bc = df.groupby('label').Barcode.agg(len).max()
