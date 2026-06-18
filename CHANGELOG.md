@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.7.0...v0.7.1) (2026-06-18)
+
+
+### Bug Fixes
+
+* MPRanalyze compiler replicate contamination ([#279](https://github.com/kircherlab/MPRAsnakeflow/issues/279)) ([105dd0d](https://github.com/kircherlab/MPRAsnakeflow/commit/105dd0dda8ac0855273d2170ebb5bb065c79f97a))
+
 ## [0.7.0](https://github.com/kircherlab/MPRAsnakeflow/compare/v0.6.5...v0.7.0) (2026-06-03)
 
 
