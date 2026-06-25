@@ -28,11 +28,9 @@ We have [tutorial](https://github.com/kircherlab/MPRAsnakeflow_tutorial) created
 
 ## Citation
 
-If you use MPRAsnakeflow in your work please cite out recent preprint:
+If you use MPRAlib in your work, please cite:
 
-**Uniform processing and analysis of IGVF massively parallel reporter assay data with MPRAsnakeflow**
-Jonathan D. Rosen, Arjun Devadas Vasanthakumari, Kilian Salomon, Nikola de Lange, Pyaree Mohan Dash, Pia Keukeleire, Ali Hassan, Alejandro Barrera, Martin Kircher, Michael I. Love, Max Schubach
-*bioRxiv* (2025). [2025.09.25.678548](https://doi.org/10.1101/2025.09.25.678548)
+> Rosen JD, Vasanthakumari AD, Salomon K, de Lange N, Dash PM, Keukeleire P, Hassan A, Barrera A, Krupkin B, Oualline G, Kircher M, Love MI, Schubach M. Uniform processing and analysis of IGVF massively parallel reporter assay data with MPRAsnakeflow. *Genome Research* (2025). doi: [10.1101/gr.281462.125](https://doi.org/10.1101/gr.281462.125)
 
 
 ## Usage
