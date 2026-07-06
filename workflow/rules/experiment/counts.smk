@@ -13,8 +13,8 @@ include: "counts/counts_onlyFWDWithUMI.smk"
 
 rule experiment_counts_filter_counts:
     """
-Filter the counts to BCs only of the correct length (defined in the config file)
-"""
+    Filter the counts to BCs only of the correct length (defined in the config file)
+    """
     input:
         lambda wc: getRawCounts(wc.project, wc.type),
     output:
@@ -38,9 +38,9 @@ Filter the counts to BCs only of the correct length (defined in the config file)
 
 rule experiment_counts_final_counts:
     """
-Counting BCs.
-Discarding PCR duplicates (taking BCxUMI only one time)
-"""
+    Counting BCs.
+    Discarding PCR duplicates (taking BCxUMI only one time)
+    """
     input:
         "results/experiments/{project}/counts/{condition}.{replicate}.{type}.filtered_counts.tsv.gz",
     output:
@@ -60,8 +60,8 @@ Discarding PCR duplicates (taking BCxUMI only one time)
 
 rule experiment_counts_final_counts_sampler:
     """
-Creates full + new distribution DNA files
-"""
+    Creates full + new distribution DNA files
+    """
     input:
         counts="results/experiments/{project}/counts/{condition}.{replicate}.{type}.final_counts.tsv.gz",
         script=getScript("count/samplerer.py"),
@@ -91,10 +91,10 @@ Creates full + new distribution DNA files
 
 rule experiment_counts_dna_rna_merge_counts:
     """
-Merge DNA and RNA counts together.
-Is done in two ways. First no not allow zeros in DNA or RNA BCs (RNA and DNA min_counts not zero).
-Second with zeros, so a BC can be defined only in the DNA or RNA (RNA or DNA min_counts zero)
-"""
+    Merge DNA and RNA counts together.
+    Is done in two ways. First no not allow zeros in DNA or RNA BCs (RNA and DNA min_counts not zero).
+    Second with zeros, so a BC can be defined only in the DNA or RNA (RNA or DNA min_counts zero)
+    """
     input:
         dna=lambda wc: getFinalCounts(wc.project, wc.config, wc.condition, "DNA", wc.raw_or_assigned),
         rna=lambda wc: getFinalCounts(wc.project, wc.config, wc.condition, "RNA", wc.raw_or_assigned),

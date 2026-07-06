@@ -1,7 +1,7 @@
 rule assignment_mapping_bwa_ref:
     """
-Create mapping reference for BWA from design file.
-"""
+    Create mapping reference for BWA from design file.
+    """
     input:
         ref="results/assignment/{assignment}/reference/reference.fa",
         check="results/assignment/{assignment}/design_check.done",
@@ -25,8 +25,8 @@ Create mapping reference for BWA from design file.
 
 rule assignment_mapping_bwa:
     """
-Map the reads to the reference and sort unsing bwa mem
-"""
+    Map the reads to the reference and sort unsing bwa mem
+    """
     input:
         reads=lambda wc: getMappingRead(wc.assignment),
         reference="results/assignment/{assignment}/reference/reference.fa",
@@ -59,8 +59,8 @@ Map the reads to the reference and sort unsing bwa mem
 
 rule assignment_mapping_bwa_getBCs:
     """
-Get the barcodes.
-"""
+    Get the barcodes.
+    """
     input:
         "results/assignment/{assignment}/bwa/merge_split{split}.mapped.bam",
     output:
@@ -114,8 +114,8 @@ Get the barcodes.
 
 rule assignment_mapping_bwa_getBCs_additional_filter:
     """
-Get the barcodes with a python script to rescue alignments with 0 mapping quality according to bwa.
-"""
+    Get the barcodes with a python script to rescue alignments with 0 mapping quality according to bwa.
+    """
     input:
         bam="results/assignment/{assignment}/bwa/merge_split{split}.mapped.bam",
         script=getScript("assignment/filter_bc_from_bam.py"),
@@ -146,8 +146,8 @@ Get the barcodes with a python script to rescue alignments with 0 mapping qualit
 
 rule assignment_collect:
     """
-Collect mapped reads.
-"""
+    Collect mapped reads.
+    """
     input:
         bams=lambda wc: expand(
             "results/assignment/{{assignment}}/{mapper}/merge_split{split}.mapped.bam",
@@ -169,8 +169,8 @@ Collect mapped reads.
 
 rule assignment_idx_bam:
     """
-Index the BAM file
-"""
+    Index the BAM file
+    """
     input:
         "results/assignment/{assignment}/aligned_merged_reads.bam",
     output:
@@ -187,8 +187,8 @@ Index the BAM file
 
 rule assignment_flagstat:
     """
-Run samtools flagstat
-"""
+    Run samtools flagstat
+    """
     input:
         bam="results/assignment/{assignment}/aligned_merged_reads.bam",
         idx="results/assignment/{assignment}/aligned_merged_reads.bam.bai",

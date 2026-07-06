@@ -20,8 +20,8 @@
 
 rule assignment_mapping_bbmap:
     """
-Map the reads to the reference and sort unsing bwa mem
-"""
+    Map the reads to the reference and sort unsing bwa mem
+    """
     input:
         reads=lambda wc: getMappingRead(wc.assignment),
         check="results/assignment/{assignment}/design_check.done",
@@ -46,18 +46,18 @@ Map the reads to the reference and sort unsing bwa mem
 
 rule assignment_mapping_bbmap_getBCs:
     """
-Get the barcodes.
+    Get the barcodes.
 
-BAM/SAM fields:
-- bc_string = $2;
-- ref_name = $3;
-- alignement_start = $4;
-- mapping_quality = $5;
-- cigar = $6;
-- aligned_sequence = $10;
-- edit_distance = $12;
-- alignment_score = $13;
-"""
+    BAM/SAM fields:
+    - bc_string = $2;
+    - ref_name = $3;
+    - alignement_start = $4;
+    - mapping_quality = $5;
+    - cigar = $6;
+    - aligned_sequence = $10;
+    - edit_distance = $12;
+    - alignment_score = $13;
+    """
     input:
         "results/assignment/{assignment}/bbmap/merge_split{split}.mapped.bam",
     output:

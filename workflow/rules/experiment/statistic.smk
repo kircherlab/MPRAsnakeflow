@@ -20,8 +20,8 @@ include: "statistic/bc_overlap.smk"
 
 rule experiment_statistic_quality_metric:
     """
-Quality metrics of the assignment run
-"""
+    Quality metrics of the assignment run
+    """
     input:
         barcode="results/experiments/{project}/reporter_experiment.barcode.{condition}.{assignment}.{config}.all.tsv.gz",
         assignment="results/experiments/{project}/assignment/{assignment}.tsv.gz",

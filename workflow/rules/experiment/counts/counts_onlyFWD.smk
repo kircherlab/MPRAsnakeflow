@@ -7,8 +7,8 @@
 
 rule experiment_counts_onlyFWD_raw_counts:
     """
-Getting the BCs from the reads using fixed length.
-"""
+    Getting the BCs from the reads using fixed length.
+    """
     input:
         lambda wc: getFWD(wc.project, wc.condition, wc.replicate, wc.type, check_splitting=False, check_trimming=True),
     output:

@@ -6,8 +6,8 @@ This sankefile will extract the BC and FWD read from the hybrid read.
 
 rule assignment_hybridFWDRead_get_reads_by_length:
     """
-Get the barcode and read from the FWD read using fixed length
-"""
+    Get the barcode and read from the FWD read using fixed length
+    """
     input:
         fastq=lambda wc: (
             "results/assignment/{assignment}/fastq/FWD.trimmed.fastq.gz"
@@ -44,9 +44,9 @@ Get the barcode and read from the FWD read using fixed length
 
 rule assignment_hybridFWDRead_get_reads_by_cutadapt:
     """
-Get the barcode and read from the FWD read using cutadapt.
-Uses the paired end mode of cutadapt to write the FWD and BC read.
-"""
+    Get the barcode and read from the FWD read using cutadapt.
+    Uses the paired end mode of cutadapt to write the FWD and BC read.
+    """
     input:
         lambda wc: (
             "results/assignment/{assignment}/fastq/FWD.trimmed.fastq.gz"

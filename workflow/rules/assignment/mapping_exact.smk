@@ -1,7 +1,7 @@
 rule assignment_mapping_exact_reference:
     """
-Create reference to map the exact design
-"""
+    Create reference to map the exact design
+    """
     input:
         check="results/assignment/{assignment}/design_check.done",
         ref="results/assignment/{assignment}/reference/reference.fa",
@@ -25,8 +25,8 @@ Create reference to map the exact design
 
 rule assignment_mapping_exact:
     """
-Map the reads to the reference and sort using exact match.
-"""
+    Map the reads to the reference and sort using exact match.
+    """
     input:
         reads=lambda wc: getMappingRead(wc.assignment),
         reference="results/assignment/{assignment}/reference/reference_exact.fa",

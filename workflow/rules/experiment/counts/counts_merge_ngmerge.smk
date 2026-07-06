@@ -5,8 +5,8 @@
 
 rule experiment_counts_merge_NGmerge_template:
     """
-Template rule to merge paired reads using NGmerge.
-"""
+    Template rule to merge paired reads using NGmerge.
+    """
     log:
         temp("results/logs/experiment/counts/merge_NGmerge.template.{project}.{condition}.{replicate}.{type}.{split}.log"),
     conda:

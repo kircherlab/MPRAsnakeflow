@@ -8,8 +8,8 @@
 
 rule experiment_counts_umi_create_BAM:
     """
-Create a BAM file from FASTQ input, merge FWD and REV read and save UMI in XI flag.
-"""
+    Create a BAM file from FASTQ input, merge FWD and REV read and save UMI in XI flag.
+    """
     input:
         fwd_fastq=lambda wc: getFWD(wc.project, wc.condition, wc.replicate, wc.type, check_splitting=True, check_trimming=True),
         rev_fastq=lambda wc: getREV(wc.project, wc.condition, wc.replicate, wc.type, check_splitting=True, check_trimming=True),
@@ -51,8 +51,8 @@ Create a BAM file from FASTQ input, merge FWD and REV read and save UMI in XI fl
 
 rule experiment_counts_umi_attach_idx:
     """
-Attach UMI read to FWD/REV headers before NGmerge.
-"""
+    Attach UMI read to FWD/REV headers before NGmerge.
+    """
     input:
         read=lambda wc: getExperimentReads(
             wc.read,
@@ -99,8 +99,8 @@ use rule experiment_counts_merge_NGmerge_template as experiment_counts_umi_merge
 
 rule experiment_counts_umi_raw_counts:
     """
-Counting BCsxUMIs from the BAM files.
-"""
+    Counting BCsxUMIs from the BAM files.
+    """
     input:
         lambda wc: (
             expand(

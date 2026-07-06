@@ -1,7 +1,7 @@
 rule assignment_mapping_pbmm2_index:
     """
-Create pbmm2 index from design reference.
-"""
+    Create pbmm2 index from design reference.
+    """
     input:
         ref="results/assignment/{assignment}/reference/reference.fa",
         check="results/assignment/{assignment}/design_check.done",
@@ -19,8 +19,8 @@ Create pbmm2 index from design reference.
 
 rule assignment_mapping_pbmm2_align:
     """
-Align long reads (BAM or FASTA) to reference using pbmm2.
-"""
+    Align long reads (BAM or FASTA) to reference using pbmm2.
+    """
     input:
         reads=lambda wc: config["assignments"][wc.assignment]["long_read_input"],
         index="results/assignment/{assignment}/reference/reference.fa.mmi",
@@ -47,9 +47,9 @@ Align long reads (BAM or FASTA) to reference using pbmm2.
 
 rule assignment_mapping_pbmm2_getBCs:
     """
-Extract barcodes from aligned long reads. Produces the standard
-barcode TSV for downstream collection and filtering.
-"""
+    Extract barcodes from aligned long reads. Produces the standard
+    barcode TSV for downstream collection and filtering.
+    """
     input:
         bam="results/assignment/{assignment}/pbmm2/aligned.bam",
         script=getScript("assignment/longread_extract.py"),
