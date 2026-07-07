@@ -5,8 +5,8 @@
 
 rule experiment_assigned_counts_filterAssignment:
     """
-Use only unique assignments and do sampling if needed.
-"""
+    Use only unique assignments and do sampling if needed.
+    """
     input:
         assignment=lambda wc: getAssignmentFile(wc.project, wc.assignment),
         script=getScript("count/samplerer_assignment.py"),
@@ -49,8 +49,8 @@ rule experiment_assigned_counts_createAssignmentPickleFile:
 
 rule experiment_assigned_counts_assignBarcodes:
     """
-Assign RNA and DNA barcodes seperately to make the statistic for assigned
-"""
+    Assign RNA and DNA barcodes seperately to make the statistic for assigned
+    """
     input:
         counts=lambda wc: getFinalCounts(wc.project, wc.config, wc.condition, wc.type, "counts"),
         association="results/experiments/{project}/assignment/{assignment}.tsv.gz",
@@ -80,8 +80,8 @@ Assign RNA and DNA barcodes seperately to make the statistic for assigned
 
 rule experiment_assigned_counts_dna_rna_merge:
     """
-Assign merged RNA/DNA barcodes. Filter BC depending on the min_counts option.
-"""
+    Assign merged RNA/DNA barcodes. Filter BC depending on the min_counts option.
+    """
     input:
         counts="results/experiments/{project}/counts/{condition}.{replicate}.merged.config.{config}.tsv.gz",
         association="results/experiments/{project}/assignment/{assignment}.tsv.gz",
@@ -125,8 +125,8 @@ Assign merged RNA/DNA barcodes. Filter BC depending on the min_counts option.
 
 rule experiment_assigned_counts_make_master_tables:
     """
-Final master table with all replicates combined. With and without threshold.
-"""
+    Final master table with all replicates combined. With and without threshold.
+    """
     input:
         counts=lambda wc: expand(
             "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}.{replicate}.merged_assigned_counts.tsv.gz",
@@ -168,8 +168,8 @@ Final master table with all replicates combined. With and without threshold.
 
 rule experiment_assigned_counts_combine_replicates_barcode_output:
     """
-Combine replictes of assigned barcode counts into one file.
-"""
+    Combine replictes of assigned barcode counts into one file.
+    """
     input:
         bc_counts=lambda wc: expand(
             "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}.{replicate}.barcode_assigned_counts.tsv.gz",
@@ -210,8 +210,8 @@ Combine replictes of assigned barcode counts into one file.
 
 rule experiment_assigned_counts_combine_replicates:
     """
-Combine replicates of master table by summing counts up and using also the average.
-"""
+    Combine replicates of master table by summing counts up and using also the average.
+    """
     input:
         master_table="results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}.{allreps_or_threshold}.merged.tsv.gz",
         script=getScript("count/combine_replicates.py"),
@@ -240,8 +240,8 @@ Combine replicates of master table by summing counts up and using also the avera
 
 rule experiment_assigned_counts_copy_final_all_files:
     """
-Will copy final files to the main folder so that it is clear which files to use.
-"""
+    Will copy final files to the main folder so that it is clear which files to use.
+    """
     input:
         all=lambda wc: "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}.allreps.merged.tsv.gz",
         bc_all=lambda wc: "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}.allreps.merged_barcode_assigned_counts.tsv.gz",
@@ -261,8 +261,8 @@ Will copy final files to the main folder so that it is clear which files to use.
 
 rule experiment_assigned_counts_copy_final_thresh_files:
     """
-Will copy final files to the main folder so that it is clear which files to use.
-"""
+    Will copy final files to the main folder so that it is clear which files to use.
+    """
     input:
         thresh=lambda wc: "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}.allreps_minThreshold.merged.tsv.gz",
         bc_thresh=lambda wc: "results/experiments/{project}/assigned_counts/{assignment}/{config}/{condition}.allreps_minThreshold.merged_barcode_assigned_counts.tsv.gz",

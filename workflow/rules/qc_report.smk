@@ -3,8 +3,8 @@ import os
 
 rule qc_report_assoc:
     """
-This rule generates the QC report for the assignment.
-"""
+    This rule generates the QC report for the assignment.
+    """
     input:
         quarto_script=getScript("report/qc_report_assoc.qmd"),
         design_file=lambda wc: config["assignments"][wc.assignment]["design_file"],
@@ -85,8 +85,8 @@ This rule generates the QC report for the assignment.
 
 rule qc_report_count:
     """
-This rule generates the QC report for the count data.
-"""
+    This rule generates the QC report for the count data.
+    """
     input:
         quarto_script=getScript("report/qc_report_count.qmd"),
         dna_oligo_coor_min_thre_plot="results/experiments/{project}/statistic/assigned_counts/{assignment}/{config}/{condition}.DNA.pairwise.minThreshold.png",

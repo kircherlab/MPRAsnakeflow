@@ -7,8 +7,8 @@
 
 rule experiment_counts_demultiplex_create_index:
     """
-Create the demultiplexing index file for the experiment.
-"""
+    Create the demultiplexing index file for the experiment.
+    """
     input:
         experiment_file=lambda wc: config["experiments"][wc.project]["experiment_file"],
         script=getScript("count/create_demultiplexed_index.py"),
@@ -28,8 +28,8 @@ Create the demultiplexing index file for the experiment.
 
 checkpoint experiment_counts_demultiplex_BAM_umi:
     """
-Demultiplexing the data and create demultiplexed bam files per condition.
-"""
+    Demultiplexing the data and create demultiplexed bam files per condition.
+    """
     input:
         fwd_fastq=lambda wc: getFWDWithIndex(wc.project),
         rev_fastq=lambda wc: getREVWithIndex(wc.project),
@@ -74,8 +74,8 @@ Demultiplexing the data and create demultiplexed bam files per condition.
 
 rule experiment_counts_demultiplex_aggregate:
     """
-Aggregate the demultiplexed bam files per condition.
-"""
+    Aggregate the demultiplexed bam files per condition.
+    """
     input:
         lambda wc: counts_aggregate_demultiplex_input(wc.project),
     output:
@@ -84,8 +84,8 @@ Aggregate the demultiplexed bam files per condition.
 
 rule experiment_counts_demultiplex_mergeTrimReads_BAM_umi:
     """
-Merge and trim reads in demultiplexed bam files.
-"""
+    Merge and trim reads in demultiplexed bam files.
+    """
     input:
         demultiplex="results/experiments/{project}/counts/demultiplex.done",
         script=getScript("count/MergeTrimReadsBAM.py"),

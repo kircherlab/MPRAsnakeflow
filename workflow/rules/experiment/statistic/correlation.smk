@@ -5,8 +5,8 @@
 
 rule experiment_statistic_correlation_bc_counts:
     """
-Calculate the correlation of the raw counts for each condition across replicates.
-"""
+    Calculate the correlation of the raw counts for each condition across replicates.
+    """
     input:
         files=lambda wc: getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[0],
         script=getScript("count/plot_perBCCounts_correlation.R"),
@@ -70,8 +70,8 @@ Calculate the correlation of the raw counts for each condition across replicates
 
 rule experiment_statistic_correlation_bc_counts_hist:
     """
-Generate histogram and boxplots of the raw counts for each condition across replicates.
-"""
+    Generate histogram and boxplots of the raw counts for each condition across replicates.
+    """
     input:
         files=lambda wc: getMergedCounts(wc.project, wc.raw_or_assigned, wc.condition, wc.config)[0],
         script=getScript("count/plot_perBCCounts_stats.R"),
@@ -103,8 +103,8 @@ Generate histogram and boxplots of the raw counts for each condition across repl
 
 rule experiment_statistic_correlation_combine_bc_raw:
     """
-Combine the correlation of the raw counts for each condition across replicates into one table.
-"""
+    Combine the correlation of the raw counts for each condition across replicates into one table.
+    """
     input:
         files=lambda wc: expand(
             "results/experiments/{{project}}/statistic/barcode/counts/{condition}.{{config}}.barcode.correlation.tsv",
@@ -138,8 +138,8 @@ Combine the correlation of the raw counts for each condition across replicates i
 
 rule experiment_statistic_correlation_combine_bc_assigned:
     """
-Combine the correlation of the assigned counts for each condition across replicates into one table.
-"""
+    Combine the correlation of the assigned counts for each condition across replicates into one table.
+    """
     input:
         files=lambda wc: expand(
             "results/experiments/{{project}}/statistic/barcode/assigned_counts/{{assignment}}/{condition}.{{config}}.barcode.correlation.tsv",
@@ -178,8 +178,8 @@ Combine the correlation of the assigned counts for each condition across replica
 
 rule experiment_statistic_correlation_calculate:
     """
-Calculate the correlation of oligos for each condition across replicates.
-"""
+    Calculate the correlation of oligos for each condition across replicates.
+    """
     input:
         counts=lambda wc: expand(
             "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}.{replicate}.merged_assigned_counts.tsv.gz",
@@ -308,8 +308,8 @@ Calculate the correlation of oligos for each condition across replicates.
 
 rule experiment_statistic_correlation_hist_box_plots:
     """
-Generate histogram and boxplots of the oligos for each condition across replicates.
-"""
+    Generate histogram and boxplots of the oligos for each condition across replicates.
+    """
     input:
         counts=lambda wc: expand(
             "results/experiments/{{project}}/assigned_counts/{{assignment}}/{{config}}/{{condition}}.{replicate}.merged_assigned_counts.tsv.gz",
@@ -367,8 +367,8 @@ Generate histogram and boxplots of the oligos for each condition across replicat
 
 rule experiment_statistic_correlation_combine_oligo:
     """
-Combine the correlation of oligos for each condition across replicates into one table.
-"""
+    Combine the correlation of oligos for each condition across replicates into one table.
+    """
     input:
         correlation=lambda wc: expand(
             "results/experiments/{{project}}/statistic/assigned_counts/{{assignment}}/{{config}}/{condition}.correlation.tsv",

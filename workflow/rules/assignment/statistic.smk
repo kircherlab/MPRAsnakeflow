@@ -5,8 +5,8 @@ Rules to create statistics for the assignment workflow.
 
 rule assignment_statistic_totalCounts:
     """
-Statistic of the total (unfiltered counts).
-"""
+    Statistic of the total (unfiltered counts).
+    """
     input:
         bc="results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
         script=getScript("assignment/statistic_total_counts.py"),
@@ -24,8 +24,8 @@ Statistic of the total (unfiltered counts).
 
 rule assignment_statistic_assignedCounts:
     """
-Statistic of the assigned counts.
-"""
+    Statistic of the assigned counts.
+    """
     input:
         bc="results/assignment/{assignment}/assignment_barcodes_with_ambiguous.{assignment_config}.tsv.gz",
         script=getScript("assignment/statistic_total_counts.py"),
@@ -43,8 +43,8 @@ Statistic of the assigned counts.
 
 rule assignment_statistic_assignment:
     """
-Statistic of the filtered assignment.
-"""
+    Statistic of the filtered assignment.
+    """
     input:
         bc="results/assignment/{assignment}/assignment_barcodes_with_ambiguous.{assignment_config}.tsv.gz",
         script=getScript("assignment/statistic_assignment.R"),
@@ -63,8 +63,8 @@ Statistic of the filtered assignment.
 
 rule assignment_statistic_quality_metric:
     """
-Quality metrics of the assignment run
-"""
+    Quality metrics of the assignment run
+    """
     input:
         assignment="results/assignment/{assignment}/assignment_barcodes.{assignment_config}.tsv.gz",
         design="results/assignment/{assignment}/reference/reference.fa",

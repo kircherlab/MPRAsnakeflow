@@ -1,8 +1,8 @@
 rule experiment_preprocessing_split_reads:
     """
-Split the fastq files into n files for parallelisation.
-n is given by split_read in the configuration file.
-"""
+    Split the fastq files into n files for parallelisation.
+    n is given by split_read in the configuration file.
+    """
     input:
         lambda wc: getExperimentReads(
             wc.read_type, wc.project, wc.condition, wc.replicate, wc.type, check_splitting=False, check_trimming=False
@@ -33,8 +33,8 @@ n is given by split_read in the configuration file.
 
 rule experiment_preprocessing_trim_reads:
     """
-Getting the BCs from the reads using cutadapt.
-"""
+    Getting the BCs from the reads using cutadapt.
+    """
     input:
         reads=lambda wc: getExperimentReads(
             wc.read_type, wc.project, wc.condition, wc.replicate, wc.type, check_splitting=True, check_trimming=False

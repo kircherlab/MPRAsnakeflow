@@ -14,9 +14,9 @@ include: "assignment/statistic.smk"
 
 rule assignment_check_design:
     """
-Check if the design file is correct and no duplicated sequences are present (FWD and reverse).
-Also check if no duplicated headers and no illegal characters in header.
-"""
+    Check if the design file is correct and no duplicated sequences are present (FWD and reverse).
+    Also check if no duplicated headers and no illegal characters in header.
+    """
     input:
         design=lambda wc: config["assignments"][wc.assignment]["design_file"],
         script=getScript("assignment/check_design_file.py"),
@@ -57,11 +57,11 @@ Also check if no duplicated headers and no illegal characters in header.
 
 rule assignment_fastq_split:
     """
-Split the fastq files into n files for parallelisation.
-n is given by split_read in the configuration file.
+    Split the fastq files into n files for parallelisation.
+    n is given by split_read in the configuration file.
 
-Runs only if the design file is correct.
-"""
+    Runs only if the design file is correct.
+    """
     input:
         fastq=lambda wc: getAssignmentRead(
             wc.assignment,
@@ -105,8 +105,8 @@ Runs only if the design file is correct.
 
 rule assignment_attach_idx:
     """
-Extract the index sequence and add it to the header.
-"""
+    Extract the index sequence and add it to the header.
+    """
     input:
         read="results/assignment/{assignment}/fastq/splits/{read}.split{split}.fastq.gz",
         BC="results/assignment/{assignment}/fastq/splits/BC.split{split}.fastq.gz",
@@ -138,8 +138,8 @@ Extract the index sequence and add it to the header.
 
 rule assignment_merge_NGmerge:
     """
-Merge the FWD, REV and BC fastq files into one using NGmerge.
-"""
+    Merge the FWD, REV and BC fastq files into one using NGmerge.
+    """
     input:
         FWD="results/assignment/{assignment}/fastq/splits/FWD.split{split}.BCattached.fastq.gz",
         REV="results/assignment/{assignment}/fastq/splits/REV.split{split}.BCattached.fastq.gz",
@@ -170,8 +170,8 @@ Merge the FWD, REV and BC fastq files into one using NGmerge.
 
 rule assignment_merge_fastqjoin:
     """
-Merge the FWD, REV and BC fastq files into one using fastq-join.
-"""
+    Merge the FWD, REV and BC fastq files into one using fastq-join.
+    """
     input:
         FWD="results/assignment/{assignment}/fastq/splits/FWD.split{split}.BCattached.fastq.gz",
         REV="results/assignment/{assignment}/fastq/splits/REV.split{split}.BCattached.fastq.gz",
@@ -201,8 +201,8 @@ include: "assignment/mapping_pbmm2.smk"
 
 rule assignment_collectBCs:
     """
-Get the barcodes.
-"""
+    Get the barcodes.
+    """
     input:
         lambda wc: (
             "results/assignment/{assignment}/BCs/barcodes.pbmm2.tsv"
@@ -234,9 +234,9 @@ Get the barcodes.
 
 rule assignment_filter:
     """
-Filter the barcodes file based on the config given in the config-file.
-FIXME: Limitation is that oligos cannot have a name ambiguous or other.
-"""
+    Filter the barcodes file based on the config given in the config-file.
+    FIXME: Limitation is that oligos cannot have a name ambiguous or other.
+    """
     input:
         assignment="results/assignment/{assignment}/barcodes_incl_other.tsv.gz",
         script=getScript("assignment/filterAssignmentTsv.py"),

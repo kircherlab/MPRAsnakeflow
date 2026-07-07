@@ -1,8 +1,8 @@
 rule assignment_preprocessing_adapter_remove:
     """
-Remove adapter sequence from the reads (3' or 5').
-Uses cutadapt to trim adapters based on the primer direction.
-"""
+    Remove adapter sequence from the reads (3' or 5').
+    Uses cutadapt to trim adapters based on the primer direction.
+    """
     input:
         reads=lambda wc: config["assignments"][wc.assignment][wc.read],
     output:

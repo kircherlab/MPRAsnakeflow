@@ -8,8 +8,8 @@ include: "counts_common.smk"
 
 rule experiment_statistic_counts_frequent_umis:
     """
-Count the 10 most frequent UMIs per condition, replicate and DNA/RNA.
-"""
+    Count the 10 most frequent UMIs per condition, replicate and DNA/RNA.
+    """
     input:
         "results/experiments/{project}/counts/{condition}.{replicate}.{type}.filtered_counts.tsv.gz",
     output:
@@ -42,8 +42,8 @@ Count the 10 most frequent UMIs per condition, replicate and DNA/RNA.
 
 rule experiment_statistic_counts_barcode_base_composition:
     """
-Count the nucleotide composition of the barcodes per condition, replicate and DNA/RNA.
-"""
+    Count the nucleotide composition of the barcodes per condition, replicate and DNA/RNA.
+    """
     input:
         counts="results/experiments/{project}/counts/{condition}.{replicate}.{type}.final_counts.tsv.gz",
         script=getScript("count/nucleotideCountPerPosition.py"),
@@ -85,8 +85,8 @@ Count the nucleotide composition of the barcodes per condition, replicate and DN
 
 rule experiment_statistic_counts_table:
     """
-Count statistic of barcodes and UMIs per condition, replicate and DNA/RNA.
-"""
+    Count statistic of barcodes and UMIs per condition, replicate and DNA/RNA.
+    """
     input:
         lambda wc: (
             "results/experiments/{project}/counts/{condition}.{replicate}.{type}.{countType}_counts.tsv.gz"
@@ -129,8 +129,8 @@ Count statistic of barcodes and UMIs per condition, replicate and DNA/RNA.
 
 rule experiment_statistic_counts_stats_merge:
     """
-Merge the count statistic of all replicates and conditions into one table.
-"""
+    Merge the count statistic of all replicates and conditions into one table.
+    """
     input:
         lambda wc: getCountStats(wc.project, wc.countType),
     output:
@@ -147,8 +147,8 @@ Merge the count statistic of all replicates and conditions into one table.
 
 rule experiment_statistic_counts_BC_in_RNA_DNA:
     """
-Count the number of barcodes shared between RNA and DNA per condition and replicate.
-"""
+    Count the number of barcodes shared between RNA and DNA per condition and replicate.
+    """
     input:
         dna=lambda wc: statistic_counts_BC_in_RNA_DNA_helper(wc.project, wc.condition, "DNA", wc.countType),
         rna=lambda wc: statistic_counts_BC_in_RNA_DNA_helper(wc.project, wc.condition, "RNA", wc.countType),
@@ -172,8 +172,8 @@ Count the number of barcodes shared between RNA and DNA per condition and replic
 
 rule experiment_statistic_counts_BC_in_RNA_DNA_merge:
     """
-Merge the shared barcodes statistic of all replicates and conditions into one table.
-"""
+    Merge the shared barcodes statistic of all replicates and conditions into one table.
+    """
     input:
         getBCinRNADNAStats,
     output:
@@ -190,8 +190,8 @@ Merge the shared barcodes statistic of all replicates and conditions into one ta
 
 rule experiment_statistic_counts_final:
     """
-Combine the final count statistic of all replicates and conditions into one table.
-"""
+    Combine the final count statistic of all replicates and conditions into one table.
+    """
     input:
         counts="results/experiments/{project}/statistic/counts/count_{countType}.tsv",
         shared="results/experiments/{project}/statistic/counts/BC_in_RNA_DNA_{countType}.tsv",
