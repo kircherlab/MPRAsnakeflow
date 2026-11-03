@@ -28,7 +28,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Formatting
-        uses: super-linter/super-linter@v8
+        uses: super-linter/super-linter@v9
         env:
           LINTER_RULES_PATH: .
           VALIDATE_ALL_CODEBASE: false
